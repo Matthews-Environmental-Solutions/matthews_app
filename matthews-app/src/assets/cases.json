@@ -1,0 +1,129 @@
+[
+    {
+        "caseId": "0001",
+        "name": "Will Smith",
+        "weight": "92kg",
+        "gender": "Male",
+        "containerType": "3",
+        "containerSize": "15",
+        "status": "Cremation complete"
+    },
+    {
+        "caseId": "0002",
+        "name": "Alu Arjun",
+        "weight": "84kg",
+        "gender": "Male",
+        "containerType": "2",
+        "containerSize": "15",
+        "status": "Cremation in progress"
+    },
+    {
+        "caseId": "0003",
+        "name": "John Snow",
+        "weight": "88kg",
+        "gender": "Male",
+        "containerType": "3",
+        "containerSize": "15",
+        "status": "Ready to cremate"
+    },
+    {
+        "caseId": "0004",
+        "name": "Richard Roy",
+        "weight": "102kg",
+        "gender": "Male",
+        "containerType": "3",
+        "containerSize": "25",
+        "status": "Ready to cremate"
+    },
+    {
+        "caseId": "0005",
+        "name": "Priya Dutt",
+        "weight": "74kg",
+        "gender": "Female",
+        "containerType": "3",
+        "containerSize": "12",
+        "status": "Ready to cremate"
+    },
+    {
+        "caseId": "0006",
+        "name": "Shri Devi",
+        "weight": "66kg",
+        "gender": "Female",
+        "containerType": "1",
+        "containerSize": "12",
+        "status": "Cremation complete"
+    },
+    {
+        "caseId": "0007",
+        "name": "Priya Kanana",
+        "weight": "70kg",
+        "gender": "Female",
+        "containerType": "1",
+        "containerSize": "12",
+        "status": "Ready to cremate"
+    },
+
+    {
+        "caseId": "0001",
+        "name": "Will Smith",
+        "weight": "92kg",
+        "gender": "Male",
+        "containerType": "3",
+        "containerSize": "15",
+        "status": "Cremation complete"
+    },
+    {
+        "caseId": "0002",
+        "name": "Alu Arjun",
+        "weight": "84kg",
+        "gender": "Male",
+        "containerType": "2",
+        "containerSize": "15",
+        "status": "Cremation in progress"
+    },
+    {
+        "caseId": "0003",
+        "name": "John Snow",
+        "weight": "88kg",
+        "gender": "Male",
+        "containerType": "3",
+        "containerSize": "15",
+        "status": "Ready to cremate"
+    },
+    {
+        "caseId": "0004",
+        "name": "Richard Roy",
+        "weight": "102kg",
+        "gender": "Male",
+        "containerType": "3",
+        "containerSize": "25",
+        "status": "Ready to cremate"
+    },
+    {
+        "caseId": "0005",
+        "name": "Priya Dutt",
+        "weight": "74kg",
+        "gender": "Female",
+        "containerType": "3",
+        "containerSize": "12",
+        "status": "Ready to cremate"
+    },
+    {
+        "caseId": "0006",
+        "name": "Shri Devi",
+        "weight": "66kg",
+        "gender": "Female",
+        "containerType": "1",
+        "containerSize": "12",
+        "status": "Cremation complete"
+    },
+    {
+        "caseId": "0007",
+        "name": "Priya Kanana",
+        "weight": "70kg",
+        "gender": "Female",
+        "containerType": "1",
+        "containerSize": "12",
+        "status": "Ready to cremate"
+    }
+]

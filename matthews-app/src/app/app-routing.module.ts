@@ -8,8 +8,12 @@ const routes: Routes = [
   },
   {
     path: '',
-    redirectTo: 'home',
+    redirectTo: 'schedule',
     pathMatch: 'full'
+  },
+  {
+    path: 'schedule',
+    loadChildren: () => import('./schedule/schedule.module').then( m => m.SchedulePageModule)
   },
 ];
 
