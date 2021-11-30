@@ -31,6 +31,11 @@ export class SchedulePage implements OnInit {
     });
   }
 
+  cancelSearch(): void {
+    this.showSearchbar = false;
+    this.searchTerm = '';
+  }
+
   async pressed(): Promise<void>  {
 
     console.log('One tap pressed');

@@ -1,12 +1,22 @@
 <ion-header>
   <ion-toolbar>
     <ion-title *ngIf="!showSearchbar">Schedule</ion-title>
-    <ion-searchbar *ngIf="showSearchbar" showCancelButton="always" (ionCancel)="showSearchbar = false" [(ngModel)]="searchTerm" placeholder="Search" animated></ion-searchbar>
-    <!-- *ngIf="!showSearchbar" (click)="showSearchbar = true" -->
+    <ion-searchbar *ngIf="showSearchbar" showCancelButton="always" (ionCancel)="cancelSearch()" [(ngModel)]="searchTerm" placeholder="Search" animated></ion-searchbar>
+    
     <ion-buttons slot="primary">
       <ion-button *ngIf="!showSearchbar" (click)="showSearchbar = true">
         <ion-icon slot="icon-only" name="search"></ion-icon>
       </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+  <ion-toolbar>
+    <ion-buttons slot="end">
+        <ion-button>
+          <ion-icon name="pencil-outline"></ion-icon>
+        </ion-button>
+        <ion-button>
+          <ion-icon name="trash-outline"></ion-icon>
+        </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
@@ -17,7 +27,7 @@
       <!-- <ion-label>List Header</ion-label> -->
     </ion-list-header>
     <!-- ion-long-press [interval]="400" (pressed)="pressed()" (longPressed)="active()" (pressEnded)="released()" -->
-    <ion-item detail='true' *ngFor="let case of cases | filter:searchTerm" ion-long-press [interval]="400" href="/home" (longPressed)="active()">
+    <ion-item detail='true' *ngFor="let case of cases | filter:searchTerm" ion-long-press [interval]="400" routerLink="/home" (longPressed)="active()">
       <ion-label>
         <h3>{{case.caseId}}</h3>
         <p>
