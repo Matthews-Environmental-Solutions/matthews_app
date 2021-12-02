@@ -1,34 +1,33 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ToastController } from '@ionic/angular';
-
-export interface ICase {
-  caseId: string;
-  name: string;
-  weight: string;
-  gender: string;
-  containerType: string;
-  containerSize: string;
-  status: string;
-}
+import { Subscription } from 'rxjs';
+import { ICase } from '../case/case';
+import { CaseService } from '../case/case.service';
 
 @Component({
   selector: 'app-schedule',
   templateUrl: './schedule.page.html',
   styleUrls: ['./schedule.page.scss'],
 })
-export class SchedulePage implements OnInit {
+export class SchedulePage implements OnInit, OnDestroy {
   cases: ICase[];
   showSearchbar: boolean;
   searchTerm: string;
+  sub: Subscription;
 
-  constructor(public toastController: ToastController) { }
+  constructor(public toastController: ToastController, private caseService: CaseService) { }
 
   ngOnInit() {
     this.showSearchbar = false;
-    fetch('../../assets/cases.json').then(res => res.json())
-    .then(json => {
-      this.cases = json;
+    this.sub = this.caseService.getCases().subscribe({
+      next: cases => {
+        this.cases = cases;
+      }
     });
+  }
+
+  ngOnDestroy(): void {
+    this.sub.unsubscribe();
   }
 
   cancelSearch(): void {

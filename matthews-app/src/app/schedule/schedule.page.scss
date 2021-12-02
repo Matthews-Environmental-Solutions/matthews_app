@@ -1,10 +1,5 @@
-.addButton {
-    border-radius: "100%";
-    color: red;
-    width: 32;
-}
-
-ion-item {  //Html element that has defined the 'ion-long-press' attribute
-      // I needed this to make my element touchable
+ion-item {
     touch-action: pan-y !important;
+    --detail-icon-color: #c6d92d;//#c6d92d;
+    --border-color: #c6d92d;//#c6d92d;
   }

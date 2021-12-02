@@ -15,6 +15,14 @@ const routes: Routes = [
     path: 'schedule',
     loadChildren: () => import('./schedule/schedule.module').then( m => m.SchedulePageModule)
   },
+  {
+    path: 'case',
+    loadChildren: () => import('./case/case.module').then( m => m.CasePageModule)
+  },
+  {
+    path: 'case/:id',
+    loadChildren: () => import('./case/case.module').then( m => m.CasePageModule)
+  },
 ];
 
 @NgModule({

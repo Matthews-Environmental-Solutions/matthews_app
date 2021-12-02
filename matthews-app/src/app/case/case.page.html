@@ -1,0 +1,47 @@
+<ion-header >
+  <ion-toolbar color="secondary">
+    <ion-title>Case</ion-title>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-buttons slot="end">
+      <ion-menu-button ></ion-menu-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <form (ngSubmit)="onSubmit()" >
+    <ion-item lines="full">
+      <ion-label position="floating">Case ID</ion-label>
+      <ion-input [(ngModel)]="case.caseId" name="caseId" type="text" required></ion-input>
+    </ion-item>
+    <ion-item lines="full">
+      <ion-label position="floating">Name</ion-label>
+      <ion-input type="text" [(ngModel)]="case.name" name="name" required></ion-input>
+    </ion-item>
+   <ion-item lines="full">
+      <ion-label position="floating">Weight</ion-label>
+      <ion-input type="weight" [(ngModel)]="case.weight" name="weight" required></ion-input>
+    </ion-item>
+    <ion-item lines="full">
+      <ion-label>Gender</ion-label>
+      <ion-select interface="popover" placeholder="Select One" name="gender" [(ngModel)]="case.gender">
+        <ion-select-option *ngFor="let gender of genders" (value)="case.gender">{{gender}}</ion-select-option>
+      </ion-select>
+    </ion-item>
+   <ion-item lines="full">
+      <ion-label>Container Type</ion-label>
+      <ion-select interface="popover" placeholder="Select One" name="containerType" [(ngModel)]="case.containerType">
+        <ion-select-option *ngFor="let t of containerTypeKeys;" value="{{ t }}">{{ containerTypes[t] }}</ion-select-option>
+      </ion-select>
+    </ion-item>
+     <ion-item lines="full">
+      <ion-label>Container Size</ion-label>
+      <ion-select interface="popover" name="containerSize" [(ngModel)]="case.containerSize"  placeholder="Select One">
+        <ion-select-option *ngFor="let s of containerSizeKeys;" value="{{ s }}">{{ containerSizes[s] }}</ion-select-option>
+      </ion-select>
+    </ion-item>
+    <ion-button type="submit" color="secondary" expand="block">Submit</ion-button>
+  </form>
+</ion-content>
