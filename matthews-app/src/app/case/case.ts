@@ -1,6 +1,7 @@
 export interface ICase {
+    id: number;
     caseId: string;
-    name: string;
+    caseName: string;
     weight: string;
     gender: string;
     containerType: string;

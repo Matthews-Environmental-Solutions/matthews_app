@@ -19,6 +19,9 @@ export class SchedulePage implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.showSearchbar = false;
+  }
+
+  ionViewWillEnter() {
     this.sub = this.caseService.getCases().subscribe({
       next: cases => {
         this.cases = cases;
@@ -30,22 +33,19 @@ export class SchedulePage implements OnInit, OnDestroy {
     this.sub.unsubscribe();
   }
 
+  deleteCase(id: number) {
+    this.caseService.deleteCase(id.toString()).subscribe(result =>
+      {
+        this.cases.forEach( (item, index) => {
+          if(item.id === id) {
+            this.cases.splice(index,1);
+          }
+        });
+      });
+  }
+
   cancelSearch(): void {
     this.showSearchbar = false;
     this.searchTerm = '';
-  }
-
-  async pressed(): Promise<void>  {
-
-    console.log('One tap pressed');
-  }
-
-  async active(): Promise<void> {
-    const toast = await this.toastController.create({
-      message: 'Your settings have been saved.',
-      duration: 2000
-    });
-    toast.present();
-    console.log('Long tap pressed');
   }
 }

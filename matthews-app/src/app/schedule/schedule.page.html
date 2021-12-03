@@ -1,8 +1,10 @@
 <ion-header >
   <ion-toolbar color="secondary">  
     <ion-title *ngIf="!showSearchbar">Schedule</ion-title>
+    <ion-buttons *ngIf="!showSearchbar" slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
     <ion-searchbar *ngIf="showSearchbar" showCancelButton="always" (ionCancel)="cancelSearch()" [(ngModel)]="searchTerm" placeholder="Search" animated></ion-searchbar>
-    
     <ion-buttons slot="primary">
       <ion-button *ngIf="!showSearchbar" (click)="showSearchbar = true">
         <ion-icon slot="icon-only" name="search"></ion-icon>
@@ -10,31 +12,26 @@
       <ion-menu-button ></ion-menu-button>
     </ion-buttons>
   </ion-toolbar>
-</ion-header>
+</ion-header>  
 
 <ion-content>
   <ion-list>
-    <ion-list-header>
-      <!-- <ion-label>List Header</ion-label> -->
-    </ion-list-header>
+    <!-- (casesNew | async) | filter:searchTerm" -->
     <ion-item-sliding *ngFor="let case of cases | filter:searchTerm">
       <ion-item-options side="end">
         <ion-buttons slot="primary">
-          <ion-button>
+          <ion-button (click)="deleteCase(case.id)">
             <ion-icon name="trash-outline"></ion-icon>
           </ion-button>
         </ion-buttons>
       </ion-item-options>
-  
-      <!-- [routerLink]="['/products', product.productId]" ion-long-press [interval]="400" (pressed)="pressed()" (longPressed)="active()" (pressEnded)="released()" -->
-      <ion-item detail='true'  ion-long-press [interval]="400" [routerLink]="['/case', case.caseId]" (longPressed)="active()">
+      <ion-item detail='true' [routerLink]="['/case', case.id]">
         <ion-label>
           <h3>{{case.caseId}}</h3>
           <p>
-            {{case.name}} &mdash; Status: {{case.status}}
+            {{case.caseName}} &mdash; Status: {{case.status}}
           </p>
         </ion-label>
-        
       </ion-item>
   </ion-item-sliding>
   </ion-list>
