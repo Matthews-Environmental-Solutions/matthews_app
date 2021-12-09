@@ -1,11 +1,12 @@
-﻿DECLARE @ClientName VARCHAR(max), @ClientDescription VARCHAR(max), @ClientId INT, @secretText varchar(max), @Hashbytes varbinary(128), @Secret VARCHAR(max), @CreationTime DateTime2, @RedirectUri varchar(max), @ApiName varchar(max);
+﻿DECLARE @ClientName VARCHAR(max), @ClientDescription VARCHAR(max), @ClientId INT, @secretText varchar(max), @Hashbytes varbinary(128), @Secret VARCHAR(max), @CreationTime DateTime2, @RedirectUri varchar(max), @RedirectUriTesting varchar(max), @ApiName varchar(max);
 SET @CreationTime = SYSUTCDATETIME();
 
 -- This values could be modified by user
 SET @ClientName = N'matthews.swagger'; 
 SET @ClientDescription = N'matthews.swagger Client';
 SET @secretText = '8f316032b4134fca974b44be7d3d816c';
-SET @RedirectUri = N'https://localhost:44320/swagger/oauth2-redirect.html';
+SET @RedirectUriTesting = N'https://localhost:44320/swagger/oauth2-redirect.html';
+SET @RedirectUri = N'https://matthewscremation.i4connected.cloud/matthews/swagger/oauth2-redirect.html';
 SET @ApiName = N'matthews.api'; 
 
 -- Creating a secret
@@ -41,6 +42,9 @@ IF NOT EXISTS
       PRINT 'Creating ClientSecret: ' + @secretText;
       INSERT [dbo].[ClientSecrets] ([ClientId], [Description], [Value], [Expiration], [Type], [Created]) VALUES (@ClientId, NULL, @Secret, NULL, N'SharedSecret', @CreationTime)
 	
+      PRINT 'Creating ClientRedirectUri for testing, needs to be removed in production: ' + @RedirectUriTesting;
+      INSERT [dbo].[ClientRedirectUris] ([RedirectUri], [ClientId]) VALUES (@RedirectUriTesting, @ClientId)
+
       PRINT 'Creating ClientRedirectUri: ' + @RedirectUri;
       INSERT [dbo].[ClientRedirectUris] ([RedirectUri], [ClientId]) VALUES (@RedirectUri, @ClientId)
     END
