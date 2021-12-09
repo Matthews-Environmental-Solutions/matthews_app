@@ -23,7 +23,7 @@ IF NOT EXISTS
 
     INSERT [dbo].[ApiResourceScopes] ([Scope], [ApiResourceId]) VALUES (@ApiResourceName, @ApiResourceId)  
 
-    INSERT [dbo].[ApiResourceSecrets] ([Id], [ApiResourceId], [Description], [Value], [Expiration], [Type], [Created]) VALUES (@ApiResourceId, NULL, @Secret, NULL, N'SharedSecret', @CreationTime)
+    INSERT [dbo].[ApiResourceSecrets] ([ApiResourceId], [Description], [Value], [Expiration], [Type], [Created]) VALUES (@ApiResourceId, NULL, @Secret, NULL, N'SharedSecret', @CreationTime)
 
     INSERT [dbo].[ApiScopes] ([Enabled], [Name], [DisplayName], [Description], [Required], [Emphasize], [ShowInDiscoveryDocument]) VALUES ( 1, @ApiResourceName, @ApiResourceName, NULL, 0, 0, 1)
     END
