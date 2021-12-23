@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { ICase } from './case';
 import { CaseService } from './case.service';
@@ -24,6 +24,8 @@ export enum ContainerSize {
 })
 export class CasePage implements OnInit {
 
+  id = 0;
+
   genders: string[] = [
     'Female',
     'Male'
@@ -35,8 +37,9 @@ export class CasePage implements OnInit {
   containerSizeKeys = Object.keys(ContainerSize).filter(x => (parseInt(x, 10) >= 0));
 
   case: ICase = {
+    id: 0,
     caseId: '',
-    name: '',
+    caseName: '',
     weight: '',
     gender: '',
     containerType: '',
@@ -45,21 +48,37 @@ export class CasePage implements OnInit {
   };
 
   case$: Observable<ICase>;
-  constructor(private route: ActivatedRoute, private caseService: CaseService) { }
+  constructor(private route: ActivatedRoute, private router: Router, private caseService: CaseService) { }
 
   ngOnInit() {
 
-    const id = this.route.snapshot.paramMap.get('id');
-    if(id) {
-      this.caseService.getCase(id).subscribe(result => {
+    this.id = parseInt(this.route.snapshot.paramMap.get('id'), 10);
+    this.getSelectedCase();
+  }
+
+  getSelectedCase() {
+    if(this.id) {
+      this.caseService.getCase(this.id).subscribe(result => {
         this.case = result;
-        console.log(this.case);
       });
     }
   }
 
   onSubmit() {
-    console.log(this.case);
+    if(!this.id) {
+      this.createCase();
+    } else {
+      this.updateCase();
+    }
+    this.router.navigate(['/schedule']);
+  }
+
+  createCase() {
+    this.caseService.createCase(this.case).subscribe();
+  }
+
+  updateCase() {
+    this.caseService.updateCase(this.id, this.case).subscribe();
   }
 
 }
