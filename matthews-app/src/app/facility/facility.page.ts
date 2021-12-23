@@ -32,7 +32,7 @@ export class FacilityPage implements OnInit {
   }
 
   ngOnDestroy(): void {
-    this.sub.unsubscribe();
+    //this.sub.unsubscribe();
   }
 
 }
