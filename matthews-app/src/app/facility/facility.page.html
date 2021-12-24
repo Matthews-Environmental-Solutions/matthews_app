@@ -1,0 +1,31 @@
+<ion-header >
+  <ion-toolbar color="secondary">  
+    <ion-title *ngIf="!showSearchbar">Facility</ion-title>
+    <ion-searchbar *ngIf="showSearchbar" showCancelButton="always" (ionCancel)="cancelSearch()" [(ngModel)]="searchTerm" placeholder="Search" animated></ion-searchbar>
+    <ion-buttons slot="primary">
+      <ion-button *ngIf="!showSearchbar" (click)="showSearchbar = true">
+        <ion-icon slot="icon-only" name="search"></ion-icon>
+      </ion-button>
+      <ion-menu-button ></ion-menu-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-card *ngFor="let facility of facilities" [routerLink]="['/facility', facility.facilityId]">
+    <ion-item>
+      <ion-icon name="business-outline" slot="start"></ion-icon>
+      <ion-card-header>
+        <ion-card-title>{{facility.name}}</ion-card-title>
+        <ion-card-subtitle>Secondary text</ion-card-subtitle>
+      </ion-card-header>
+      <ion-icon name="information" slot="end"></ion-icon>
+    </ion-item>
+    <ion-card-content>
+      Secondary text
+    </ion-card-content>
+  </ion-card>
+</ion-content>
+
+<!-- <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script> -->

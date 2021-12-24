@@ -1,0 +1,59 @@
+[
+    {
+        "facilityId": "0001",
+        "name": "Munich",
+        "devices" : 
+        [
+            {
+                "deviceId":"0001",
+                "name":"Cremator1",
+                "status":"Cooling to load",
+                "time":"2021-12-01T18:25:43.511Z"
+            }, 
+            {
+                "deviceId":"0002",
+                "name":"Cremator2",
+                "status":"Preheat",
+                "time":"2021-12-01T18:25:43.511Z"
+            }
+        ]
+    },
+    {
+        "facilityId": "0002",
+        "name": "Berlin",
+        "devices" : 
+        [
+            {
+                "deviceId":"0001",
+                "name":"Cremator1",
+                "status":"Cooling to load",
+                "time":"2021-12-01T18:25:43.511Z"
+            }, 
+            {
+                "deviceId":"0002",
+                "name":"Cremator2",
+                "status":"Preheat",
+                "time":"2021-12-01T18:25:43.511Z"
+            }
+        ]
+    },
+    {
+        "facilityId": "0003",
+        "name": "Novi Sad",
+        "devices" : 
+        [
+            {
+                "deviceId":"0001",
+                "name":"Cremator1",
+                "status":"Cooling to load",
+                "time":"2021-12-01T18:25:43.511Z"
+            }, 
+            {
+                "deviceId":"0002",
+                "name":"Cremator2",
+                "status":"Preheat",
+                "time":"2021-12-01T18:25:43.511Z"
+            }
+        ]
+    }
+]

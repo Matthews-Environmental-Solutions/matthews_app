@@ -9,11 +9,16 @@ import { AppRoutingModule } from './app-routing.module';
 
 import { IonicGestureConfig } from '../assets/ionic-gesture-config';
 import { HttpClientModule } from '@angular/common/http';
+import { BrowserAnimationsModule, NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [AppComponent],
   entryComponents: [],
-  imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule, HttpClientModule],
+  imports: [
+    BrowserModule, 
+    IonicModule.forRoot(), 
+    AppRoutingModule, 
+    HttpClientModule, BrowserAnimationsModule],
   providers: [
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     { provide: HAMMER_GESTURE_CONFIG, useClass: IonicGestureConfig }

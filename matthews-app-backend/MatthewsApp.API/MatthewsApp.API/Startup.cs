@@ -1,7 +1,9 @@
 
+using IdentityModel.AspNetCore.OAuth2Introspection;
 using MatthewsApp.API.Models;
 using MatthewsApp.API.Repository;
 using MatthewsApp.API.Services;
+using MatthewsApp.API.Swagger.Filters;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http.Features;
@@ -10,6 +12,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using System;
+using System.Collections.Generic;
 
 namespace MatthewsApp.API
 {
@@ -29,6 +33,22 @@ namespace MatthewsApp.API
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "MatthewsApp.API", Version = "v1" });
+                c.AddSecurityDefinition("oauth2",
+                new OpenApiSecurityScheme
+                {
+                    Type = SecuritySchemeType.OAuth2,
+
+                    Flows = new OpenApiOAuthFlows
+                    {
+                        AuthorizationCode = new OpenApiOAuthFlow
+                        {
+                            AuthorizationUrl = new Uri(Configuration["Swagger:Authority"] + "/connect/authorize", UriKind.Absolute),
+                            TokenUrl = new Uri(Configuration["Swagger:Authority"] + "/connect/token", UriKind.Absolute),
+                            Scopes = new Dictionary<string, string> { { "matthews.api", "matthews.api" } },
+                        }
+                    },
+                });
+                c.OperationFilter<AuthorizeOperationFilter>();
             });
 
             var connectionString = Configuration["connectionStrings:MatthewsAppDBConnectionString"];
@@ -43,6 +63,14 @@ namespace MatthewsApp.API
                 o.MultipartBodyLengthLimit = int.MaxValue;
                 o.MemoryBufferThreshold = int.MaxValue;
             });
+
+            services.AddAuthentication(OAuth2IntrospectionDefaults.AuthenticationScheme)
+                    .AddOAuth2Introspection(options =>
+                    {
+                        options.Authority = Configuration["OAuth2Introspection:Authority"];
+                        options.ClientId = "matthews.api";
+                        options.ClientSecret = "62819d04e4ca43d993b7e9b769180e83";
+                    });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -52,7 +80,15 @@ namespace MatthewsApp.API
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "MatthewsApp.API v1"));
+                app.UseSwaggerUI(c =>
+                {
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "MatthewsApp.API v1");
+                    c.OAuthAppName("matthews.swagger");
+                    c.OAuthClientId("matthews.swagger");
+                    c.OAuthClientSecret("8f316032b4134fca974b44be7d3d816c");
+                    c.OAuthScopeSeparator(" ");
+                    c.OAuthUsePkce();
+                });
             }
             app.UseCors(x => x
             .AllowAnyOrigin()
@@ -61,11 +97,12 @@ namespace MatthewsApp.API
 
             app.UseHttpsRedirection();
             app.UseRouting();
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllers();
+                endpoints.MapControllers().RequireAuthorization();
             });
 
             matthewsAppDBContext.FillInitialData();

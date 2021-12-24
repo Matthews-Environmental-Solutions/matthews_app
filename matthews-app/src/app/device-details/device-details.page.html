@@ -1,0 +1,197 @@
+<ion-header >
+  <ion-toolbar color="secondary">  
+    <ion-title *ngIf="!showSearchbar">Facility</ion-title>
+    <ion-buttons *ngIf="!showSearchbar" slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-searchbar *ngIf="showSearchbar" showCancelButton="always" (ionCancel)="cancelSearch()" [(ngModel)]="searchTerm" placeholder="Search" animated></ion-searchbar>
+    
+    <ion-buttons slot="primary">
+      <ion-button *ngIf="!showSearchbar" (click)="showSearchbar = true">
+        <ion-icon slot="icon-only" name="search"></ion-icon>
+      </ion-button>
+      <ion-menu-button ></ion-menu-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+<mat-stepper orientation="vertical" #stepper>
+  <mat-step [stepControl]="firstFormGroup" [completed]="isPreheatStarted">
+    <form *ngIf="!isPreheatStarted" [formGroup]="firstFormGroup">
+      <ng-template matStepLabel>Preheat System</ng-template>
+      <ion-button expand="full" (click)="startPreheat()">
+        <ion-icon slot="end" name="arrow-forward"></ion-icon>
+        Start Preheat
+      </ion-button>
+    </form>
+    <form *ngIf="isPreheatStarted" [formGroup]="firstFormGroup">
+      <ion-card>
+        <ion-item>
+          <ion-card-header>
+            <ion-card-title>Preheat in progress</ion-card-title>
+            <ion-card-subtitle>Secondary text</ion-card-subtitle>
+          </ion-card-header>
+        </ion-item>
+        <ion-card-content>
+          Secondary text
+        </ion-card-content>
+      </ion-card>
+
+      <p><ng-template matStepLabel>Preheat System</ng-template>
+      <ion-button expand="block" (click)="stopPreheat()">
+        <ion-icon slot="end" name="arrow-forward"></ion-icon>
+        Stop Preheat
+      </ion-button></p>
+    </form>
+  </mat-step>
+
+  <mat-step [stepControl]="secondFormGroup">
+    <form *ngIf="!isCaseSelected" [formGroup]="secondFormGroup">
+      <ng-template matStepLabel>Case</ng-template>
+      <ion-button expand="block" (click)="selectCase()">
+        <ion-icon slot="end" name="arrow-forward"></ion-icon>
+        Select Case
+      </ion-button>
+    </form>
+    <form *ngIf="isCaseSelected" [formGroup]="secondFormGroup">
+      <ng-template matStepLabel>Case</ng-template>
+      <ion-text>Details of case.</ion-text>
+      <p>
+        <ion-button expand="block" (click)="changeCase()">
+          <ion-icon slot="end" name="arrow-forward"></ion-icon>
+          changeCase
+        </ion-button>
+      </p>
+    </form>
+  </mat-step>
+
+  <mat-step [stepControl]="thirdFormGroup">
+    <form *ngIf="!isCycleStarted" [formGroup]="thirdFormGroup">
+      <ng-template matStepLabel>Start Cycle</ng-template>
+      <ion-card>
+        <ion-item>
+          <ion-card-header>
+            <ion-card-title>Burn Mode</ion-card-title>
+          </ion-card-header>
+        </ion-item>
+        <ion-card-content>
+          <!-- Default Segment -->
+          <ion-segment (ionChange)="segmentChanged($event)">
+            <ion-segment-button>
+              <ion-label>Simplicity</ion-label>
+            </ion-segment-button>
+            <ion-segment-button>
+              <ion-label>Eco</ion-label>
+            </ion-segment-button>
+            <ion-segment-button>
+              <ion-label>Bariatric</ion-label>
+            </ion-segment-button>
+          </ion-segment>
+        </ion-card-content>
+      </ion-card>
+
+      <p>
+        <ion-button expand="block" (click)="startCycle()">
+          <ion-icon slot="end" name="arrow-forward"></ion-icon>
+          Start Cycle
+        </ion-button>
+      </p>
+    </form>
+    <form *ngIf="isCycleStarted" [formGroup]="thirdFormGroup">
+      <ng-template matStepLabel>Start Cycle</ng-template>
+      <ion-card>
+        <ion-item>
+          <ion-card-header>
+            <ion-card-title>Cycle in progress</ion-card-title>
+            <ion-card-subtitle>Secondary text</ion-card-subtitle>
+          </ion-card-header>
+        </ion-item>
+        <ion-card-content>
+          Secondary text
+        </ion-card-content>
+      </ion-card>
+
+      <p>
+        <ion-button expand="block" (click)="pauseCycle()">
+          <ion-icon slot="end" name="arrow-forward"></ion-icon>
+          Pause Cycle
+        </ion-button>
+        <ion-button expand="block" (click)="extendCycle()">
+          <ion-icon slot="end" name="arrow-forward"></ion-icon>
+          Extend Cycle
+        </ion-button>
+        <ion-button expand="block" (click)="endCycle()">
+          <ion-icon slot="end" name="arrow-forward"></ion-icon>
+          End Cycle
+        </ion-button>
+      </p>
+    </form>
+  </mat-step>
+  <mat-step [stepControl]="fourthFormGroup">
+    <form *ngIf="!isCoolDownStarted" [formGroup]="fourthFormGroup">
+      <ng-template matStepLabel>Complete Cycle</ng-template>
+      <ion-button expand="block" (click)="coolDown()">
+        <ion-icon slot="end" name="arrow-forward"></ion-icon>
+        Cool Down
+      </ion-button>
+      <ion-button expand="block" (click)="rakeOut()">
+        <ion-icon slot="end" name="arrow-forward"></ion-icon>
+        Rake Out
+      </ion-button>
+    </form>
+    <form *ngIf="isCoolDownStarted && !isRakeOutStarted" [formGroup]="fourthFormGroup">
+      <ng-template matStepLabel>Complete Cycle</ng-template>
+      <ion-card>
+        <ion-item>
+          <ion-card-header>
+            <ion-card-title>Cooling in progress</ion-card-title>
+            <ion-card-subtitle>Secondary text</ion-card-subtitle>
+          </ion-card-header>
+        </ion-item>
+        <ion-card-content>
+          Secondary text
+        </ion-card-content>
+      </ion-card>
+      <p>
+        <ion-button expand="block" (click)="rakeOut()">
+          <ion-icon slot="end" name="arrow-forward"></ion-icon>
+          Rake Out
+        </ion-button>
+      </p>
+    </form>
+    <form *ngIf="isCoolDownStarted && isRakeOutStarted" [formGroup]="fourthFormGroup">
+      <ng-template matStepLabel>Complete Cycle</ng-template>
+      <ion-card>
+        <ion-item>
+          <ion-card-header>
+            <ion-card-title>Cooled down</ion-card-title>
+            <ion-card-subtitle>Secondary text</ion-card-subtitle>
+          </ion-card-header>
+        </ion-item>
+        <ion-card-content>
+          Secondary text
+        </ion-card-content>
+      </ion-card>
+
+      <ion-card>
+        <ion-item>
+          <ion-card-header>
+            <ion-card-title>Rake out in progress</ion-card-title>
+            <ion-card-subtitle>Secondary text</ion-card-subtitle>
+          </ion-card-header>
+        </ion-item>
+        <ion-card-content>
+          Secondary text
+        </ion-card-content>
+      </ion-card>
+      <p>
+        <ion-button expand="block" (click)="presentAlert()">
+          <ion-icon slot="end" name="arrow-forward"></ion-icon>
+          Confirm rake out is finished.
+        </ion-button>
+      </p>
+    </form>
+  </mat-step>
+</mat-stepper>
+</ion-content>
