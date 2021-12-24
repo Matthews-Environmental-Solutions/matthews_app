@@ -16,8 +16,7 @@
 
 <ion-content>
   <ion-list>
-    <!-- (casesNew | async) | filter:searchTerm" -->
-    <ion-item-sliding *ngFor="let case of cases | filter:searchTerm">
+    <ion-item-sliding *ngFor="let case of (cases$ | async) | filter:searchTerm">
       <ion-item-options side="end">
         <ion-buttons slot="primary">
           <ion-button (click)="deleteCase(case.id)">

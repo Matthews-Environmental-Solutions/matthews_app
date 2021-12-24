@@ -1,4 +1,4 @@
-export interface ICase {
+export class Case {
     id: number;
     caseId: string;
     caseName: string;

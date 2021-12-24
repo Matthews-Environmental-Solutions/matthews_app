@@ -19,7 +19,7 @@ import { LongPressModule } from 'ionic-long-press';
     IonicModule,
     SchedulePageRoutingModule,
     Ng2SearchPipeModule,
-    LongPressModule
+    LongPressModule,
   ],
   declarations: [SchedulePage]
 })

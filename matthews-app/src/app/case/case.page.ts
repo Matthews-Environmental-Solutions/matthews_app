@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
-import { ICase } from './case';
-import { CaseService } from './case.service';
+import { Case } from './case';
+import { CaseStoreService } from './case.store.service';
 
 export enum ContainerType {
   cardboard,
@@ -36,49 +36,24 @@ export class CasePage implements OnInit {
   containerTypeKeys =  Object.keys(ContainerType).filter(x => (parseInt(x, 10) >= 0));
   containerSizeKeys = Object.keys(ContainerSize).filter(x => (parseInt(x, 10) >= 0));
 
-  case: ICase = {
-    id: 0,
-    caseId: '',
-    caseName: '',
-    weight: '',
-    gender: '',
-    containerType: '',
-    containerSize: '',
-    status: ''
-  };
+  case$: Observable<Case>;
 
-  case$: Observable<ICase>;
-  constructor(private route: ActivatedRoute, private router: Router, private caseService: CaseService) { }
+  constructor(private route: ActivatedRoute, private router: Router, private caseStore: CaseStoreService) { }
 
   ngOnInit() {
 
     this.id = parseInt(this.route.snapshot.paramMap.get('id'), 10);
-    this.getSelectedCase();
+    this.caseStore.updateCaseId(this.id);
+    this.case$ = this.caseStore.selectedCase$;
   }
 
-  getSelectedCase() {
-    if(this.id) {
-      this.caseService.getCase(this.id).subscribe(result => {
-        this.case = result;
-      });
-    }
-  }
-
-  onSubmit() {
+  onSubmit(selectedCase: Case) {
     if(!this.id) {
-      this.createCase();
+      this.caseStore.createCase(selectedCase);
     } else {
-      this.updateCase();
+      this.caseStore.updateCase(selectedCase);
     }
     this.router.navigate(['/schedule']);
-  }
-
-  createCase() {
-    this.caseService.createCase(this.case).subscribe();
-  }
-
-  updateCase() {
-    this.caseService.updateCase(this.id, this.case).subscribe();
   }
 
 }

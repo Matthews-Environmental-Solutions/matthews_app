@@ -2,7 +2,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
-import { ICase } from './case';
+import { Case } from './case';
 
 @Injectable({
   providedIn: 'root'
@@ -18,40 +18,42 @@ export class CaseService {
     this.cases = this.casesSub.asObservable();
   }
 
-  getCasesNew(): void {
-    this.httpClient.get<ICase[]>(this.caseUrlBase)
+  getCasesNew(): Case[] {
+    let casesCollection: Case[] = [];
+    this.httpClient.get<Case[]>(this.caseUrlBase)
       .pipe (catchError(this.handleError)).subscribe((cases) => {
 
-        this.casesSub.next(['test']);
+        casesCollection = cases;
       });
+      return casesCollection;
   }
 
-  getCases(): Observable<ICase[]> {
-    return this.httpClient.get<ICase[]>(this.caseUrlBase)
+  getCases(): Observable<Case[]> {
+    return this.httpClient.get<Case[]>(this.caseUrlBase)
       .pipe (catchError(this.handleError));
   }
 
-  getCase(id: number): Observable<ICase | undefined> {
+  getCase(id: number): Observable<Case | undefined> {
     const getCaseUrl = `${this.caseUrlBase}/${id}`;
-    return this.httpClient.get<ICase>(getCaseUrl)
+    return this.httpClient.get<Case>(getCaseUrl)
       .pipe(catchError(this.handleError));
   }
 
-  createCase(caseToAdd: ICase): Observable<ICase | undefined> {
-    return this.httpClient.post<ICase>(this.caseUrlBase, caseToAdd)
+  createCase(caseToAdd: Case): Observable<Case | undefined> {
+    return this.httpClient.post<Case>(this.caseUrlBase, caseToAdd)
       .pipe(catchError(this.handleError));
   }
 
-  updateCase(id: number, caseToUpdate: ICase): Observable<number>{
+  updateCase(id: number, caseToUpdate: Case): Observable<number>{
     const updateCaseUrl = `${this.caseUrlBase}/${id}`;
     return this.httpClient
       .put<number>(updateCaseUrl, caseToUpdate)
       .pipe(catchError(this.handleError));
   }
 
-  deleteCase(caseId: string): Observable<ICase | undefined> {
+  deleteCase(caseId: string): Observable<Case | undefined> {
     const deleteCaseUrl = `${this.caseUrlBase}/${caseId}`;
-    return this.httpClient.delete<ICase>(deleteCaseUrl)
+    return this.httpClient.delete<Case>(deleteCaseUrl)
       .pipe(catchError(this.handleError));
   }
 

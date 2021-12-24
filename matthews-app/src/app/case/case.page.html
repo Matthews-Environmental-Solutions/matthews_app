@@ -10,8 +10,8 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
-  <form (ngSubmit)="onSubmit()" >
+<ion-content *ngIf="case$ | async as case">
+  <form (ngSubmit)="onSubmit(case)" >
     <ion-item lines="full">
       <ion-label position="floating">Case ID</ion-label>
       <ion-input [(ngModel)]="case.caseId" name="caseId" type="text" required></ion-input>
