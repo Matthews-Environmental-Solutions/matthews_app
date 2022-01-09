@@ -1,19 +1,15 @@
-<ion-header [translucent]="true">
+<ion-header>
   <ion-toolbar>
-    <ion-buttons slot="end">  
-      <ion-menu-button  color="dark"></ion-menu-button>   
-    </ion-buttons>
-    <ion-title>
-      Blank
-    </ion-title>
-    <ion-buttons slot="start">
-      <ion-back-button></ion-back-button>
-    </ion-buttons>
+    <ion-title>HOME | APP 2</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-button routerLink="/schedule">
-    Schedule
-  </ion-button>
+<ion-content>
+  <h1>{{ (whoAmI | async)?.name }}</h1>
+  <p>{{ (whoAmI | async)?.sub }}</p>
+  <ion-button expand="block" (click)="testService()">Test Service</ion-button>
 </ion-content>
+
+<ion-footer>
+  <ion-button expand="block" (click)="logOut()">Logout</ion-button>
+</ion-footer>

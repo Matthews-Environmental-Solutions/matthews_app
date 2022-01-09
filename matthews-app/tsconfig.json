@@ -8,6 +8,34 @@
     "declaration": false,
     "downlevelIteration": true,
     "experimentalDecorators": true,
+    "paths": {
+      "@matthews-app/identity-mobile": ["libs/identity-mobile/src/index.ts"],
+      "@matthews-app/identity": ["libs/identity/src/index.ts"],
+      "@matthews-app/identity-angular": ["libs/identity-angular/src/index.ts"],
+      "@matthews-app/identity-common": ["libs/identity-common/src/index.ts"],
+      "@matthews-app/identity-web": ["libs/identity-web/src/index.ts"],
+      "@matthews-app/ionic-appauth": ["libs/ionic-appauth/src/index.ts"],
+      "identity-common": [
+        "dist/identity-common/identity-common",
+        "dist/identity-common"
+      ],
+      "identity-mobile": [
+        "dist/identity-mobile/identity-mobile",
+        "dist/identity-mobile"
+      ],
+      "identity-web": [
+        "dist/identity-web/identity-web",
+        "dist/identity-web"
+      ],
+      "ionic-appauth": [
+        "dist/ionic-appauth/ionic-appauth",
+        "dist/ionic-appauth"
+      ],
+      "libs": [
+        "dist/libs/libs",
+        "dist/libs"
+      ]
+    },
     "moduleResolution": "node",
     "importHelpers": true,
     "target": "es2015",

@@ -168,6 +168,161 @@
           }
         }
       }
+    },
+    "identity": {
+      "projectType": "library",
+      "root": "libs/identity",
+      "sourceRoot": "libs/identity/src",
+      "prefix": "matthews-app",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "project": "libs/identity/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "libs/identity/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "libs/identity/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "libs/identity/src/test.ts",
+            "tsConfig": "libs/identity/tsconfig.spec.json",
+            "karmaConfig": "libs/identity/karma.conf.js"
+          }
+        }
+      }
+    },
+    "identity-common": {
+      "projectType": "library",
+      "root": "libs/identity-common",
+      "sourceRoot": "libs/identity-common/src",
+      "prefix": "matthews-app",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "project": "libs/identity-common/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "libs/identity-common/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "libs/identity-common/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "libs/identity-common/src/test.ts",
+            "tsConfig": "libs/identity-common/tsconfig.spec.json",
+            "karmaConfig": "libs/identity-common/karma.conf.js"
+          }
+        }
+      }
+    },
+    "identity-mobile": {
+      "projectType": "library",
+      "root": "libs/identity-mobile",
+      "sourceRoot": "libs/identity-mobile/src",
+      "prefix": "matthews-app",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "project": "libs/identity-mobile/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "libs/identity-mobile/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "libs/identity-mobile/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "libs/identity-mobile/src/test.ts",
+            "tsConfig": "libs/identity-mobile/tsconfig.spec.json",
+            "karmaConfig": "libs/identity-mobile/karma.conf.js"
+          }
+        }
+      }
+    },
+    "identity-web": {
+      "projectType": "library",
+      "root": "libs/identity-web",
+      "sourceRoot": "libs/identity-web/src",
+      "prefix": "matthews-app",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "project": "libs/identity-web/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "libs/identity-web/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "libs/identity-web/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "libs/identity-web/src/test.ts",
+            "tsConfig": "libs/identity-web/tsconfig.spec.json",
+            "karmaConfig": "libs/identity-web/karma.conf.js"
+          }
+        }
+      }
+    },
+    "ionic-appauth": {
+      "projectType": "library",
+      "root": "libs/ionic-appauth",
+      "sourceRoot": "libs/ionic-appauth/src",
+      "prefix": "matthews-app",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "project": "libs/ionic-appauth/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "libs/ionic-appauth/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "libs/ionic-appauth/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "libs/ionic-appauth/src/test.ts",
+            "tsConfig": "libs/ionic-appauth/tsconfig.spec.json",
+            "karmaConfig": "libs/ionic-appauth/karma.conf.js"
+          }
+        }
+      }
     }
   },
   "cli": {
