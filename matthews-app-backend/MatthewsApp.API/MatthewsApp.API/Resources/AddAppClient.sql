@@ -31,6 +31,10 @@ IF NOT EXISTS
       PRINT 'Creating a ClientGrantTypes, authorization_code';
       INSERT [dbo].[ClientGrantTypes] ([GrantType], [ClientId]) VALUES (N'authorization_code', @ClientId)
 
+      -- if authorization_code with Pkce is not posible may use this
+      -- PRINT 'Creating a ClientGrantTypes, implicit';
+      -- INSERT [dbo].[ClientGrantTypes] ([GrantType], [ClientId]) VALUES (N'implicit', @ClientId)
+
       PRINT 'Creating ClientScope profile';
       INSERT [dbo].[ClientScopes] ([Scope], [ClientId]) VALUES (N'profile', @ClientId)
       PRINT 'Creating ClientScope openid';
