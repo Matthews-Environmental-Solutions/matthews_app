@@ -1,5 +1,5 @@
 {
-	"appId": "io.ionic.starter",
+	"appId": "com.matthews.app",
 	"appName": "matthews-app",
 	"webDir": "www",
 	"bundledWebRuntime": false

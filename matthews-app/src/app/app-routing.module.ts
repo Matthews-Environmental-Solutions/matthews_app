@@ -1,22 +1,9 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouteReuseStrategy, RouterModule, Routes } from '@angular/router';
-import { IdentityLandingGuard } from 'libs/identity/src/lib/identity-landing.guard';
-import { IdentityGuard, IdentityGuardConfig } from '@matthews-app/identity';
 import { IonicRouteStrategy } from '@ionic/angular';
-
-const identityGuardConfig: IdentityGuardConfig = {
-  redirectTo: ['landing']
-};
-
-const identityLandingGuardConfig: IdentityGuardConfig = {
-  redirectTo: ['']
-};
+import { AuthGuardService } from './core/auth-guard.service';
 
 const routes: Routes = [
-  // {
-  //   path: 'home',
-  //   loadChildren: () => import('./home/home.module').then( m => m.HomePageModule)
-  // },
   {
     path: '',
     redirectTo: 'facility',
@@ -36,6 +23,7 @@ const routes: Routes = [
   },
   {
     path: 'facility',
+    canActivate: [AuthGuardService],
     loadChildren: () => import('./facility/facility.module').then( m => m.FacilityPageModule)
   },
   {
@@ -50,31 +38,20 @@ const routes: Routes = [
     path: 'device/:id',
     loadChildren: () => import('./device-details/device-details.module').then( m => m.DeviceDetailsPageModule)
   },
-  // {
-  //   path: '',
-  //   redirectTo: 'home',
-  //   pathMatch: 'full'
-  // },
-  // {
-  //   path: 'landing',
-  //   loadChildren: () => import('./landing/landing.module').then( m => m.LandingPageModule),
-  //   canActivate: [IdentityLandingGuard],
-  //   data: {
-  //     ...identityLandingGuardConfig
-  //   }
-  // },
-  // {
-  //   path: 'home',
-  //   loadChildren: () =>
-  //     import('./home/home.module').then(m => m.HomePageModule),
-  //   canActivate: [IdentityGuard],
-  //   data: {
-  //     ...identityGuardConfig
-  //   }
-  // }
-
-
-
+  {
+    path: 'landing',
+    loadChildren: () => import('./landing/landing.module').then( m => m.LandingPageModule)
+  },
+  {
+    path: 'logout',
+    loadChildren: () => import('./logout/logout.module').then( m => m.LogoutPageModule)
+  },
+  {
+    path: 'auth/authorizationcallback', loadChildren: () => import('./auth/auth-callback/auth-callback.module').then(m => m.AuthCallbackPageModule)
+  },
+  {
+    path: 'auth/endsessioncallback', loadChildren: () => import('./auth/end-session/end-session.module').then(m => m.EndSessionPageModule)
+  },
 ];
 
 @NgModule({

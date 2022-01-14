@@ -1,19 +1,38 @@
-import { Component, Inject } from '@angular/core';
-import { IDENTITY_SERVICE } from '@matthews-app/identity-common';
-import { IdentityMobileService } from '@matthews-app/identity-mobile';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Subscription } from 'rxjs/internal/Subscription';
+import { IAuthAction, AuthActions, AuthService } from 'ionic-appauth';
+import { NavController } from '@ionic/angular';
 
 @Component({
   selector: 'app-landing',
   templateUrl: './landing.page.html',
   styleUrls: ['./landing.page.scss'],
 })
-export class LandingPage {
+export class LandingPage implements OnInit, OnDestroy {
+  events$ = this.auth.events$;
+  sub: Subscription;
+
   constructor(
-    @Inject(IDENTITY_SERVICE) private identityService: IdentityMobileService
-  ) {}
+    private auth: AuthService,
+    private navCtrl: NavController
+  ) { }
 
-  logIn() {
-    this.identityService.logIn();
+  ngOnInit() {
+    this.sub = this.auth.events$.subscribe((action) => this.onSignInSuccess(action));
   }
-}
 
+  ngOnDestroy() {
+    this.sub.unsubscribe();
+  }
+
+  private onSignInSuccess(action: IAuthAction) {
+    if (action.action === AuthActions.SignInSuccess) {
+      this.navCtrl.navigateRoot('facility');
+    }
+  }
+
+  public signIn() {
+    this.auth.signIn();
+  }
+
+}

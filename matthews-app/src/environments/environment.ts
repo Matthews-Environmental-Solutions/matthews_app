@@ -3,7 +3,16 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+  production: false,
+  auth_config: {
+    client_id: 'matthews.app',
+    client_secret: 'b8f30abd541943ff92a1d36ca72ed25e',
+    server_host: 'https://matthewscremation.i4connected.cloud/identity',
+    redirect_url: 'com.matthews.app://authorizationcallback',
+    end_session_redirect_url: 'com.matthews.app://endsessioncallback',
+    scopes: 'profile openid email api matthews.api',
+    pkce: true
+  }
 };
 
 /*

@@ -1,23 +1,24 @@
 <ion-app >
-  <ion-menu side="end" menuId="first" contentId="content">  
-    <ion-header>  
-      <ion-toolbar>  
-        <ion-title>Content</ion-title>  
-      </ion-toolbar>   
-    </ion-header>  
-    <ion-content color="light">  
-      <ion-list *ngFor="let pages of navigate">  
-        <ion-menu-toggle auto-hide="true">  
-          <ion-item [routerLink]="pages.url" routerDirection="forward">  
-            <ion-icon [name]="pages.icon" slot="start"></ion-icon>  
-              {{pages.title}}   
-          </ion-item>  
-        </ion-menu-toggle>  
-      </ion-list> 
-      <!-- Start of d3v-webfactory-i4 Zendesk Widget script -->
-  <script id="ze-snippet" src="https://static.zdassets.com/ekr/snippet.js?key=127c2c3e-fa71-478c-900c-c2442a6f139b"> </script>
-  <!-- End of d3v-webfactory-i4 Zendesk Widget script -->
-    </ion-content>   
-  </ion-menu> 
+  <ion-menu side="end" menuId="first" contentId="content">
+    <ion-header>
+      <ion-toolbar>
+        <ion-title>Content</ion-title>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content color="light">
+      <ion-list *ngFor="let pages of navigate">
+        <ion-menu-toggle auto-hide="true">
+          <ion-item [routerLink]="pages.url" routerDirection="forward">
+            <ion-icon [name]="pages.icon" slot="start"></ion-icon>
+              {{pages.title}}
+          </ion-item>
+        </ion-menu-toggle>
+      </ion-list>
+    </ion-content>
+  </ion-menu>
   <ion-router-outlet Id="content"></ion-router-outlet>
+
+   <!-- Start of d3v-webfactory-i4 Zendesk Widget script -->
+   <script id="ze-snippet" src="https://static.zdassets.com/ekr/snippet.js?key=127c2c3e-fa71-478c-900c-c2442a6f139b"> </script>
+   <!-- End of d3v-webfactory-i4 Zendesk Widget script -->
 </ion-app>

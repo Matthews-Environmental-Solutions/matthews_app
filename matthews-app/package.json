@@ -37,6 +37,7 @@
     "@types/hammerjs": "^2.0.40",
     "angular-material": "^1.2.4",
     "angular-oauth2-oidc": "^13.0.1",
+    "capacitor-secure-storage-plugin": "^0.6.2",
     "hammerjs": "^2.0.8",
     "ionic-appauth": "^0.8.5",
     "ionic-long-press": "^2.0.3",
