@@ -3,7 +3,8 @@ import { ActivatedRoute } from '@angular/router';
 import { Observable, Subscription } from 'rxjs';
 import { IDevice } from '../device-details/device';
 import { IFacility } from '../facility/facility';
-import { FacilityService } from '../facility/facility.service';
+import { Device } from './device';
+import { DeviceListService } from './device-list.service';
 
 @Component({
   selector: 'app-device-list',
@@ -13,23 +14,28 @@ import { FacilityService } from '../facility/facility.service';
 export class DeviceListPage implements OnInit {
 
   facility$: Observable<IFacility>;
-  devices: IDevice[]
   showSearchbar: boolean;
   searchTerm: string;
   sub: Subscription;
+  deviceIds: string[] = [];
+  devices: Device[] = [];
 
-  constructor(private route: ActivatedRoute, private facilityService: FacilityService) { }
+  constructor(private route: ActivatedRoute, private deviceListService: DeviceListService) { }
 
   ngOnInit() {
 
     const id = this.route.snapshot.paramMap.get('id');
+    console.log(id);
     if(id) {
-      // this.facilityService.getFacility(id).subscribe(result => {
-      //   this.facility = result;
-      //   this.devices = this.facility.devices;
-      //   console.log(this.facility);
-      // });
-     //**** */ this.facility$ = this.facilityService.getFacility(id);
+      this.deviceListService.getDeviceIdsByStateId(id).then(
+        (response: any) => {
+          this.deviceIds = response;
+          console.log("DEVICE IDS =====> " + JSON.stringify(this.deviceIds));
+          this.getDevices(this.deviceIds);
+        }
+      ).catch((error: any) => {
+        console.log(error);
+      });
     }
   }
 
@@ -37,9 +43,20 @@ export class DeviceListPage implements OnInit {
     this.showSearchbar = false;
     this.searchTerm = '';
   }
-
-  ngOnDestroy(): void {
-    //this.sub.unsubscribe();
+  getDevices(deviceIds: string[])
+  {
+    for(let id of deviceIds)
+    {
+      this.deviceListService.getDeviceNameById(id).then(
+        (name: any) => {
+          this.devices.push({id, name});
+        }
+      ).catch((error: any) => {
+        console.log(error);
+      });
+    }
+    console.log("DEVICES =====> " + JSON.stringify(this.devices));
   }
+
 
 }
