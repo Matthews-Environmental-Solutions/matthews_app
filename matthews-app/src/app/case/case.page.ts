@@ -1,8 +1,7 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { Observable } from 'rxjs';
+import { Component, Input, OnInit } from '@angular/core';
 import { Case } from './case';
 import { CaseStoreService } from './case.store.service';
+import { ModalController } from '@ionic/angular';
 
 export enum ContainerType {
   cardboard,
@@ -24,7 +23,7 @@ export enum ContainerSize {
 })
 export class CasePage implements OnInit {
 
-  id = 0;
+  @Input() selectedCase: Case;
 
   genders: string[] = [
     'Female',
@@ -36,24 +35,22 @@ export class CasePage implements OnInit {
   containerTypeKeys =  Object.keys(ContainerType).filter(x => (parseInt(x, 10) >= 0));
   containerSizeKeys = Object.keys(ContainerSize).filter(x => (parseInt(x, 10) >= 0));
 
-  case$: Observable<Case>;
-
-  constructor(private route: ActivatedRoute, private router: Router, private caseStore: CaseStoreService) { }
+  constructor(private caseStore: CaseStoreService, private modalCtrl: ModalController) { }
 
   ngOnInit() {
 
-    this.id = parseInt(this.route.snapshot.paramMap.get('id'), 10);
-    this.caseStore.updateCaseId(this.id);
-    this.case$ = this.caseStore.selectedCase$;
   }
 
-  onSubmit(selectedCase: Case) {
-    if(!this.id) {
-      this.caseStore.createCase(selectedCase);
+  onSubmit() {
+    if(!this.selectedCase.id) {
+      this.caseStore.createCase(this.selectedCase);
     } else {
-      this.caseStore.updateCase(selectedCase);
+      this.caseStore.updateCase(this.selectedCase);
     }
-    this.router.navigate(['/schedule']);
+    this.close();
   }
 
+  close() {
+    this.modalCtrl.dismiss();
+  }
 }

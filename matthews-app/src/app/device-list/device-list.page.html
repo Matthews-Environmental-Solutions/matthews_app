@@ -24,7 +24,7 @@
 <ion-content *ngIf="facility$ | async as facility">
   <ion-card *ngFor="let device of facility.devices" [routerLink]="['/device', device.deviceId]">
     <ion-item>
-      <ion-icon name="skull-outline" slot="start"></ion-icon>
+      <ion-icon name="flame-outline"></ion-icon>
       <ion-card-header>
         <ion-card-title>{{device.name}}</ion-card-title>
         <ion-card-subtitle>Secondary text</ion-card-subtitle>

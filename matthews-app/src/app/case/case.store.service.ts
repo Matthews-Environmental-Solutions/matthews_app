@@ -1,15 +1,15 @@
 /* eslint-disable @typescript-eslint/member-ordering */
 import { Injectable } from '@angular/core';
+import { ModalController } from '@ionic/angular';
 import { ComponentStore} from '@ngrx/component-store';
 import { EMPTY, Observable } from 'rxjs';
 import { catchError, mergeMap, switchMap, tap } from 'rxjs/operators';
 import { Case } from './case';
+import { CasePage } from './case.page';
 import { CaseService } from './case.service';
 
 export interface CaseState {
     cases: Case[];
-    caseId: number;
-    selectedCase: Case;
 }
 
 @Injectable({
@@ -17,22 +17,15 @@ export interface CaseState {
 })
 export class CaseStoreService extends ComponentStore<CaseState> {
 
-    constructor(private caseService: CaseService) {
-        super({ cases: [], selectedCase: new Case(), caseId: 0});
+    constructor(private caseService: CaseService, public modalController: ModalController) {
+        super({ cases: []});
     }
 
     readonly cases$: Observable<Case[]> = this.select(state => state.cases);
-    readonly selectedCase$: Observable<Case> = this.select((state) => state.selectedCase);
 
     readonly updateCases = this.updater((state: CaseState, cases: Case[]) => ({
             ...state,
             cases: [...cases]
-      }));
-
-    readonly updateCaseId = this.updater((state: CaseState, selectedCaseId: number) => ({
-        ...state,
-        caseId: selectedCaseId,
-        selectedCase: selectedCaseId ? state.cases.find(c => c.id === selectedCaseId) : new Case()
       }));
 
     readonly getCases = this.effect(trigger$ => trigger$.pipe (
@@ -89,4 +82,18 @@ export class CaseStoreService extends ComponentStore<CaseState> {
         catchError(() => EMPTY)
       ))
     ));
+
+    readonly openCaseModal = this.effect<Case>(trigger$ => trigger$.pipe(
+      mergeMap((selectedCase) => this.presentModal(selectedCase))
+    ));
+
+    async presentModal(selectedCase: Case) {
+      const modal = await this.modalController.create({
+        component: CasePage,
+        componentProps: {
+          selectedCase
+        }
+      });
+      return await modal.present();
+    }
 }

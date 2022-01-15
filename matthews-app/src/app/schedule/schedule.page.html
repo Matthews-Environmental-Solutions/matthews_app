@@ -24,7 +24,8 @@
           </ion-button>
         </ion-buttons>
       </ion-item-options>
-      <ion-item detail='true' [routerLink]="['/case', case.id]">
+      <ion-item detail='true' (click)="presentModal(case)">
+        <!-- [routerLink]="['/case', case.id]" -->
         <ion-label>
           <h3>{{case.caseId}}</h3>
           <p>
@@ -34,8 +35,9 @@
       </ion-item>
   </ion-item-sliding>
   </ion-list>
-  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
-    <ion-fab-button color="secondary" routerLink="/case">
+  <ion-fab id="trigger-button" vertical="bottom" horizontal="end" slot="fixed">
+    <!-- routerLink="/case" -->
+    <ion-fab-button color="secondary" (click)="presentModal()">
       <ion-icon name="add"></ion-icon>
     </ion-fab-button>
   </ion-fab>
