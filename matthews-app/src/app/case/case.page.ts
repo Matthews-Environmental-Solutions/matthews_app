@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Case } from './case';
-import { CaseStoreService } from './case.store.service';
+import { AppStoreService } from '../app.store.service';
 import { ModalController } from '@ionic/angular';
 
 export enum ContainerType {
@@ -35,7 +35,7 @@ export class CasePage implements OnInit {
   containerTypeKeys =  Object.keys(ContainerType).filter(x => (parseInt(x, 10) >= 0));
   containerSizeKeys = Object.keys(ContainerSize).filter(x => (parseInt(x, 10) >= 0));
 
-  constructor(private caseStore: CaseStoreService, private modalCtrl: ModalController) { }
+  constructor(private caseStore: AppStoreService, private modalCtrl: ModalController) { }
 
   ngOnInit() {
 

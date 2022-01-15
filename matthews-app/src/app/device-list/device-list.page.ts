@@ -30,7 +30,7 @@ export class DeviceListPage implements OnInit {
       this.deviceListService.getDeviceIdsByStateId(id).then(
         (response: any) => {
           this.deviceIds = response;
-          console.log("DEVICE IDS =====> " + JSON.stringify(this.deviceIds));
+          console.log('DEVICE IDS =====> ' + JSON.stringify(this.deviceIds));
           this.getDevices(this.deviceIds);
         }
       ).catch((error: any) => {
@@ -45,7 +45,7 @@ export class DeviceListPage implements OnInit {
   }
   getDevices(deviceIds: string[])
   {
-    for(let id of deviceIds)
+    for(const id of deviceIds)
     {
       this.deviceListService.getDeviceNameById(id).then(
         (name: any) => {
@@ -55,7 +55,7 @@ export class DeviceListPage implements OnInit {
         console.log(error);
       });
     }
-    console.log("DEVICES =====> " + JSON.stringify(this.devices));
+    console.log('DEVICES =====> ' + JSON.stringify(this.devices));
   }
 
 

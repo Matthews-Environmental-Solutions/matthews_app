@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ToastController } from '@ionic/angular';
+import { AppStoreService } from '../app.store.service';
 import { IFacility } from './facility';
 import { FacilityService } from './facility.service';
 
@@ -9,23 +10,16 @@ import { FacilityService } from './facility.service';
   styleUrls: ['./facility.page.scss'],
 })
 export class FacilityPage implements OnInit {
+  facilities$ = this.appStoreService.facilities$;
   facilities: IFacility[];
   showSearchbar: boolean;
   searchTerm: string;
 
-  constructor(public toastController: ToastController, private facilityService: FacilityService) { }
+  constructor(public toastController: ToastController, private appStoreService: AppStoreService) { }
 
   ngOnInit() {
     this.showSearchbar = false;
-
-    this.facilityService.getFacilities().then(
-      (response: IFacility[]) => {
-        this.facilities = response;
-        console.log("FACILITIES =====> " + JSON.stringify(this.facilities));
-      }
-    ).catch((error: any) => {
-      console.log(error);
-    });
+    this.appStoreService.getFacilities();
   }
 
   cancelSearch(): void {

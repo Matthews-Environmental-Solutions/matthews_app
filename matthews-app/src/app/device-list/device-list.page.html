@@ -1,9 +1,10 @@
 <ion-header >
-  <ion-toolbar color="secondary" *ngIf="facility$ | async as facility">
+  <!-- *ngIf="facility$ | async as facility" -->
+  <ion-toolbar color="secondary" >
     <ion-buttons *ngIf="!showSearchbar" slot="start">
       <ion-back-button></ion-back-button>
     </ion-buttons>
-    <ion-title *ngIf="!showSearchbar">{{facility.name}}</ion-title>
+    <!-- <ion-title *ngIf="!showSearchbar">{{facility.name}}</ion-title> -->
     <ion-searchbar *ngIf="showSearchbar" showCancelButton="always" (ionCancel)="cancelSearch()" [(ngModel)]="searchTerm" placeholder="Search" animated></ion-searchbar>
 
     <ion-buttons slot="primary">

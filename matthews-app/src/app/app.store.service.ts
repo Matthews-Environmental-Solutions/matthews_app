@@ -1,29 +1,40 @@
 /* eslint-disable @typescript-eslint/member-ordering */
+import { trigger } from '@angular/animations';
 import { Injectable } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { ComponentStore} from '@ngrx/component-store';
 import { EMPTY, Observable } from 'rxjs';
 import { catchError, mergeMap, switchMap, tap } from 'rxjs/operators';
-import { Case } from './case';
-import { CasePage } from './case.page';
-import { CaseService } from './case.service';
+import { Case } from './case/case';
+import { CasePage } from './case/case.page';
+import { CaseService } from './case/case.service';
+import { IFacility } from './facility/facility';
+import { FacilityService } from './facility/facility.service';
 
-export interface CaseState {
+export interface AppState {
     cases: Case[];
+    facilities: IFacility[];
 }
 
 @Injectable({
   providedIn: 'root'
 })
-export class CaseStoreService extends ComponentStore<CaseState> {
+export class AppStoreService extends ComponentStore<AppState> {
 
-    constructor(private caseService: CaseService, public modalController: ModalController) {
-        super({ cases: []});
+    constructor(private caseService: CaseService, private facilitiesService: FacilityService, public modalController: ModalController) {
+        super({ cases: [], facilities: []});
     }
 
     readonly cases$: Observable<Case[]> = this.select(state => state.cases);
 
-    readonly updateCases = this.updater((state: CaseState, cases: Case[]) => ({
+    readonly facilities$: Observable<IFacility[]> = this.select(state => state.facilities);
+
+    readonly updateFacilities = this.updater((state: AppState, facilities: IFacility[]) => ({
+      ...state,
+      facilities: [...facilities]
+    }));
+
+    readonly updateCases = this.updater((state: AppState, cases: Case[]) => ({
             ...state,
             cases: [...cases]
       }));
@@ -39,6 +50,13 @@ export class CaseStoreService extends ComponentStore<CaseState> {
           }),
           catchError(() => EMPTY)
         ))
+    ));
+
+    readonly getFacilities = this.effect(trigger$ => trigger$.pipe(
+      switchMap(() => this.facilitiesService.getFacilities().then(
+        (response: IFacility[]) => {
+          this.updateFacilities(response);
+        }))
     ));
 
     readonly deleteCase = this.effect<string>(case$ => case$.pipe (

@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ToastController } from '@ionic/angular';
-import { CaseStoreService } from '../case/case.store.service';
+import { AppStoreService } from '../app.store.service';
 import { ModalController } from '@ionic/angular';
 import { CasePage } from '../case/case.page';
 import { Case } from '../case/case';
@@ -16,7 +16,7 @@ export class SchedulePage implements OnInit {
 
   cases$ = this.caseStore.cases$;
 
-  constructor(public toastController: ToastController, private caseStore: CaseStoreService, public modalController: ModalController) { }
+  constructor(public toastController: ToastController, private caseStore: AppStoreService, public modalController: ModalController) { }
 
   ngOnInit() {
     this.showSearchbar = false;
