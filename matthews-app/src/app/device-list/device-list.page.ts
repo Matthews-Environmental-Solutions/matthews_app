@@ -29,7 +29,7 @@ export class DeviceListPage implements OnInit {
       //   this.devices = this.facility.devices;
       //   console.log(this.facility);
       // });
-      this.facility$ = this.facilityService.getFacility(id);
+     //**** */ this.facility$ = this.facilityService.getFacility(id);
     }
   }
 
