@@ -1,4 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { Platform } from '@ionic/angular';
+import { SplashScreen } from '@capacitor/splash-screen';
+import { AuthService } from 'ionic-appauth';
 
 @Component({
   selector: 'app-root',
@@ -6,31 +10,49 @@ import { Component } from '@angular/core';
   styleUrls: ['app.component.scss'],
 })
 export class AppComponent {
+  title = 'Identity Mobile Test App2';
 
   navigate: any;
 
-  constructor() {
+  constructor(
+    private platform: Platform,
+    private auth: AuthService
+  ) {
+    this.initializeApp();
     this.sideMenu();
   }
 
-  sideMenu() {  
-    this.navigate =   
-    [  
-        { 
+  sideMenu() {
+    this.navigate =
+    [
+        {
         title : 'Facility',
         url   : '/facility',
-        icon  : 'business-outline' 
+        icon  : 'business-outline'
         },
-      { 
-        title : 'Schedule',  
-        url   : '/schedule',  
-        icon  : 'calendar-outline'  
-      },   
-      {  
-        title : 'AccountInfo',  
-        url   : '/accountInfo',  
-        icon  : 'person-outline'   
+      {
+        title : 'Schedule',
+        url   : '/schedule',
+        icon  : 'calendar-outline'
+      },
+      {
+        title : 'AccountInfo',
+        url   : '/accountInfo',
+        icon  : 'person-outline'
+      },
+      {
+        title : 'Logout',
+        url   : '/logout',
+        icon  : 'log-out-outline'
       }
-    ];  
-  }  
+    ];
+  }
+
+  initializeApp() {
+    this.platform.ready().then(async () => {
+      await this.auth.init();
+      SplashScreen.hide();
+    });
+  }
+
 }

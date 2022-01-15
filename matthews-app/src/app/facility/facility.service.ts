@@ -1,28 +1,18 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
 import { IFacility } from './facility';
+import { AuthHttpService } from '../core/auth-http.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FacilityService {
 
-  private productUrl = '../../assets/facilities.json';
-  constructor(private httpClient: HttpClient) { }
+  private productUrl = 'https://matthewscremation.i4connected.cloud/api/api/sites/list';
+  constructor(
+    private httpService: AuthHttpService
+    ) { }
 
-  getFacilities(): Observable<IFacility[]> {
-    return this.httpClient.get<IFacility[]>(this.productUrl)
-      .pipe(
-        tap(data => console.log('All: ', JSON.stringify(data)))
-      );
-  }
-
-  getFacility(id: string): Observable<IFacility | undefined> {
-    return this.getFacilities()
-      .pipe(
-        map((facility: IFacility[]) => facility.find(c => c.facilityId === id))
-      );
+  getFacilities() {
+    return this.httpService.request<IFacility[]>("GET", this.productUrl);
   }
 }

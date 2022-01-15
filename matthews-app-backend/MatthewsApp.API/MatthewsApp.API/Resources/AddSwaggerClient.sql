@@ -27,7 +27,7 @@ IF NOT EXISTS
 
       SET @ClientId = (SELECT Id FROM  [dbo].[Clients] WHERE ClientId = @ClientName)
 
-      PRINT 'Creating a ClientGrantTypes, password';
+      PRINT 'Creating a ClientGrantTypes, authorization_code';
       INSERT [dbo].[ClientGrantTypes] ([GrantType], [ClientId]) VALUES (N'authorization_code', @ClientId)
 
       PRINT 'Creating ClientScope profile';

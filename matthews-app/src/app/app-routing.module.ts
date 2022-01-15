@@ -1,11 +1,9 @@
 import { NgModule } from '@angular/core';
-import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
+import { PreloadAllModules, RouteReuseStrategy, RouterModule, Routes } from '@angular/router';
+import { IonicRouteStrategy } from '@ionic/angular';
+import { AuthGuardService } from './core/auth-guard.service';
 
 const routes: Routes = [
-  // {
-  //   path: 'home',
-  //   loadChildren: () => import('./home/home.module').then( m => m.HomePageModule)
-  // },
   {
     path: '',
     redirectTo: 'facility',
@@ -25,6 +23,7 @@ const routes: Routes = [
   },
   {
     path: 'facility',
+    canActivate: [AuthGuardService],
     loadChildren: () => import('./facility/facility.module').then( m => m.FacilityPageModule)
   },
   {
@@ -39,14 +38,27 @@ const routes: Routes = [
     path: 'device/:id',
     loadChildren: () => import('./device-details/device-details.module').then( m => m.DeviceDetailsPageModule)
   },
-
-
+  {
+    path: 'landing',
+    loadChildren: () => import('./landing/landing.module').then( m => m.LandingPageModule)
+  },
+  {
+    path: 'logout',
+    loadChildren: () => import('./logout/logout.module').then( m => m.LogoutPageModule)
+  },
+  {
+    path: 'auth/authorizationcallback', loadChildren: () => import('./auth/auth-callback/auth-callback.module').then(m => m.AuthCallbackPageModule)
+  },
+  {
+    path: 'auth/endsessioncallback', loadChildren: () => import('./auth/end-session/end-session.module').then(m => m.EndSessionPageModule)
+  },
 ];
 
 @NgModule({
   imports: [
     RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules })
   ],
-  exports: [RouterModule]
+  exports: [RouterModule],
+  providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }]
 })
 export class AppRoutingModule { }
