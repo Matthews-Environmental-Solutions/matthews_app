@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ToastController } from '@ionic/angular';
 import { AppStoreService } from '../app.store.service';
-import { IFacility } from './facility';
 import { FacilityService } from './facility.service';
 
 @Component({
@@ -11,7 +10,6 @@ import { FacilityService } from './facility.service';
 })
 export class FacilityPage implements OnInit {
   facilities$ = this.appStoreService.facilities$;
-  facilities: IFacility[];
   showSearchbar: boolean;
   searchTerm: string;
 

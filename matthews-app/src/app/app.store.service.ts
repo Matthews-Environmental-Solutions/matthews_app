@@ -8,12 +8,15 @@ import { catchError, mergeMap, switchMap, tap } from 'rxjs/operators';
 import { Case } from './case/case';
 import { CasePage } from './case/case.page';
 import { CaseService } from './case/case.service';
-import { IFacility } from './facility/facility';
+import { Device } from './device-list/device';
+import { DeviceListService } from './device-list/device-list.service';
+import { Facility } from './facility/facility';
 import { FacilityService } from './facility/facility.service';
 
 export interface AppState {
     cases: Case[];
-    facilities: IFacility[];
+    facilities: Facility[];
+    deviceList: Device[];
 }
 
 @Injectable({
@@ -21,23 +24,48 @@ export interface AppState {
 })
 export class AppStoreService extends ComponentStore<AppState> {
 
-    constructor(private caseService: CaseService, private facilitiesService: FacilityService, public modalController: ModalController) {
-        super({ cases: [], facilities: []});
+    constructor(private caseService: CaseService, private facilitiesService: FacilityService, private deviceListService: DeviceListService, public modalController: ModalController) {
+        super({ cases: [], facilities: [], deviceList: []});
     }
 
     readonly cases$: Observable<Case[]> = this.select(state => state.cases);
+    readonly facilities$: Observable<Facility[]> = this.select(state => state.facilities);
+    readonly deviceList$: Observable<Device[]> = this.select(state => state.deviceList);
 
-    readonly facilities$: Observable<IFacility[]> = this.select(state => state.facilities);
-
-    readonly updateFacilities = this.updater((state: AppState, facilities: IFacility[]) => ({
+    readonly updateFacilities = this.updater((state: AppState, facilities: Facility[]) => ({
       ...state,
       facilities: [...facilities]
     }));
+
+    readonly updateDeviceList = this.updater((state: AppState, device: Device) => ({
+      ...state,
+      deviceList: [...state.deviceList, device]
+    }));
+
 
     readonly updateCases = this.updater((state: AppState, cases: Case[]) => ({
             ...state,
             cases: [...cases]
       }));
+
+    readonly getFacilities = this.effect(trigger$ => trigger$.pipe(
+      switchMap(() => this.facilitiesService.getFacilities().then(
+        (response: Facility[]) => {
+          this.updateFacilities(response);
+        }))
+    ));
+
+    readonly getDeviceList = this.effect<string>(trigger$ => trigger$.pipe(
+      switchMap((facilityId) => this.deviceListService.getDeviceIdsByFacilityId(facilityId).then(
+        (response: string[]) => {
+         this.clearDevicesFromState();
+          response.forEach(id => this.deviceListService.getDeviceNameById(id).then(
+            (name: string) => {
+              this.updateDeviceList({id, name})
+            }
+          ))
+        }))
+    ));
 
     readonly getCases = this.effect(trigger$ => trigger$.pipe (
       switchMap(() => this.caseService.getCases().pipe(
@@ -50,13 +78,6 @@ export class AppStoreService extends ComponentStore<AppState> {
           }),
           catchError(() => EMPTY)
         ))
-    ));
-
-    readonly getFacilities = this.effect(trigger$ => trigger$.pipe(
-      switchMap(() => this.facilitiesService.getFacilities().then(
-        (response: IFacility[]) => {
-          this.updateFacilities(response);
-        }))
     ));
 
     readonly deleteCase = this.effect<string>(case$ => case$.pipe (
@@ -113,5 +134,14 @@ export class AppStoreService extends ComponentStore<AppState> {
         }
       });
       return await modal.present();
+    }
+
+    clearDevicesFromState() {
+      this.setState((currentState) => {
+        return {
+          ...currentState,
+          deviceList: []
+        }
+       });
     }
 }

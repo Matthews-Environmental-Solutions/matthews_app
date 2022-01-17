@@ -12,7 +12,7 @@ export class DeviceListService {
     private httpService: AuthHttpService
   ) { }
 
-  getDeviceIdsByStateId(stateId: string) {
+  getDeviceIdsByFacilityId(stateId: string) {
     console.log("getDeviceIdByStateId called!");
     return this.httpService.request("GET", `${this.productUrl}find?siteIds=${stateId}` );
   }
