@@ -2,6 +2,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
+import { AuthHttpService } from '../core/auth-http.service';
 import { Case } from './case';
 
 @Injectable({
@@ -11,10 +12,10 @@ export class CaseService {
   cases: Observable<string[]>;
 
   private caseUrlBase = 'https://localhost:44320/Case';
-
+  private prodUrl ='https://develop.comdata.rs/MatthewsApp.API/Case';
   private casesSub = new BehaviorSubject<string[]>([]);
 
-  constructor(private httpClient: HttpClient) {
+  constructor(private httpClient: HttpClient, private httpService: AuthHttpService) {
     this.cases = this.casesSub.asObservable();
   }
 
@@ -28,10 +29,13 @@ export class CaseService {
       return casesCollection;
   }
 
-  getCases(): Observable<Case[]> {
-    return this.httpClient.get<Case[]>(this.caseUrlBase)
-      .pipe (catchError(this.handleError));
+  getCases() {
+    return this.httpService.request<Case[]>("GET", this.prodUrl);
   }
+  // getCases(): Observable<Case[]> {
+  //   return this.httpClient.get<Case[]>(this.caseUrlBase)
+  //     .pipe (catchError(this.handleError));
+  // }
 
   getCase(id: number): Observable<Case | undefined> {
     const getCaseUrl = `${this.caseUrlBase}/${id}`;

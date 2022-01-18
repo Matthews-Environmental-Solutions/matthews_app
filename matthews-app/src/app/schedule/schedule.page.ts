@@ -24,7 +24,7 @@ export class SchedulePage implements OnInit {
   }
 
   deleteCase(id: number) {
-    this.caseStore.deleteCase(id.toString());
+    // this.caseStore.deleteCase(id.toString());
   }
 
   cancelSearch(): void {
