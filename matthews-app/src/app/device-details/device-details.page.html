@@ -1,11 +1,11 @@
 <ion-header >
-  <ion-toolbar color="primary">  
+  <ion-toolbar color="primary">
     <ion-title *ngIf="!showSearchbar">Facility</ion-title>
     <ion-buttons *ngIf="!showSearchbar" slot="start">
       <ion-back-button></ion-back-button>
     </ion-buttons>
     <ion-searchbar *ngIf="showSearchbar" showCancelButton="always" (ionCancel)="cancelSearch()" [(ngModel)]="searchTerm" placeholder="Search" animated></ion-searchbar>
-    
+
     <ion-buttons slot="primary">
       <ion-button *ngIf="!showSearchbar" (click)="showSearchbar = true">
         <ion-icon slot="icon-only" name="search"></ion-icon>
@@ -49,14 +49,14 @@
   <mat-step [completed]="isCaseSelected" >
     <ng-container *ngIf="!isCaseSelected">
       <ng-template matStepLabel>Case</ng-template>
-      <ion-button expand="block" (click)="selectCase()">
+      <ion-button expand="block" (click)="presentCasesModal()">
         <ion-icon slot="end" name="arrow-forward"></ion-icon>
         Select Case
       </ion-button>
     </ng-container>
-    <ng-container *ngIf="isCaseSelected">
+    <ng-container *ngIf="selectedCase$ | async as selectedCase">
       <ng-template matStepLabel>Case</ng-template>
-      <ion-text>Details of case.</ion-text>
+      <ion-text>{{selectedCase.caseName}}</ion-text>
       <p>
         <ion-button expand="block" (click)="changeCase()">
           <ion-icon slot="end" name="arrow-forward"></ion-icon>
