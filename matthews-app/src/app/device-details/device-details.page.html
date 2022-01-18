@@ -1,5 +1,5 @@
 <ion-header >
-  <ion-toolbar color="secondary">  
+  <ion-toolbar color="primary">  
     <ion-title *ngIf="!showSearchbar">Facility</ion-title>
     <ion-buttons *ngIf="!showSearchbar" slot="start">
       <ion-back-button></ion-back-button>
@@ -16,16 +16,16 @@
 </ion-header>
 
 <ion-content>
-<mat-stepper orientation="vertical" #stepper>
-  <mat-step [stepControl]="firstFormGroup" [completed]="isPreheatStarted">
-    <form *ngIf="!isPreheatStarted" [formGroup]="firstFormGroup">
+<mat-stepper orientation="vertical" #stepper linear>
+  <mat-step [completed]="isPreheatStarted" >
+    <ng-container *ngIf="!isPreheatStarted" >
       <ng-template matStepLabel>Preheat System</ng-template>
-      <ion-button expand="full" (click)="startPreheat()">
+      <ion-button expand="full" (click)="startPreheat()" color="secondary">
         <ion-icon slot="end" name="arrow-forward"></ion-icon>
         Start Preheat
       </ion-button>
-    </form>
-    <form *ngIf="isPreheatStarted" [formGroup]="firstFormGroup">
+    </ng-container>
+    <ng-container *ngIf="isPreheatStarted" >
       <ion-card>
         <ion-item>
           <ion-card-header>
@@ -39,22 +39,22 @@
       </ion-card>
 
       <p><ng-template matStepLabel>Preheat System</ng-template>
-      <ion-button expand="block" (click)="stopPreheat()">
+      <ion-button expand="block" (click)="stopPreheat()" color="danger">
         <ion-icon slot="end" name="arrow-forward"></ion-icon>
         Stop Preheat
       </ion-button></p>
-    </form>
+    </ng-container>
   </mat-step>
 
-  <mat-step [stepControl]="secondFormGroup">
-    <form *ngIf="!isCaseSelected" [formGroup]="secondFormGroup">
+  <mat-step [completed]="isCaseSelected" >
+    <ng-container *ngIf="!isCaseSelected">
       <ng-template matStepLabel>Case</ng-template>
       <ion-button expand="block" (click)="selectCase()">
         <ion-icon slot="end" name="arrow-forward"></ion-icon>
         Select Case
       </ion-button>
-    </form>
-    <form *ngIf="isCaseSelected" [formGroup]="secondFormGroup">
+    </ng-container>
+    <ng-container *ngIf="isCaseSelected">
       <ng-template matStepLabel>Case</ng-template>
       <ion-text>Details of case.</ion-text>
       <p>
@@ -63,11 +63,11 @@
           changeCase
         </ion-button>
       </p>
-    </form>
+    </ng-container>
   </mat-step>
 
-  <mat-step [stepControl]="thirdFormGroup">
-    <form *ngIf="!isCycleStarted" [formGroup]="thirdFormGroup">
+  <mat-step [completed]="isCycleStarted">
+    <ng-container *ngIf="!isCycleStarted" >
       <ng-template matStepLabel>Start Cycle</ng-template>
       <ion-card>
         <ion-item>
@@ -92,13 +92,13 @@
       </ion-card>
 
       <p>
-        <ion-button expand="block" (click)="startCycle()">
+        <ion-button expand="block" (click)="startCycle()" color="secondary">
           <ion-icon slot="end" name="arrow-forward"></ion-icon>
           Start Cycle
         </ion-button>
       </p>
-    </form>
-    <form *ngIf="isCycleStarted" [formGroup]="thirdFormGroup">
+    </ng-container>
+    <ng-container *ngIf="isCycleStarted" >
       <ng-template matStepLabel>Start Cycle</ng-template>
       <ion-card>
         <ion-item>
@@ -117,21 +117,21 @@
           <ion-icon slot="end" name="arrow-forward"></ion-icon>
           Pause Cycle
         </ion-button>
-        <ion-button expand="block" (click)="extendCycle()">
+        <ion-button expand="block" (click)="extendCycle()" color="tertiary">
           <ion-icon slot="end" name="arrow-forward"></ion-icon>
           Extend Cycle
         </ion-button>
-        <ion-button expand="block" (click)="endCycle()">
+        <ion-button expand="block" (click)="endCycle()" color="danger">
           <ion-icon slot="end" name="arrow-forward"></ion-icon>
           End Cycle
         </ion-button>
       </p>
-    </form>
+    </ng-container>
   </mat-step>
-  <mat-step [stepControl]="fourthFormGroup">
-    <form *ngIf="!isCoolDownStarted" [formGroup]="fourthFormGroup">
+  <mat-step [completed]="isCoolDownStarted && isRakeOutStarted">
+    <ng-container *ngIf="!isCoolDownStarted" >
       <ng-template matStepLabel>Complete Cycle</ng-template>
-      <ion-button expand="block" (click)="coolDown()">
+      <ion-button expand="block" (click)="coolDown()" color="tertiary">
         <ion-icon slot="end" name="arrow-forward"></ion-icon>
         Cool Down
       </ion-button>
@@ -139,8 +139,8 @@
         <ion-icon slot="end" name="arrow-forward"></ion-icon>
         Rake Out
       </ion-button>
-    </form>
-    <form *ngIf="isCoolDownStarted && !isRakeOutStarted" [formGroup]="fourthFormGroup">
+    </ng-container>
+    <ng-container *ngIf="isCoolDownStarted && !isRakeOutStarted" >
       <ng-template matStepLabel>Complete Cycle</ng-template>
       <ion-card>
         <ion-item>
@@ -159,8 +159,8 @@
           Rake Out
         </ion-button>
       </p>
-    </form>
-    <form *ngIf="isCoolDownStarted && isRakeOutStarted" [formGroup]="fourthFormGroup">
+    </ng-container>
+    <ng-container *ngIf="isCoolDownStarted && isRakeOutStarted">
       <ng-template matStepLabel>Complete Cycle</ng-template>
       <ion-card>
         <ion-item>
@@ -186,12 +186,12 @@
         </ion-card-content>
       </ion-card>
       <p>
-        <ion-button expand="block" (click)="presentAlert()">
+        <ion-button expand="block" (click)="presentAlert(stepper)" color="secondary">
           <ion-icon slot="end" name="arrow-forward"></ion-icon>
           Confirm rake out is finished.
         </ion-button>
       </p>
-    </form>
+    </ng-container>
   </mat-step>
 </mat-stepper>
 </ion-content>

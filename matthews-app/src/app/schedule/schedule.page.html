@@ -1,5 +1,5 @@
 <ion-header >
-  <ion-toolbar color="secondary">  
+  <ion-toolbar color="primary">  
     <ion-title *ngIf="!showSearchbar">Schedule</ion-title>
     <ion-buttons *ngIf="!showSearchbar" slot="start">
       <ion-back-button></ion-back-button>
@@ -37,7 +37,7 @@
   </ion-list>
   <ion-fab id="trigger-button" vertical="bottom" horizontal="end" slot="fixed">
     <!-- routerLink="/case" -->
-    <ion-fab-button color="secondary" (click)="presentModal()">
+    <ion-fab-button color="primary" (click)="presentModal()">
       <ion-icon name="add"></ion-icon>
     </ion-fab-button>
   </ion-fab>

@@ -10,6 +10,7 @@ import { DeviceDetailsPage } from './device-details.page';
 import { MatStepperModule } from '@angular/material/stepper';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatIconModule } from '@angular/material/icon';
 
 
 @NgModule({
@@ -21,7 +22,8 @@ import { MatInputModule } from '@angular/material/input';
     DeviceDetailsPageRoutingModule,
     MatStepperModule,
     MatFormFieldModule,
-    MatInputModule
+    MatInputModule,
+    MatIconModule
   ],
   declarations: [DeviceDetailsPage]
 })

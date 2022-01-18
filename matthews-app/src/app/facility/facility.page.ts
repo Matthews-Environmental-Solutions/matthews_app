@@ -10,6 +10,7 @@ import { FacilityService } from './facility.service';
   styleUrls: ['./facility.page.scss'],
 })
 export class FacilityPage implements OnInit {
+  vm$ = this.appStoreService.vm$;
   facilities$ = this.appStoreService.facilities$;
   facilities: IFacility[];
   showSearchbar: boolean;

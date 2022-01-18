@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/member-ordering */
-import { trigger } from '@angular/animations';
 import { Injectable } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { ComponentStore} from '@ngrx/component-store';
@@ -14,6 +13,7 @@ import { FacilityService } from './facility/facility.service';
 export interface AppState {
     cases: Case[];
     facilities: IFacility[];
+    loading: boolean;
 }
 
 @Injectable({
@@ -22,12 +22,25 @@ export interface AppState {
 export class AppStoreService extends ComponentStore<AppState> {
 
     constructor(private caseService: CaseService, private facilitiesService: FacilityService, public modalController: ModalController) {
-        super({ cases: [], facilities: []});
+        super({ cases: [], facilities: [], loading: false});
     }
 
     readonly cases$: Observable<Case[]> = this.select(state => state.cases);
 
     readonly facilities$: Observable<IFacility[]> = this.select(state => state.facilities);
+
+    readonly loading$: Observable<boolean> = this.select(state => state.loading);
+
+    readonly vm$ = this.select(
+      this.cases$,
+      this.facilities$,
+      this.loading$,
+      (cases, facilities, loading) => ({
+        cases,
+        facilities,
+        loading
+      })
+    );
 
     readonly updateFacilities = this.updater((state: AppState, facilities: IFacility[]) => ({
       ...state,
@@ -38,6 +51,11 @@ export class AppStoreService extends ComponentStore<AppState> {
             ...state,
             cases: [...cases]
       }));
+
+    readonly updateLoading = this.updater((state: AppState, loading: boolean) => ({
+          ...state,
+          loading
+    }));
 
     readonly getCases = this.effect(trigger$ => trigger$.pipe (
       switchMap(() => this.caseService.getCases().pipe(
@@ -53,9 +71,11 @@ export class AppStoreService extends ComponentStore<AppState> {
     ));
 
     readonly getFacilities = this.effect(trigger$ => trigger$.pipe(
+      tap(() => this.updateLoading(true)),
       switchMap(() => this.facilitiesService.getFacilities().then(
         (response: IFacility[]) => {
           this.updateFacilities(response);
+          this.updateLoading(false);
         }))
     ));
 

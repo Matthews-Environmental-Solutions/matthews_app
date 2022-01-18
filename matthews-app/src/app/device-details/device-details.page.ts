@@ -1,6 +1,7 @@
+/* eslint-disable @angular-eslint/component-selector */
 import { Component, OnInit } from '@angular/core';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import { AlertController } from '@ionic/angular';
+import { MatStepper } from '@angular/material/stepper';
 
 @Component({
   selector: 'app-device-details',
@@ -8,11 +9,6 @@ import { AlertController } from '@ionic/angular';
   styleUrls: ['./device-details.page.scss'],
 })
 export class DeviceDetailsPage implements OnInit {
-  isLinear = false;
-  firstFormGroup: FormGroup;
-  secondFormGroup: FormGroup;
-  thirdFormGroup: FormGroup;
-  fourthFormGroup: FormGroup;
   isPreheatStarted = false;
   isCaseSelected = false;
   isCycleStarted = false;
@@ -21,26 +17,12 @@ export class DeviceDetailsPage implements OnInit {
   showSearchbar: boolean;
   searchTerm: string;
 
-  constructor(private _formBuilder: FormBuilder, public alertController: AlertController) {}
+  constructor(public alertController: AlertController) {}
 
   ngOnInit() {
-    this.firstFormGroup = this._formBuilder.group({
-      firstCtrl: ['', Validators.required],
-    });
-    this.secondFormGroup = this._formBuilder.group({
-      secondCtrl: ['', Validators.required],
-    });
-    this.thirdFormGroup = this._formBuilder.group({
-      thirdCtrl: ['', Validators.required],
-    });
-    this.fourthFormGroup = this._formBuilder.group({
-      fourthCtrl: ['', Validators.required],
-    });
   }
 
-  startPreheat()
-  {
-    //call StartPreheat on API
+  startPreheat() {
     this.isPreheatStarted = true;
   }
 
@@ -93,7 +75,7 @@ export class DeviceDetailsPage implements OnInit {
     console.log('Segment changed', ev);
   }
 
-  async presentAlert() {
+  async presentAlert(stepper: MatStepper) {
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',
       header: 'Alert',
@@ -106,5 +88,15 @@ export class DeviceDetailsPage implements OnInit {
 
     const { role } = await alert.onDidDismiss();
     console.log('onDidDismiss resolved with role', role);
+    this.resetStepper(stepper);
+  }
+
+  resetStepper(stepper: MatStepper) {
+    this.isPreheatStarted = false;
+    this.isCaseSelected = false;
+    this.isCycleStarted = false;
+    this.isCoolDownStarted = false;
+    this.isRakeOutStarted = false;
+    stepper.reset();
   }
 }
