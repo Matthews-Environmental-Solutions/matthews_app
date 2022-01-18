@@ -31,8 +31,6 @@ export class AppStoreService extends ComponentStore<AppState> {
     readonly cases$: Observable<Case[]> = this.select(state => state.cases);
     readonly facilities$: Observable<Facility[]> = this.select(state => state.facilities);
     readonly deviceList$: Observable<Device[]> = this.select(state => state.deviceList);
-
-    readonly updateFacilities = this.updater((state: AppState, facilities: Facility[]) => ({
     readonly loading$: Observable<boolean> = this.select(state => state.loading);
 
     readonly vm$ = this.select(
@@ -46,6 +44,7 @@ export class AppStoreService extends ComponentStore<AppState> {
       })
     );
 
+    readonly updateFacilities = this.updater((state: AppState, facilities: Facility[]) => ({
       ...state,
       facilities: [...facilities]
     }));
@@ -54,7 +53,6 @@ export class AppStoreService extends ComponentStore<AppState> {
       ...state,
       deviceList: [...state.deviceList, device]
     }));
-
 
     readonly updateCases = this.updater((state: AppState, cases: Case[]) => ({
             ...state,
@@ -67,9 +65,11 @@ export class AppStoreService extends ComponentStore<AppState> {
     }));
 
     readonly getFacilities = this.effect(trigger$ => trigger$.pipe(
+      tap(() => this.updateLoading(true)),
       switchMap(() => this.facilitiesService.getFacilities().then(
         (response: Facility[]) => {
           this.updateFacilities(response);
+          this.updateLoading(false);
         }))
     ));
 
@@ -79,9 +79,9 @@ export class AppStoreService extends ComponentStore<AppState> {
          this.clearDevicesFromState();
           response.forEach(id => this.deviceListService.getDeviceNameById(id).then(
             (name: string) => {
-              this.updateDeviceList({id, name})
+              this.updateDeviceList({id, name});
             }
-          ))
+          ));
         }))
     ));
 
@@ -98,8 +98,6 @@ export class AppStoreService extends ComponentStore<AppState> {
         ))
     ));
 
-      tap(() => this.updateLoading(true)),
-          this.updateLoading(false);
     readonly deleteCase = this.effect<string>(case$ => case$.pipe (
       mergeMap ((caseId) => this.caseService.deleteCase(caseId).pipe(
         tap({
@@ -157,11 +155,9 @@ export class AppStoreService extends ComponentStore<AppState> {
     }
 
     clearDevicesFromState() {
-      this.setState((currentState) => {
-        return {
+      this.setState((currentState) => ({
           ...currentState,
           deviceList: []
-        }
-       });
+        }));
     }
 }
