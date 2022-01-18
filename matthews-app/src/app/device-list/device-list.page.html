@@ -23,7 +23,7 @@
 </ion-item-divider>
 
 <ion-content>
-  <ion-card *ngFor="let device of devices" [routerLink]="['/device', device.id]">
+  <ion-card *ngFor="let device of devices$ | async" [routerLink]="['/device', device.id]">
     <ion-item>
       <ion-icon name="flame-outline"></ion-icon>
       <ion-card-header>

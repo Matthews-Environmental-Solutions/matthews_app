@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { IFacility } from './facility';
+import { Facility } from './facility';
 import { AuthHttpService } from '../core/auth-http.service';
 
 @Injectable({
@@ -13,6 +13,6 @@ export class FacilityService {
     ) { }
 
   getFacilities() {
-    return this.httpService.request<IFacility[]>("GET", this.productUrl);
+    return this.httpService.request<Facility[]>("GET", this.productUrl);
   }
 }
