@@ -51,7 +51,11 @@ const routes: Routes = [
   },
   {
     path: 'auth/endsessioncallback', loadChildren: () => import('./auth/end-session/end-session.module').then(m => m.EndSessionPageModule)
+  },  {
+    path: 'case-list',
+    loadChildren: () => import('./case-list/case-list.module').then( m => m.CaseListPageModule)
   },
+
 ];
 
 @NgModule({

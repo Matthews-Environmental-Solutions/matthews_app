@@ -4,6 +4,7 @@ import { ModalController } from '@ionic/angular';
 import { ComponentStore} from '@ngrx/component-store';
 import { EMPTY, Observable } from 'rxjs';
 import { catchError, mergeMap, switchMap, tap } from 'rxjs/operators';
+import { CaseListPage } from './case-list/case-list.page';
 import { Case } from './case/case';
 import { CasePage } from './case/case.page';
 import { CaseService } from './case/case.service';
@@ -14,6 +15,7 @@ import { FacilityService } from './facility/facility.service';
 
 export interface AppState {
     cases: Case[];
+    selectedCase: Case;
     facilities: Facility[];
     loading: boolean;
     deviceList: Device[];
@@ -25,10 +27,11 @@ export interface AppState {
 export class AppStoreService extends ComponentStore<AppState> {
 
     constructor(private caseService: CaseService, private facilitiesService: FacilityService, private deviceListService: DeviceListService, public modalController: ModalController) {
-        super({ cases: [], facilities: [], loading: false,  deviceList: []});
+        super({ cases: [], selectedCase: new Case(), facilities: [], loading: false,  deviceList: []});
     }
 
     readonly cases$: Observable<Case[]> = this.select(state => state.cases);
+    readonly selectedCase$: Observable<Case> = this.select(state => state.selectedCase);
     readonly facilities$: Observable<Facility[]> = this.select(state => state.facilities);
     readonly deviceList$: Observable<Device[]> = this.select(state => state.deviceList);
     readonly loading$: Observable<boolean> = this.select(state => state.loading);
@@ -58,6 +61,11 @@ export class AppStoreService extends ComponentStore<AppState> {
             ...state,
             cases: [...cases]
       }));
+
+      readonly updateSelectedCases = this.updater((state: AppState, selectedCase: Case) => ({
+        ...state,
+        selectedCase
+  }));
 
     readonly updateLoading = this.updater((state: AppState, loading: boolean) => ({
           ...state,
@@ -159,6 +167,17 @@ export class AppStoreService extends ComponentStore<AppState> {
         componentProps: {
           selectedCase
         }
+      });
+      return await modal.present();
+    }
+
+    readonly openCasesModal = this.effect(trigger$ => trigger$.pipe(
+      mergeMap(() => this.presentCasesModal())
+    ));
+
+    async presentCasesModal() {
+      const modal = await this.modalController.create({
+        component: CaseListPage
       });
       return await modal.present();
     }

@@ -2,6 +2,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AlertController } from '@ionic/angular';
 import { MatStepper } from '@angular/material/stepper';
+import { AppStoreService } from '../app.store.service';
 
 @Component({
   selector: 'app-device-details',
@@ -9,6 +10,7 @@ import { MatStepper } from '@angular/material/stepper';
   styleUrls: ['./device-details.page.scss'],
 })
 export class DeviceDetailsPage implements OnInit {
+  selectedCase$ = this.appStore.selectedCase$;
   isPreheatStarted = false;
   isCaseSelected = false;
   isCycleStarted = false;
@@ -17,7 +19,7 @@ export class DeviceDetailsPage implements OnInit {
   showSearchbar: boolean;
   searchTerm: string;
 
-  constructor(public alertController: AlertController) {}
+  constructor(private appStore: AppStoreService, public alertController: AlertController) {}
 
   ngOnInit() {
   }
@@ -35,7 +37,7 @@ export class DeviceDetailsPage implements OnInit {
   }
 
   changeCase() {
-
+    this.presentCasesModal();
   }
 
   startCycle() {
@@ -98,5 +100,9 @@ export class DeviceDetailsPage implements OnInit {
     this.isCoolDownStarted = false;
     this.isRakeOutStarted = false;
     stepper.reset();
+  }
+
+  presentCasesModal() {
+    this.appStore.openCasesModal();
   }
 }
