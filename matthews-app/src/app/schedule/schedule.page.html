@@ -9,9 +9,13 @@
       <ion-button *ngIf="!showSearchbar" (click)="showSearchbar = true">
         <ion-icon slot="icon-only" name="search"></ion-icon>
       </ion-button>
+      <ion-button (click)="presentModal()" *ngIf="!showSearchbar">
+        <ion-icon slot="icon-only" name="add"></ion-icon>
+      </ion-button>
       <ion-menu-button ></ion-menu-button>
     </ion-buttons>
   </ion-toolbar>
+  <!-- <ion-searchbar  showCancelButton="never" (ionCancel)="cancelSearch()" [(ngModel)]="searchTerm" placeholder="Search" animated></ion-searchbar> -->
 </ion-header>  
 
 <ion-content>
@@ -35,11 +39,6 @@
       </ion-item>
   </ion-item-sliding>
   </ion-list>
-  <ion-fab id="trigger-button" vertical="bottom" horizontal="end" slot="fixed">
-    <!-- routerLink="/case" -->
-    <ion-fab-button color="primary" (click)="presentModal()">
-      <ion-icon name="add"></ion-icon>
-    </ion-fab-button>
-  </ion-fab>
+  
 </ion-content>
 

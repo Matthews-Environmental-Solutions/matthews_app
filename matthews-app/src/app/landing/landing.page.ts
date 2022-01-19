@@ -27,7 +27,7 @@ export class LandingPage implements OnInit, OnDestroy {
 
   private onSignInSuccess(action: IAuthAction) {
     if (action.action === AuthActions.SignInSuccess) {
-      this.navCtrl.navigateRoot('facility');
+      this.navCtrl.navigateRoot('app');
     }
   }
 

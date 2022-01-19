@@ -21,7 +21,7 @@ export class AuthGuardService implements CanActivate {
       switchMap(() => this.auth.isAuthenticated$),
       tap(isAuthenticated => {
         if(!isAuthenticated) {
-          this.navCtrl.navigateRoot('landing')
+          this.navCtrl.navigateRoot('landing');
         }
       }),
     );

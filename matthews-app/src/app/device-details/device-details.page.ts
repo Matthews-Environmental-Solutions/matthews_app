@@ -104,5 +104,6 @@ export class DeviceDetailsPage implements OnInit {
 
   presentCasesModal() {
     this.appStore.openCasesModal();
+    this.isCaseSelected = true;
   }
 }

@@ -21,10 +21,6 @@ export class CaseListPage implements OnInit {
     this.caseStore.getCases();
   }
 
-  deleteCase(id: number) {
-    this.caseStore.deleteCase(id.toString());
-  }
-
   cancelSearch(): void {
     this.showSearchbar = false;
     this.searchTerm = '';
@@ -32,5 +28,6 @@ export class CaseListPage implements OnInit {
 
   getSelectedCase(selectedCase: Case) {
     this.caseStore.updateSelectedCases(selectedCase);
+    this.modalController.dismiss();
   }
 }

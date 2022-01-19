@@ -17,6 +17,7 @@ export class AuthCallbackPage implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
+    console.log(window.location.origin + this.router.url);
     this.sub = this.auth.events$.subscribe((action) => this.postCallback(action));
     this.auth.authorizationCallback(window.location.origin + this.router.url);
   }
@@ -28,7 +29,7 @@ export class AuthCallbackPage implements OnInit, OnDestroy {
   postCallback(action: IAuthAction) {
     console.log(JSON.stringify(action))
     if (action.action === AuthActions.SignInSuccess) {
-      this.navCtrl.navigateRoot('home');
+      this.navCtrl.navigateRoot('app');
     }
 
     if (action.action === AuthActions.SignInFailed) {

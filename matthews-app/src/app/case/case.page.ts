@@ -42,11 +42,11 @@ export class CasePage implements OnInit {
   }
 
   onSubmit() {
-    // if(!this.selectedCase.id) {
-    //   this.caseStore.createCase(this.selectedCase);
-    // } else {
-    //   this.caseStore.updateCase(this.selectedCase);
-    // }
+    if(!this.selectedCase.id) {
+      this.caseStore.createCase(this.selectedCase);
+    } else {
+      this.caseStore.updateCase(this.selectedCase);
+    }
     this.close();
   }
 

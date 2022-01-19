@@ -25,14 +25,14 @@ export class AppComponent {
   sideMenu() {
     this.navigate =
     [
-        {
+      {
         title : 'Facility',
-        url   : '/facility',
+        url   : '/app/tabs/facility',
         icon  : 'business-outline'
-        },
+      },
       {
         title : 'Schedule',
-        url   : '/schedule',
+        url   : '/app/tabs/schedule',
         icon  : 'calendar-outline'
       },
       {

@@ -101,61 +101,24 @@ export class AppStoreService extends ComponentStore<AppState> {
           this.updateLoading(false);
         }))
     ));
+    
+    readonly createCase = this.effect<Case>(case$ => case$.pipe(
+      tap(() => this.updateLoading(true)),
+      switchMap((selectedCase) => this.caseService.createCase(selectedCase).then(
+        () => {
+          this.getCases();
+          this.updateLoading(false);
+        }))
+    ));
 
-    // readonly getCases = this.effect(trigger$ => trigger$.pipe (
-    //   switchMap(() => this.caseService.getCases().pipe(
-    //       tap({
-    //         next: (response) => {
-    //           this.updateCases(response);
-    //         },
-    //         error: () => {
-    //         }
-    //       }),
-    //       catchError(() => EMPTY)
-    //     ))
-    // ));
-
-    // readonly deleteCase = this.effect<string>(case$ => case$.pipe (
-    //   mergeMap ((caseId) => this.caseService.deleteCase(caseId).pipe(
-    //     tap({
-    //       next: () => {
-    //         this.getCases();
-    //       },
-    //       error: () => {
-
-    //       }
-    //     }),
-    //     catchError(() => EMPTY)
-    //   ))
-    // ));
-
-    // readonly createCase = this.effect<Case>(case$ => case$.pipe (
-    //   mergeMap ((selectedCase) => this.caseService.createCase(selectedCase).pipe(
-    //     tap({
-    //       next: () => {
-    //         this.getCases();
-    //       },
-    //       error: () => {
-
-    //       }
-    //     }),
-    //     catchError(() => EMPTY)
-    //   ))
-    // ));
-
-    // readonly updateCase = this.effect<Case>(case$ => case$.pipe(
-    //   mergeMap((selectedCase) => this.caseService.updateCase(selectedCase.id, selectedCase).pipe(
-    //     tap({
-    //       next: () => {
-    //         this.getCases();
-    //       },
-    //       error: () => {
-
-    //       }
-    //     }),
-    //     catchError(() => EMPTY)
-    //   ))
-    // ));
+    readonly updateCase = this.effect<Case>(case$ => case$.pipe(
+      tap(() => this.updateLoading(true)),
+      switchMap((selectedCase) => this.caseService.updateCase(selectedCase.id, selectedCase).then(
+        () => {
+          this.getCases();
+          this.updateLoading(false);
+        }))
+    ));
 
     readonly openCaseModal = this.effect<Case>(trigger$ => trigger$.pipe(
       mergeMap((selectedCase) => this.presentModal(selectedCase))
