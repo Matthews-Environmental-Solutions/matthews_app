@@ -5,8 +5,11 @@ SET @CreationTime = SYSUTCDATETIME();
 SET @ClientName = N'matthews.web'; 
 SET @ClientDescription = N'matthews.web Client';
 SET @secretText = '0be0470165fa49ca9631a2babc0a73d4';
-SET @RedirectUri = N'com.matthews.app://authorizationcallback';
-SET @PostLogoutRedirectUri = N'com.matthews.app://endsessioncallback';
+SET @RedirectUri1 = N'https://develop.comdata.rs/MatthewsApp';
+SET @RedirectUri2 = N'http://localhost:8100';
+SET @PostLogoutRedirectUri1 = N'https://develop.comdata.rs/MatthewsApp';
+SET @PostLogoutRedirectUri2 = N'http://localhost:8100';
+
 SET @MatthewsApiName = N'matthews.api'; 
 
 -- Creating a secret
@@ -42,11 +45,17 @@ IF NOT EXISTS
       PRINT 'Creating ClientSecret: ' + @secretText;
       INSERT [dbo].[ClientSecrets] ([ClientId], [Description], [Value], [Expiration], [Type], [Created]) VALUES (@ClientId, NULL, @Secret, NULL, N'SharedSecret', @CreationTime)
 	
-      PRINT 'Creating ClientRedirectUri: ' + @RedirectUri;
-      INSERT [dbo].[ClientRedirectUris] ([RedirectUri], [ClientId]) VALUES (@RedirectUri, @ClientId)
+      PRINT 'Creating ClientRedirectUri: ' + @RedirectUri1;
+      INSERT [dbo].[ClientRedirectUris] ([RedirectUri], [ClientId]) VALUES (@RedirectUri1, @ClientId)
+	  
+	  PRINT 'Creating ClientRedirectUri: ' + @RedirectUri2;
+      INSERT [dbo].[ClientRedirectUris] ([RedirectUri], [ClientId]) VALUES (@RedirectUri2, @ClientId)
 
-      PRINT 'Creating ClientPostLogoutRedirectUris: ' + @PostLogoutRedirectUri;
-      INSERT [dbo].ClientPostLogoutRedirectUris ([PostLogoutRedirectUri], [ClientId]) VALUES (@PostLogoutRedirectUri, @ClientId)
+      PRINT 'Creating ClientPostLogoutRedirectUris: ' + @PostLogoutRedirectUri1;
+      INSERT [dbo].ClientPostLogoutRedirectUris ([PostLogoutRedirectUri], [ClientId]) VALUES (@PostLogoutRedirectUri1, @ClientId)
+	  
+	  PRINT 'Creating ClientPostLogoutRedirectUris: ' + @PostLogoutRedirectUri2;
+      INSERT [dbo].ClientPostLogoutRedirectUris ([PostLogoutRedirectUri], [ClientId]) VALUES (@PostLogoutRedirectUri2, @ClientId)
 
     END
 ELSE 
