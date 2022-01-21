@@ -1,4 +1,4 @@
-﻿DECLARE @ClientName VARCHAR(max), @ClientDescription VARCHAR(max), @ClientId INT, @secretText varchar(max), @Hashbytes varbinary(128), @Secret VARCHAR(max), @CreationTime DateTime2, @RedirectUri varchar(max), @PostLogoutRedirectUri varchar(max), @ApiName varchar(max), @MatthewsApiName varchar(max);
+﻿DECLARE @ClientName VARCHAR(max), @ClientDescription VARCHAR(max), @ClientId INT, @secretText varchar(max), @Hashbytes varbinary(128), @Secret VARCHAR(max), @CreationTime DateTime2, @RedirectUri1 varchar(max), @PostLogoutRedirectUri1 varchar(max), @RedirectUri2 varchar(max), @PostLogoutRedirectUri2 varchar(max), @ApiName varchar(max), @MatthewsApiName varchar(max);
 SET @CreationTime = SYSUTCDATETIME();
 
 -- This values could be modified by user
