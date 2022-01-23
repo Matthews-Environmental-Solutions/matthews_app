@@ -40,8 +40,6 @@ const routes: Routes = [
     path: 'app',
     loadChildren: () => import('./tabs-page/tabs-page.module').then( m => m.TabsPagePageModule)
   },
-
-
 ];
 
 @NgModule({
