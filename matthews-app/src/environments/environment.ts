@@ -5,15 +5,29 @@
 export const environment = {
   production: false,
   auth_config: {
-    client_id: 'matthews.app',
-    client_secret: 'b8f30abd541943ff92a1d36ca72ed25e',
+    client_id: 'matthews.web',
+    client_secret: '0be0470165fa49ca9631a2babc0a73d4',
     server_host: 'https://matthewscremation.i4connected.cloud/identity',
-    redirect_url: 'com.matthews.app://authorizationcallback',
-    end_session_redirect_url: 'com.matthews.app://endsessioncallback',
-    scopes: 'profile openid email api matthews.api',
+    redirect_url: 'http://localhost:8100/authorizationcallback',
+    end_session_redirect_url: 'http://localhost:8100/authorizationcallback',
+    scopes: 'profile openid email offline_access matthews.api api',
     pkce: true
   }
 };
+
+// export const environment = {
+//   production: false,
+//   auth_config: {
+//     client_id: 'matthews.app',
+//     client_secret: 'b8f30abd541943ff92a1d36ca72ed25e',
+//     server_host: 'https://matthewscremation.i4connected.cloud/identity',
+//     redirect_url: 'com.matthews.app://authorizationcallback',
+//     end_session_redirect_url: 'com.matthews.app://endsessioncallback',
+//     scopes: 'profile openid email api matthews.api',
+//     pkce: true
+//   }
+// };
+
 
 /*
  * For easier debugging in development mode, you can import the following file

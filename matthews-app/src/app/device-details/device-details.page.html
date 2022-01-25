@@ -28,13 +28,16 @@
     <ng-container *ngIf="isPreheatStarted" >
       <ion-card>
         <ion-item>
-          <ion-card-header>
-            <ion-card-title>Preheat in progress</ion-card-title>
-            <ion-card-subtitle>Secondary text</ion-card-subtitle>
-          </ion-card-header>
+          <ion-label>Preheat in progress...</ion-label>
         </ion-item>
         <ion-card-content>
-          Secondary text
+          <ion-label >
+            <p> Prim. Chamber 435°C/850°C </p>
+            <p> 2th. Chamber 435°C/950°C </p>
+           </ion-label>
+        </ion-card-content>
+        <ion-card-content>
+          Remaining 10 min
         </ion-card-content>
       </ion-card>
 
@@ -58,7 +61,7 @@
       <ng-template matStepLabel>Case</ng-template>
       <ion-text>{{selectedCase.caseName}}</ion-text>
       <p>
-        <ion-button expand="block" (click)="changeCase()">
+        <ion-button expand="block" *ngIf="isCaseSelected" (click)="changeCase()">
           <ion-icon slot="end" name="arrow-forward"></ion-icon>
           changeCase
         </ion-button>
@@ -69,28 +72,21 @@
   <mat-step [completed]="isCycleStarted">
     <ng-container *ngIf="!isCycleStarted" >
       <ng-template matStepLabel>Start Cycle</ng-template>
-      <ion-card>
-        <ion-item>
-          <ion-card-header>
-            <ion-card-title>Burn Mode</ion-card-title>
-          </ion-card-header>
+     
+      <ion-item>
+          <ion-label>Burn Mode</ion-label>
         </ion-item>
-        <ion-card-content>
-          <!-- Default Segment -->
-          <ion-segment (ionChange)="segmentChanged($event)">
-            <ion-segment-button>
-              <ion-label>Simplicity</ion-label>
-            </ion-segment-button>
-            <ion-segment-button>
-              <ion-label>Eco</ion-label>
-            </ion-segment-button>
-            <ion-segment-button>
-              <ion-label>Bariatric</ion-label>
-            </ion-segment-button>
-          </ion-segment>
-        </ion-card-content>
-      </ion-card>
-
+      <ion-segment (ionChange)="segmentChanged($event)">
+        <ion-segment-button>
+          <ion-label>Simplicity</ion-label>
+        </ion-segment-button>
+        <ion-segment-button>
+          <ion-label>Eco</ion-label>
+        </ion-segment-button>
+        <ion-segment-button>
+          <ion-label>Bariatric</ion-label>
+        </ion-segment-button>
+      </ion-segment>
       <p>
         <ion-button expand="block" (click)="startCycle()" color="secondary">
           <ion-icon slot="end" name="arrow-forward"></ion-icon>
@@ -102,13 +98,16 @@
       <ng-template matStepLabel>Start Cycle</ng-template>
       <ion-card>
         <ion-item>
-          <ion-card-header>
-            <ion-card-title>Cycle in progress</ion-card-title>
-            <ion-card-subtitle>Secondary text</ion-card-subtitle>
-          </ion-card-header>
+          <ion-label>Cycle in progress...</ion-label>
         </ion-item>
         <ion-card-content>
-          Secondary text
+          <ion-label >
+            <p> Start Time: 01:40 </p>
+            <p> Burn mode: Eco </p>
+           </ion-label>
+        </ion-card-content>
+        <ion-card-content>
+          Remaining 10 min
         </ion-card-content>
       </ion-card>
 
@@ -117,7 +116,7 @@
           <ion-icon slot="end" name="arrow-forward"></ion-icon>
           Pause Cycle
         </ion-button>
-        <ion-button expand="block" (click)="extendCycle()" color="tertiary">
+        <ion-button expand="block" id="trigger-button" (click)="presentPopover('event$')" color="tertiary">
           <ion-icon slot="end" name="arrow-forward"></ion-icon>
           Extend Cycle
         </ion-button>
@@ -144,13 +143,16 @@
       <ng-template matStepLabel>Complete Cycle</ng-template>
       <ion-card>
         <ion-item>
-          <ion-card-header>
-            <ion-card-title>Cooling in progress</ion-card-title>
-            <ion-card-subtitle>Secondary text</ion-card-subtitle>
-          </ion-card-header>
+          <ion-label>Cooling in progress...</ion-label>
         </ion-item>
         <ion-card-content>
-          Secondary text
+          <ion-label >
+            <p> Prim. Chamber 435°C/850°C </p>
+            <p> 2th. Chamber 435°C/950°C </p>
+           </ion-label>
+        </ion-card-content>
+        <ion-card-content>
+          Remaining 10 min
         </ion-card-content>
       </ion-card>
       <p>
@@ -164,26 +166,17 @@
       <ng-template matStepLabel>Complete Cycle</ng-template>
       <ion-card>
         <ion-item>
-          <ion-card-header>
-            <ion-card-title>Cooled down</ion-card-title>
-            <ion-card-subtitle>Secondary text</ion-card-subtitle>
-          </ion-card-header>
+          <ion-label>Cooled down</ion-label>
         </ion-item>
         <ion-card-content>
-          Secondary text
+          Elasped time: 10 min
         </ion-card-content>
       </ion-card>
 
       <ion-card>
         <ion-item>
-          <ion-card-header>
-            <ion-card-title>Rake out in progress</ion-card-title>
-            <ion-card-subtitle>Secondary text</ion-card-subtitle>
-          </ion-card-header>
+          <ion-label>Rake out in progress...</ion-label>
         </ion-item>
-        <ion-card-content>
-          Secondary text
-        </ion-card-content>
       </ion-card>
       <p>
         <ion-button expand="block" (click)="presentAlert(stepper)" color="secondary">

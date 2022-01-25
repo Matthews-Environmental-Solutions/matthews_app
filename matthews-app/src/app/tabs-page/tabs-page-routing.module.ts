@@ -29,7 +29,11 @@ const routes: Routes = [
             path: 'device/:id',
             loadChildren: () => import('../device-details/device-details.module').then( m => m.DeviceDetailsPageModule)
           },
-        ]
+        ],
+      },
+      {
+        path: 'device',
+        loadChildren: () => import('../device-details/device-details.module').then( m => m.DeviceDetailsPageModule)
       },
       {
         path: '',

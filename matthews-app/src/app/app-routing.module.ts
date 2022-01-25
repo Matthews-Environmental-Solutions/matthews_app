@@ -26,11 +26,11 @@ const routes: Routes = [
     loadChildren: () => import('./logout/logout.module').then( m => m.LogoutPageModule)
   },
   {
-    path: 'auth/authorizationcallback',
+    path: 'authorizationcallback',
     loadChildren: () => import('./auth/auth-callback/auth-callback.module').then(m => m.AuthCallbackPageModule)
   },
   {
-    path: 'auth/endsessioncallback', loadChildren: () => import('./auth/end-session/end-session.module').then(m => m.EndSessionPageModule)
+    path: 'endsessioncallback', loadChildren: () => import('./auth/end-session/end-session.module').then(m => m.EndSessionPageModule)
   },
   {
     path: 'case-list',
@@ -40,6 +40,11 @@ const routes: Routes = [
     path: 'app',
     loadChildren: () => import('./tabs-page/tabs-page.module').then( m => m.TabsPagePageModule)
   },
+  {
+    path: 'extend-cycle',
+    loadChildren: () => import('./extend-cycle/extend-cycle.module').then( m => m.ExtendCyclePageModule)
+  },
+
 
 
 ];

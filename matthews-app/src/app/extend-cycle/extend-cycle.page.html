@@ -1,0 +1,36 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Extend Cycle Time</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-item lines="full">
+    <ion-button (click)="decreseTimeInterval()" class="ion-btn-size">-</ion-button>
+    <ion-item lines="full">
+      <ion-label position="floating">Extra Time</ion-label>
+      <ion-input type="number" [(ngModel)]="extraTimeInterval" min="1" max="9"></ion-input>
+    </ion-item>
+    <ion-button (click)="increseTimeInterval()" class="ion-btn-size">+</ion-button>
+  </ion-item>
+  <ion-item lines="full" class="ion-item-flex">
+    <ion-button (click)="increseForTenMinutes()" >+10</ion-button>
+    <ion-button (click)="increseForFifteenMinutes()">+15</ion-button>
+    <ion-button (click)="increseForThirtyMinutes()">+30</ion-button>
+  </ion-item>
+  <ion-item>
+    <ion-buttons slot="end">
+      <ion-button (click)="onConfirm()">Confirm</ion-button>
+      <ion-button (click)="onCancel()">Cancel</ion-button>
+    </ion-buttons>
+  </ion-item>
+</ion-content>
+
+<!-- <ion-footer>
+  <ion-toolbar>
+  <ion-buttons slot="end">
+    <ion-button (click)="onConfirm()">Confirm</ion-button>
+    <ion-button (click)="onCancel()">Cancel</ion-button>
+  </ion-buttons>
+</ion-toolbar>
+</ion-footer> -->

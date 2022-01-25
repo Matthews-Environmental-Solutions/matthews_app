@@ -62,7 +62,7 @@ export class AppStoreService extends ComponentStore<AppState> {
             cases: [...cases]
       }));
 
-      readonly updateSelectedCases = this.updater((state: AppState, selectedCase: Case) => ({
+      readonly updateSelectedCase = this.updater((state: AppState, selectedCase: Case) => ({
         ...state,
         selectedCase
   }));

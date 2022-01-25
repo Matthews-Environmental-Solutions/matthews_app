@@ -1,8 +1,12 @@
+/* eslint-disable max-len */
 /* eslint-disable @angular-eslint/component-selector */
 import { Component, OnInit } from '@angular/core';
-import { AlertController } from '@ionic/angular';
+import { AlertController, PopoverController } from '@ionic/angular';
 import { MatStepper } from '@angular/material/stepper';
 import { AppStoreService } from '../app.store.service';
+import { Case } from '../case/case';
+import { CasePage } from '../case/case.page';
+import { ExtendCyclePage } from '../extend-cycle/extend-cycle.page';
 
 @Component({
   selector: 'app-device-details',
@@ -19,7 +23,7 @@ export class DeviceDetailsPage implements OnInit {
   showSearchbar: boolean;
   searchTerm: string;
 
-  constructor(private appStore: AppStoreService, public alertController: AlertController) {}
+  constructor(private appStore: AppStoreService, public alertController: AlertController, private popoverController: PopoverController) {}
 
   ngOnInit() {
   }
@@ -49,7 +53,20 @@ export class DeviceDetailsPage implements OnInit {
   }
 
   extendCycle() {
+    // this.presentPopover();
+  }
 
+  async presentPopover(ev: any) {
+    const popover = await this.popoverController.create({
+      component: ExtendCyclePage,
+      cssClass: 'my-custom-class',
+      event: ev,
+      translucent: true
+    });
+    await popover.present();
+
+    const { role } = await popover.onDidDismiss();
+    console.log('onDidDismiss resolved with role', role);
   }
 
   endCycle() {
@@ -80,17 +97,27 @@ export class DeviceDetailsPage implements OnInit {
   async presentAlert(stepper: MatStepper) {
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',
-      header: 'Alert',
-      subHeader: 'Subtitle',
-      message: 'This is an alert message.',
-      buttons: ['OK']
+      header: 'Confirm Rake Out',
+      subHeader: '',
+      message: 'Choosing Complete will end this process cycle and reset all case information. The machine will be ready to begin a new process. Confirm?',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel'
+        },
+        {
+          text: 'Confirm',
+          handler: () => {
+            this.resetStepper(stepper);
+          }
+        }
+      ]
     });
 
     await alert.present();
 
     const { role } = await alert.onDidDismiss();
     console.log('onDidDismiss resolved with role', role);
-    this.resetStepper(stepper);
   }
 
   resetStepper(stepper: MatStepper) {
@@ -100,6 +127,7 @@ export class DeviceDetailsPage implements OnInit {
     this.isCoolDownStarted = false;
     this.isRakeOutStarted = false;
     stepper.reset();
+    this.appStore.updateSelectedCase(new Case());
   }
 
   presentCasesModal() {

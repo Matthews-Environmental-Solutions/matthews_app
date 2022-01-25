@@ -27,7 +27,7 @@ export class CaseListPage implements OnInit {
   }
 
   getSelectedCase(selectedCase: Case) {
-    this.caseStore.updateSelectedCases(selectedCase);
+    this.caseStore.updateSelectedCase(selectedCase);
     this.modalController.dismiss();
   }
 }
