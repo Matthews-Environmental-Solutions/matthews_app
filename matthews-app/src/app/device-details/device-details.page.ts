@@ -127,7 +127,7 @@ export class DeviceDetailsPage implements OnInit {
     this.isCoolDownStarted = false;
     this.isRakeOutStarted = false;
     stepper.reset();
-    this.appStore.updateSelectedCase(new Case());
+    this.appStore.updateSelectedCase( {} as Case);
   }
 
   presentCasesModal() {
