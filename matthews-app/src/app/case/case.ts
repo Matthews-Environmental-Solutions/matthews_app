@@ -1,4 +1,4 @@
-export class Case {
+export interface Case {
     id: number;
     caseId: string;
     caseName: string;

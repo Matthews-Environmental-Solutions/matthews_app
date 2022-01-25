@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { Platform } from '@ionic/angular';
 import { SplashScreen } from '@capacitor/splash-screen';
 import { AuthService } from 'ionic-appauth';
+import { AppStoreService } from './app.store.service';
 
 @Component({
   selector: 'app-root',
@@ -10,13 +11,14 @@ import { AuthService } from 'ionic-appauth';
   styleUrls: ['app.component.scss'],
 })
 export class AppComponent {
-  title = 'Identity Mobile Test App2';
 
   navigate: any;
+  userInfo$ = this.appStoreService.userInfo$;
 
   constructor(
     private platform: Platform,
-    private auth: AuthService
+    private auth: AuthService,
+    private appStoreService: AppStoreService
   ) {
     this.initializeApp();
     this.sideMenu();
@@ -34,11 +36,6 @@ export class AppComponent {
         title : 'Schedule',
         url   : '/app/tabs/schedule',
         icon  : 'calendar-outline'
-      },
-      {
-        title : 'AccountInfo',
-        url   : '/accountInfo',
-        icon  : 'person-outline'
       },
       {
         title : 'Logout',

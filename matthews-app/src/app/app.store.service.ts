@@ -12,6 +12,7 @@ import { Device } from './device-list/device';
 import { DeviceListService } from './device-list/device-list.service';
 import { Facility } from './facility/facility';
 import { FacilityService } from './facility/facility.service';
+import { UserInfo } from './core/userInfo'
 
 export interface AppState {
     cases: Case[];
@@ -19,6 +20,7 @@ export interface AppState {
     facilities: Facility[];
     loading: boolean;
     deviceList: Device[];
+    userInfo: UserInfo;
 }
 
 @Injectable({
@@ -27,7 +29,7 @@ export interface AppState {
 export class AppStoreService extends ComponentStore<AppState> {
 
     constructor(private caseService: CaseService, private facilitiesService: FacilityService, private deviceListService: DeviceListService, public modalController: ModalController) {
-        super({ cases: [], selectedCase: new Case(), facilities: [], loading: false,  deviceList: []});
+        super({ cases: [], selectedCase: {} as Case, facilities: [], loading: false,  deviceList: [], userInfo: {} as UserInfo});
     }
 
     readonly cases$: Observable<Case[]> = this.select(state => state.cases);
@@ -35,6 +37,7 @@ export class AppStoreService extends ComponentStore<AppState> {
     readonly facilities$: Observable<Facility[]> = this.select(state => state.facilities);
     readonly deviceList$: Observable<Device[]> = this.select(state => state.deviceList);
     readonly loading$: Observable<boolean> = this.select(state => state.loading);
+    readonly userInfo$: Observable<UserInfo> = this.select(state => state.userInfo);
 
     readonly vm$ = this.select(
       this.cases$,
@@ -65,6 +68,11 @@ export class AppStoreService extends ComponentStore<AppState> {
       readonly updateSelectedCase = this.updater((state: AppState, selectedCase: Case) => ({
         ...state,
         selectedCase
+  }));
+
+  readonly updateUserInfo = this.updater((state: AppState, userInfo: UserInfo) => ({
+    ...state,
+    userInfo
   }));
 
     readonly updateLoading = this.updater((state: AppState, loading: boolean) => ({
@@ -101,7 +109,7 @@ export class AppStoreService extends ComponentStore<AppState> {
           this.updateLoading(false);
         }))
     ));
-    
+
     readonly createCase = this.effect<Case>(case$ => case$.pipe(
       tap(() => this.updateLoading(true)),
       switchMap((selectedCase) => this.caseService.createCase(selectedCase).then(
@@ -117,6 +125,19 @@ export class AppStoreService extends ComponentStore<AppState> {
         () => {
           this.getCases();
           this.updateLoading(false);
+        }))
+    ));
+
+    readonly getUserInfo = this.effect<string>(trigger$ => trigger$.pipe(
+      switchMap((userInfo) => this.facilitiesService.getUserInfo(userInfo).then(
+        (response: UserInfo) => {
+          // this.facilitiesService.getAttachment(response.photoId).then(
+          //   (attachment) => {
+          //     // response.photo = btoa(attachment.stream.toString());
+          //   }
+          // )
+          this.updateUserInfo(response);
+          console.log(JSON.stringify(response));
         }))
     ));
 

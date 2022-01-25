@@ -33,6 +33,6 @@ export class SchedulePage implements OnInit {
   }
 
   presentModal(selectedCase?: Case) {
-    this.caseStore.openCaseModal(selectedCase ? selectedCase : new Case());
+    this.caseStore.openCaseModal(selectedCase ? selectedCase: {} as Case);
   }
 }

@@ -1,12 +1,15 @@
 <ion-app >
-  <ion-menu side="end" menuId="first" contentId="content">
-    <ion-header>
-      <ion-toolbar>
-        <ion-title>Content</ion-title>
-      </ion-toolbar>
-    </ion-header>
-    <ion-content color="light">
-      <ion-list *ngFor="let pages of navigate">
+  <ion-menu side="end" menuId="main-menu" contentId="main">
+    <ion-content *ngIf="userInfo$ | async as userInfo" color="light">
+      <div class="header-content">
+        <img src="https://png.pngtree.com/png-clipart/20190924/original/pngtree-businessman-user-avatar-free-vector-png-image_4827807.jpg" alt=""/>
+        <ion-label>
+          <h2>{{userInfo.firstName}} {{userInfo.lastName}}</h2>
+          <p>{{userInfo.email}}</p>
+        </ion-label>
+      </div>
+
+      <ion-list class="menu-items" *ngFor="let pages of navigate">
         <ion-menu-toggle auto-hide="true">
           <ion-item [routerLink]="pages.url" routerDirection="forward">
             <ion-icon [name]="pages.icon" slot="start"></ion-icon>
@@ -16,5 +19,5 @@
       </ion-list>
     </ion-content>
   </ion-menu>
-  <ion-router-outlet Id="content"></ion-router-outlet>
+  <ion-router-outlet Id="main"></ion-router-outlet>
 </ion-app>

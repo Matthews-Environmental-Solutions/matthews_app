@@ -45,8 +45,6 @@ const routes: Routes = [
     loadChildren: () => import('./extend-cycle/extend-cycle.module').then( m => m.ExtendCyclePageModule)
   },
 
-
-
 ];
 
 @NgModule({
