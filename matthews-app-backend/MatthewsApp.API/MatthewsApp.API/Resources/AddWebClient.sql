@@ -1,15 +1,12 @@
-﻿DECLARE @ClientName VARCHAR(max), @ClientDescription VARCHAR(max), @ClientId INT, @secretText varchar(max), @Hashbytes varbinary(128), @Secret VARCHAR(max), @CreationTime DateTime2, @RedirectUri1 varchar(max), @PostLogoutRedirectUri1 varchar(max), @RedirectUri2 varchar(max), @PostLogoutRedirectUri2 varchar(max), @ApiName varchar(max), @MatthewsApiName varchar(max);
+﻿DECLARE @ClientName VARCHAR(max), @ClientDescription VARCHAR(max), @ClientId INT, @secretText varchar(max), @Hashbytes varbinary(128), @Secret VARCHAR(max), @CreationTime DateTime2, @PostLogoutRedirectUri varchar(max), @RedirectUri varchar(max), @ApiName varchar(max), @MatthewsApiName varchar(max);
 SET @CreationTime = SYSUTCDATETIME();
 
 -- This values could be modified by user
 SET @ClientName = N'matthews.web'; 
 SET @ClientDescription = N'matthews.web Client';
 SET @secretText = '0be0470165fa49ca9631a2babc0a73d4';
-SET @RedirectUri1 = N'https://develop.comdata.rs/MatthewsApp';
-SET @RedirectUri2 = N'http://localhost:8100';
-SET @PostLogoutRedirectUri1 = N'https://develop.comdata.rs/MatthewsApp';
-SET @PostLogoutRedirectUri2 = N'http://localhost:8100';
-
+SET @RedirectUri = N'http://localhost:8100/authorizationcallback';
+SET @PostLogoutRedirectUr = N'http://localhost:8100/authorizationcallback',
 SET @MatthewsApiName = N'matthews.api'; 
 
 -- Creating a secret
@@ -30,8 +27,8 @@ IF NOT EXISTS
 
       SET @ClientId = (SELECT Id FROM  [dbo].[Clients] WHERE ClientId = @ClientName)
 
-      PRINT 'Creating a ClientGrantTypes, implicit';
-      INSERT [dbo].[ClientGrantTypes] ([GrantType], [ClientId]) VALUES (N'implicit', @ClientId)
+      PRINT 'Creating a ClientGrantTypes, authorization_code';
+      INSERT [dbo].[ClientGrantTypes] ([GrantType], [ClientId]) VALUES (N'authorization_code', @ClientId)
 
       PRINT 'Creating ClientScope profile';
       INSERT [dbo].[ClientScopes] ([Scope], [ClientId]) VALUES (N'profile', @ClientId)
@@ -45,17 +42,11 @@ IF NOT EXISTS
       PRINT 'Creating ClientSecret: ' + @secretText;
       INSERT [dbo].[ClientSecrets] ([ClientId], [Description], [Value], [Expiration], [Type], [Created]) VALUES (@ClientId, NULL, @Secret, NULL, N'SharedSecret', @CreationTime)
 	
-      PRINT 'Creating ClientRedirectUri: ' + @RedirectUri1;
+      PRINT 'Creating ClientRedirectUri: ' + @RedirectUri;
       INSERT [dbo].[ClientRedirectUris] ([RedirectUri], [ClientId]) VALUES (@RedirectUri1, @ClientId)
-	  
-	  PRINT 'Creating ClientRedirectUri: ' + @RedirectUri2;
-      INSERT [dbo].[ClientRedirectUris] ([RedirectUri], [ClientId]) VALUES (@RedirectUri2, @ClientId)
 
-      PRINT 'Creating ClientPostLogoutRedirectUris: ' + @PostLogoutRedirectUri1;
+      PRINT 'Creating ClientPostLogoutRedirectUris: ' + @PostLogoutRedirectUri;
       INSERT [dbo].ClientPostLogoutRedirectUris ([PostLogoutRedirectUri], [ClientId]) VALUES (@PostLogoutRedirectUri1, @ClientId)
-	  
-	  PRINT 'Creating ClientPostLogoutRedirectUris: ' + @PostLogoutRedirectUri2;
-      INSERT [dbo].ClientPostLogoutRedirectUris ([PostLogoutRedirectUri], [ClientId]) VALUES (@PostLogoutRedirectUri2, @ClientId)
 
     END
 ELSE 
