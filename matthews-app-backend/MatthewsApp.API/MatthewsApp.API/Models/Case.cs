@@ -11,6 +11,8 @@ namespace MatthewsApp.API.Models
 
         public string CaseId { get; set; }
 
+        public string FacilityId { get; set; }
+
         public string CaseName { get; set; }
 
         public double Weight { get; set; }
