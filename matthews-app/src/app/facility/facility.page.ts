@@ -16,13 +16,13 @@ export class FacilityPage implements OnInit {
   showSearchbar: boolean;
   searchTerm: string;
   userId: string;
+  accessToken: string;
 
   constructor(private auth: AuthService, public toastController: ToastController, private appStoreService: AppStoreService) { }
 
   ngOnInit() {
     this.showSearchbar = false;
     this.appStoreService.getFacilities();
-
     this.getUserInfo();
   }
 
@@ -34,11 +34,9 @@ export class FacilityPage implements OnInit {
   public async getUserInfo(): Promise<void> {
     await this.auth.loadUserInfo();
 
-    this.auth.user$.subscribe(res => {
-      this.userId = res.sub;
+    await this.auth.user$.subscribe(res => {
+      this.appStoreService.getUserInfo(res.sub);
     });
-
-    this.appStoreService.getUserInfo(this.userId);
   }
 
   revokeTokens() {
