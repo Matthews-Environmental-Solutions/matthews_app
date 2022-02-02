@@ -2,8 +2,8 @@
 import { Injectable } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { ComponentStore} from '@ngrx/component-store';
-import { EMPTY, Observable } from 'rxjs';
-import { catchError, mergeMap, switchMap, tap } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { mergeMap, switchMap, tap } from 'rxjs/operators';
 import { CaseListPage } from './case-list/case-list.page';
 import { Case } from './case/case';
 import { CasePage } from './case/case.page';
@@ -13,6 +13,7 @@ import { DeviceListService } from './device-list/device-list.service';
 import { Facility } from './facility/facility';
 import { FacilityService } from './facility/facility.service';
 import { UserInfo } from './core/userInfo';
+import { AuthService } from 'ionic-appauth';
 
 export interface AppState {
     cases: Case[];
@@ -30,7 +31,8 @@ export interface AppState {
 })
 export class AppStoreService extends ComponentStore<AppState> {
 
-    constructor(private caseService: CaseService,
+    constructor(private auth: AuthService,
+    		private caseService: CaseService,
                 private facilitiesService: FacilityService,
                 private deviceListService: DeviceListService,
                 public modalController: ModalController) {
@@ -192,17 +194,29 @@ export class AppStoreService extends ComponentStore<AppState> {
     ));
 
     readonly getUserInfo = this.effect<string>(trigger$ => trigger$.pipe(
-      switchMap((userInfo) => this.facilitiesService.getUserInfo(userInfo).then(
+      switchMap((userId) => this.facilitiesService.getUserInfo(userId).then(
         (response: UserInfo) => {
-          // this.facilitiesService.getAttachment(response.photoId).then(
-          //   (attachment) => {
-          //     // response.photo = btoa(attachment.stream.toString());
-          //   }
-          // )
-          this.updateUserInfo(response);
-          console.log(JSON.stringify(response));
+          this.auth.token$.subscribe(async res => {
+            this.facilitiesService.getAttachment(res.accessToken, response.photoId).subscribe(data => {
+              response.imageBlob = data;
+              this.createImageFromBlob(response);
+            })
+          })
+
         }))
     ));
+
+    createImageFromBlob(userInfo: UserInfo) {
+      let reader = new FileReader();
+      reader.addEventListener("load", () => {
+        userInfo.photoBase64 = reader.result.toString();
+        this.updateUserInfo(userInfo);
+      }, false);
+
+      if (userInfo.imageBlob) {
+         reader.readAsDataURL(userInfo.imageBlob);
+      }
+   }
 
     readonly openCaseModal = this.effect<Case>(trigger$ => trigger$.pipe(
       mergeMap((selectedCase) => this.presentModal(selectedCase))

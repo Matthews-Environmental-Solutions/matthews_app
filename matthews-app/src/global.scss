@@ -39,12 +39,16 @@
     background-color: #29C0F1 !important;
     color: White;
   }
-  
+
 .mat-step-header .mat-step-icon {
       color:  white;
       background-color: #5B6771;
   }
- 
+
+  .mat-stepper-horizontal, .mat-stepper-vertical {
+    background-color: transparent;
+}
+
   ion-tab-button {
     --background-focused: #29C0F1;
     --color-selected: #29C0F1;

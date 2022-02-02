@@ -10,5 +10,6 @@ export interface UserInfo {
   department: string;
   name: string;
   id: string
-  photo: string;
+  photoBase64: string;
+  imageBlob: Blob;
 }

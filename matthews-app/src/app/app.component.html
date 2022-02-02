@@ -2,7 +2,7 @@
   <ion-menu side="end" menuId="main-menu" contentId="main">
     <ion-content *ngIf="userInfo$ | async as userInfo" color="light">
       <div class="header-content">
-        <img src="https://png.pngtree.com/png-clipart/20190924/original/pngtree-businessman-user-avatar-free-vector-png-image_4827807.jpg" alt=""/>
+        <img src={{userInfo.photoBase64}} alt=""/>
         <ion-label>
           <h2>{{userInfo.firstName}} {{userInfo.lastName}}</h2>
           <p>{{userInfo.email}}</p>
