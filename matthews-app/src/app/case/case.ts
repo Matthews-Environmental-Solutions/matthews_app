@@ -7,4 +7,5 @@ export interface Case {
     containerType: string;
     containerSize: string;
     status: string;
+    facilityId: string;
 }

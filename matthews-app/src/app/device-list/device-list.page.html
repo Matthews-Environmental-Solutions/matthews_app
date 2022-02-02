@@ -22,15 +22,20 @@
   </ion-label>
 </ion-item-divider>
 
-<ion-content>
-  <ion-card *ngFor="let device of devices$ | async" [routerLink]="['/app/tabs/facility/device', device.id]">
-    <ion-item>
-      <ion-icon name="flame-outline"></ion-icon>
-      <ion-card-header>
-        <ion-card-title>{{device.name}}</ion-card-title>
-        <ion-card-subtitle>Secondary text</ion-card-subtitle>
-      </ion-card-header>
-      <ion-icon name="information" slot="end"></ion-icon>
-    </ion-item>
-  </ion-card>
+<ion-content *ngIf="deviceListVm$ | async as deviceListVm">
+  <ng-container *ngIf="deviceListVm.loading">
+    <ion-spinner></ion-spinner>
+  </ng-container>
+  <ng-container *ngIf="deviceListVm.deviceList">
+    <ion-card *ngFor="let device of deviceListVm.deviceList" [routerLink]="['/app/tabs/facility/device', device.id]" (click)="updateSelectedCremator(device.name)">
+      <ion-item>
+        <ion-icon name="flame-outline"></ion-icon>
+        <ion-card-header>
+          <ion-card-title>{{device.name}}</ion-card-title>
+          <ion-card-subtitle>Secondary text</ion-card-subtitle>
+        </ion-card-header>
+        <ion-icon name="information" slot="end"></ion-icon>
+      </ion-item>
+    </ion-card>
+  </ng-container>
 </ion-content>

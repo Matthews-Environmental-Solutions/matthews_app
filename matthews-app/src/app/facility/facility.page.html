@@ -16,7 +16,7 @@
     <ion-spinner></ion-spinner>
   </ng-container>
   <ng-container *ngIf="vm.facilities">
-    <ion-card *ngFor="let facility of vm.facilities" [routerLink]="['/app/tabs/facility/device-list', facility.id]">
+    <ion-card *ngFor="let facility of vm.facilities" (click)="selectFacility(facility)" >
       <ion-item>
         <ion-icon name="business-outline" slot="start"></ion-icon>
         <ion-card-header>

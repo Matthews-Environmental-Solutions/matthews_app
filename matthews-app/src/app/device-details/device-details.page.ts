@@ -15,6 +15,8 @@ import { ExtendCyclePage } from '../extend-cycle/extend-cycle.page';
 })
 export class DeviceDetailsPage implements OnInit {
   selectedCase$ = this.appStore.selectedCase$;
+  selectedCrematorName$ = this.appStore.selectedCrematorName$;
+  selectedFacility$ = this.appStore.selectedFacility$;
   isPreheatStarted = false;
   isCaseSelected = false;
   isCycleStarted = false;
@@ -40,8 +42,8 @@ export class DeviceDetailsPage implements OnInit {
     this.isCaseSelected = true;
   }
 
-  changeCase() {
-    this.presentCasesModal();
+  changeCase(facilityId: string) {
+    this.presentCasesModal(facilityId);
   }
 
   startCycle() {
@@ -130,8 +132,8 @@ export class DeviceDetailsPage implements OnInit {
     this.appStore.updateSelectedCase( {} as Case);
   }
 
-  presentCasesModal() {
-    this.appStore.openCasesModal();
+  presentCasesModal(facilityId: string) {
+    this.appStore.openCasesModal(facilityId);
     this.isCaseSelected = true;
   }
 }

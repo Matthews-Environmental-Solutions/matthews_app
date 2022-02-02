@@ -12,7 +12,7 @@ import { Device } from './device-list/device';
 import { DeviceListService } from './device-list/device-list.service';
 import { Facility } from './facility/facility';
 import { FacilityService } from './facility/facility.service';
-import { UserInfo } from './core/userInfo'
+import { UserInfo } from './core/userInfo';
 
 export interface AppState {
     cases: Case[];
@@ -21,6 +21,8 @@ export interface AppState {
     loading: boolean;
     deviceList: Device[];
     userInfo: UserInfo;
+    selectedCrematorName: string;
+    selectedFacility: Facility;
 }
 
 @Injectable({
@@ -28,8 +30,19 @@ export interface AppState {
 })
 export class AppStoreService extends ComponentStore<AppState> {
 
-    constructor(private caseService: CaseService, private facilitiesService: FacilityService, private deviceListService: DeviceListService, public modalController: ModalController) {
-        super({ cases: [], selectedCase: {} as Case, facilities: [], loading: false,  deviceList: [], userInfo: {} as UserInfo});
+    constructor(private caseService: CaseService,
+                private facilitiesService: FacilityService,
+                private deviceListService: DeviceListService,
+                public modalController: ModalController) {
+
+            super({ cases: [],
+                    selectedCase: {} as Case,
+                    facilities: [],
+                    loading: false,
+                    deviceList: [],
+                    userInfo: {} as UserInfo,
+                    selectedCrematorName: '',
+                    selectedFacility: {} as Facility});
     }
 
     readonly cases$: Observable<Case[]> = this.select(state => state.cases);
@@ -38,6 +51,32 @@ export class AppStoreService extends ComponentStore<AppState> {
     readonly deviceList$: Observable<Device[]> = this.select(state => state.deviceList);
     readonly loading$: Observable<boolean> = this.select(state => state.loading);
     readonly userInfo$: Observable<UserInfo> = this.select(state => state.userInfo);
+    readonly selectedCrematorName$: Observable<string> = this.select(state => state.selectedCrematorName);
+    readonly selectedFacility$: Observable<Facility> = this.select(state => state.selectedFacility);
+
+    readonly scheduleVm$ = this.select(
+      this.cases$,
+      this.selectedCase$,
+      this.facilities$,
+      this.selectedFacility$,
+      this.loading$,
+      (cases, selectedCase, facilities, selectedFacility, loading) => ({
+        cases,
+        selectedCase,
+        facilities,
+        selectedFacility,
+        loading
+      })
+    );
+
+    readonly deviceListVm$ = this.select(
+      this.deviceList$,
+      this.loading$,
+      (deviceList, loading) =>({
+        deviceList,
+        loading
+      })
+    );
 
     readonly vm$ = this.select(
       this.cases$,
@@ -50,14 +89,24 @@ export class AppStoreService extends ComponentStore<AppState> {
       })
     );
 
+    readonly updateSelectedCrematorName = this.updater((state: AppState, selectedCrematorName: string) => ({
+      ...state,
+      selectedCrematorName
+    }));
+
+    readonly updateSelectedFacility = this.updater((state: AppState, selectedFacility: Facility) => ({
+      ...state,
+      selectedFacility
+    }));
+
     readonly updateFacilities = this.updater((state: AppState, facilities: Facility[]) => ({
       ...state,
       facilities: [...facilities]
     }));
 
-    readonly updateDeviceList = this.updater((state: AppState, device: Device) => ({
+    readonly updateDeviceList = this.updater((state: AppState, deviceList: Device[]) => ({
       ...state,
-      deviceList: [...state.deviceList, device]
+      deviceList
     }));
 
     readonly updateCases = this.updater((state: AppState, cases: Case[]) => ({
@@ -65,15 +114,15 @@ export class AppStoreService extends ComponentStore<AppState> {
             cases: [...cases]
       }));
 
-      readonly updateSelectedCase = this.updater((state: AppState, selectedCase: Case) => ({
-        ...state,
-        selectedCase
-  }));
+    readonly updateSelectedCase = this.updater((state: AppState, selectedCase: Case) => ({
+      ...state,
+      selectedCase
+    }));
 
-  readonly updateUserInfo = this.updater((state: AppState, userInfo: UserInfo) => ({
-    ...state,
-    userInfo
-  }));
+    readonly updateUserInfo = this.updater((state: AppState, userInfo: UserInfo) => ({
+      ...state,
+      userInfo
+    }));
 
     readonly updateLoading = this.updater((state: AppState, loading: boolean) => ({
           ...state,
@@ -90,22 +139,27 @@ export class AppStoreService extends ComponentStore<AppState> {
     ));
 
     readonly getDeviceList = this.effect<string>(trigger$ => trigger$.pipe(
-      switchMap((facilityId) => this.deviceListService.getDeviceIdsByFacilityId(facilityId).then(
+      tap(() => {
+        this.updateLoading(true);
+      }),
+      switchMap(async (facilityId) => this.deviceListService.getDeviceIdsByFacilityId(facilityId).then(
         (response: string[]) => {
-         this.clearDevicesFromState();
-          response.forEach(id => this.deviceListService.getDeviceNameById(id).then(
-            (name: string) => {
-              this.updateDeviceList({id, name});
+          Promise.all(response.map(id => this.deviceListService.getDeviceNameById(id))).then((names: string[]) => {
+            const devices: Device[] = [];
+            for (let i = 0; i < names.length; i++) {
+              devices.push({ id: response[i], name: names[i] });
             }
-          ));
+            this.updateDeviceList(devices);
+          });
+          this.updateLoading(false);
         }))
     ));
 
-    readonly getCases = this.effect(trigger$ => trigger$.pipe(
+    readonly getCases = this.effect<string>(cases$ => cases$.pipe(
       tap(() => this.updateLoading(true)),
-      switchMap(() => this.caseService.getCases().then(
+      switchMap((facilityId) => this.caseService.getCases().then(
         (response: Case[]) => {
-          this.updateCases(response);
+          this.updateCases(response.filter((caseToFilter) => caseToFilter.facilityId === facilityId));
           this.updateLoading(false);
         }))
     ));
@@ -114,7 +168,7 @@ export class AppStoreService extends ComponentStore<AppState> {
       tap(() => this.updateLoading(true)),
       switchMap((selectedCase) => this.caseService.createCase(selectedCase).then(
         () => {
-          this.getCases();
+          this.getCases(selectedCase.facilityId);
           this.updateLoading(false);
         }))
     ));
@@ -123,7 +177,16 @@ export class AppStoreService extends ComponentStore<AppState> {
       tap(() => this.updateLoading(true)),
       switchMap((selectedCase) => this.caseService.updateCase(selectedCase.id, selectedCase).then(
         () => {
-          this.getCases();
+          this.getCases(selectedCase.facilityId);
+          this.updateLoading(false);
+        }))
+    ));
+
+    readonly deleteCase = this.effect<Case>(case$ => case$.pipe(
+      tap(() => this.updateLoading(true)),
+      switchMap((selectedCase) => this.caseService.deleteCase(selectedCase.id.toString()).then(
+        () => {
+          this.getCases(selectedCase.facilityId);
           this.updateLoading(false);
         }))
     ));
@@ -155,13 +218,16 @@ export class AppStoreService extends ComponentStore<AppState> {
       return await modal.present();
     }
 
-    readonly openCasesModal = this.effect(trigger$ => trigger$.pipe(
-      mergeMap(() => this.presentCasesModal())
+    readonly openCasesModal = this.effect<string>(trigger$ => trigger$.pipe(
+      mergeMap((selectedFacilityId) => this.presentCasesModal(selectedFacilityId))
     ));
 
-    async presentCasesModal() {
+    async presentCasesModal(selectedFacilityId: string) {
       const modal = await this.modalController.create({
-        component: CaseListPage
+        component: CaseListPage,
+        componentProps: {
+          selectedFacilityId
+        }
       });
       return await modal.present();
     }

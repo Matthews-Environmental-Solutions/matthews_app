@@ -11,7 +11,7 @@ import { Case } from './case';
 export class CaseService {
 
   private prodUrl = 'https://develop.comdata.rs/MatthewsApp.API/Case';
-  constructor(private httpClient: HttpClient, private httpService: AuthHttpService) {
+  constructor(private httpService: AuthHttpService) {
   }
 
   getCases() {
@@ -27,23 +27,8 @@ export class CaseService {
     return this.httpService.request<Case>('PUT', updateCaseUrl, caseToUpdate);
   }
 
-  deleteCase(caseId: string): Observable<Case | undefined> {
+  deleteCase(caseId: string) {
     const deleteCaseUrl = `${this.prodUrl}/${caseId}`;
-    return this.httpClient.delete<Case>(deleteCaseUrl)
-      .pipe(catchError(this.handleError));
-  }
-
-  private handleError(err: HttpErrorResponse): Observable<never> {
-    let errorMessage = '';
-    if (err.error instanceof ErrorEvent) {
-      // A client-side or network error occurred. Handle it accordingly.
-      errorMessage = `An error occurred: ${err.error.message}`;
-    } else {
-      // The backend returned an unsuccessful response code.
-      // The response body may contain clues as to what went wrong.
-      errorMessage = `Server returned code: ${err.status}, error message is: ${err.message}`;
-    }
-    console.error(errorMessage);
-    return throwError(errorMessage);
+    return this.httpService.request<Case>('DELETE', deleteCaseUrl, caseId);
   }
 }

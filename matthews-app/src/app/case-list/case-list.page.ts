@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { ModalController, ToastController } from '@ionic/angular';
 import { AppStoreService } from '../app.store.service';
 import { Case } from '../case/case';
@@ -9,16 +9,16 @@ import { Case } from '../case/case';
   styleUrls: ['./case-list.page.scss'],
 })
 export class CaseListPage implements OnInit {
+  @Input() selectedFacilityId: string;
   showSearchbar: boolean;
   searchTerm: string;
+  cases$ = this.appStore.cases$;
 
-  cases$ = this.caseStore.cases$;
-
-  constructor(public toastController: ToastController, private caseStore: AppStoreService, public modalController: ModalController) { }
+  constructor(public toastController: ToastController, private appStore: AppStoreService, public modalController: ModalController) { }
 
   ngOnInit() {
     this.showSearchbar = false;
-    this.caseStore.getCases();
+    this.appStore.getCases(this.selectedFacilityId);
   }
 
   cancelSearch(): void {
@@ -27,7 +27,11 @@ export class CaseListPage implements OnInit {
   }
 
   getSelectedCase(selectedCase: Case) {
-    this.caseStore.updateSelectedCase(selectedCase);
+    this.appStore.updateSelectedCase(selectedCase);
+    this.close();
+  }
+
+  close() {
     this.modalController.dismiss();
   }
 }

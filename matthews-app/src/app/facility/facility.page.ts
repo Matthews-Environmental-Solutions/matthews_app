@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { ToastController } from '@ionic/angular';
+import { NavController, ToastController } from '@ionic/angular';
 import { AuthService } from 'ionic-appauth';
 import { AppStoreService } from '../app.store.service';
-import { FacilityService } from './facility.service';
+import { Facility } from './facility';
 
 @Component({
   selector: 'app-facility',
@@ -11,13 +11,14 @@ import { FacilityService } from './facility.service';
 })
 export class FacilityPage implements OnInit {
   vm$ = this.appStoreService.vm$;
-  facilities$ = this.appStoreService.facilities$;
-  userInfo$ = this.appStoreService.userInfo$;
   showSearchbar: boolean;
   searchTerm: string;
   userId: string;
 
-  constructor(private auth: AuthService, public toastController: ToastController, private appStoreService: AppStoreService) { }
+  constructor(private auth: AuthService,
+              public toastController: ToastController,
+              private appStoreService: AppStoreService,
+              private navCtrl: NavController) { }
 
   ngOnInit() {
     this.showSearchbar = false;
@@ -31,9 +32,13 @@ export class FacilityPage implements OnInit {
     this.searchTerm = '';
   }
 
+  selectFacility(facility: Facility) {
+    this.appStoreService.updateSelectedFacility(facility);
+    this.navCtrl.navigateForward(['app/tabs/facility/device-list', facility.id]);
+  }
+
   public async getUserInfo(): Promise<void> {
     await this.auth.loadUserInfo();
-
     this.auth.user$.subscribe(res => {
       this.userId = res.sub;
     });
