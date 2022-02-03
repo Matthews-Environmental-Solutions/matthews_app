@@ -1,12 +1,12 @@
 <ion-header >
   <ion-toolbar color="primary">
-    <ion-title>Case</ion-title>
+    <ion-title>{{'Case' | translate}}</ion-title>
     <ion-buttons slot="start">
       <ion-back-button></ion-back-button>
     </ion-buttons>
     <ion-buttons slot="end">
       <ion-button (click)="close()">
-        <ion-icon name="close-outline"></ion-icon>  
+        <ion-icon name="close-outline"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
@@ -14,35 +14,35 @@
 <ion-content >
   <form (ngSubmit)="onSubmit()" >
     <ion-item lines="full">
-      <ion-label position="floating">Case ID</ion-label>
+      <ion-label position="floating">{{'CaseID' | translate}}</ion-label>
       <ion-input [(ngModel)]="selectedCase.caseId" name="caseId" type="text" required></ion-input>
     </ion-item>
     <ion-item lines="full">
-      <ion-label position="floating">Name</ion-label>
+      <ion-label position="floating">{{'Name' | translate}}</ion-label>
       <ion-input type="text" [(ngModel)]="selectedCase.caseName" name="name" required></ion-input>
     </ion-item>
    <ion-item lines="full">
-      <ion-label position="floating">Weight</ion-label>
+      <ion-label position="floating">{{'Weight' | translate}}</ion-label>
       <ion-input type="weight" [(ngModel)]="selectedCase.weight" name="weight" required></ion-input>
     </ion-item>
     <ion-item lines="full">
-      <ion-label>Gender</ion-label>
+      <ion-label>{{'Gender' | translate}}</ion-label>
       <ion-select [interfaceOptions]="{cssClass:'custom-popover'}" interface="popover" placeholder="Select One" name="gender" [(ngModel)]="selectedCase.gender">
         <ion-select-option *ngFor="let gender of genders" (value)="selectedCase.gender">{{gender}}</ion-select-option>
       </ion-select>
     </ion-item>
    <ion-item lines="full">
-      <ion-label>Container Type</ion-label>
+      <ion-label>{{'ContainerType' | translate}}</ion-label>
       <ion-select [interfaceOptions]="{cssClass:'custom-popover'}" interface="popover" placeholder="Select One" name="containerType" [(ngModel)]="selectedCase.containerType">
         <ion-select-option *ngFor="let t of containerTypeKeys;" value="{{ t }}">{{ containerTypes[t] }}</ion-select-option>
       </ion-select>
     </ion-item>
      <ion-item lines="full">
-      <ion-label>Container Size</ion-label>
+      <ion-label>{{'ContainerSize' | translate}}</ion-label>
       <ion-select [interfaceOptions]="{cssClass:'custom-popover'}" interface="popover" name="containerSize" [(ngModel)]="selectedCase.containerSize"  placeholder="Select One">
         <ion-select-option *ngFor="let s of containerSizeKeys;" value="{{ s }}">{{ containerSizes[s] }}</ion-select-option>
       </ion-select>
     </ion-item>
-    <ion-button type="submit" color="primary" expand="block">Submit</ion-button>
+    <ion-button type="submit" color="primary" expand="block">{{'Submit' | translate}}</ion-button>
   </form>
 </ion-content>

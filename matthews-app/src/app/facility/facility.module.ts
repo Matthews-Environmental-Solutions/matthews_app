@@ -7,12 +7,14 @@ import { IonicModule } from '@ionic/angular';
 import { FacilityPageRoutingModule } from './facility-routing.module';
 
 import { FacilityPage } from './facility.page';
+import { TranslateModule } from '@ngx-translate/core';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
+    TranslateModule,
     FacilityPageRoutingModule
   ],
   declarations: [FacilityPage]

@@ -4,6 +4,7 @@ import { Platform } from '@ionic/angular';
 import { SplashScreen } from '@capacitor/splash-screen';
 import { AuthService } from 'ionic-appauth';
 import { AppStoreService } from './app.store.service';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-root',
@@ -14,14 +15,26 @@ export class AppComponent {
 
   navigate: any;
   userInfo$ = this.appStoreService.userInfo$;
+  language: string;
 
   constructor(
     private platform: Platform,
     private auth: AuthService,
-    private appStoreService: AppStoreService
+    private appStoreService: AppStoreService,
+    public translateService: TranslateService
   ) {
     this.initializeApp();
     this.sideMenu();
+
+
+    this.translateService.addLangs(['en', 'de']);
+    this.translateService.setDefaultLang('en');
+
+    const browserLang = this.translateService.getBrowserLang();
+    this.translateService.use(browserLang.match(/en|de/) ? browserLang : 'en');
+
+    console.log("Current language: " + this.translateService.currentLang);
+    this.language = this.translateService.currentLang;
   }
 
   sideMenu() {
@@ -52,4 +65,7 @@ export class AppComponent {
     });
   }
 
+  languageChange() {
+    this.translateService.use(this.language);
+  }
 }

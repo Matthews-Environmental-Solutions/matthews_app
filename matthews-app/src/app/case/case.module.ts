@@ -7,6 +7,7 @@ import { IonicModule } from '@ionic/angular';
 import { CasePageRoutingModule } from './case-routing.module';
 
 import { CasePage } from './case.page';
+import { TranslateModule } from '@ngx-translate/core';
 
 
 @NgModule({
@@ -15,7 +16,8 @@ import { CasePage } from './case.page';
     FormsModule,
     ReactiveFormsModule,
     IonicModule,
-    CasePageRoutingModule
+    CasePageRoutingModule,
+    TranslateModule
   ],
   declarations: [CasePage]
 })

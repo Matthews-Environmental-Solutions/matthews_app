@@ -1,6 +1,6 @@
 <ion-header >
   <ion-toolbar color="primary">
-    <ion-title *ngIf="!showSearchbar">Cases</ion-title>
+    <ion-title *ngIf="!showSearchbar">{{'Cases' | translate}}</ion-title>
     <ion-buttons *ngIf="!showSearchbar" slot="start">
       <ion-back-button></ion-back-button>
     </ion-buttons>
@@ -10,7 +10,7 @@
         <ion-icon slot="icon-only" name="search"></ion-icon>
       </ion-button>
       <ion-button (click)="close()">
-        <ion-icon name="close-outline"></ion-icon>  
+        <ion-icon name="close-outline"></ion-icon>
       </ion-button>
       <ion-menu-button menu="main-menu"></ion-menu-button>
     </ion-buttons>
@@ -23,7 +23,7 @@
       <ion-label>
         <h3>{{case.caseId}}</h3>
         <p>
-          {{case.caseName}} &mdash; Status: {{case.status}}
+          {{case.caseName}} &mdash; {{'Status' | translate}}: {{case.status}}
         </p>
       </ion-label>
     </ion-item>

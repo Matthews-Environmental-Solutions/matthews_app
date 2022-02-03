@@ -39,7 +39,8 @@ export class FacilityPage implements OnInit {
 
   public async getUserInfo(): Promise<void> {
     await this.auth.loadUserInfo();
-    await this.auth.user$.subscribe(res => {
+    console.log("User: " + JSON.stringify(this.auth.user$))
+    this.auth.user$.subscribe(res => {
       this.appStoreService.getUserInfo(res.sub);
     });
   }

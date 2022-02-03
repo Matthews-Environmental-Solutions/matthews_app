@@ -7,13 +7,15 @@ import { IonicModule } from '@ionic/angular';
 import { ExtendCyclePageRoutingModule } from './extend-cycle-routing.module';
 
 import { ExtendCyclePage } from './extend-cycle.page';
+import { TranslateModule } from '@ngx-translate/core';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    ExtendCyclePageRoutingModule
+    ExtendCyclePageRoutingModule,
+    TranslateModule
   ],
   declarations: [ExtendCyclePage]
 })
