@@ -7,6 +7,7 @@ import { AppStoreService } from '../app.store.service';
 import { Case } from '../case/case';
 import { CasePage } from '../case/case.page';
 import { ExtendCyclePage } from '../extend-cycle/extend-cycle.page';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-device-details',
@@ -25,7 +26,7 @@ export class DeviceDetailsPage implements OnInit {
   showSearchbar: boolean;
   searchTerm: string;
 
-  constructor(private appStore: AppStoreService, public alertController: AlertController, private popoverController: PopoverController) {}
+  constructor(private appStore: AppStoreService, public alertController: AlertController, private popoverController: PopoverController, private translateService: TranslateService) {}
 
   ngOnInit() {
   }
@@ -120,15 +121,15 @@ export class DeviceDetailsPage implements OnInit {
 
   rakeOutConfirmation(stepper: MatStepper) {
     const alertOptions: AlertOptions = {
-      header: 'Confirm Rake Out',
-      message: 'Choosing Complete will end this process cycle and reset all case information. The machine will be ready to begin a new process. Confirm?',
+      header: this.translateService.instant('ConfirmRakeOut'),
+      message: this.translateService.instant('ConfirmRakeOutMessage'),
       buttons: [
         {
-          text: 'Cancel',
+          text: this.translateService.instant('Cancel'),
           role: 'cancel'
         },
         {
-          text: 'Confirm',
+          text: this.translateService.instant('Confirm'),
           role: 'confirm',
           handler: () => {
             this.resetStepper(stepper);

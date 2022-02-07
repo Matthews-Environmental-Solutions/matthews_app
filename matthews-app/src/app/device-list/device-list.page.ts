@@ -14,6 +14,7 @@ export class DeviceListPage implements OnInit {
   deviceIds: string[] = [];
   deviceListVm$ = this.appStore.deviceListVm$;
   devices$ = this.appStore.deviceList$;
+  selectedFacility$ = this.appStore.selectedFacility$;
 
   constructor(private route: ActivatedRoute, private appStore: AppStoreService) { }
 

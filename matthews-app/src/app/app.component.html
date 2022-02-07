@@ -13,10 +13,21 @@
         <ion-menu-toggle auto-hide="true">
           <ion-item [routerLink]="pages.url" routerDirection="forward">
             <ion-icon [name]="pages.icon" slot="start"></ion-icon>
-              {{pages.title}}
+              {{pages.title | translate}}
           </ion-item>
         </ion-menu-toggle>
       </ion-list>
+    </ion-content>
+    <ion-content>
+      <div>
+        <ion-item>
+          <ion-label translate>Language</ion-label>
+          <ion-select [(ngModel)]='language' (ionChange)='languageChange()'>
+            <ion-select-option value='en'>English</ion-select-option>
+            <ion-select-option value='de'>German</ion-select-option>
+          </ion-select>
+        </ion-item>
+      </div>
     </ion-content>
   </ion-menu>
   <ion-router-outlet Id="main"></ion-router-outlet>

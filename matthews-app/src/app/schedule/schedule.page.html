@@ -1,6 +1,6 @@
 <ion-header >
   <ion-toolbar color="primary">
-    <ion-title *ngIf="!showSearchbar">Schedule</ion-title>
+    <ion-title *ngIf="!showSearchbar">{{'Schedule' | translate}}</ion-title>
     <ion-buttons *ngIf="!showSearchbar" slot="start">
       <ion-back-button></ion-back-button>
     </ion-buttons>
@@ -19,12 +19,9 @@
 </ion-header>
 
 <ion-content *ngIf="scheduleVm$ | async as scheduleVm">
-  <ng-container *ngIf="scheduleVm.loading">
-    <ion-spinner></ion-spinner>
-  </ng-container>
   <ng-container *ngIf="scheduleVm.cases">
     <ion-item lines="full">
-      <ion-label>Select Facility:</ion-label>
+      <ion-label>{{'SelectFacility' | translate}}:</ion-label>
       <ion-select [interfaceOptions]="{cssClass:'custom-popover'}" interface="popover" placeholder="Select One" name="containerType" (ionChange)="selectedFacilityChanged($event)">
         <ion-select-option *ngFor="let facility of scheduleVm.facilities;" value="{{ facility.id}}">{{ facility.name }}</ion-select-option>
       </ion-select>
@@ -44,7 +41,7 @@
           <ion-label>
             <h3>{{case.caseId}}</h3>
             <p>
-              {{case.caseName}} &mdash; Status: {{case.status}}
+              {{case.caseName}} &mdash; {{'Status' | translate}}: {{case.status}}
             </p>
           </ion-label>
         </ion-item>

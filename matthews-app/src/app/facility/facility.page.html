@@ -1,6 +1,6 @@
 <ion-header >
   <ion-toolbar color="primary">
-    <ion-title *ngIf="!showSearchbar">Facility</ion-title>
+    <ion-title *ngIf="!showSearchbar" translate>Facility</ion-title>
     <ion-searchbar *ngIf="showSearchbar" showCancelButton="always" (ionCancel)="cancelSearch()" [(ngModel)]="searchTerm" placeholder="Search" animated></ion-searchbar>
     <ion-buttons slot="primary">
       <ion-button *ngIf="!showSearchbar" (click)="showSearchbar = true">
@@ -12,9 +12,6 @@
 </ion-header>
 
 <ion-content *ngIf="vm$ | async as vm">
-  <ng-container *ngIf="vm.loading">
-    <ion-spinner></ion-spinner>
-  </ng-container>
   <ng-container *ngIf="vm.facilities">
     <ion-card *ngFor="let facility of vm.facilities" (click)="selectFacility(facility)" >
       <ion-item>

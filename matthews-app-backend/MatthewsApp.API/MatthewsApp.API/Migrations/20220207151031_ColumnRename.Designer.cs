@@ -3,14 +3,16 @@ using MatthewsApp.API;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace MatthewsApp.API.Migrations
 {
     [DbContext(typeof(MatthewsAppDBContext))]
-    partial class MatthewsAppDBContextModelSnapshot : ModelSnapshot
+    [Migration("20220207151031_ColumnRename")]
+    partial class ColumnRename
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -42,9 +44,6 @@ namespace MatthewsApp.API.Migrations
 
                     b.Property<string>("Gender")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsObsolete")
-                        .HasColumnType("bit");
 
                     b.Property<double>("Weight")
                         .HasColumnType("float");

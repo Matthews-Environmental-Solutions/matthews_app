@@ -14,6 +14,7 @@ import { Facility } from './facility/facility';
 import { FacilityService } from './facility/facility.service';
 import { UserInfo } from './core/userInfo';
 import { AuthService } from 'ionic-appauth';
+import { LoadingService } from './core/loading.service';
 
 export interface AppState {
     cases: Case[];
@@ -35,7 +36,8 @@ export class AppStoreService extends ComponentStore<AppState> {
     		private caseService: CaseService,
                 private facilitiesService: FacilityService,
                 private deviceListService: DeviceListService,
-                public modalController: ModalController) {
+                public modalController: ModalController,
+                private loadingService: LoadingService) {
 
             super({ cases: [],
                     selectedCase: {} as Case,
@@ -132,18 +134,16 @@ export class AppStoreService extends ComponentStore<AppState> {
     }));
 
     readonly getFacilities = this.effect(trigger$ => trigger$.pipe(
-      tap(() => this.updateLoading(true)),
-      switchMap(() => this.facilitiesService.getFacilities().then(
+      tap(() => this.loadingService.present()),
+      switchMap(() =>  this.facilitiesService.getFacilities().then(
         (response: Facility[]) => {
           this.updateFacilities(response);
-          this.updateLoading(false);
+          this.loadingService.dismiss();
         }))
-    ));
+      ));
 
     readonly getDeviceList = this.effect<string>(trigger$ => trigger$.pipe(
-      tap(() => {
-        this.updateLoading(true);
-      }),
+      tap(() => this.loadingService.present()),
       switchMap(async (facilityId) => this.deviceListService.getDeviceIdsByFacilityId(facilityId).then(
         (response: string[]) => {
           Promise.all(response.map(id => this.deviceListService.getDeviceNameById(id))).then((names: string[]) => {
@@ -153,43 +153,43 @@ export class AppStoreService extends ComponentStore<AppState> {
             }
             this.updateDeviceList(devices);
           });
-          this.updateLoading(false);
+          this.loadingService.dismiss();
         }))
     ));
 
     readonly getCases = this.effect<string>(cases$ => cases$.pipe(
-      tap(() => this.updateLoading(true)),
+      tap(() => this.loadingService.present()),
       switchMap((facilityId) => this.caseService.getCases().then(
         (response: Case[]) => {
           this.updateCases(response.filter((caseToFilter) => caseToFilter.facilityId === facilityId));
-          this.updateLoading(false);
+          this.loadingService.dismiss();
         }))
     ));
 
     readonly createCase = this.effect<Case>(case$ => case$.pipe(
-      tap(() => this.updateLoading(true)),
+      tap(() => this.loadingService.present()),
       switchMap((selectedCase) => this.caseService.createCase(selectedCase).then(
         () => {
           this.getCases(selectedCase.facilityId);
-          this.updateLoading(false);
+          this.loadingService.dismiss();
         }))
     ));
 
     readonly updateCase = this.effect<Case>(case$ => case$.pipe(
-      tap(() => this.updateLoading(true)),
+      tap(() => this.loadingService.present()),
       switchMap((selectedCase) => this.caseService.updateCase(selectedCase.id, selectedCase).then(
         () => {
           this.getCases(selectedCase.facilityId);
-          this.updateLoading(false);
+          this.loadingService.dismiss();
         }))
     ));
 
     readonly deleteCase = this.effect<Case>(case$ => case$.pipe(
-      tap(() => this.updateLoading(true)),
+      tap(() => this.loadingService.present()),
       switchMap((selectedCase) => this.caseService.deleteCase(selectedCase.id.toString()).then(
         () => {
           this.getCases(selectedCase.facilityId);
-          this.updateLoading(false);
+          this.loadingService.dismiss();
         }))
     ));
 

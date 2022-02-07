@@ -22,5 +22,7 @@ namespace MatthewsApp.API.Models
         public string ContainerType { get; set; }
 
         public string ContainerSize { get; set; }
+
+        public bool IsObsolete { get; set; }
     }
 }

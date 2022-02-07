@@ -22,7 +22,8 @@ namespace MatthewsApp.API.Repository
 
         public void Delete(Case entity)
         {
-            context.Cases.Remove(entity);
+            entity.IsObsolete = true;
+            context.Entry(entity).State = EntityState.Modified;
             context.SaveChangesAsync();
         }
 

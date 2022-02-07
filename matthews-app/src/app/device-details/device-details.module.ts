@@ -12,6 +12,7 @@ import {MatFormFieldModule} from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { STEPPER_GLOBAL_OPTIONS } from '@angular/cdk/stepper';
+import { TranslateModule } from '@ngx-translate/core';
 
 
 @NgModule({
@@ -30,7 +31,8 @@ import { STEPPER_GLOBAL_OPTIONS } from '@angular/cdk/stepper';
     MatStepperModule,
     MatFormFieldModule,
     MatInputModule,
-    MatIconModule
+    MatIconModule,
+    TranslateModule
   ],
   declarations: [DeviceDetailsPage]
 })

@@ -4,7 +4,7 @@
     <ion-buttons *ngIf="!showSearchbar" slot="start">
       <ion-back-button></ion-back-button>
     </ion-buttons>
-    <!-- <ion-title *ngIf="!showSearchbar">{{facility.name}}</ion-title> -->
+    <ion-title *ngIf="selectedFacility$ | async as selectedFacility">{{selectedFacility.name}}</ion-title>
     <ion-searchbar *ngIf="showSearchbar" showCancelButton="always" (ionCancel)="cancelSearch()" [(ngModel)]="searchTerm" placeholder="Search" animated></ion-searchbar>
 
     <ion-buttons slot="primary">
@@ -18,14 +18,11 @@
 
 <ion-item-divider>
   <ion-label>
-    Cremators
+    <h2 translate>Devices</h2>
   </ion-label>
 </ion-item-divider>
 
 <ion-content *ngIf="deviceListVm$ | async as deviceListVm">
-  <ng-container *ngIf="deviceListVm.loading">
-    <ion-spinner></ion-spinner>
-  </ng-container>
   <ng-container *ngIf="deviceListVm.deviceList">
     <ion-card *ngFor="let device of deviceListVm.deviceList" [routerLink]="['/app/tabs/facility/device', device.id]" (click)="updateSelectedCremator(device.name)">
       <ion-item>

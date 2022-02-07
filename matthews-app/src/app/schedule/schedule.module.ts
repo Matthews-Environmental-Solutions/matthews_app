@@ -10,6 +10,7 @@ import { SchedulePage } from './schedule.page';
 import { Ng2SearchPipeModule } from 'ng2-search-filter';
 
 import { LongPressModule } from 'ionic-long-press';
+import { TranslateModule } from '@ngx-translate/core';
 
 
 @NgModule({
@@ -20,6 +21,7 @@ import { LongPressModule } from 'ionic-long-press';
     SchedulePageRoutingModule,
     Ng2SearchPipeModule,
     LongPressModule,
+    TranslateModule
   ],
   declarations: [SchedulePage]
 })
