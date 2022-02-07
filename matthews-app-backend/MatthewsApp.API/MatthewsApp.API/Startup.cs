@@ -74,7 +74,7 @@ namespace MatthewsApp.API
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, MatthewsAppDBContext matthewsAppDBContext)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -104,8 +104,6 @@ namespace MatthewsApp.API
             {
                 endpoints.MapControllers().RequireAuthorization();
             });
-
-            matthewsAppDBContext.FillInitialData();
         }
     }
 }
