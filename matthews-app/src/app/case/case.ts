@@ -8,4 +8,5 @@ export interface Case {
     containerSize: string;
     status: string;
     facilityId: string;
+    isObsolete: boolean;
 }

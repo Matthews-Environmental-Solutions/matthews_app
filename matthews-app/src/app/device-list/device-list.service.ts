@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import { AuthHttpService } from '../core/auth-http.service';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DeviceListService {
 
-  private productUrl = 'https://matthewscremation.i4connected.cloud/api/api/devices/';
+  private productUrl = environment.i4connectedApiUrl + 'devices/';
 
   constructor(
     private httpService: AuthHttpService

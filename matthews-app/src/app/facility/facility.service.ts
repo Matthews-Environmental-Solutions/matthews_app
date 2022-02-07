@@ -1,17 +1,14 @@
 import { Injectable } from '@angular/core';
 import { Facility } from './facility';
 import { AuthHttpService } from '../core/auth-http.service';
-import { AuthService } from 'ionic-appauth';
 import { UserInfo } from '../core/userInfo';
-import { TokenResponse } from '@openid/appauth';
-import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FacilityService {
-
-  private productUrl = 'https://matthewscremation.i4connected.cloud/api/api/';
 
   constructor(
     private httpService: AuthHttpService,
@@ -19,15 +16,15 @@ export class FacilityService {
     ) { }
 
   getFacilities() {
-    return this.httpService.request<Facility[]>("GET", this.productUrl + "sites/list");
+    return this.httpService.request<Facility[]>("GET", environment.i4connectedApiUrl + "sites/list");
   }
 
   getUserInfo(userId: string) {
-    return this.httpService.request<UserInfo>("GET", this.productUrl + "users/" + userId + "/info");
+    return this.httpService.request<UserInfo>("GET", environment.i4connectedApiUrl + "users/" + userId + "/info");
   }
 
   getAttachment(accessToken: string, photoId: string) {
     const headers = new HttpHeaders().set('Authorization', `Bearer ${accessToken}`);
-    return this.http.get(this.productUrl + "attachments/" + photoId, { headers: headers, responseType: 'blob' });
+    return this.http.get(environment.i4connectedApiUrl + "attachments/" + photoId, { headers: headers, responseType: 'blob' });
   }
 }

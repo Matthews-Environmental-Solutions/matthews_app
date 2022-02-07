@@ -4,6 +4,8 @@
 
 export const environment = {
   production: false,
+  casesApiUrl: 'https://develop.comdata.rs/MatthewsApp.API/Case',
+  i4connectedApiUrl: 'https://matthewscremation.i4connected.cloud/api/api/',
   auth_config: {
     client_id: 'matthews.web',
     client_secret: '0be0470165fa49ca9631a2babc0a73d4',
@@ -17,6 +19,8 @@ export const environment = {
 
 // export const environment = {
 //   production: false,
+//     casesApiUrl: 'https://develop.comdata.rs/MatthewsApp.API/Case',
+//     i4connectedApiUrl: 'https://matthewscremation.i4connected.cloud/api/api/',
 //   auth_config: {
 //     client_id: 'matthews.app',
 //     client_secret: 'b8f30abd541943ff92a1d36ca72ed25e',

@@ -1,5 +1,7 @@
 export const environment = {
   production: true,
+  casesApiUrl:'https://develop.comdata.rs/MatthewsApp.API/Case',
+  i4connectedApiUrl: 'https://matthewscremation.i4connected.cloud/api/api/',
   auth_config: {
     client_id: 'matthews.web',
     client_secret: '0be0470165fa49ca9631a2babc0a73d4',

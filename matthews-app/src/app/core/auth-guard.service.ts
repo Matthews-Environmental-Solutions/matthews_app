@@ -26,8 +26,4 @@ export class AuthGuardService implements CanActivate {
       }),
     );
   }
-
-  // public async canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-  //   
-  // }
 }

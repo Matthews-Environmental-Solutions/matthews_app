@@ -1,7 +1,7 @@
 /* eslint-disable max-len */
 /* eslint-disable @angular-eslint/component-selector */
 import { Component, OnInit } from '@angular/core';
-import { AlertController, PopoverController } from '@ionic/angular';
+import { AlertController, AlertOptions, PopoverController } from '@ionic/angular';
 import { MatStepper } from '@angular/material/stepper';
 import { AppStoreService } from '../app.store.service';
 import { Case } from '../case/case';
@@ -35,7 +35,25 @@ export class DeviceDetailsPage implements OnInit {
   }
 
   stopPreheat() {
-    this.isPreheatStarted = false;
+    const alertOptions: AlertOptions = {
+      header: 'Confirm Preheat Stop',
+      message: 'Preheat process will be stopped. Confirm?',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel'
+        },
+        {
+          text: 'Confirm',
+          role: 'confirm',
+          handler: () => {
+            this.isPreheatStarted = false;
+          }
+        }
+      ]
+    };
+
+    this.presentAlert(alertOptions);
   }
 
   selectCase() {
@@ -55,7 +73,7 @@ export class DeviceDetailsPage implements OnInit {
   }
 
   extendCycle() {
-    // this.presentPopover();
+
   }
 
   async presentPopover(ev: any) {
@@ -72,7 +90,24 @@ export class DeviceDetailsPage implements OnInit {
   }
 
   endCycle() {
+    const alertOptions: AlertOptions = {
+      header: 'End Cycle',
+      message: 'The cycle will be stopped. Confirm?',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel'
+        },
+        {
+          text: 'Confirm',
+          role: 'confirm',
+          handler: () => {
+          }
+        }
+      ]
+    };
 
+    this.presentAlert(alertOptions);
   }
 
   coolDown() {
@@ -83,8 +118,26 @@ export class DeviceDetailsPage implements OnInit {
     this.isRakeOutStarted = true;
   }
 
-  rakeOutConfirmation() {
+  rakeOutConfirmation(stepper: MatStepper) {
+    const alertOptions: AlertOptions = {
+      header: 'Confirm Rake Out',
+      message: 'Choosing Complete will end this process cycle and reset all case information. The machine will be ready to begin a new process. Confirm?',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel'
+        },
+        {
+          text: 'Confirm',
+          role: 'confirm',
+          handler: () => {
+            this.resetStepper(stepper);
+          }
+        }
+      ]
+    };
 
+    this.presentAlert(alertOptions);
   }
 
   cancelSearch(): void {
@@ -96,26 +149,8 @@ export class DeviceDetailsPage implements OnInit {
     console.log('Segment changed', ev);
   }
 
-  async presentAlert(stepper: MatStepper) {
-    const alert = await this.alertController.create({
-      cssClass: 'my-custom-class',
-      header: 'Confirm Rake Out',
-      subHeader: '',
-      message: 'Choosing Complete will end this process cycle and reset all case information. The machine will be ready to begin a new process. Confirm?',
-      buttons: [
-        {
-          text: 'Cancel',
-          role: 'cancel'
-        },
-        {
-          text: 'Confirm',
-          handler: () => {
-            this.resetStepper(stepper);
-          }
-        }
-      ]
-    });
-
+  async presentAlert(options: AlertOptions) {
+    const alert = await this.alertController.create(options);
     await alert.present();
 
     const { role } = await alert.onDidDismiss();
@@ -123,12 +158,20 @@ export class DeviceDetailsPage implements OnInit {
   }
 
   resetStepper(stepper: MatStepper) {
+    this.resetProperties();
+    stepper.reset();
+  }
+
+  ionViewDidLeave() {
+    this.resetProperties();
+  }
+
+  resetProperties() {
     this.isPreheatStarted = false;
     this.isCaseSelected = false;
     this.isCycleStarted = false;
     this.isCoolDownStarted = false;
     this.isRakeOutStarted = false;
-    stepper.reset();
     this.appStore.updateSelectedCase( {} as Case);
   }
 
