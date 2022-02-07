@@ -37,15 +37,15 @@ export class DeviceDetailsPage implements OnInit {
 
   stopPreheat() {
     const alertOptions: AlertOptions = {
-      header: 'Confirm Preheat Stop',
-      message: 'Preheat process will be stopped. Confirm?',
+      header: this.translateService.instant('ConfirmPreheatStop'),
+      message: this.translateService.instant('ConfirmPreheatStopMessage'),
       buttons: [
         {
-          text: 'Cancel',
+          text: this.translateService.instant('Cancel'),
           role: 'cancel'
         },
         {
-          text: 'Confirm',
+          text: this.translateService.instant('Confirm'),
           role: 'confirm',
           handler: () => {
             this.isPreheatStarted = false;
@@ -92,15 +92,15 @@ export class DeviceDetailsPage implements OnInit {
 
   endCycle() {
     const alertOptions: AlertOptions = {
-      header: 'End Cycle',
-      message: 'The cycle will be stopped. Confirm?',
+      header: this.translateService.instant('EndCycle'),
+      message: this.translateService.instant('EndCycleMessage'),
       buttons: [
         {
-          text: 'Cancel',
+          text: this.translateService.instant('Cancel'),
           role: 'cancel'
         },
         {
-          text: 'Confirm',
+          text: this.translateService.instant('Confirm'),
           role: 'confirm',
           handler: () => {
           }
