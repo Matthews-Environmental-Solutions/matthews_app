@@ -12,9 +12,6 @@
 </ion-header>
 
 <ion-content *ngIf="vm$ | async as vm">
-  <ng-container *ngIf="vm.loading">
-    <ion-spinner></ion-spinner>
-  </ng-container>
   <ng-container *ngIf="vm.facilities">
     <ion-card *ngFor="let facility of vm.facilities" (click)="selectFacility(facility)" >
       <ion-item>

@@ -47,5 +47,6 @@
   "Cancel": "Abbrechen",
   "Facilities": "Einrichtungen",
   "Schedule": "Zeitplan",
-  "Logout": "Ausloggen"
+  "Logout": "Ausloggen",
+  "SelectFacility": "Einrichtung Auswählen"
 }

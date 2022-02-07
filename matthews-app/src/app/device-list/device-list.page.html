@@ -23,9 +23,6 @@
 </ion-item-divider>
 
 <ion-content *ngIf="deviceListVm$ | async as deviceListVm">
-  <ng-container *ngIf="deviceListVm.loading">
-    <ion-spinner></ion-spinner>
-  </ng-container>
   <ng-container *ngIf="deviceListVm.deviceList">
     <ion-card *ngFor="let device of deviceListVm.deviceList" [routerLink]="['/app/tabs/facility/device', device.id]" (click)="updateSelectedCremator(device.name)">
       <ion-item>
