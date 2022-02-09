@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { ComponentStore} from '@ngrx/component-store';
 import { Observable } from 'rxjs';
-import { mergeMap, switchMap, tap } from 'rxjs/operators';
+import { catchError, mergeMap, switchMap, tap } from 'rxjs/operators';
 import { CaseListPage } from './case-list/case-list.page';
 import { Case } from './case/case';
 import { CasePage } from './case/case.page';
@@ -33,7 +33,7 @@ export interface AppState {
 export class AppStoreService extends ComponentStore<AppState> {
 
     constructor(private auth: AuthService,
-    		private caseService: CaseService,
+    		        private caseService: CaseService,
                 private facilitiesService: FacilityService,
                 private deviceListService: DeviceListService,
                 public modalController: ModalController,
@@ -147,21 +147,27 @@ export class AppStoreService extends ComponentStore<AppState> {
       switchMap(async (facilityId) => this.deviceListService.getDeviceIdsByFacilityId(facilityId).then(
         (response: string[]) => {
           Promise.all(response.map(id => this.deviceListService.getDeviceNameById(id))).then((names: string[]) => {
-            const devices: Device[] = [];
-            for (let i = 0; i < names.length; i++) {
-              devices.push({ id: response[i], name: names[i] });
-            }
-            this.updateDeviceList(devices);
+
+            this.updateDeviceList(this.getSortedDeviceObjects(response, names));
           });
           this.loadingService.dismiss();
         }))
     ));
 
+    getSortedDeviceObjects(deviceIds: string[], deviceNames: string[]) {
+      const devices: Device[] = [];
+      for (let i = 0; i < deviceNames.length; i++) {
+        devices.push({ id: deviceIds[i], name: deviceNames[i] });
+      }
+      devices.sort((a, b) => (a.name < b.name ? -1 : 1));
+      return devices;
+    }
+
     readonly getCases = this.effect<string>(cases$ => cases$.pipe(
       tap(() => this.loadingService.present()),
       switchMap((facilityId) => this.caseService.getCases().then(
         (response: Case[]) => {
-          this.updateCases(response.filter((caseToFilter) => caseToFilter.facilityId === facilityId));
+          this.updateCases(response.filter((caseToFilter) => caseToFilter.facilityId === facilityId && caseToFilter.isObsolete === false));
           this.loadingService.dismiss();
         }))
     ));
@@ -172,7 +178,8 @@ export class AppStoreService extends ComponentStore<AppState> {
         () => {
           this.getCases(selectedCase.facilityId);
           this.loadingService.dismiss();
-        }))
+        })),
+        catchError(() => this.loadingService.dismiss())
     ));
 
     readonly updateCase = this.effect<Case>(case$ => case$.pipe(
@@ -200,15 +207,15 @@ export class AppStoreService extends ComponentStore<AppState> {
             this.facilitiesService.getAttachment(res.accessToken, response.photoId).subscribe(data => {
               response.imageBlob = data;
               this.createImageFromBlob(response);
-            })
-          })
+            });
+          });
 
         }))
     ));
 
     createImageFromBlob(userInfo: UserInfo) {
-      let reader = new FileReader();
-      reader.addEventListener("load", () => {
+      const reader = new FileReader();
+      reader.addEventListener('load', () => {
         userInfo.photoBase64 = reader.result.toString();
         this.updateUserInfo(userInfo);
       }, false);
@@ -244,12 +251,5 @@ export class AppStoreService extends ComponentStore<AppState> {
         }
       });
       return await modal.present();
-    }
-
-    clearDevicesFromState() {
-      this.setState((currentState) => ({
-          ...currentState,
-          deviceList: []
-        }));
     }
 }
