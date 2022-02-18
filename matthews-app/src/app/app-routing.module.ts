@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouteReuseStrategy, RouterModule, Routes } from '@angular/router';
 import { IonicRouteStrategy } from '@ionic/angular';
-import { AuthGuardService } from './core/auth-guard.service';
 
 const routes: Routes = [
   {
@@ -43,6 +42,9 @@ const routes: Routes = [
   {
     path: 'extend-cycle',
     loadChildren: () => import('./extend-cycle/extend-cycle.module').then( m => m.ExtendCyclePageModule)
+  },  {
+    path: 'facility-details',
+    loadChildren: () => import('./facility-details/facility-details.module').then( m => m.FacilityDetailsPageModule)
   },
 
 ];

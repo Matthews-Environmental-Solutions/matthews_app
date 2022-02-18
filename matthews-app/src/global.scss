@@ -53,3 +53,26 @@
     --background-focused: #29C0F1;
     --color-selected: #29C0F1;
 }
+
+.mat-step-optional, .mat-step-sub-label-error {
+  font-weight: 400 !important;
+  font-size: 17px !important;
+}
+
+.mat-step-label, .mat-step-label-selected {
+  font-size: 19px !important;
+  margin-left: 6px;
+  font-weight: 500 !important;
+}
+
+.mat-step-icon {
+  border-radius: 50% !important;
+  height: 41px !important;
+  width: 41px !important;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.mat-stepper-horizontal-line,  .mat-stepper-vertical-line{
+  margin-left: 44px !important;
+}

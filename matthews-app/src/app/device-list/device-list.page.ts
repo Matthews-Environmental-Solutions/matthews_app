@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { NavController } from '@ionic/angular';
 import { AppStoreService } from '../app.store.service';
 
 @Component({
@@ -16,7 +17,7 @@ export class DeviceListPage implements OnInit {
   devices$ = this.appStore.deviceList$;
   selectedFacility$ = this.appStore.selectedFacility$;
 
-  constructor(private route: ActivatedRoute, private appStore: AppStoreService) { }
+  constructor(private route: ActivatedRoute, private appStore: AppStoreService, private navCtrl: NavController) { }
 
   ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id');
@@ -28,7 +29,13 @@ export class DeviceListPage implements OnInit {
     this.searchTerm = '';
   }
 
-  updateSelectedCremator(crematorName: string) {
+  updateSelectedCremator(crematorId: string, crematorName: string) {
     this.appStore.updateSelectedCrematorName(crematorName);
+    this.navCtrl.navigateForward(['/app/tabs/facility/device/', crematorId]);
+  }
+
+  navigateToDetailsPage($event, deviceId: string) {
+    $event.stopPropagation();
+    this.navCtrl.navigateForward(['/app/tabs/facility/device/'+ deviceId + '/device-details']);
   }
 }

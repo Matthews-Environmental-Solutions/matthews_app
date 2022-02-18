@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { AuthGuardService } from '../core/auth-guard.service';
-
 import { TabsPagePage } from './tabs-page.page';
 
 const routes: Routes = [
@@ -22,18 +21,31 @@ const routes: Routes = [
             loadChildren: () => import('../facility/facility.module').then( m => m.FacilityPageModule)
           },
           {
+            path: ':id/facility-details',
+            loadChildren: () => import('../facility-details/facility-details.module').then( m => m.FacilityDetailsPageModule)
+          },
+          {
             path: 'device-list/:id',
             loadChildren: () => import('../device-list/device-list.module').then( m => m.DeviceListPageModule)
           },
           {
             path: 'device/:id',
-            loadChildren: () => import('../device-details/device-details.module').then( m => m.DeviceDetailsPageModule)
+            children: [
+              {
+                path: '',
+                loadChildren: () => import('../cremation-process/cremation-process.module').then( m => m.CremationProcessPageModule)
+              },
+              {
+                path: 'device-details',
+                loadChildren: () => import('../device-details/device-details.module').then( m => m.DeviceDetailsPageModule)
+              }
+            ]
           },
         ],
       },
       {
         path: 'device',
-        loadChildren: () => import('../device-details/device-details.module').then( m => m.DeviceDetailsPageModule)
+        loadChildren: () => import('../cremation-process/cremation-process.module').then( m => m.CremationProcessPageModule)
       },
       {
         path: '',

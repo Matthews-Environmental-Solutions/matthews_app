@@ -18,20 +18,20 @@
 
 <ion-item-divider>
   <ion-label>
-    <h2 translate>Devices</h2>
+    <h2>{{'AvailableEquipments' | translate}}</h2>
   </ion-label>
 </ion-item-divider>
 
 <ion-content *ngIf="deviceListVm$ | async as deviceListVm">
   <ng-container *ngIf="deviceListVm.deviceList">
-    <ion-card *ngFor="let device of deviceListVm.deviceList" [routerLink]="['/app/tabs/facility/device', device.id]" (click)="updateSelectedCremator(device.name)">
+    <ion-card *ngFor="let device of deviceListVm.deviceList"  (click)="updateSelectedCremator(device.id, device.name)">
       <ion-item>
         <ion-icon name="flame-outline"></ion-icon>
         <ion-card-header>
           <ion-card-title>{{device.name}}</ion-card-title>
           <ion-card-subtitle>Secondary text</ion-card-subtitle>
         </ion-card-header>
-        <ion-icon name="information" slot="end"></ion-icon>
+        <ion-icon name="information" slot="end" (click)="navigateToDetailsPage($event, device.id)"></ion-icon> <!--[routerLink]="['/app/tabs/facility/device', device.id, 'device-details']"-->
       </ion-item>
     </ion-card>
   </ng-container>

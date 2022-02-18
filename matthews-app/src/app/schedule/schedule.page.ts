@@ -14,11 +14,13 @@ export class SchedulePage implements OnInit {
   searchTerm: string;
   selectedFacilityId: string;
   scheduleVm$ = this.caseStore.scheduleVm$;
+  defaultFacilityId: any;
 
   constructor(public toastController: ToastController, private caseStore: AppStoreService, public modalController: ModalController) { }
 
   ngOnInit() {
     this.showSearchbar = false;
+    this.setDefaultValues();
   }
 
   deleteCase(selectedCase: Case) {
@@ -39,5 +41,13 @@ export class SchedulePage implements OnInit {
     this.caseStore.openCaseModal(selectedCase ?
       { ...selectedCase, facilityId: this.selectedFacilityId } :
       { facilityId : this.selectedFacilityId } as Case);
+  }
+
+  setDefaultValues() {
+    this.caseStore.scheduleVm$.subscribe(result => {
+      this.defaultFacilityId = result.facilities[0].id;
+    });
+
+    this.caseStore.getCases(this.defaultFacilityId);
   }
 }

@@ -48,4 +48,9 @@ export class FacilityPage implements OnInit {
   revokeTokens() {
     this.auth.revokeTokens();
   }
+
+  navigateToDetailsPage($event, facilityId: string) {
+    $event.stopPropagation();
+    this.navCtrl.navigateForward(['app/tabs/facility', facilityId, 'facility-details']);
+  }
 }

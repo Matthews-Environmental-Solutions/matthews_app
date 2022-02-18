@@ -22,8 +22,8 @@
   <ng-container *ngIf="scheduleVm.cases">
     <ion-item lines="full">
       <ion-label>{{'SelectFacility' | translate}}:</ion-label>
-      <ion-select [interfaceOptions]="{cssClass:'custom-popover'}" interface="popover" placeholder="Select One" name="containerType" (ionChange)="selectedFacilityChanged($event)">
-        <ion-select-option *ngFor="let facility of scheduleVm.facilities;" value="{{ facility.id}}">{{ facility.name }}</ion-select-option>
+      <ion-select [interfaceOptions]="{cssClass:'custom-popover'}" value="{{ defaultFacilityId }}" interface="popover" placeholder="Select One" name="containerType" (ionChange)="selectedFacilityChanged($event)">
+        <ion-select-option *ngFor="let facility of scheduleVm.facilities;" value="{{ facility.id }}">{{ facility.name }}</ion-select-option>
       </ion-select>
     </ion-item>
     <p></p>
@@ -43,6 +43,7 @@
             <p>
               {{case.caseName}} &mdash; {{'Status' | translate}}: {{case.status}}
             </p>
+            <p>{{'Schedule' | translate}}: {{case.selectedDevice}}    {{case.createdTime}}</p>
           </ion-label>
         </ion-item>
     </ion-item-sliding>

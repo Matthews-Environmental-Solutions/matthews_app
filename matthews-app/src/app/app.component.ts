@@ -26,14 +26,10 @@ export class AppComponent {
     this.initializeApp();
     this.sideMenu();
 
-
     this.translateService.addLangs(['en', 'de']);
     this.translateService.setDefaultLang('en');
-
     const browserLang = this.translateService.getBrowserLang();
     this.translateService.use(browserLang.match(/en|de/) ? browserLang : 'en');
-
-    console.log("Current language: " + this.translateService.currentLang);
     this.language = this.translateService.currentLang;
   }
 
@@ -41,17 +37,17 @@ export class AppComponent {
     this.navigate =
     [
       {
-        title : 'Facility',
+        title : this.translateService.instant('Facility'),
         url   : '/app/tabs/facility',
         icon  : 'business-outline'
       },
       {
-        title : 'Schedule',
+        title : this.translateService.instant('Schedule'),
         url   : '/app/tabs/schedule',
         icon  : 'calendar-outline'
       },
       {
-        title : 'Logout',
+        title : this.translateService.instant('Logout'),
         url   : '/logout',
         icon  : 'log-out-outline'
       }
