@@ -7,6 +7,7 @@ import { AppStoreService } from '../app.store.service';
 import { Case } from '../case/case';
 import { ExtendCyclePage } from '../extend-cycle/extend-cycle.page';
 import { TranslateService } from '@ngx-translate/core';
+import { SignalRService } from '../core/signal-r.service';
 
 
 @Component({
@@ -27,11 +28,20 @@ export class CremationProcessPage implements OnInit {
   showSearchbar: boolean;
   searchTerm: string;
 
-  constructor(private appStore: AppStoreService, public alertController: AlertController, private popoverController: PopoverController, private translateService: TranslateService, private matStepperIntl: MatStepperIntl) {}
+  constructor(private appStore: AppStoreService,
+              private popoverController: PopoverController,
+              private translateService: TranslateService,
+              private matStepperIntl: MatStepperIntl,
+              private signalRService: SignalRService,
+              public alertController: AlertController) {}
 
   ngOnInit() {
     this.matStepperIntl.optionalLabel ="";
     this.matStepperIntl.changes.next();
+
+    this.signalRService.getAccessToken();
+    this.signalRService.initializeSignalRConnection();
+    //Call get method for data
   }
 
   startPreheat() {

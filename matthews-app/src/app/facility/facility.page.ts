@@ -14,7 +14,6 @@ export class FacilityPage implements OnInit {
   showSearchbar: boolean;
   searchTerm: string;
   userId: string;
-  accessToken: string;
 
   constructor(private auth: AuthService,
               public toastController: ToastController,
