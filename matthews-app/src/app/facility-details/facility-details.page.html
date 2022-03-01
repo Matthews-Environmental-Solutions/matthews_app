@@ -11,6 +11,21 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
-
+<ion-content *ngIf="$selectedFacility | async as selectedFacility">
+  <ion-item lines="full">
+    <ion-label position="stacked">Name</ion-label>
+    <ion-input value={{selectedFacility.name}} name="caseId" placeholder="-" type="text" readonly="true"></ion-input>
+  </ion-item>
+  <ion-item lines="full">
+    <ion-label position="stacked">Postal Code</ion-label>
+    <ion-input value={{selectedFacility.postalCode}} placeholder="-" name="caseId" type="text" readonly="true"></ion-input>
+  </ion-item>
+  <ion-item lines="full">
+    <ion-label position="stacked">City</ion-label>
+    <ion-input value={{selectedFacility.city}} name="caseId" placeholder="-" type="text" readonly="true"></ion-input>        
+  </ion-item>
+  <ion-item lines="full">
+    <ion-label position="stacked">Country</ion-label>
+    <ion-input value={{selectedFacility.country}} name="caseId" placeholder="-" type="text" readonly="true"></ion-input>
+  </ion-item>
 </ion-content>

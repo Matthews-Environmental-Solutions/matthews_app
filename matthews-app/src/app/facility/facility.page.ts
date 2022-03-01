@@ -32,13 +32,13 @@ export class FacilityPage implements OnInit {
   }
 
   selectFacility(facility: Facility) {
-    this.appStoreService.updateSelectedFacility(facility);
+    this.updateSelectedFacility(facility);
     this.navCtrl.navigateForward(['app/tabs/facility/device-list', facility.id]);
   }
 
   public async getUserInfo(): Promise<void> {
     await this.auth.loadUserInfo();
-    console.log("User: " + JSON.stringify(this.auth.user$))
+    console.log("User: " + JSON.stringify(this.auth.user$));
     this.auth.user$.subscribe(res => {
       this.appStoreService.getUserInfo(res.sub);
     });
@@ -48,8 +48,13 @@ export class FacilityPage implements OnInit {
     this.auth.revokeTokens();
   }
 
-  navigateToDetailsPage($event, facilityId: string) {
+  navigateToDetailsPage($event, facility: Facility) {
     $event.stopPropagation();
-    this.navCtrl.navigateForward(['app/tabs/facility', facilityId, 'facility-details']);
+    this.updateSelectedFacility(facility);
+    this.navCtrl.navigateForward(['app/tabs/facility', facility.id, 'facility-details']);
   }
+
+  updateSelectedFacility(facility: Facility) {
+    this.appStoreService.updateSelectedFacility(facility);
+   }
 }
