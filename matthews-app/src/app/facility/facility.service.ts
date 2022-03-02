@@ -16,7 +16,7 @@ export class FacilityService {
     ) { }
 
   getFacilities() {
-    return this.httpService.request<Facility[]>("GET", environment.i4connectedApiUrl + "sites/list");
+    return this.httpService.request<Facility[]>("GET", environment.i4connectedApiUrl + "sites/details/list");
   }
 
   getUserInfo(userId: string) {

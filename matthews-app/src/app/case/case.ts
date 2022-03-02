@@ -3,7 +3,7 @@ export interface Case {
     caseId: string;
     caseName: string;
     weight: string;
-    age: string
+    age: string;
     gender: string;
     containerType: string;
     containerSize: string;
