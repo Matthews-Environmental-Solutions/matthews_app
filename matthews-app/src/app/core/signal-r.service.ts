@@ -8,37 +8,33 @@ declare let $: any;
 @Injectable({
   providedIn: 'root'
 })
+
 export class SignalRService {
 
   constructor(private authService: AuthService) {}
 
-  public initializeSignalRConnection(): void {
+  public initializeSignalRConnection(signalId: string, func: (measurement) => void): void {
     const signalRServerEndPoint = 'https://matthewscremation.i4connected.cloud/api/signalr';
     const connection = $.hubConnection(signalRServerEndPoint);
     this.getAccessToken().then((token) => {
       connection.qs = { access_token: token };
       const proxy = connection.createHubProxy('measurementHub');
-      proxy.on('onMeasurement', this.onMessageReceived);
+      proxy.on('onMeasurement', func);
 
       connection.start().done(() => {
           console.log('Connected to Measurement Hub');
-          proxy.invoke('Subscribe', 'bbb709ea-4db7-4a9c-80d0-c45b10d137a5')
+          proxy.invoke('Subscribe', signalId)
             .done((measurement) => {
                 console.log(measurement);
               });
         }).fail((error) => {
-            console.log('Notification Hub error -> ' + error);
+            console.log('Measurement Hub error -> ' + error);
           });
     });
-  }
-
-  private onMessageReceived(measurement: any) {
-    console.log('New message received from Server: ' + measurement);
   }
 
   public async getAccessToken() {
     const token: TokenResponse = await this.authService.getValidToken();
     return token.accessToken;
   }
-
 }

@@ -19,6 +19,8 @@ export class CremationProcessPage implements OnInit {
   selectedCase$ = this.appStore.selectedCase$;
   selectedCrematorName$ = this.appStore.selectedCrematorName$;
   selectedFacility$ = this.appStore.selectedFacility$;
+  primaryTemp$ = this.appStore.primaryTemp$;
+  secondaryTemp$ = this.appStore.secondaryTemp$;
   isPreheatStarted = false;
   isCaseSelected = false;
   isCycleStarted = false;
@@ -38,14 +40,16 @@ export class CremationProcessPage implements OnInit {
   ngOnInit() {
     this.matStepperIntl.optionalLabel ="";
     this.matStepperIntl.changes.next();
-
-    this.signalRService.getAccessToken();
-    this.signalRService.initializeSignalRConnection();
-    //Call get method for data
   }
 
   startPreheat() {
     this.isPreheatStarted = true;
+
+    this.selectedCrematorName$.subscribe((response) => {
+      this.appStore.getEwonPreheatValue(response);
+      this.appStore.getPrimaryChamberTempValues(response);
+      this.appStore.getSecondaryChamberTempValues(response);
+    })
   }
 
   stopPreheat() {

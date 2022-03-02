@@ -15,6 +15,8 @@ import { FacilityService } from './facility/facility.service';
 import { UserInfo } from './core/userInfo';
 import { AuthService } from 'ionic-appauth';
 import { LoadingService } from './core/loading.service';
+import { CremationProcessService } from './cremation-process/cremation-process.service';
+import { SignalRService } from './core/signal-r.service';
 
 export interface AppState {
     cases: Case[];
@@ -25,6 +27,13 @@ export interface AppState {
     userInfo: UserInfo;
     selectedCrematorName: string;
     selectedFacility: Facility;
+    primaryTemp: string;
+    secondaryTemp: string;
+    ewonPreheat: string;
+}
+
+export interface Measurement {
+  value: string;
 }
 
 @Injectable({
@@ -36,8 +45,10 @@ export class AppStoreService extends ComponentStore<AppState> {
     		        private caseService: CaseService,
                 private facilitiesService: FacilityService,
                 private deviceListService: DeviceListService,
+                private cremationProcessService: CremationProcessService,
                 public modalController: ModalController,
-                private loadingService: LoadingService) {
+                private loadingService: LoadingService,
+                private signalRService: SignalRService) {
 
             super({ cases: [],
                     selectedCase: {} as Case,
@@ -46,7 +57,10 @@ export class AppStoreService extends ComponentStore<AppState> {
                     deviceList: [],
                     userInfo: {} as UserInfo,
                     selectedCrematorName: '',
-                    selectedFacility: {} as Facility});
+                    selectedFacility: {} as Facility,
+                    primaryTemp: '',
+                    secondaryTemp: '',
+                    ewonPreheat: ''});
     }
 
     readonly cases$: Observable<Case[]> = this.select(state => state.cases);
@@ -57,6 +71,9 @@ export class AppStoreService extends ComponentStore<AppState> {
     readonly userInfo$: Observable<UserInfo> = this.select(state => state.userInfo);
     readonly selectedCrematorName$: Observable<string> = this.select(state => state.selectedCrematorName);
     readonly selectedFacility$: Observable<Facility> = this.select(state => state.selectedFacility);
+    readonly primaryTemp$: Observable<string> = this.select(state => state.primaryTemp);
+    readonly secondaryTemp$: Observable<string> = this.select(state => state.secondaryTemp);
+    readonly ewonPreheat$: Observable<string> = this.select(state => state.ewonPreheat);
 
     readonly scheduleVm$ = this.select(
       this.cases$,
@@ -131,6 +148,21 @@ export class AppStoreService extends ComponentStore<AppState> {
     readonly updateLoading = this.updater((state: AppState, loading: boolean) => ({
           ...state,
           loading
+    }));
+
+    readonly updatePrimaryTemp = this.updater((state: AppState, primaryTemp: string) => ({
+      ...state,
+      primaryTemp
+    }));
+
+    readonly updateSecondaryTemp = this.updater((state: AppState, secondaryTemp: string) => ({
+      ...state,
+      secondaryTemp
+    }));
+
+    readonly updateEwonPreheat = this.updater((state: AppState, ewonPreheat: string) => ({
+      ...state,
+      ewonPreheat
     }));
 
     readonly getFacilities = this.effect(trigger$ => trigger$.pipe(
@@ -209,9 +241,56 @@ export class AppStoreService extends ComponentStore<AppState> {
               this.createImageFromBlob(response);
             });
           });
-
         }))
     ));
+
+    readonly getPrimaryChamberTempValues = this.effect<string>(trigger$ => trigger$.pipe(
+      tap(() => this.loadingService.present()),
+      switchMap((deviceName) =>  this.cremationProcessService.getSignalId("TT100_PV", deviceName).then(
+        (signalId: string) => {
+          //console.log("Primary signalId: " + signalId);
+          this.signalRService.initializeSignalRConnection(signalId, (measurement: Measurement) => {
+            if(measurement) {
+              console.log("Primary measurement value: " + measurement.value);
+              this.updatePrimaryTemp(measurement.value);
+            }
+          });
+
+          this.loadingService.dismiss();
+        }))
+      ));
+
+      readonly getSecondaryChamberTempValues = this.effect<string>(trigger$ => trigger$.pipe(
+        tap(() => this.loadingService.present()),
+        switchMap((deviceName) =>  this.cremationProcessService.getSignalId("TT101_PV", deviceName).then(
+          (signalId: string) => {
+            //console.log("Secondary signalId: " + signalId);
+            this.signalRService.initializeSignalRConnection(signalId, (measurement: Measurement) => {
+              if(measurement) {
+                console.log("Secondary measurement value: " + measurement.value);
+                this.updateSecondaryTemp(measurement.value);
+              }
+            });
+
+            this.loadingService.dismiss();
+          }))
+        ));
+
+        readonly getEwonPreheatValue = this.effect<string>(trigger$ => trigger$.pipe(
+          tap(() => this.loadingService.present()),
+          switchMap((deviceName) =>  this.cremationProcessService.getSignalId("Ewon_Preheat", deviceName).then(
+            (signalId: string) => {
+              console.log("Ewon_Preheat signalId: " + signalId);
+              this.signalRService.initializeSignalRConnection(signalId, (measurement: Measurement) => {
+                if(measurement) {
+                  console.log("Ewon_Preheat value: " + measurement.value);
+                  this.updateEwonPreheat(measurement.value);
+                }
+              });
+
+              this.loadingService.dismiss();
+            }))
+          ));
 
     createImageFromBlob(userInfo: UserInfo) {
       const reader = new FileReader();

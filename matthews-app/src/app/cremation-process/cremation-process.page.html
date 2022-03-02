@@ -28,8 +28,8 @@
         </ion-item>
         <ion-card-content>
           <ion-label >
-            <p> {{'PrimChamber' | translate}} 435°C/850°C </p>
-            <p> {{'SecChamber' | translate}} 435°C/950°C </p>
+            <p> {{'PrimChamber' | translate}} {{primaryTemp$ | async}}°C </p>
+            <p> {{'SecChamber' | translate}} {{secondaryTemp$ | async}}°C </p>
            </ion-label>
         </ion-card-content>
         <ion-card-content>
