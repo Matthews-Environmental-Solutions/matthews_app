@@ -13,10 +13,10 @@ import { DeviceListService } from './device-list/device-list.service';
 import { Facility } from './facility/facility';
 import { FacilityService } from './facility/facility.service';
 import { UserInfo } from './core/userInfo';
-import { AuthService } from 'ionic-appauth';
+import { AuthService, ConsoleLogObserver } from 'ionic-appauth';
 import { LoadingService } from './core/loading.service';
 import { CremationProcessService } from './cremation-process/cremation-process.service';
-import { SignalRService } from './core/signal-r.service';
+import { Measurement, SignalRService } from './core/signal-r.service';
 
 export interface AppState {
     cases: Case[];
@@ -27,14 +27,10 @@ export interface AppState {
     userInfo: UserInfo;
     selectedCrematorName: string;
     selectedFacility: Facility;
-    primaryTemp: string;
-    secondaryTemp: string;
-    ewonPreheat: string;
+    signalsMeasurement: Measurement[];
 }
 
-export interface Measurement {
-  value: string;
-}
+
 
 @Injectable({
   providedIn: 'root'
@@ -58,9 +54,7 @@ export class AppStoreService extends ComponentStore<AppState> {
                     userInfo: {} as UserInfo,
                     selectedCrematorName: '',
                     selectedFacility: {} as Facility,
-                    primaryTemp: '',
-                    secondaryTemp: '',
-                    ewonPreheat: ''});
+                    signalsMeasurement: []});
     }
 
     readonly cases$: Observable<Case[]> = this.select(state => state.cases);
@@ -71,9 +65,7 @@ export class AppStoreService extends ComponentStore<AppState> {
     readonly userInfo$: Observable<UserInfo> = this.select(state => state.userInfo);
     readonly selectedCrematorName$: Observable<string> = this.select(state => state.selectedCrematorName);
     readonly selectedFacility$: Observable<Facility> = this.select(state => state.selectedFacility);
-    readonly primaryTemp$: Observable<string> = this.select(state => state.primaryTemp);
-    readonly secondaryTemp$: Observable<string> = this.select(state => state.secondaryTemp);
-    readonly ewonPreheat$: Observable<string> = this.select(state => state.ewonPreheat);
+    readonly signalsMeasurement$: Observable<Measurement[]> = this.select(state => state.signalsMeasurement);
 
     readonly scheduleVm$ = this.select(
       this.cases$,
@@ -150,19 +142,9 @@ export class AppStoreService extends ComponentStore<AppState> {
           loading
     }));
 
-    readonly updatePrimaryTemp = this.updater((state: AppState, primaryTemp: string) => ({
+    readonly updateInitSignalsMeasurements = this.updater((state: AppState, signalsMeasurement: Measurement[]) => ({
       ...state,
-      primaryTemp
-    }));
-
-    readonly updateSecondaryTemp = this.updater((state: AppState, secondaryTemp: string) => ({
-      ...state,
-      secondaryTemp
-    }));
-
-    readonly updateEwonPreheat = this.updater((state: AppState, ewonPreheat: string) => ({
-      ...state,
-      ewonPreheat
+      signalsMeasurement
     }));
 
     readonly getFacilities = this.effect(trigger$ => trigger$.pipe(
@@ -246,31 +228,108 @@ export class AppStoreService extends ComponentStore<AppState> {
 
     readonly getPrimaryChamberTempValues = this.effect<string>(trigger$ => trigger$.pipe(
       tap(() => this.loadingService.present()),
-      switchMap((deviceName) =>  this.cremationProcessService.getSignalId("TT100_PV", deviceName).then(
-        (signalId: string) => {
-          //console.log("Primary signalId: " + signalId);
-          this.signalRService.initializeSignalRConnection(signalId, (measurement: Measurement) => {
-            if(measurement) {
-              console.log("Primary measurement value: " + measurement.value);
-              this.updatePrimaryTemp(measurement.value);
-            }
-          });
+      switchMap((deviceName: string) =>
+        Promise.all(['TT100_PV', 'TT101_PV'].map(signalName =>
+          this.cremationProcessService.getSignalId(signalName, deviceName)))
+          .then((signalIds: string[]) => {
+            this.signalRService.proxy.invoke('SubscribeAll', signalIds)
+              .done((measurement) => {
+                console.log(measurement);
+                this.updateInitSignalsMeasurements(this.getSortedObjects(['TT100_PV', 'TT101_PV'], measurement));
+              })
+              this.loadingService.dismiss();
+            }))));
 
-          this.loadingService.dismiss();
-        }))
-      ));
+          getSortedObjects(signalNames: string[], measuremnts: Measurement[]) {
+            for(let i = 0; i < signalNames.length; i++)
+            {
+              measuremnts[i].signalName = signalNames[i];
+            }
+
+            console.log("MEASUREMENT UPDATETD WITH NAMES" + JSON.stringify(measuremnts));
+            return measuremnts;
+          }
+
+        // this.cremationProcessService.getSignalId("TT100_PV", deviceName).then( // napraviti da dobijemo niz signalId-eva
+        // (signalId: string) => {
+        //   console.log("Primary signalId: " + signalId);
+          //await this.signalRService.initializeSignalRConnection();
+          // this.signalRService.proxy.invoke('Read', signalId) // Reand za svaki od signala
+          // .done((measurement) => {
+          //   console.log(measurement);
+          //  // this.updatePrimaryTemp(measurement.value);
+          // });
+
+          // this.signalRService.proxy.invoke('SubscribeAll', ['e3998ff6-b625-4221-b72b-30ab2d7e09c1', '5b53e9f4-0c42-43b9-8563-c16bdb125398']) // Reand za svaki od signala
+          // .done((measurement) => {
+          //   console.log(measurement);
+
+          //   measurement.forEach(element => {
+          //     if(element.signalId === '5b53e9f4-0c42-43b9-8563-c16bdb125398')
+          //   {
+          //     console.log("PRVI IF");
+          //     this.updateInitSignalsMeasurements(element.value);
+          //   }
+          //   if(element.signalId === 'e3998ff6-b625-4221-b72b-30ab2d7e09c1')
+          //   {
+          //     console.log("DRUGI IF");
+          //    // this.updateSecondaryTemp(element.value);
+          //   }
+          //   });
+
+
+          // });
+        // this.signalRService.addListener((measurement: Measurement) => {
+        //   if(measurement.signalId === '5b53e9f4-0c42-43b9-8563-c16bdb125398')
+        //     {
+        //       console.log("TRECI IF");
+        //       this.updatePrimaryTemp(measurement.value);
+        //     }
+        //     if(measurement.signalId === 'e3998ff6-b625-4221-b72b-30ab2d7e09c1')
+        //     {
+        //       console.log("CETVRT|I IF");
+        //       this.updateSecondaryTemp(measurement.value);
+        //     }
+        //   console.log("addListener: ");
+        //   console.log(measurement);
+        //   //this.updatePrimaryTemp(measurement.value);
+        // });
+
+        //this.signalRService.subscribeToSignalValues(['e3998ff6-b625-4221-b72b-30ab2d7e09c1', '5b53e9f4-0c42-43b9-8563-c16bdb125398']);
+
+      //   this.loadingService.dismiss();
+      //     // setTimeout(() =>
+      //     // { e3998ff6-b625-4221-b72b-30ab2d7e09c1     5b53e9f4-0c42-43b9-8563-c16bdb125398
+
+
+      //     //   console.log("WAITING FOR TIMEOUT")
+      //     // }, 5000);
+
+      //   }))
+      // ));
 
       readonly getSecondaryChamberTempValues = this.effect<string>(trigger$ => trigger$.pipe(
         tap(() => this.loadingService.present()),
         switchMap((deviceName) =>  this.cremationProcessService.getSignalId("TT101_PV", deviceName).then(
           (signalId: string) => {
-            //console.log("Secondary signalId: " + signalId);
-            this.signalRService.initializeSignalRConnection(signalId, (measurement: Measurement) => {
-              if(measurement) {
-                console.log("Secondary measurement value: " + measurement.value);
-                this.updateSecondaryTemp(measurement.value);
-              }
-            });
+          //   console.log("Secondary signalId: " + signalId);
+          //   this.signalRService.proxy.invoke('Read', signalId)
+          //   .done((measurement) => {
+          //     console.log(measurement);
+          //     this.updateSecondaryTemp(measurement.value);
+          //     //this.signalRService.subscribeToSignalValues(signalId);
+          //   });
+          //   setTimeout(() =>
+          // {
+          //   this.signalRService.addListener((measurement: Measurement) => {
+          //     console.log("Secondary listener: ");
+          //     this.updateSecondaryTemp(measurement.value);
+          //   });
+
+
+
+          //   console.log("WAITING FOR TIMEOUT")
+          // }, 5000);
 
             this.loadingService.dismiss();
           }))
@@ -281,12 +340,29 @@ export class AppStoreService extends ComponentStore<AppState> {
           switchMap((deviceName) =>  this.cremationProcessService.getSignalId("Ewon_Preheat", deviceName).then(
             (signalId: string) => {
               console.log("Ewon_Preheat signalId: " + signalId);
-              this.signalRService.initializeSignalRConnection(signalId, (measurement: Measurement) => {
-                if(measurement) {
-                  console.log("Ewon_Preheat value: " + measurement.value);
-                  this.updateEwonPreheat(measurement.value);
-                }
-              });
+              // this.signalRService.initializeSignalRConnection(signalId, (measurement: Measurement) => {
+              //   console.log("getEwonPreheatValue FUNC CALLED!!!!!!!!!!!" + JSON.stringify(measurement));
+
+              //   if (measurement) {
+              //     console.log("Ewon_Preheat value: " + JSON.stringify(measurement));
+              //     //this.updateEwonPreheat(measurement.value);
+              //     // measurement.subscribe((res) => {
+              //     // })
+              //   }
+              // });
+
+                // this.signalRService.proxy.invoke('Read', signalId)
+                //   .done((measurement) => {
+                //     console.log("READ:" + JSON.stringify(measurement));
+                //   })
+              // , (measurement) => {
+              //   console.log("getEwonPreheatValue FUNC CALLED!!!!!!!!!!!" + JSON.stringify(measurement));
+
+              //   if(measurement) {
+              //     console.log("Ewon_Preheat value: " + measurement.value);
+              //     this.updateEwonPreheat(measurement.value);
+              //   }
+              // });
 
               this.loadingService.dismiss();
             }))

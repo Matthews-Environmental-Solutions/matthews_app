@@ -26,10 +26,10 @@
         <ion-item>
           <ion-label>{{'PreheatInProgress' | translate}}...</ion-label>
         </ion-item>
-        <ion-card-content>
-          <ion-label >
-            <p> {{'PrimChamber' | translate}} {{primaryTemp$ | async}}°C </p>
-            <p> {{'SecChamber' | translate}} {{secondaryTemp$ | async}}°C </p>
+        <ion-card-content *ngIf="signalsMeasurement$ | async as signalsMeasurement">
+          <ion-label *ngFor="let signalsMeasurement of signalsMeasurement;">
+            <p *ngIf="signalsMeasurement.signalName == 'TT100_PV'"> {{'PrimChamber' | translate}} {{signalsMeasurement.value}}°C </p>
+            <p *ngIf="signalsMeasurement.signalName == 'TT101_PV'"> {{'SecChamber' | translate}} {{signalsMeasurement.value}}°C </p>
            </ion-label>
         </ion-card-content>
         <ion-card-content>
