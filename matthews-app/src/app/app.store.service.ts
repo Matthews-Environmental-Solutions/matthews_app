@@ -147,6 +147,11 @@ export class AppStoreService extends ComponentStore<AppState> {
       signalsMeasurement
     }));
 
+    readonly updateDevicesStatusSignals = this.updater((state: AppState, deviceList: Device[]) => ({
+      ...state,
+      deviceList
+    }));
+
     readonly getFacilities = this.effect(trigger$ => trigger$.pipe(
       tap(() => this.loadingService.present()),
       switchMap(() =>  this.facilitiesService.getFacilities().then(
@@ -159,19 +164,33 @@ export class AppStoreService extends ComponentStore<AppState> {
     readonly getDeviceList = this.effect<string>(trigger$ => trigger$.pipe(
       tap(() => this.loadingService.present()),
       switchMap(async (facilityId) => this.deviceListService.getDeviceIdsByFacilityId(facilityId).then(
-        (response: string[]) => {
-          Promise.all(response.map(id => this.deviceListService.getDeviceNameById(id))).then((names: string[]) => {
+        (devideIds: string[]) => {
+          Promise.all(devideIds.map(id => this.deviceListService.getDeviceNameById(id))).then((names: string[]) => {
+            Promise.all(names.map(deviceName =>
+              this.cremationProcessService.getSignalId("Machine_Status", deviceName)))
+              .then((signalIds: string[]) => {
 
-            this.updateDeviceList(this.getSortedDeviceObjects(response, names));
+                // List of devices are shown on UI
+                this.signalRService.proxy.invoke('SubscribeAll', signalIds)
+                  .done((measurement) => {
+                    console.log(measurement);
+                    this.updateDeviceList(this.getSortedDeviceObjects(devideIds, names, signalIds, measurement));
+                    //this.updateDevicesStatusSignals(this.getSortedObjects(['TT100_PV', 'TT101_PV'], measurement));
+                    //novi updater gde preko signal ID-a updateujes odgovarajuci
+                  });
+
+                  this.loadingService.dismiss();
+                });
           });
           this.loadingService.dismiss();
         }))
     ));
 
-    getSortedDeviceObjects(deviceIds: string[], deviceNames: string[]) {
+    getSortedDeviceObjects(deviceIds: string[], deviceNames: string[], signalIds: string[], measurements: Measurement[]) {
       const devices: Device[] = [];
-      for (let i = 0; i < deviceNames.length; i++) {
-        devices.push({ id: deviceIds[i], name: deviceNames[i] });
+      for (let i = 0; i < deviceIds.length; i++) {
+        const measurement = measurements.find(x => x.signalId == signalIds[i]);
+        devices.push({ id: deviceIds[i], name: deviceNames[i], signalStatusId: signalIds[i], signalStatusValue: measurement.value});
       }
       devices.sort((a, b) => (a.name < b.name ? -1 : 1));
       return devices;
