@@ -29,7 +29,9 @@
         <ion-icon name="flame-outline"></ion-icon>
         <ion-card-header>
           <ion-card-title>{{device.name}}</ion-card-title>
-          <ion-card-subtitle>Secondary text</ion-card-subtitle>
+          <ng-container *ngFor="let signal of device.signals">
+            <ion-card-subtitle  *ngIf="signal.name == 'Machine_Status'">{{signal.value}}</ion-card-subtitle>
+          </ng-container>
         </ion-card-header>
         <ion-icon name="information" slot="end" (click)="navigateToDetailsPage($event, device.id)"></ion-icon> <!--[routerLink]="['/app/tabs/facility/device', device.id, 'device-details']"-->
       </ion-item>

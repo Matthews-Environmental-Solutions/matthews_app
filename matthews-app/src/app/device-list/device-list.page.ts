@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NavController } from '@ionic/angular';
 import { AppStoreService } from '../app.store.service';
+import { SignalRService } from '../core/signal-r.service';
 
 @Component({
   selector: 'app-device-list',
@@ -17,11 +18,22 @@ export class DeviceListPage implements OnInit {
   devices$ = this.appStore.deviceList$;
   selectedFacility$ = this.appStore.selectedFacility$;
 
-  constructor(private route: ActivatedRoute, private appStore: AppStoreService, private navCtrl: NavController) { }
+  constructor(private route: ActivatedRoute, private appStore: AppStoreService, private navCtrl: NavController, private signalRService: SignalRService) { }
 
   ngOnInit() {
-    const id = this.route.snapshot.paramMap.get('id');
-    this.appStore.getDeviceList(id);
+    const facilityId = this.route.snapshot.paramMap.get('id');
+    //this.appStore.getDevices();
+    this.signalRService.initializeSignalRConnection().then((response) => {
+      response.start().done(() => {
+        console.log("Connection started!");
+        this.appStore.getDeviceList(facilityId);
+        //this.loadingService.dismiss();
+      }).catch((error: any) => {
+        console.log(error);
+      });
+    })
+
+
   }
 
   cancelSearch(): void {

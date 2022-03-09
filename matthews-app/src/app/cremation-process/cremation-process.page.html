@@ -26,11 +26,15 @@
         <ion-item>
           <ion-label>{{'PreheatInProgress' | translate}}...</ion-label>
         </ion-item>
-        <ion-card-content *ngIf="signalsMeasurement$ | async as signalsMeasurement">
-          <ion-label *ngFor="let signalsMeasurement of signalsMeasurement;">
-            <p *ngIf="signalsMeasurement.signalName == 'TT100_PV'"> {{'PrimChamber' | translate}} {{signalsMeasurement.value}}°C </p>
-            <p *ngIf="signalsMeasurement.signalName == 'TT101_PV'"> {{'SecChamber' | translate}} {{signalsMeasurement.value}}°C </p>
-           </ion-label>
+        <ion-card-content *ngIf="deviceList$ | async as deviceList">
+          <ng-container *ngFor="let device of deviceList">
+            <ion-label *ngIf="device.id == deviceId">
+              <ng-container *ngFor="let signal of device.signals">
+                <p *ngIf="signal.name == 'TT100_PV'"> {{'PrimChamber' | translate}} {{signal.value}}°C </p>
+                <p *ngIf="signal.name == 'TT101_PV'"> {{'SecChamber' | translate}} {{signal.value}}°C </p>
+            </ng-container>
+             </ion-label>
+          </ng-container>
         </ion-card-content>
         <ion-card-content>
           {{'Remaining' | translate}} 10 min
@@ -72,7 +76,7 @@
 
       <ion-item>
           <ion-label>{{'BurnMode' | translate}}</ion-label>
-        </ion-item>
+
       <ion-segment (ionChange)="segmentChanged($event)">
         <ion-segment-button>
           <ion-label>{{'Simplicity' | translate}}</ion-label>
@@ -84,6 +88,7 @@
           <ion-label>{{'Standard' | translate}}</ion-label>
         </ion-segment-button>
       </ion-segment>
+    </ion-item>
       <p>
         <ion-button expand="block" (click)="startCycle()" color="secondary">
           <ion-icon slot="end" name="arrow-forward"></ion-icon>

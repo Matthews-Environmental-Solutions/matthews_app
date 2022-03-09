@@ -8,6 +8,8 @@ import { Case } from '../case/case';
 import { ExtendCyclePage } from '../extend-cycle/extend-cycle.page';
 import { TranslateService } from '@ngx-translate/core';
 import { SignalRService } from '../core/signal-r.service';
+import { ActivatedRoute } from '@angular/router';
+import { Device } from '../device-list/device';
 
 
 @Component({
@@ -19,7 +21,7 @@ export class CremationProcessPage implements OnInit {
   selectedCase$ = this.appStore.selectedCase$;
   selectedCrematorName$ = this.appStore.selectedCrematorName$;
   selectedFacility$ = this.appStore.selectedFacility$;
-  signalsMeasurement$ = this.appStore.signalsMeasurement$;
+  deviceList$ = this.appStore.deviceList$;
   isPreheatStarted = false;
   isCaseSelected = false;
   isCycleStarted = false;
@@ -28,29 +30,29 @@ export class CremationProcessPage implements OnInit {
   isRakeOutStarted = false;
   showSearchbar: boolean;
   searchTerm: string;
+  deviceId: string;
 
   constructor(private appStore: AppStoreService,
               private popoverController: PopoverController,
               private translateService: TranslateService,
               private matStepperIntl: MatStepperIntl,
-              private signalRService: SignalRService,
+              private route: ActivatedRoute,
               public alertController: AlertController) {}
 
   ngOnInit() {
     this.matStepperIntl.optionalLabel ="";
     this.matStepperIntl.changes.next();
-    this.signalRService.initializeSignalRConnection();
+    this.deviceId = this.route.snapshot.paramMap.get('id');
+    console.log("Device ID: " + this.deviceId);
+    // this.appStore.deviceList$.subscribe((devices) => {
+    //   this.selectedDevice = devices.find(device => device.id == deviceId);
+    //   console.log(this.selectedDevice);
+    // });
+    //this.signalRService.initializeSignalRConnection();
   }
 
   startPreheat() {
     this.isPreheatStarted = true;
-
-    this.selectedCrematorName$.subscribe((response) => {
-      //this.appStore.getEwonPreheatValue(response);
-      this.appStore.getSecondaryChamberTempValues(response);
-      this.appStore.getPrimaryChamberTempValues(response);
-
-    })
   }
 
   stopPreheat() {

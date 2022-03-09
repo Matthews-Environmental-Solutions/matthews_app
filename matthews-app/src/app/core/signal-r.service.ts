@@ -20,23 +20,25 @@ export interface Measurement {
 export class SignalRService {
   public proxy: any;
   private connection: any;
-  private waitedAnswer: Measurement;
 
   constructor(private authService: AuthService, private loadingService: LoadingService) { }
 
-  public initializeSignalRConnection(): void {
+  public async initializeSignalRConnection(): Promise<any> {
     this.loadingService.present();
     const signalRServerEndPoint = 'https://matthewscremation.i4connected.cloud/api/signalr';
     this.connection = $.hubConnection(signalRServerEndPoint);
     //this.connection.logging = true;
-    this.getAccessToken().then((token) => {
+    await this.getAccessToken().then((token) => {
       this.connection.qs = { access_token: token };
       this.proxy = this.connection.createHubProxy('measurementHub');
-      this.startConnection();
+
+      //this.startConnection();
     });
+
+    return this.connection;
   }
 
-  public startConnection(){
+  public startConnection() {
     this.connection.start().done(() => {
       console.log("Connection started!");
       this.loadingService.dismiss();

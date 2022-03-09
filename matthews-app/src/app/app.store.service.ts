@@ -17,6 +17,7 @@ import { AuthService, ConsoleLogObserver } from 'ionic-appauth';
 import { LoadingService } from './core/loading.service';
 import { CremationProcessService } from './cremation-process/cremation-process.service';
 import { Measurement, SignalRService } from './core/signal-r.service';
+import { Signal } from './device-list/Signal';
 
 export interface AppState {
     cases: Case[];
@@ -27,10 +28,7 @@ export interface AppState {
     userInfo: UserInfo;
     selectedCrematorName: string;
     selectedFacility: Facility;
-    signalsMeasurement: Measurement[];
 }
-
-
 
 @Injectable({
   providedIn: 'root'
@@ -53,8 +51,7 @@ export class AppStoreService extends ComponentStore<AppState> {
                     deviceList: [],
                     userInfo: {} as UserInfo,
                     selectedCrematorName: '',
-                    selectedFacility: {} as Facility,
-                    signalsMeasurement: []});
+                    selectedFacility: {} as Facility});
     }
 
     readonly cases$: Observable<Case[]> = this.select(state => state.cases);
@@ -65,7 +62,6 @@ export class AppStoreService extends ComponentStore<AppState> {
     readonly userInfo$: Observable<UserInfo> = this.select(state => state.userInfo);
     readonly selectedCrematorName$: Observable<string> = this.select(state => state.selectedCrematorName);
     readonly selectedFacility$: Observable<Facility> = this.select(state => state.selectedFacility);
-    readonly signalsMeasurement$: Observable<Measurement[]> = this.select(state => state.signalsMeasurement);
 
     readonly scheduleVm$ = this.select(
       this.cases$,
@@ -122,6 +118,11 @@ export class AppStoreService extends ComponentStore<AppState> {
       deviceList
     }));
 
+    readonly updateDeviceSignals = this.updater((state: AppState, deviceSignalsMap:  [string, Signal[]]) => ({
+      ...state,
+      deviceList: this.getUpdatedSignalsForDevice(state.deviceList, deviceSignalsMap)
+    }));
+
     readonly updateCases = this.updater((state: AppState, cases: Case[]) => ({
             ...state,
             cases: [...cases]
@@ -162,38 +163,44 @@ export class AppStoreService extends ComponentStore<AppState> {
       ));
 
     readonly getDeviceList = this.effect<string>(trigger$ => trigger$.pipe(
-      tap(() => this.loadingService.present()),
-      switchMap(async (facilityId) => this.deviceListService.getDeviceIdsByFacilityId(facilityId).then(
-        (devideIds: string[]) => {
-          Promise.all(devideIds.map(id => this.deviceListService.getDeviceNameById(id))).then((names: string[]) => {
-            Promise.all(names.map(deviceName =>
-              this.cremationProcessService.getSignalId("Machine_Status", deviceName)))
-              .then((signalIds: string[]) => {
+      //tap(() => this.loadingService.present()),
+      switchMap((facilityId) => this.deviceListService.getDevices(facilityId).then(
+        (devices: Device[]) => {
+         this.updateDeviceList(devices);
+         this.addMeasurementListener(devices);
+          devices.forEach(device => {
+              this.deviceListService.getSignalsForDevice(device.id).then(
+                (signals) => {
+                  this.signalRService.proxy.invoke('SubscribeAll', signals.map(x => x.id))
+                    .done((measurements) => {
+                      //console.log("SUBSCRIPTIONS WERE DONE");
+                      measurements.forEach(measurement => {
+                        signals.find(signal => signal.id == measurement.signalId).value = measurement.value;
+                      });
 
-                // List of devices are shown on UI
-                this.signalRService.proxy.invoke('SubscribeAll', signalIds)
-                  .done((measurement) => {
-                    console.log(measurement);
-                    this.updateDeviceList(this.getSortedDeviceObjects(devideIds, names, signalIds, measurement));
-                    //this.updateDevicesStatusSignals(this.getSortedObjects(['TT100_PV', 'TT101_PV'], measurement));
-                    //novi updater gde preko signal ID-a updateujes odgovarajuci
-                  });
+                      const deviceSignalsMap: [string, Signal[]] = [device.id, signals];
+                      this.updateDeviceSignals(deviceSignalsMap);
+                    });
+                  })});
 
-                  this.loadingService.dismiss();
-                });
-          });
+
+
           this.loadingService.dismiss();
         }))
     ));
 
-    getSortedDeviceObjects(deviceIds: string[], deviceNames: string[], signalIds: string[], measurements: Measurement[]) {
-      const devices: Device[] = [];
-      for (let i = 0; i < deviceIds.length; i++) {
-        const measurement = measurements.find(x => x.signalId == signalIds[i]);
-        devices.push({ id: deviceIds[i], name: deviceNames[i], signalStatusId: signalIds[i], signalStatusValue: measurement.value});
-      }
-      devices.sort((a, b) => (a.name < b.name ? -1 : 1));
-      return devices;
+    addMeasurementListener(devices: Device[]) {
+      this.signalRService.addListener((measurement: Measurement) => {
+        console.log(devices);
+        devices.forEach(device => {
+          const signalToUpdate = device.signals.find(signal => signal.id == measurement.signalId);
+          if(signalToUpdate)  {
+            signalToUpdate.value = measurement.value;
+          }
+        });
+
+        this.updateDeviceList(devices);
+      });
     }
 
     readonly getCases = this.effect<string>(cases$ => cases$.pipe(
@@ -245,148 +252,6 @@ export class AppStoreService extends ComponentStore<AppState> {
         }))
     ));
 
-    readonly getPrimaryChamberTempValues = this.effect<string>(trigger$ => trigger$.pipe(
-      tap(() => this.loadingService.present()),
-      switchMap((deviceName: string) =>
-        Promise.all(['TT100_PV', 'TT101_PV'].map(signalName =>
-          this.cremationProcessService.getSignalId(signalName, deviceName)))
-          .then((signalIds: string[]) => {
-            this.signalRService.proxy.invoke('SubscribeAll', signalIds)
-              .done((measurement) => {
-                console.log(measurement);
-                this.updateInitSignalsMeasurements(this.getSortedObjects(['TT100_PV', 'TT101_PV'], measurement));
-              })
-              this.loadingService.dismiss();
-            }))));
-
-          getSortedObjects(signalNames: string[], measuremnts: Measurement[]) {
-            for(let i = 0; i < signalNames.length; i++)
-            {
-              measuremnts[i].signalName = signalNames[i];
-            }
-
-            console.log("MEASUREMENT UPDATETD WITH NAMES" + JSON.stringify(measuremnts));
-            return measuremnts;
-          }
-
-        // this.cremationProcessService.getSignalId("TT100_PV", deviceName).then( // napraviti da dobijemo niz signalId-eva
-        // (signalId: string) => {
-        //   console.log("Primary signalId: " + signalId);
-          //await this.signalRService.initializeSignalRConnection();
-          // this.signalRService.proxy.invoke('Read', signalId) // Reand za svaki od signala
-          // .done((measurement) => {
-          //   console.log(measurement);
-          //  // this.updatePrimaryTemp(measurement.value);
-          // });
-
-          // this.signalRService.proxy.invoke('SubscribeAll', ['e3998ff6-b625-4221-b72b-30ab2d7e09c1', '5b53e9f4-0c42-43b9-8563-c16bdb125398']) // Reand za svaki od signala
-          // .done((measurement) => {
-          //   console.log(measurement);
-
-          //   measurement.forEach(element => {
-          //     if(element.signalId === '5b53e9f4-0c42-43b9-8563-c16bdb125398')
-          //   {
-          //     console.log("PRVI IF");
-          //     this.updateInitSignalsMeasurements(element.value);
-          //   }
-          //   if(element.signalId === 'e3998ff6-b625-4221-b72b-30ab2d7e09c1')
-          //   {
-          //     console.log("DRUGI IF");
-          //    // this.updateSecondaryTemp(element.value);
-          //   }
-          //   });
-
-
-          // });
-        // this.signalRService.addListener((measurement: Measurement) => {
-        //   if(measurement.signalId === '5b53e9f4-0c42-43b9-8563-c16bdb125398')
-        //     {
-        //       console.log("TRECI IF");
-        //       this.updatePrimaryTemp(measurement.value);
-        //     }
-        //     if(measurement.signalId === 'e3998ff6-b625-4221-b72b-30ab2d7e09c1')
-        //     {
-        //       console.log("CETVRT|I IF");
-        //       this.updateSecondaryTemp(measurement.value);
-        //     }
-        //   console.log("addListener: ");
-        //   console.log(measurement);
-        //   //this.updatePrimaryTemp(measurement.value);
-        // });
-
-        //this.signalRService.subscribeToSignalValues(['e3998ff6-b625-4221-b72b-30ab2d7e09c1', '5b53e9f4-0c42-43b9-8563-c16bdb125398']);
-
-      //   this.loadingService.dismiss();
-      //     // setTimeout(() =>
-      //     // { e3998ff6-b625-4221-b72b-30ab2d7e09c1     5b53e9f4-0c42-43b9-8563-c16bdb125398
-
-
-      //     //   console.log("WAITING FOR TIMEOUT")
-      //     // }, 5000);
-
-      //   }))
-      // ));
-
-      readonly getSecondaryChamberTempValues = this.effect<string>(trigger$ => trigger$.pipe(
-        tap(() => this.loadingService.present()),
-        switchMap((deviceName) =>  this.cremationProcessService.getSignalId("TT101_PV", deviceName).then(
-          (signalId: string) => {
-          //   console.log("Secondary signalId: " + signalId);
-          //   this.signalRService.proxy.invoke('Read', signalId)
-          //   .done((measurement) => {
-          //     console.log(measurement);
-          //     this.updateSecondaryTemp(measurement.value);
-          //     //this.signalRService.subscribeToSignalValues(signalId);
-          //   });
-          //   setTimeout(() =>
-          // {
-          //   this.signalRService.addListener((measurement: Measurement) => {
-          //     console.log("Secondary listener: ");
-          //     this.updateSecondaryTemp(measurement.value);
-          //   });
-
-
-
-          //   console.log("WAITING FOR TIMEOUT")
-          // }, 5000);
-
-            this.loadingService.dismiss();
-          }))
-        ));
-
-        readonly getEwonPreheatValue = this.effect<string>(trigger$ => trigger$.pipe(
-          tap(() => this.loadingService.present()),
-          switchMap((deviceName) =>  this.cremationProcessService.getSignalId("Ewon_Preheat", deviceName).then(
-            (signalId: string) => {
-              console.log("Ewon_Preheat signalId: " + signalId);
-              // this.signalRService.initializeSignalRConnection(signalId, (measurement: Measurement) => {
-              //   console.log("getEwonPreheatValue FUNC CALLED!!!!!!!!!!!" + JSON.stringify(measurement));
-
-              //   if (measurement) {
-              //     console.log("Ewon_Preheat value: " + JSON.stringify(measurement));
-              //     //this.updateEwonPreheat(measurement.value);
-              //     // measurement.subscribe((res) => {
-              //     // })
-              //   }
-              // });
-
-                // this.signalRService.proxy.invoke('Read', signalId)
-                //   .done((measurement) => {
-                //     console.log("READ:" + JSON.stringify(measurement));
-                //   })
-              // , (measurement) => {
-              //   console.log("getEwonPreheatValue FUNC CALLED!!!!!!!!!!!" + JSON.stringify(measurement));
-
-              //   if(measurement) {
-              //     console.log("Ewon_Preheat value: " + measurement.value);
-              //     this.updateEwonPreheat(measurement.value);
-              //   }
-              // });
-
-              this.loadingService.dismiss();
-            }))
-          ));
-
     createImageFromBlob(userInfo: UserInfo) {
       const reader = new FileReader();
       reader.addEventListener('load', () => {
@@ -425,5 +290,10 @@ export class AppStoreService extends ComponentStore<AppState> {
         }
       });
       return await modal.present();
+    }
+
+    getUpdatedSignalsForDevice(deviceList: Device[], deviceSignalsMap: [string, Signal[]]){
+      deviceList.find(x => x.id === deviceSignalsMap[0]).signals = deviceSignalsMap[1];
+      return deviceList;
     }
 }
