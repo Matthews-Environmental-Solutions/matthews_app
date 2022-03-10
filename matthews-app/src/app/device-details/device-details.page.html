@@ -1,16 +1,93 @@
-<ion-header >
-  <ion-toolbar color="primary">
-    <ion-title>Device details</ion-title>
-    <ion-buttons slot="start">
-      <ion-back-button></ion-back-button>
-    </ion-buttons>
+<ng-container *ngIf="deviceListVm$ | async as deviceListVm">
+  <ion-header >
+    <ion-toolbar color="primary">
+      <ion-title>{{deviceListVm.selectedDevice.alias ?? deviceListVm.selectedDevice.name}}</ion-title>
+      <ion-buttons slot="start">
+        <ion-back-button></ion-back-button>
+      </ion-buttons>
 
-    <ion-buttons slot="primary">
-      <ion-menu-button menu="main-menu"></ion-menu-button>
-    </ion-buttons>
-  </ion-toolbar>
-</ion-header>
+      <ion-buttons slot="primary">
+        <ion-menu-button menu="main-menu"></ion-menu-button>
+      </ion-buttons>
+    </ion-toolbar>
+  </ion-header>
 
-<ion-content>
+  <ion-content>
 
-</ion-content>
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>Cremator</ion-card-title>
+        </ion-card-header>
+        <ng-container *ngFor="let signal of deviceListVm.selectedDevice.signals">
+          <ion-card-content *ngIf="signal.name == 'Machine_Status'">
+            {{signal.value ?? "-"}}
+          </ion-card-content>
+        </ng-container>
+
+      </ion-card>
+
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>Chamber</ion-card-title>
+        </ion-card-header>
+
+        <ion-card-content>
+          <ng-container *ngFor="let signal of deviceListVm.selectedDevice.signals">
+            <p *ngIf="signal.name == 'Chamber_Status'"> {{signal.value ?? "-"}}</p>
+            <p *ngIf="signal.name == 'TT100_PV'"> {{'PrimChamber' | translate}}: {{signal.value ?? "-"}}°C </p>
+            <p *ngIf="signal.name == 'TT101_PV'"> {{'SecChamber' | translate}}: {{signal.value ?? "-"}}°C </p>
+          </ng-container>
+
+        </ion-card-content>
+      </ion-card>
+
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>Ash Cooling</ion-card-title>
+        </ion-card-header>
+
+        <ion-card-content>
+          <ng-container *ngFor="let signal of deviceListVm.selectedDevice.signals">
+            <p *ngIf="signal.name == 'AshCooling_Status'">{{signal.value ?? "-"}}</p>
+          </ng-container>
+        </ion-card-content>
+      </ion-card>
+
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>Ash Removal</ion-card-title>
+        </ion-card-header>
+
+        <ion-card-content>
+          <ng-container *ngFor="let signal of deviceListVm.selectedDevice.signals">
+            <p *ngIf="signal.name == 'AshRemoval_Status'">{{signal.value ?? "-"}}</p>
+          </ng-container>
+        </ion-card-content>
+      </ion-card>
+
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>Emissions</ion-card-title>
+        </ion-card-header>
+
+        <ion-card-content>
+          <ng-container *ngFor="let signal of deviceListVm.selectedDevice.signals">
+            <p *ngIf="signal.name == 'Emmissions_Status'">{{signal.value ?? "-"}}</p>
+          </ng-container>
+        </ion-card-content>
+      </ion-card>
+
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>Machine info</ion-card-title>
+        </ion-card-header>
+
+        <ion-card-content>
+          <ng-container *ngIf="deviceListVm.selectedDevice">
+          Type: {{deviceListVm.selectedDevice.deviceTypeName ?? "-"}}
+          <p>Model: {{deviceListVm.selectedDevice.deviceModelName ?? "-"}}</p>
+        </ng-container>
+        </ion-card-content>
+      </ion-card>
+  </ion-content>
+</ng-container>

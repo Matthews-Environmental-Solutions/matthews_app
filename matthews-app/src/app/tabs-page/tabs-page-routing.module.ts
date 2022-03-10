@@ -29,18 +29,14 @@ const routes: Routes = [
             loadChildren: () => import('../device-list/device-list.module').then( m => m.DeviceListPageModule)
           },
           {
+
             path: 'device/:id',
-            children: [
-              {
-                path: '',
-                loadChildren: () => import('../cremation-process/cremation-process.module').then( m => m.CremationProcessPageModule)
-              },
-              {
-                path: 'device-details',
-                loadChildren: () => import('../device-details/device-details.module').then( m => m.DeviceDetailsPageModule)
-              }
-            ]
+            loadChildren: () => import('../cremation-process/cremation-process.module').then( m => m.CremationProcessPageModule)
           },
+          {
+            path: 'device/device-details/:id/:name',
+            loadChildren: () => import('../device-details/device-details.module').then( m => m.DeviceDetailsPageModule)
+          }
         ],
       },
       {

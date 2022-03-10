@@ -68,6 +68,11 @@ export class SignalRService {
               });
   }
 
+  public stopConnection() {
+    this.connection.stop();
+    console.log("Connection stopped!");
+  }
+
   // public initializeSignalRConnection(signalId: string, func: (measurement) => void): void { //
   //   const signalRServerEndPoint = 'https://matthewscremation.i4connected.cloud/api/signalr';
   //   const connection = $.hubConnection(signalRServerEndPoint);

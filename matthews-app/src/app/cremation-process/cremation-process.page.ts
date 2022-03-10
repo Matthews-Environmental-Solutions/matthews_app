@@ -19,7 +19,7 @@ import { Device } from '../device-list/device';
 })
 export class CremationProcessPage implements OnInit {
   selectedCase$ = this.appStore.selectedCase$;
-  selectedCrematorName$ = this.appStore.selectedCrematorName$;
+  selectedDevice$ = this.appStore.selectedDevice$;
   selectedFacility$ = this.appStore.selectedFacility$;
   deviceList$ = this.appStore.deviceList$;
   isPreheatStarted = false;
@@ -44,11 +44,6 @@ export class CremationProcessPage implements OnInit {
     this.matStepperIntl.changes.next();
     this.deviceId = this.route.snapshot.paramMap.get('id');
     console.log("Device ID: " + this.deviceId);
-    // this.appStore.deviceList$.subscribe((devices) => {
-    //   this.selectedDevice = devices.find(device => device.id == deviceId);
-    //   console.log(this.selectedDevice);
-    // });
-    //this.signalRService.initializeSignalRConnection();
   }
 
   startPreheat() {
