@@ -54,6 +54,10 @@ export class CasePage implements OnInit {
     console.log("SELECTED CASE:" + JSON.stringify(this.selectedCase));
   }
 
+  selectedDeviceChanged($event){
+    this.selectedCase.selectedDevice = $event.target.value;
+  }
+
   onSubmit() {
     if(!this.selectedCase.id) {
       this.caseStore.createCase(this.selectedCase);

@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { ToastController } from '@ionic/angular';
 import { AppStoreService } from '../app.store.service';
 import { ModalController } from '@ionic/angular';
 import { Case } from '../case/case';
@@ -16,7 +15,7 @@ export class SchedulePage implements OnInit {
   scheduleVm$ = this.caseStore.scheduleVm$;
   defaultFacilityId: any;
 
-  constructor(public toastController: ToastController, private caseStore: AppStoreService, public modalController: ModalController) { }
+  constructor(private caseStore: AppStoreService, public modalController: ModalController) { }
 
   ngOnInit() {
     this.showSearchbar = false;
@@ -39,14 +38,14 @@ export class SchedulePage implements OnInit {
 
   presentModal(selectedCase?: Case) {
     this.caseStore.openCaseModal(selectedCase ?
-      { ...selectedCase, facilityId: this.selectedFacilityId } :
-      { facilityId : this.selectedFacilityId } as Case);
+      { ...selectedCase, facilityId: this.selectedFacilityId ?? this.defaultFacilityId } :
+      { facilityId : this.selectedFacilityId ?? this.defaultFacilityId } as Case);
   }
 
   setDefaultValues() {
     this.caseStore.scheduleVm$.subscribe(result => {
       this.defaultFacilityId = result.facilities[0].id;
-    });
+  });
 
     this.caseStore.getCases(this.defaultFacilityId);
   }

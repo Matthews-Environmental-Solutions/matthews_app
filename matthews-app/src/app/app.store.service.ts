@@ -162,7 +162,17 @@ export class AppStoreService extends ComponentStore<AppState> {
         }))
       ));
 
-    readonly getDeviceList = this.effect<string>(trigger$ => trigger$.pipe(
+     readonly getDeviceList = this.effect<string>(devices$ => devices$.pipe(
+       tap(() => this.loadingService.present()),
+       switchMap((facilityId) => this.deviceListService.getDevices(facilityId).then(
+         (devices: Device[]) => {
+           this.updateDeviceList(devices);
+           this.loadingService.dismiss();
+         }
+       ))
+     ));
+
+    readonly getDeviceListWithSignalR = this.effect<string>(trigger$ => trigger$.pipe(
       //tap(() => this.loadingService.present()),
       switchMap((facilityId) => this.deviceListService.getDevices(facilityId).then(
         (devices: Device[]) => {
