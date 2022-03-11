@@ -41,13 +41,19 @@ export class DeviceListPage implements OnInit {
     this.searchTerm = '';
   }
 
-  updateSelectedCremator(crematorId: string, crematorName: string) {
-    this.appStore.updateSelectedCrematorName(crematorName);
-    this.navCtrl.navigateForward(['/app/tabs/facility/device/', crematorId]);
+  updateSelectedCremator(deviceId: string) {
+    this.appStore.updateSelectedselectedDevice(deviceId);
+    this.navCtrl.navigateForward(['/app/tabs/facility/device/', deviceId]);
   }
 
-  navigateToDetailsPage($event, deviceId: string) {
+  navigateToDetailsPage($event, deviceId: string, deviceName: string) {
     $event.stopPropagation();
-    this.navCtrl.navigateForward(['/app/tabs/facility/device/'+ deviceId + '/device-details']);
+    this.appStore.updateSelectedselectedDevice(deviceId);
+    this.navCtrl.navigateForward(['/app/tabs/facility/device/device-details/', deviceId, deviceName]);
+  }
+
+  stopSignalRConnection()
+  {
+    this.signalRService.stopConnection();
   }
 }

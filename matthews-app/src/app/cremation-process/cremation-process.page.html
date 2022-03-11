@@ -1,6 +1,6 @@
 <ion-header >
   <ion-toolbar color="primary">
-    <ion-title>{{selectedCrematorName$ | async}}</ion-title>
+    <ion-title *ngIf="selectedDevice$ | async as selectedDevice">{{selectedDevice.alias}}></ion-title>
     <ion-buttons slot="start">
       <ion-back-button></ion-back-button>
     </ion-buttons>
@@ -30,8 +30,8 @@
           <ng-container *ngFor="let device of deviceList">
             <ion-label *ngIf="device.id == deviceId">
               <ng-container *ngFor="let signal of device.signals">
-                <p *ngIf="signal.name == 'TT100_PV'"> {{'PrimChamber' | translate}} {{signal.value}}°C </p>
-                <p *ngIf="signal.name == 'TT101_PV'"> {{'SecChamber' | translate}} {{signal.value}}°C </p>
+                <p *ngIf="signal.name == 'TT100_PV'"> {{'PrimChamber' | translate}}: {{signal.value}}°C </p>
+                <p *ngIf="signal.name == 'TT101_PV'"> {{'SecChamber' | translate}}: {{signal.value}}°C </p>
             </ng-container>
              </ion-label>
           </ng-container>
@@ -75,19 +75,18 @@
       <ng-template matStepLabel>{{'StartCycle' | translate}}</ng-template>
 
       <ion-item>
-          <ion-label>{{'BurnMode' | translate}}</ion-label>
-
-      <ion-segment (ionChange)="segmentChanged($event)">
-        <ion-segment-button>
-          <ion-label>{{'Simplicity' | translate}}</ion-label>
-        </ion-segment-button>
-        <ion-segment-button>
-          <ion-label>{{'Eco' | translate}}</ion-label>
-        </ion-segment-button>
-        <ion-segment-button>
-          <ion-label>{{'Standard' | translate}}</ion-label>
-        </ion-segment-button>
-      </ion-segment>
+        <ion-label>{{'BurnMode' | translate}}</ion-label>
+        <ion-segment (ionChange)="segmentChanged($event)">
+          <ion-segment-button>
+            <ion-label>{{'Simplicity' | translate}}</ion-label>
+          </ion-segment-button>
+          <ion-segment-button>
+            <ion-label>{{'Eco' | translate}}</ion-label>
+          </ion-segment-button>
+          <ion-segment-button>
+            <ion-label>{{'Standard' | translate}}</ion-label>
+          </ion-segment-button>
+        </ion-segment>
     </ion-item>
       <p>
         <ion-button expand="block" (click)="startCycle()" color="secondary">

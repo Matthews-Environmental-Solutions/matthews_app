@@ -7,13 +7,15 @@ import { IonicModule } from '@ionic/angular';
 import { DeviceDetailsPageRoutingModule } from './device-details-routing.module';
 
 import { DeviceDetailsPage } from './device-details.page';
+import { TranslateModule } from '@ngx-translate/core';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    DeviceDetailsPageRoutingModule
+    DeviceDetailsPageRoutingModule,
+    TranslateModule
   ],
   declarations: [DeviceDetailsPage]
 })

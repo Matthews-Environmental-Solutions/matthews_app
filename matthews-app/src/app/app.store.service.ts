@@ -26,7 +26,7 @@ export interface AppState {
     loading: boolean;
     deviceList: Device[];
     userInfo: UserInfo;
-    selectedCrematorName: string;
+    selectedDevice: Device;
     selectedFacility: Facility;
 }
 
@@ -39,7 +39,6 @@ export class AppStoreService extends ComponentStore<AppState> {
     		        private caseService: CaseService,
                 private facilitiesService: FacilityService,
                 private deviceListService: DeviceListService,
-                private cremationProcessService: CremationProcessService,
                 public modalController: ModalController,
                 private loadingService: LoadingService,
                 private signalRService: SignalRService) {
@@ -50,7 +49,7 @@ export class AppStoreService extends ComponentStore<AppState> {
                     loading: false,
                     deviceList: [],
                     userInfo: {} as UserInfo,
-                    selectedCrematorName: '',
+                    selectedDevice: {} as Device,
                     selectedFacility: {} as Facility});
     }
 
@@ -60,7 +59,7 @@ export class AppStoreService extends ComponentStore<AppState> {
     readonly deviceList$: Observable<Device[]> = this.select(state => state.deviceList);
     readonly loading$: Observable<boolean> = this.select(state => state.loading);
     readonly userInfo$: Observable<UserInfo> = this.select(state => state.userInfo);
-    readonly selectedCrematorName$: Observable<string> = this.select(state => state.selectedCrematorName);
+    readonly selectedDevice$: Observable<Device> = this.select(state => state.selectedDevice);
     readonly selectedFacility$: Observable<Facility> = this.select(state => state.selectedFacility);
 
     readonly scheduleVm$ = this.select(
@@ -80,9 +79,11 @@ export class AppStoreService extends ComponentStore<AppState> {
 
     readonly deviceListVm$ = this.select(
       this.deviceList$,
+      this.selectedDevice$,
       this.loading$,
-      (deviceList, loading) =>({
+      (deviceList, selectedDevice, loading) =>({
         deviceList,
+        selectedDevice,
         loading
       })
     );
@@ -98,9 +99,9 @@ export class AppStoreService extends ComponentStore<AppState> {
       })
     );
 
-    readonly updateSelectedCrematorName = this.updater((state: AppState, selectedCrematorName: string) => ({
+    readonly updateSelectedselectedDevice = this.updater((state: AppState, selectedDeviceId: string) => ({
       ...state,
-      selectedCrematorName
+      selectedDevice: state.deviceList.find(device => device.id == selectedDeviceId)
     }));
 
     readonly updateSelectedFacility = this.updater((state: AppState, selectedFacility: Facility) => ({
@@ -183,11 +184,9 @@ export class AppStoreService extends ComponentStore<AppState> {
                 (signals) => {
                   this.signalRService.proxy.invoke('SubscribeAll', signals.map(x => x.id))
                     .done((measurements) => {
-                      //console.log("SUBSCRIPTIONS WERE DONE");
                       measurements.forEach(measurement => {
                         signals.find(signal => signal.id == measurement.signalId).value = measurement.value;
                       });
-
                       const deviceSignalsMap: [string, Signal[]] = [device.id, signals];
                       this.updateDeviceSignals(deviceSignalsMap);
                     });
@@ -201,15 +200,14 @@ export class AppStoreService extends ComponentStore<AppState> {
 
     addMeasurementListener(devices: Device[]) {
       this.signalRService.addListener((measurement: Measurement) => {
-        console.log(devices);
         devices.forEach(device => {
-          const signalToUpdate = device.signals.find(signal => signal.id == measurement.signalId);
-          if(signalToUpdate)  {
-            signalToUpdate.value = measurement.value;
-          }
+            if(device.signals.find(signal => signal.id == measurement.signalId)?.value)
+            {
+              device.signals.find(signal => signal.id == measurement.signalId).value = measurement.value ;
+              const deviceSignalsMap: [string, Signal[]] = [device.id, device.signals];
+              this.updateDeviceSignals(deviceSignalsMap);
+            }
         });
-
-        this.updateDeviceList(devices);
       });
     }
 

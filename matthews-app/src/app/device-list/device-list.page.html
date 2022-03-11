@@ -2,7 +2,7 @@
   <!-- *ngIf="facility$ | async as facility" -->
   <ion-toolbar color="primary" >
     <ion-buttons *ngIf="!showSearchbar" slot="start">
-      <ion-back-button></ion-back-button>
+      <ion-back-button (click)="stopSignalRConnection()"></ion-back-button>
     </ion-buttons>
     <ion-title *ngIf="selectedFacility$ | async as selectedFacility">{{selectedFacility.name}}</ion-title>
     <ion-searchbar *ngIf="showSearchbar" showCancelButton="always" (ionCancel)="cancelSearch()" [(ngModel)]="searchTerm" placeholder="Search" animated></ion-searchbar>
@@ -24,16 +24,16 @@
 
 <ion-content *ngIf="deviceListVm$ | async as deviceListVm">
   <ng-container *ngIf="deviceListVm.deviceList">
-    <ion-card *ngFor="let device of deviceListVm.deviceList"  (click)="updateSelectedCremator(device.id, device.name)">
+    <ion-card *ngFor="let device of deviceListVm.deviceList"  (click)="updateSelectedCremator(device.id)">
       <ion-item>
         <ion-icon name="flame-outline"></ion-icon>
         <ion-card-header>
-          <ion-card-title>{{device.name}}</ion-card-title>
+          <ion-card-title>{{device.alias ?? device.name}}</ion-card-title>
           <ng-container *ngFor="let signal of device.signals">
             <ion-card-subtitle  *ngIf="signal.name == 'Machine_Status'">{{signal.value}}</ion-card-subtitle>
           </ng-container>
         </ion-card-header>
-        <ion-icon name="information" slot="end" (click)="navigateToDetailsPage($event, device.id)"></ion-icon> <!--[routerLink]="['/app/tabs/facility/device', device.id, 'device-details']"-->
+        <ion-icon name="information" slot="end" (click)="navigateToDetailsPage($event, device.id, device.name)"></ion-icon> <!--[routerLink]="['/app/tabs/facility/device', device.id, 'device-details']"-->
       </ion-item>
     </ion-card>
   </ng-container>
