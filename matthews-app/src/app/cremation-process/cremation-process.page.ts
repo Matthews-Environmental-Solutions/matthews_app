@@ -7,10 +7,15 @@ import { AppStoreService } from '../app.store.service';
 import { Case } from '../case/case';
 import { ExtendCyclePage } from '../extend-cycle/extend-cycle.page';
 import { TranslateService } from '@ngx-translate/core';
-import { SignalRService } from '../core/signal-r.service';
 import { ActivatedRoute } from '@angular/router';
 import { Device } from '../device-list/device';
+import { CremationProcessService } from './cremation-process.service';
 
+export enum BurnMode {
+  Simplicity = 0,
+  ECO = 1,
+  Production = 2
+}
 
 @Component({
   selector: 'app-device-details',
@@ -37,6 +42,7 @@ export class CremationProcessPage implements OnInit {
               private translateService: TranslateService,
               private matStepperIntl: MatStepperIntl,
               private route: ActivatedRoute,
+              private cremationProcessService:CremationProcessService,
               public alertController: AlertController) {}
 
   ngOnInit() {
@@ -46,11 +52,13 @@ export class CremationProcessPage implements OnInit {
     console.log("Device ID: " + this.deviceId);
   }
 
-  startPreheat() {
+  startPreheat(selectedDevice: Device) {
     this.isPreheatStarted = true;
+    const signal = selectedDevice.signals.find(signal => signal.name == "Preheat");
+    this.cremationProcessService.writeSignalValue(signal?.id, 1);
   }
 
-  stopPreheat() {
+  stopPreheat(selectedDevice: Device) {
     const alertOptions: AlertOptions = {
       header: this.translateService.instant('ConfirmPreheatStop'),
       message: this.translateService.instant('ConfirmPreheatStopMessage'),
@@ -64,6 +72,8 @@ export class CremationProcessPage implements OnInit {
           role: 'confirm',
           handler: () => {
             this.isPreheatStarted = false;
+            const signal = selectedDevice.signals.find(signal => signal.name == "Ewon_Preheat");
+            this.cremationProcessService.writeSignalValue(signal?.id, 0);
           }
         }
       ]
@@ -80,11 +90,14 @@ export class CremationProcessPage implements OnInit {
     this.presentCasesModal(facilityId);
   }
 
-  startCycle() {
+  startCycle(selectedDevice: Device) {
     this.isCycleStarted = true;
+
+    const signal = selectedDevice.signals.find(signal => signal.name == "Ewon_Start_Cremation");
+    this.cremationProcessService.writeSignalValue(signal?.id, 1);
   }
 
-  pauseCycle() {
+  pauseCycle(selectedDevice: Device) {
     const alertOptions: AlertOptions = {
       header: this.translateService.instant('ConfirmPauseCycle'),
       message: this.translateService.instant('ConfirmPauseCycleMessage'),
@@ -98,6 +111,8 @@ export class CremationProcessPage implements OnInit {
           role: 'yes',
           handler: () => {
             this.isCyclePaused = true;
+            const signal = selectedDevice.signals.find(signal => signal.name == "Ewon_Pause_Cremation");
+            this.cremationProcessService.writeSignalValue(signal?.id, 1);
           }
         }
       ]
@@ -106,7 +121,7 @@ export class CremationProcessPage implements OnInit {
     this.presentAlert(alertOptions);
   }
 
-  resumeCycle() {
+  resumeCycle(selectedDevice: Device) {
     const alertOptions: AlertOptions = {
       header: this.translateService.instant('ConfirmResumeCycle'),
       message: this.translateService.instant('ConfirmResumeCycleMessage'),
@@ -120,16 +135,14 @@ export class CremationProcessPage implements OnInit {
           role: 'yes',
           handler: () => {
             this.isCyclePaused = false;
+            const signal = selectedDevice.signals.find(signal => signal.name == "Ewon_Pause_Cremation");
+            this.cremationProcessService.writeSignalValue(signal?.id, 0);
           }
         }
       ]
     };
 
     this.presentAlert(alertOptions);
-  }
-
-  extendCycle() {
-
   }
 
   async presentPopover(ev: any) {
@@ -145,7 +158,7 @@ export class CremationProcessPage implements OnInit {
     console.log('onDidDismiss resolved with role', role);
   }
 
-  endCycle(stepper: MatStepper) {
+  endCycle(stepper: MatStepper, selectedDevice: Device) {
     const alertOptions: AlertOptions = {
       header: this.translateService.instant('EndCycle'),
       message: this.translateService.instant('EndCycleMessage'),
@@ -158,6 +171,8 @@ export class CremationProcessPage implements OnInit {
           text: this.translateService.instant('Confirm'),
           role: 'confirm',
           handler: () => {
+            const signal = selectedDevice.signals.find(signal => signal.name == "Ewon_Stop_Cremation");
+            this.cremationProcessService.writeSignalValue(signal?.id, 1);
             this.goToNextStep(stepper);
           }
         }
@@ -167,15 +182,19 @@ export class CremationProcessPage implements OnInit {
     this.presentAlert(alertOptions);
   }
 
-  coolDown() {
+  coolDown(selectedDevice: Device) {
     this.isCoolDownStarted = true;
+    const signal = selectedDevice.signals.find(signal => signal.name == "Ewon_Cooldown");
+    this.cremationProcessService.writeSignalValue(signal?.id, 1);
   }
 
-  rakeOut() {
+  rakeOut(selectedDevice: Device) {
     this.isRakeOutStarted = true;
+    const signal = selectedDevice.signals.find(signal => signal.name == "Ewon_Rake_Out");
+    this.cremationProcessService.writeSignalValue(signal?.id, 1);
   }
 
-  rakeOutConfirmation(stepper: MatStepper) {
+  rakeOutConfirmation(stepper: MatStepper, selectedDevice: Device) {
     const alertOptions: AlertOptions = {
       header: this.translateService.instant('ConfirmRakeOut'),
       message: this.translateService.instant('ConfirmRakeOutMessage'),
@@ -189,6 +208,8 @@ export class CremationProcessPage implements OnInit {
           role: 'confirm',
           handler: () => {
             this.resetStepper(stepper);
+            const signal = selectedDevice.signals.find(signal => signal.name == "Ewon_Rake_Complete");
+            this.cremationProcessService.writeSignalValue(signal?.id, 1);
           }
         }
       ]

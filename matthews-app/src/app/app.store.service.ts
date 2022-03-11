@@ -99,7 +99,7 @@ export class AppStoreService extends ComponentStore<AppState> {
       })
     );
 
-    readonly updateSelectedselectedDevice = this.updater((state: AppState, selectedDeviceId: string) => ({
+    readonly updateSelectedDevice = this.updater((state: AppState, selectedDeviceId: string) => ({
       ...state,
       selectedDevice: state.deviceList.find(device => device.id == selectedDeviceId)
     }));
