@@ -26,7 +26,7 @@ export class DeviceListPage implements OnInit {
     this.signalRService.initializeSignalRConnection().then((response) => {
       response.start().done(() => {
         console.log("Connection started!");
-        this.appStore.getDeviceList(facilityId);
+        this.appStore.getDeviceListWithSignalR(facilityId);
         //this.loadingService.dismiss();
       }).catch((error: any) => {
         console.log(error);
