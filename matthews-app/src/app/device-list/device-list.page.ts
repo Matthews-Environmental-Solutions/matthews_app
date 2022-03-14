@@ -53,13 +53,13 @@ export class DeviceListPage implements OnInit {
   }
 
   updateSelectedCremator(deviceId: string) {
-    this.appStore.updateSelectedselectedDevice(deviceId);
+    this.appStore.updateSelectedDevice(deviceId);
     this.navCtrl.navigateForward(['/app/tabs/facility/device/', deviceId]);
   }
 
   navigateToDetailsPage($event, deviceId: string, deviceName: string) {
     $event.stopPropagation();
-    this.appStore.updateSelectedselectedDevice(deviceId);
+    this.appStore.updateSelectedDevice(deviceId);
     this.navCtrl.navigateForward(['/app/tabs/facility/device/device-details/', deviceId, deviceName]);
   }
 

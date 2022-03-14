@@ -15,6 +15,15 @@ export class CremationProcessService {
     return this.httpService.request<string>("GET", environment.i4connectedApiUrl + "/signals/" + signalName + "/" + deviceName + "/getId");
   }
 
+  public writeSignalValue(signalId: string, signalValue: number) {
+    return this.httpService.request<string>("POST", environment.i4connectedApiUrl + "/signals/" + signalId + "/write",
+    {
+      "SignalId": signalId,
+      "Timestamp": new Date().toUTCString,
+      "Value": signalValue
+    });
+  }
+
   public getPrimaryChamberTemperature(deviceName: string) {
 
   }
@@ -22,4 +31,6 @@ export class CremationProcessService {
   public getSecondaryChamberTemperature(deviceName: string) {
 
   }
+
+
 }

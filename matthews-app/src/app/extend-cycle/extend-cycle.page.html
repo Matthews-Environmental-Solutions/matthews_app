@@ -4,7 +4,7 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content *ngIf="selectedDevice$ | async as selectedDevice">
   <ion-item lines="full">
     <ion-button (click)="decreseTimeInterval()" class="ion-btn-size">-</ion-button>
     <ion-item lines="full">
@@ -20,7 +20,7 @@
   </ion-item>
   <ion-item>
     <ion-buttons slot="end">
-      <ion-button (click)="onConfirm()">{{'Confirm' | translate}}</ion-button>
+      <ion-button (click)="onConfirm(selectedDevice)">{{'Confirm' | translate}}</ion-button>
       <ion-button (click)="onCancel()">{{'Cancel' | translate}}</ion-button>
     </ion-buttons>
   </ion-item>
