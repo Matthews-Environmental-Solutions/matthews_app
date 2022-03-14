@@ -19,7 +19,7 @@
 
 <ion-content>
   <ion-list>
-    <ion-item detail='true' *ngFor="let case of (cases$ | async) | filter:searchTerm" (click)="getSelectedCase(case)">
+    <ion-item detail='true' *ngFor="let case of (deviceCases$ | async) | filter:searchTerm" (click)="getSelectedCase(case)">
       <ion-label>
         <h3>{{case.caseId}}</h3>
         <p>

@@ -4,13 +4,24 @@ import { NavController } from '@ionic/angular';
 import { AppStoreService } from '../app.store.service';
 import { SignalRService } from '../core/signal-r.service';
 
+export enum MachineStatus {
+  shutdown = 0,
+  preheat = 10,
+  idle = 20,
+  cremation = 30,
+  rake = 40,
+  cooldown = 50,
+  curing = 60,
+  emergencyBypass = 70
+}
+
 @Component({
   selector: 'app-device-list',
   templateUrl: './device-list.page.html',
   styleUrls: ['./device-list.page.scss'],
 })
 export class DeviceListPage implements OnInit {
-
+  machineStatus = MachineStatus;
   showSearchbar: boolean;
   searchTerm: string;
   deviceIds: string[] = [];

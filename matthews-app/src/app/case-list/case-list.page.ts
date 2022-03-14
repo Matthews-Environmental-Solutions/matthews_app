@@ -12,13 +12,13 @@ export class CaseListPage implements OnInit {
   @Input() selectedFacilityId: string;
   showSearchbar: boolean;
   searchTerm: string;
-  cases$ = this.appStore.cases$;
+  deviceCases$ = this.appStore.deviceCases$;
 
   constructor(public toastController: ToastController, private appStore: AppStoreService, public modalController: ModalController) { }
 
   ngOnInit() {
     this.showSearchbar = false;
-    this.appStore.getCases(this.selectedFacilityId);
+    this.appStore.getCasesFilteredByDevice(this.selectedFacilityId,);
   }
 
   cancelSearch(): void {

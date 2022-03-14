@@ -31,7 +31,7 @@
       <ion-col>
         <ion-item lines="full">
           <ion-label position="floating">{{'Age' | translate}}</ion-label>
-          <ion-input background-color="#C6D92D" type="text" [(ngModel)]="selectedCase.age" name="name" required></ion-input>
+          <ion-input background-color="#C6D92D" type="text" [(ngModel)]="selectedCase.age" name="age" required></ion-input>
         </ion-item>
       </ion-col>
     </ion-row>
@@ -71,7 +71,7 @@
         <ion-col>
           <ion-item lines="full">
             <ion-select name="selectDevice"  placeholder="Select Device" [(ngModel)]="selectedCase.selectedDevice">
-              <ion-select-option *ngFor="let device of deviceList;" (value)="selectedCase.selectedDevice">{{ device.name }}</ion-select-option>
+              <ion-select-option *ngFor="let device of deviceList;" value={{device.id}}>{{ device.name }}</ion-select-option>
             </ion-select>
           </ion-item>
         </ion-col>

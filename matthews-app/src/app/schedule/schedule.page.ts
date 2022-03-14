@@ -45,7 +45,7 @@ export class SchedulePage implements OnInit {
   setDefaultValues() {
     this.caseStore.scheduleVm$.subscribe(result => {
       this.defaultFacilityId = result.facilities[0].id;
-  });
+    });
 
     this.caseStore.getCases(this.defaultFacilityId);
   }
