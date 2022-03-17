@@ -95,5 +95,6 @@
   "dropAshes" : "Lass Asche fallen",
   "ashesReadytoRemove" : "Asche zum Entfernen bereit",
   "bypass" : "Bypass",
-  "abatement" : "Minderung"
+  "abatement" : "Minderung",
+  "scheduleDate": "Plandatum"
 }

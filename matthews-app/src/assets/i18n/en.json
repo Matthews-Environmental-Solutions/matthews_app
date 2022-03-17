@@ -95,6 +95,7 @@
   "dropAshes" : "Drop Ashes",
   "ashesReadytoRemove" : "Ashes Ready to Remove",
   "bypass" : "Bypass",
-  "abatement" : "Abatement"
+  "abatement" : "Abatement",
+  "scheduleDate": "Schedule Date"
 
 }

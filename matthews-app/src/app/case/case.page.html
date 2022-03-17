@@ -74,7 +74,7 @@
     </ion-item>
   </ng-container>
   <ion-item lines="full">
-    <ion-datetime placeholder="Select Date" displayFormat="DD-MMM-YYYY"></ion-datetime>
+    <ion-label position="floating">{{'scheduleDate' | translate}}</ion-label>
     <ion-datetime placeholder="Select Date" name="createdTime" [(ngModel)]="selectedCase.createdTime" displayFormat="DD-MMM-YYYY"></ion-datetime>
   </ion-item>
 
