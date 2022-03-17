@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AppStoreService } from '../app.store.service';
 import { ModalController } from '@ionic/angular';
 import { Case } from '../case/case';
+import { CaseStatuses } from '../core/enums';
 
 @Component({
   selector: 'app-schedule',
@@ -14,6 +15,7 @@ export class SchedulePage implements OnInit {
   selectedFacilityId: string;
   scheduleVm$ = this.caseStore.scheduleVm$;
   defaultFacilityId: any;
+  caseStatus = CaseStatuses;
 
   constructor(private caseStore: AppStoreService, public modalController: ModalController) { }
 

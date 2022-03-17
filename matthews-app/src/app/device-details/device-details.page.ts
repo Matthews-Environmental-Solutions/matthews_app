@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { AppStoreService } from '../app.store.service';
+import { AshCoolingStatus, AshRemovalStatus, ChamberStatus, EmissionsStatus, MachineStatus } from '../core/enums';
 
 @Component({
   selector: 'app-device-details',
@@ -10,6 +11,11 @@ import { AppStoreService } from '../app.store.service';
 export class DeviceDetailsPage implements OnInit {
   deviceId = this.route.snapshot.paramMap.get('id');
   deviceName = this.route.snapshot.paramMap.get('name');
+  chamberStatus = ChamberStatus;
+  machineStatus = MachineStatus;
+  ashCoolingStatus = AshCoolingStatus;
+  ashRemovalStatus = AshRemovalStatus;
+  emissionsStatus = EmissionsStatus;
   deviceListVm$ = this.appStore.deviceListVm$;
 
   constructor(private route: ActivatedRoute, private appStore: AppStoreService) { }

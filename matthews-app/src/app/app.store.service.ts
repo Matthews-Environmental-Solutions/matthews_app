@@ -141,7 +141,7 @@ export class AppStoreService extends ComponentStore<AppState> {
 
     filterCasesByDevice(cases: Case[], selectedDevice: Device): Case[] {
       console.log(cases);
-      return cases.filter(x => x.selectedDevice === selectedDevice.id || !x.selectedDevice);
+      return cases.filter(x => (x.selectedDevice === selectedDevice.id || !x.selectedDevice) && x.status === '1');
     }
 
     readonly updateSelectedCase = this.updater((state: AppState, selectedCase: Case) => ({

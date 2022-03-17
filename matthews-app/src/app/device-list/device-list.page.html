@@ -30,7 +30,7 @@
         <ion-card-header>
           <ion-card-title>{{device.alias ?? device.name}}</ion-card-title>
           <ng-container *ngFor="let signal of device.signals">
-            <ion-card-subtitle  *ngIf="signal.name === 'Machine_Status'">{{machineStatus[signal.value]}}</ion-card-subtitle>
+            <ion-card-subtitle  *ngIf="signal.name === 'Machine_Status'">{{machineStatus[signal.value] | translate}}</ion-card-subtitle>
           </ng-container>
         </ion-card-header>
         <ion-icon name="information" slot="end" (click)="navigateToDetailsPage($event, device.id, device.name)"></ion-icon> <!--[routerLink]="['/app/tabs/facility/device', device.id, 'device-details']"-->

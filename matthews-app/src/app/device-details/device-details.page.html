@@ -20,7 +20,7 @@
         </ion-card-header>
         <ng-container *ngFor="let signal of deviceListVm.selectedDevice.signals">
           <ion-card-content *ngIf="signal.name == 'Machine_Status'">
-            {{signal.value ?? "-"}}
+            {{machineStatus[signal.value] ?? "-" | translate}}
           </ion-card-content>
         </ng-container>
 
@@ -33,7 +33,7 @@
 
         <ion-card-content>
           <ng-container *ngFor="let signal of deviceListVm.selectedDevice.signals">
-            <p *ngIf="signal.name == 'Chamber_Status'"> {{signal.value ?? "-"}}</p>
+            <p *ngIf="signal.name == 'Chamber_Status'"> {{chamberStatus[signal.value] ?? "-" | translate}}</p>
             <p *ngIf="signal.name == 'TT100_PV'"> {{'PrimChamber' | translate}}: {{signal.value ?? "-"}}°C </p>
             <p *ngIf="signal.name == 'TT101_PV'"> {{'SecChamber' | translate}}: {{signal.value ?? "-"}}°C </p>
           </ng-container>
@@ -48,7 +48,7 @@
 
         <ion-card-content>
           <ng-container *ngFor="let signal of deviceListVm.selectedDevice.signals">
-            <p *ngIf="signal.name == 'AshCooling_Status'">{{signal.value ?? "-"}}</p>
+            <p *ngIf="signal.name == 'AshCooling_Status'">{{ashCoolingStatus[signal.value] ?? "-" | translate}}</p>
           </ng-container>
         </ion-card-content>
       </ion-card>
@@ -60,7 +60,7 @@
 
         <ion-card-content>
           <ng-container *ngFor="let signal of deviceListVm.selectedDevice.signals">
-            <p *ngIf="signal.name == 'AshRemoval_Status'">{{signal.value ?? "-"}}</p>
+            <p *ngIf="signal.name == 'AshRemoval_Status'">{{ashRemovalStatus[signal.value] ?? "-" | translate}}</p>
           </ng-container>
         </ion-card-content>
       </ion-card>
@@ -72,7 +72,7 @@
 
         <ion-card-content>
           <ng-container *ngFor="let signal of deviceListVm.selectedDevice.signals">
-            <p *ngIf="signal.name == 'Emmissions_Status'">{{signal.value ?? "-"}}</p>
+            <p *ngIf="signal.name == 'Emmissions_Status'">{{emissionsStatus[signal.value] ?? "-" | translate}}</p>
           </ng-container>
         </ion-card-content>
       </ion-card>

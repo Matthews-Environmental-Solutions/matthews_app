@@ -2,18 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NavController } from '@ionic/angular';
 import { AppStoreService } from '../app.store.service';
+import { MachineStatus } from '../core/enums';
 import { SignalRService } from '../core/signal-r.service';
-
-export enum MachineStatus {
-  shutdown = 0,
-  preheat = 10,
-  idle = 20,
-  cremation = 30,
-  rake = 40,
-  cooldown = 50,
-  curing = 60,
-  emergencyBypass = 70
-}
 
 @Component({
   selector: 'app-device-list',

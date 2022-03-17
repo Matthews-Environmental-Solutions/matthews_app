@@ -3,24 +3,9 @@ import { Case } from './case';
 import { AppStoreService } from '../app.store.service';
 import { ModalController } from '@ionic/angular';
 import { DatePipe } from '@angular/common';
+import { CaseStatuses, ContainerSize, ContainerType } from '../core/enums';
 
-export enum ContainerType {
-  cardboard,
-  fiberboard,
-  hardwood,
-  none,
-}
 
-export enum ContainerSize {
-  child,
-  standard,
-  bariatric
-}
-
-export enum CaseStatuses {
-  waitingForPermits,
-  readyToCremate
-}
 
 @Component({
   selector: 'app-case',
