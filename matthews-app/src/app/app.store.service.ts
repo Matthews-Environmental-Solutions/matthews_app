@@ -28,6 +28,7 @@ export interface AppState {
     userInfo: UserInfo;
     selectedDevice: Device;
     selectedFacility: Facility;
+    deviceCases: Case[];
 }
 
 @Injectable({
@@ -50,7 +51,9 @@ export class AppStoreService extends ComponentStore<AppState> {
                     deviceList: [],
                     userInfo: {} as UserInfo,
                     selectedDevice: {} as Device,
-                    selectedFacility: {} as Facility});
+                    selectedFacility: {} as Facility,
+                    deviceCases: []},
+                    );
     }
 
     readonly cases$: Observable<Case[]> = this.select(state => state.cases);
@@ -61,6 +64,8 @@ export class AppStoreService extends ComponentStore<AppState> {
     readonly userInfo$: Observable<UserInfo> = this.select(state => state.userInfo);
     readonly selectedDevice$: Observable<Device> = this.select(state => state.selectedDevice);
     readonly selectedFacility$: Observable<Facility> = this.select(state => state.selectedFacility);
+    readonly deviceCases$: Observable<Case[]> = this.select(state => state.deviceCases);
+
 
     readonly scheduleVm$ = this.select(
       this.cases$,
@@ -128,6 +133,16 @@ export class AppStoreService extends ComponentStore<AppState> {
             ...state,
             cases: [...cases]
       }));
+
+    readonly updateCasesByDeviceId = this.updater((state: AppState, cases: Case[]) => ({
+      ...state,
+      deviceCases: this.filterCasesByDevice(cases, state.selectedDevice)
+    }));
+
+    filterCasesByDevice(cases: Case[], selectedDevice: Device): Case[] {
+      console.log(cases);
+      return cases.filter(x => (x.selectedDevice === selectedDevice.id || !x.selectedDevice) && x.status === '1');
+    }
 
     readonly updateSelectedCase = this.updater((state: AppState, selectedCase: Case) => ({
       ...state,
@@ -216,6 +231,16 @@ export class AppStoreService extends ComponentStore<AppState> {
       switchMap((facilityId) => this.caseService.getCases().then(
         (response: Case[]) => {
           this.updateCases(response.filter((caseToFilter) => caseToFilter.facilityId === facilityId && caseToFilter.isObsolete === false));
+          this.loadingService.dismiss();
+        }))
+    ));
+
+    readonly getCasesFilteredByDevice = this.effect<string>(cases$ => cases$.pipe(
+      tap(() => this.loadingService.present()),
+      switchMap((facilityId) => this.caseService.getCases().then(
+        (response: Case[]) => {
+          // eslint-disable-next-line max-len
+          this.updateCasesByDeviceId(response.filter((caseToFilter) => caseToFilter.facilityId === facilityId && caseToFilter.isObsolete === false));
           this.loadingService.dismiss();
         }))
     ));

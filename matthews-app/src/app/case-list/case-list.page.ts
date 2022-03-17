@@ -2,6 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { ModalController, ToastController } from '@ionic/angular';
 import { AppStoreService } from '../app.store.service';
 import { Case } from '../case/case';
+import { CaseStatuses } from '../core/enums';
 
 @Component({
   selector: 'app-case-list',
@@ -12,13 +13,14 @@ export class CaseListPage implements OnInit {
   @Input() selectedFacilityId: string;
   showSearchbar: boolean;
   searchTerm: string;
-  cases$ = this.appStore.cases$;
+  caseStatuses = CaseStatuses;
+  deviceCases$ = this.appStore.deviceCases$;
 
   constructor(public toastController: ToastController, private appStore: AppStoreService, public modalController: ModalController) { }
 
   ngOnInit() {
     this.showSearchbar = false;
-    this.appStore.getCases(this.selectedFacilityId);
+    this.appStore.getCasesFilteredByDevice(this.selectedFacilityId,);
   }
 
   cancelSearch(): void {

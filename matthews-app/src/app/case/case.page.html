@@ -31,7 +31,7 @@
       <ion-col>
         <ion-item lines="full">
           <ion-label position="floating">{{'Age' | translate}}</ion-label>
-          <ion-input background-color="#C6D92D" type="text" [(ngModel)]="selectedCase.age" name="name" required></ion-input>
+          <ion-input background-color="#C6D92D" type="text" [(ngModel)]="selectedCase.age" name="age" required></ion-input>
         </ion-item>
       </ion-col>
     </ion-row>
@@ -69,13 +69,13 @@
     <ion-item lines="full">
       <ion-label position="floating">{{'Device' | translate}}</ion-label>
       <ion-select name="selectDevice"  placeholder="Select Device" [(ngModel)]="selectedCase.selectedDevice">
-        <ion-select-option *ngFor="let device of deviceList;" (value)="selectedCase.selectedDevice">{{ device.name }}</ion-select-option>
+              <ion-select-option *ngFor="let device of deviceList;" value={{device.id}}>{{ device.name }}</ion-select-option>
       </ion-select>
     </ion-item>
   </ng-container>
   <ion-item lines="full">
-    <ion-label position="floating">{{'Schedule date' | translate}}</ion-label>
     <ion-datetime placeholder="Select Date" displayFormat="DD-MMM-YYYY"></ion-datetime>
+    <ion-datetime placeholder="Select Date" name="createdTime" [(ngModel)]="selectedCase.createdTime" displayFormat="DD-MMM-YYYY"></ion-datetime>
   </ion-item>
 
     <ng-container *ngIf="userInfo$ | async as userInfo">

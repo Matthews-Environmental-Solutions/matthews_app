@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NavController } from '@ionic/angular';
 import { AppStoreService } from '../app.store.service';
+import { MachineStatus } from '../core/enums';
 import { SignalRService } from '../core/signal-r.service';
 
 @Component({
@@ -10,7 +11,7 @@ import { SignalRService } from '../core/signal-r.service';
   styleUrls: ['./device-list.page.scss'],
 })
 export class DeviceListPage implements OnInit {
-
+  machineStatus = MachineStatus;
   showSearchbar: boolean;
   searchTerm: string;
   deviceIds: string[] = [];
