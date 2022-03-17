@@ -64,3 +64,9 @@ export enum ContainerType {
     abatement = 10
   }
   // 10	Ashes Ready to Remove
+
+  export enum BurnMode {
+    Simplicity = 0,
+    ECO = 1,
+    Production = 2
+  }

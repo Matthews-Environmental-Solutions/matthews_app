@@ -16,7 +16,7 @@
 <ng-container *ngFor="let signal of selectedDevice.signals">
   <mat-step *ngIf="signal.name == 'Chamber_Status'" [completed]="signal.value >= '30' ? true : false">
     <ng-template matStepLabel>{{'PreheatSystem' | translate}}<br>
-      <span class="font-size" *ngIf="signal.value >= '30' ? true : false">{{signal.value}}<br>
+      <span class="font-size" *ngIf="signal.value >= '30' ? true : false">{{chamberStatus[30] ?? "-" | translate}}<br>
       <ng-container *ngFor="let signal of selectedDevice.signals">
         <span class="font-size" *ngIf="signal.name == 'TT100_PV'"> {{'PrimChamber' | translate}}: {{signal.value}}°C <br></span>
         <span class="font-size" *ngIf="signal.name == 'TT101_PV'"> {{'SecChamber' | translate}}: {{signal.value}}°C </span>
@@ -48,8 +48,6 @@
           {{'Remaining' | translate}} 10 min
         </ion-card-content>
       </ion-card>
-
-      <!-- <ng-template matStepLabel>{{'PreheatSystem' | translate}}</ng-template> -->
       <p>
       <ion-button expand="block" (click)="stopPreheat(selectedDevice)" color="danger">
         <ion-icon slot="end" name="arrow-forward"></ion-icon>
@@ -69,7 +67,6 @@
     </ng-container>
     <ng-container *ngIf="selectedCase$ | async as selectedCase">
       <ng-template matStepLabel>{{'Case' | translate}}</ng-template>
-      <!-- <ion-text>{{selectedCase.caseName}} - {{selectedCase.caseId}}</ion-text> -->
       <p>
         <ion-button expand="block" *ngIf="isCaseSelected" (click)="changeCase(selectedFacility.id)">
           <ion-icon slot="end" name="arrow-forward"></ion-icon>
@@ -80,12 +77,11 @@
     </ng-container>
   </mat-step>
 
-  <!-- <ng-container *ngFor="let signal of selectedDevice.signals">
-    <mat-step *ngIf="signal.name == 'Chamber_Status'" [completed]="signal.value >= '30' ? true : false"> -->
-
 <ng-container *ngFor="let signal of selectedDevice.signals">
   <mat-step *ngIf="signal.name == 'Chamber_Status'" [completed]="signal.value >= '100' ? true : false">
-    <ng-template matStepLabel>{{'StartCycle' | translate}}</ng-template>
+    <ng-template matStepLabel>{{'StartCycle' | translate}}<br>
+        <span class="font-size" *ngIf="signal.value >= '100' ? true : false">{{chamberStatus[100] ?? "-" | translate}}</span>
+    </ng-template>
     <ng-container *ngIf="signal.value < '80' ? true : false" >
       <ion-item>
         <ion-label>{{'BurnMode' | translate}}</ion-label>
@@ -104,13 +100,14 @@
     </ng-container>
     <ng-container *ngIf="signal.value >= '80' ? true : false" >
       <ion-card>
-        <ion-item>
-          <ion-label>{{'CycleInProgress' | translate}}...</ion-label>
+        <ion-item *ngFor="let signal of selectedDevice.signals">
+          <ion-label *ngIf="signal.value == '80' ? true : false">{{chamberStatus[80] ?? "-" | translate}}...</ion-label>
+          <ion-label *ngIf="signal.value >= '90' ? true : false">{{chamberStatus[90] ?? "-" | translate}}...</ion-label>
         </ion-item>
         <ion-card-content>
           <ion-label >
             <p>{{'StartTime' | translate}}: 01:40 </p>
-            <p>{{'BurnMode' | translate}}: {{'Eco' | translate}} </p>
+            <p>{{'BurnMode' | translate}}: {{burnMode[selectedBurnMode] ?? "-" | translate}}</p>
            </ion-label>
         </ion-card-content>
         <ion-card-content>

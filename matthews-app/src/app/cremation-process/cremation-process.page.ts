@@ -11,12 +11,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Device } from '../device-list/device';
 import { CremationProcessService } from './cremation-process.service';
 import { Observable } from 'rxjs';
-
-export enum BurnMode {
-  Simplicity = 0,
-  ECO = 1,
-  Production = 2
-}
+import { BurnMode, ChamberStatus } from '../core/enums';
 
 @Component({
   selector: 'app-device-details',
@@ -40,6 +35,7 @@ export class CremationProcessPage implements OnInit {
   searchTerm: string;
   deviceId: string;
   selectedBurnMode: number;
+  chamberStatus = ChamberStatus;
 
   burnMode = BurnMode;
   burnModeKeys = Object.keys(BurnMode).filter(x => (parseInt(x, 10) >= 0));
@@ -232,6 +228,7 @@ export class CremationProcessPage implements OnInit {
   }
 
   segmentChanged(ev: any) {
+    this.selectedBurnMode = ev.details.value;
     console.log('Segment changed', ev);
   }
 
