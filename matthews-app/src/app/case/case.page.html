@@ -37,52 +37,47 @@
     </ion-row>
 
     <ion-item lines="full">
-      <ion-label>{{'Gender' | translate}}</ion-label>
+      <ion-label position="floating">{{'Gender' | translate}}</ion-label>
       <ion-select [interfaceOptions]="{cssClass:'custom-popover'}" interface="popover" placeholder="Select One" name="gender" [(ngModel)]="selectedCase.gender">
         <ion-select-option *ngFor="let gender of genders" (value)="selectedCase.gender">{{gender}}</ion-select-option>
       </ion-select>
     </ion-item>
    <ion-item lines="full">
-      <ion-label>{{'ContainerType' | translate}}</ion-label>
+      <ion-label position="floating">{{'ContainerType' | translate}}</ion-label>
       <ion-select [interfaceOptions]="{cssClass:'custom-popover'}" interface="popover" placeholder="Select One" name="containerType" [(ngModel)]="selectedCase.containerType">
         <ion-select-option *ngFor="let t of containerTypeKeys;" value="{{ t }}">{{ containerTypes[t] }}</ion-select-option>
       </ion-select>
     </ion-item>
      <ion-item lines="full">
-      <ion-label>{{'ContainerSize' | translate}}</ion-label>
+      <ion-label position="floating">{{'ContainerSize' | translate}}</ion-label>
       <ion-select [interfaceOptions]="{cssClass:'custom-popover'}" interface="popover" name="containerSize" [(ngModel)]="selectedCase.containerSize"  placeholder="Select One">
         <ion-select-option *ngFor="let s of containerSizeKeys;" value="{{ s }}">{{ containerSizes[s] }}</ion-select-option>
       </ion-select>
     </ion-item>
     <ion-item lines="full">
-      <ion-label>{{'Status' | translate}}</ion-label>
+      <ion-label position="floating">{{'Status' | translate}}</ion-label>
       <ion-select [interfaceOptions]="{cssClass:'custom-popover'}" interface="popover" name="status" [(ngModel)]="selectedCase.status"  placeholder="Select One">
         <ion-select-option *ngFor="let s of caseStatusesKeys;" value="{{ s }}">{{ caseStatuses[s] | translate }}</ion-select-option>
       </ion-select>
     </ion-item>
-    <ion-row class="text-center">
+    <!-- <ion-row class="text-center">
     <ion-item lines="full">
       <ion-label>{{'Schedule' | translate}}:</ion-label>
     </ion-item>
-  </ion-row>
+  </ion-row> -->
   <ng-container *ngIf="deviceList$ | async as deviceList">
-    <ion-grid>
-      <ion-row>
-        <ion-col>
-          <ion-item lines="full">
-            <ion-select name="selectDevice"  placeholder="Select Device" [(ngModel)]="selectedCase.selectedDevice">
-              <ion-select-option *ngFor="let device of deviceList;" (value)="selectedCase.selectedDevice">{{ device.name }}</ion-select-option>
-            </ion-select>
-          </ion-item>
-        </ion-col>
-        <ion-col>
-          <ion-item lines="full">
-            <ion-datetime placeholder="Select Date" displayFormat="DD-MMM-YYYY"></ion-datetime>
-          </ion-item>
-        </ion-col>
-      </ion-row>
-    </ion-grid>
+    <ion-item lines="full">
+      <ion-label position="floating">{{'Device' | translate}}</ion-label>
+      <ion-select name="selectDevice"  placeholder="Select Device" [(ngModel)]="selectedCase.selectedDevice">
+        <ion-select-option *ngFor="let device of deviceList;" (value)="selectedCase.selectedDevice">{{ device.name }}</ion-select-option>
+      </ion-select>
+    </ion-item>
   </ng-container>
+  <ion-item lines="full">
+    <ion-label position="floating">{{'Schedule date' | translate}}</ion-label>
+    <ion-datetime placeholder="Select Date" displayFormat="DD-MMM-YYYY"></ion-datetime>
+  </ion-item>
+
     <ng-container *ngIf="userInfo$ | async as userInfo">
       <ion-item lines="full">
         <ion-grid>

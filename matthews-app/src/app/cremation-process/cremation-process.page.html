@@ -1,6 +1,6 @@
 <ion-header >
   <ion-toolbar color="primary">
-    <ion-title *ngIf="selectedDevice$ | async as selectedDevice">{{selectedDevice.alias}}></ion-title>
+    <ion-title *ngIf="selectedDevice$ | async as selectedDevice">{{selectedDevice.alias}}</ion-title>
     <ion-buttons slot="start">
       <ion-back-button></ion-back-button>
     </ion-buttons>
@@ -13,15 +13,27 @@
 
 <ion-content style="--background: #E9EBED;">
 <mat-stepper *ngIf="selectedDevice$ | async as selectedDevice" orientation="vertical" #stepper linear>
-  <mat-step [completed]="isPreheatStarted" >
-    <ng-container *ngIf="!isPreheatStarted" >
-      <ng-template matStepLabel>{{'PreheatSystem' | translate}}</ng-template>
+<ng-container *ngFor="let signal of selectedDevice.signals">
+  <mat-step *ngIf="signal.name == 'Chamber_Status'" [completed]="signal.value >= '30' ? true : false">
+    <ng-template matStepLabel>{{'PreheatSystem' | translate}}<br>
+      <span class="font-size" *ngIf="signal.value >= '30' ? true : false">{{signal.value}}<br>
+      <ng-container *ngFor="let signal of selectedDevice.signals">
+        <span class="font-size" *ngIf="signal.name == 'TT100_PV'"> {{'PrimChamber' | translate}}: {{signal.value}}°C <br></span>
+        <span class="font-size" *ngIf="signal.name == 'TT101_PV'"> {{'SecChamber' | translate}}: {{signal.value}}°C </span>
+      </ng-container>
+    </span>
+    </ng-template>
+    <ng-container>
+
+    </ng-container>
+    <ng-container *ngIf="signal.value < '20' ? true : false" >
+
       <ion-button expand="full" (click)="startPreheat(selectedDevice)" color="secondary">
         <ion-icon slot="end" name="arrow-forward"></ion-icon>
         {{'StartPreheat' | translate}}
       </ion-button>
     </ng-container>
-    <ng-container *ngIf="isPreheatStarted" >
+    <ng-container *ngIf="signal.value < '30' && signal.value >= '20' ? true : false" >
       <ion-card>
         <ion-item>
           <ion-label>{{'PreheatInProgress' | translate}}...</ion-label>
@@ -37,13 +49,15 @@
         </ion-card-content>
       </ion-card>
 
-      <p><ng-template matStepLabel>{{'PreheatSystem' | translate}}</ng-template>
+      <!-- <ng-template matStepLabel>{{'PreheatSystem' | translate}}</ng-template> -->
+      <p>
       <ion-button expand="block" (click)="stopPreheat(selectedDevice)" color="danger">
         <ion-icon slot="end" name="arrow-forward"></ion-icon>
         {{'StopPreheat' | translate}}
       </ion-button></p>
     </ng-container>
   </mat-step>
+</ng-container>
 
   <mat-step [completed]="isCaseSelected" *ngIf="selectedFacility$ | async as selectedFacility" optional>
     <ng-container *ngIf="!isCaseSelected">
@@ -66,21 +80,18 @@
     </ng-container>
   </mat-step>
 
-  <mat-step [completed]="isCycleStarted">
-    <ng-container *ngIf="!isCycleStarted" >
-      <ng-template matStepLabel>{{'StartCycle' | translate}}</ng-template>
+  <!-- <ng-container *ngFor="let signal of selectedDevice.signals">
+    <mat-step *ngIf="signal.name == 'Chamber_Status'" [completed]="signal.value >= '30' ? true : false"> -->
 
+<ng-container *ngFor="let signal of selectedDevice.signals">
+  <mat-step *ngIf="signal.name == 'Chamber_Status'" [completed]="signal.value >= '100' ? true : false">
+    <ng-template matStepLabel>{{'StartCycle' | translate}}</ng-template>
+    <ng-container *ngIf="signal.value < '80' ? true : false" >
       <ion-item>
         <ion-label>{{'BurnMode' | translate}}</ion-label>
         <ion-segment (ionChange)="segmentChanged($event)">
-          <ion-segment-button>
-            <ion-label>{{'Simplicity' | translate}}</ion-label>
-          </ion-segment-button>
-          <ion-segment-button>
-            <ion-label>{{'Eco' | translate}}</ion-label>
-          </ion-segment-button>
-          <ion-segment-button>
-            <ion-label>{{'Standard' | translate}}</ion-label>
+          <ion-segment-button *ngFor="let s of burnModeKeys;"  value="{{ s }}">
+            <ion-label>{{ burnMode[s]}}</ion-label>
           </ion-segment-button>
         </ion-segment>
     </ion-item>
@@ -91,8 +102,7 @@
         </ion-button>
       </p>
     </ng-container>
-    <ng-container *ngIf="isCycleStarted" >
-      <ng-template matStepLabel>{{'StartCycle' | translate}}</ng-template>
+    <ng-container *ngIf="signal.value >= '80' ? true : false" >
       <ion-card>
         <ion-item>
           <ion-label>{{'CycleInProgress' | translate}}...</ion-label>
@@ -109,15 +119,15 @@
       </ion-card>
 
       <p>
-        <ion-button *ngIf="!isCyclePaused" expand="block" (click)="pauseCycle(selectedDevice)">
+        <ion-button *ngIf="signal.value < '80'" expand="block" (click)="pauseCycle(selectedDevice)">
           <ion-icon slot="end" name="arrow-forward"></ion-icon>
           {{'PauseCycle' | translate}}
         </ion-button>
-        <ion-button *ngIf="isCyclePaused" expand="block" (click)="resumeCycle(selectedDevice)" color="secondary">
+        <ion-button *ngIf="signal.value < '85'" expand="block" (click)="resumeCycle(selectedDevice)" color="secondary">
           <ion-icon slot="end" name="arrow-forward"></ion-icon>
           {{'ResumeCycle' | translate}}
         </ion-button>
-        <ion-button expand="block" id="trigger-button" (click)="presentPopover('event$')" color="tertiary">
+        <ion-button expand="block" id="trigger-button" (click)="presentPopover('event$', selectedDevice)" color="tertiary">
           <ion-icon slot="end" name="arrow-forward"></ion-icon>
           {{'ExtendCycle' | translate}}
         </ion-button>
@@ -128,64 +138,65 @@
       </p>
     </ng-container>
   </mat-step>
-  <mat-step [completed]="isCoolDownStarted && isRakeOutStarted">
-    <ng-container *ngIf="!isCoolDownStarted" >
-      <ng-template matStepLabel>{{'CompleteCycle' | translate}}</ng-template>
-      <ion-button expand="block" (click)="coolDown(selectedDevice)" color="tertiary">
-        <ion-icon slot="end" name="arrow-forward"></ion-icon>
-        {{'CoolDown' | translate}}
-      </ion-button>
-      <ion-button expand="block" (click)="rakeOut(selectedDevice)">
-        <ion-icon slot="end" name="arrow-forward"></ion-icon>
-        {{'RakeOut' | translate}}
-      </ion-button>
-    </ng-container>
-    <ng-container *ngIf="isCoolDownStarted && !isRakeOutStarted" >
-      <ng-template matStepLabel>{{'CompleteCycle' | translate}}</ng-template>
-      <ion-card>
-        <ion-item>
-          <ion-label>{{'CoolingInProgress' | translate}}...</ion-label>
-        </ion-item>
-        <ion-card-content>
-          <ion-label *ngFor="let signal of selectedDevice.signals">
-            <p *ngIf="signal.name == 'TT100_PV'"> {{'PrimChamber' | translate}}: {{signal.value}}°C </p>
-            <p *ngIf="signal.name == 'TT101_PV'"> {{'SecChamber' | translate}}: {{signal.value}}°C </p>
-          </ion-label>
-        </ion-card-content>
-        <ion-card-content>
-          {{'Remaining' | translate}} 10 min
-        </ion-card-content>
-      </ion-card>
-      <p>
+  </ng-container>
+    <mat-step [completed]="isCoolDownStarted && isRakeOutStarted">
+      <ng-container *ngIf="!isCoolDownStarted" >
+        <ng-template matStepLabel>{{'CompleteCycle' | translate}}</ng-template>
+        <ion-button expand="block" (click)="coolDown(selectedDevice)" color="tertiary">
+          <ion-icon slot="end" name="arrow-forward"></ion-icon>
+          {{'CoolDown' | translate}}
+        </ion-button>
         <ion-button expand="block" (click)="rakeOut(selectedDevice)">
           <ion-icon slot="end" name="arrow-forward"></ion-icon>
           {{'RakeOut' | translate}}
         </ion-button>
-      </p>
-    </ng-container>
-    <ng-container *ngIf="isCoolDownStarted && isRakeOutStarted">
-      <ng-template matStepLabel>{{'CompleteCycle' | translate}}</ng-template>
-      <ion-card>
-        <ion-item>
-          <ion-label>{{'CooledDown' | translate}}</ion-label>
-        </ion-item>
-        <ion-card-content>
-          {{'ElaspedTime' | translate}}: 10 min
-        </ion-card-content>
-      </ion-card>
+      </ng-container>
+      <ng-container *ngIf="isCoolDownStarted && !isRakeOutStarted" >
+        <ng-template matStepLabel>{{'CompleteCycle' | translate}}</ng-template>
+        <ion-card>
+          <ion-item>
+            <ion-label>{{'CoolingInProgress' | translate}}...</ion-label>
+          </ion-item>
+          <ion-card-content>
+            <ion-label *ngFor="let signal of selectedDevice.signals">
+              <p *ngIf="signal.name == 'TT100_PV'"> {{'PrimChamber' | translate}}: {{signal.value}}°C </p>
+              <p *ngIf="signal.name == 'TT101_PV'"> {{'SecChamber' | translate}}: {{signal.value}}°C </p>
+            </ion-label>
+          </ion-card-content>
+          <ion-card-content>
+            {{'Remaining' | translate}} 10 min
+          </ion-card-content>
+        </ion-card>
+        <p>
+          <ion-button expand="block" (click)="rakeOut(selectedDevice)">
+            <ion-icon slot="end" name="arrow-forward"></ion-icon>
+            {{'RakeOut' | translate}}
+          </ion-button>
+        </p>
+      </ng-container>
+      <ng-container *ngIf="isCoolDownStarted && isRakeOutStarted">
+        <ng-template matStepLabel>{{'CompleteCycle' | translate}}</ng-template>
+        <ion-card>
+          <ion-item>
+            <ion-label>{{'CooledDown' | translate}}</ion-label>
+          </ion-item>
+          <ion-card-content>
+            {{'ElaspedTime' | translate}}: 10 min
+          </ion-card-content>
+        </ion-card>
 
-      <ion-card>
-        <ion-item>
-          <ion-label>{{'RakeOutInProgress' | translate}}...</ion-label>
-        </ion-item>
-      </ion-card>
-      <p>
-        <ion-button expand="block" (click)="rakeOutConfirmation(stepper, selectedDevice)" color="secondary">
-          <ion-icon slot="end" name="arrow-forward"></ion-icon>
-          {{'ConfirmRakeOutIsFinished' | translate}}.
-        </ion-button>
-      </p>
-    </ng-container>
-  </mat-step>
+        <ion-card>
+          <ion-item>
+            <ion-label>{{'RakeOutInProgress' | translate}}...</ion-label>
+          </ion-item>
+        </ion-card>
+        <p>
+          <ion-button expand="block" (click)="rakeOutConfirmation(stepper, selectedDevice)" color="secondary">
+            <ion-icon slot="end" name="arrow-forward"></ion-icon>
+            {{'ConfirmRakeOutIsFinished' | translate}}.
+          </ion-button>
+        </p>
+      </ng-container>
+    </mat-step>
 </mat-stepper>
 </ion-content>

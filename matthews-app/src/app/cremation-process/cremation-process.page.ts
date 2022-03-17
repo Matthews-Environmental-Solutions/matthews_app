@@ -10,6 +10,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { ActivatedRoute } from '@angular/router';
 import { Device } from '../device-list/device';
 import { CremationProcessService } from './cremation-process.service';
+import { Observable } from 'rxjs';
 
 export enum BurnMode {
   Simplicity = 0,
@@ -31,11 +32,17 @@ export class CremationProcessPage implements OnInit {
   isCaseSelected = false;
   isCycleStarted = false;
   isCyclePaused = false;
+  isCycleStopped = false;
   isCoolDownStarted = false;
   isRakeOutStarted = false;
+  isRakeOutCompleted = false;
   showSearchbar: boolean;
   searchTerm: string;
   deviceId: string;
+  selectedBurnMode: number;
+
+  burnMode = BurnMode;
+  burnModeKeys = Object.keys(BurnMode).filter(x => (parseInt(x, 10) >= 0));
 
   constructor(private appStore: AppStoreService,
               private popoverController: PopoverController,
@@ -49,12 +56,12 @@ export class CremationProcessPage implements OnInit {
     this.matStepperIntl.optionalLabel ="";
     this.matStepperIntl.changes.next();
     this.deviceId = this.route.snapshot.paramMap.get('id');
-    console.log("Device ID: " + this.deviceId);
   }
 
   startPreheat(selectedDevice: Device) {
     this.isPreheatStarted = true;
-    const signal = selectedDevice.signals.find(signal => signal.name == "Preheat");
+    const signal = selectedDevice.signals.find(signal => signal.name == "Ewon_Preheat");
+    console.log("SignalId" + signal.id);
     this.cremationProcessService.writeSignalValue(signal?.id, 1);
   }
 
@@ -145,9 +152,10 @@ export class CremationProcessPage implements OnInit {
     this.presentAlert(alertOptions);
   }
 
-  async presentPopover(ev: any) {
+  async presentPopover(ev: any, selectedDevice: Device) {
     const popover = await this.popoverController.create({
       component: ExtendCyclePage,
+      componentProps:{ selectedDevice },
       cssClass: 'my-custom-class',
       event: ev,
       translucent: true

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { PopoverController } from '@ionic/angular';
 import { AppStoreService } from '../app.store.service';
 import { CremationProcessService } from '../cremation-process/cremation-process.service';
@@ -8,9 +8,10 @@ import { Device } from '../device-list/device';
   selector: 'app-extend-cycle',
   templateUrl: './extend-cycle.page.html',
   styleUrls: ['./extend-cycle.page.scss'],
+
 })
 export class ExtendCyclePage implements OnInit {
-  selectedDevice$ = this.appStore.selectedDevice$;
+  @Input() selectedDevice: Device;
 
   extraTimeInterval = 5;
 
@@ -41,8 +42,8 @@ export class ExtendCyclePage implements OnInit {
     this.extraTimeInterval += 30;
   }
 
-  onConfirm(selectedDevice: Device) {
-    const signal = selectedDevice.signals.find(signal => signal.name == "Ewon_Time_to_Add_(Mins)");
+  onConfirm() {
+    const signal = this.selectedDevice.signals.find(signal => signal.name == "Ewon_Time_to_Add_(Mins)");
     this.cremationProcessService.writeSignalValue(signal?.id, this.extraTimeInterval);
     this.popoverController.dismiss();
   }

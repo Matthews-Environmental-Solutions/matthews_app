@@ -70,9 +70,22 @@
   height: 41px !important;
   width: 41px !important;
   flex-shrink: 0;
-  position: relative;
+  position: relative !important;
 }
 
 .mat-stepper-horizontal-line,  .mat-stepper-vertical-line{
   margin-left: 44px !important;
+}
+
+.font-size {
+  font-size: 15px !important;
+  font-weight: 375 !important;
+}
+
+.mat-vertical-stepper-header {
+  height:auto !important;
+}
+
+.mat-vertical-stepper-header {
+  padding: 24px 24px 0px 24px;
 }
