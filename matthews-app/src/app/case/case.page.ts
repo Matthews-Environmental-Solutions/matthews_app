@@ -4,6 +4,7 @@ import { AppStoreService } from '../app.store.service';
 import { ModalController } from '@ionic/angular';
 import { DatePipe } from '@angular/common';
 import { CaseStatuses, ContainerSize, ContainerType } from '../core/enums';
+import { Device } from '../device-list/device';
 
 
 
@@ -30,6 +31,7 @@ export class CasePage implements OnInit {
   userInfo$ = this.caseStore.userInfo$;
   currentDateTime: any;
   deviceList$ = this.caseStore.deviceList$;
+  selectedDevice: Device;
 
   constructor(private caseStore: AppStoreService, private modalCtrl: ModalController, private datePipe: DatePipe) {
   }
@@ -45,15 +47,26 @@ export class CasePage implements OnInit {
 
   onSubmit() {
     if(!this.selectedCase.id) {
+      this.updateDeviceAlias(this.selectedCase);
       this.caseStore.createCase(this.selectedCase);
-      this.currentDateTime = this.datePipe.transform((new Date), 'MM/dd/yyyy h:mm:ss');
+      this.currentDateTime = (new Date).toISOString();
+      console.log(this.selectedCase);
     } else {
+      this.updateDeviceAlias(this.selectedCase);
       this.caseStore.updateCase(this.selectedCase);
+      console.log(this.selectedCase);
+
     }
     this.close();
   }
 
   close() {
     this.modalCtrl.dismiss();
+  }
+
+  updateDeviceAlias(selectedCase: Case) {
+    this.deviceList$.subscribe((devices) => {
+      this.selectedCase.selectedDeviceAlias = devices.find(device => device.id == selectedCase.selectedDevice).alias;
+    });
   }
 }

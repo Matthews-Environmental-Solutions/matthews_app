@@ -228,7 +228,7 @@ export class CremationProcessPage implements OnInit {
   }
 
   segmentChanged(ev: any) {
-    this.selectedBurnMode = ev.details.value;
+    this.selectedBurnMode = ev.detail.value;
     console.log('Segment changed', ev);
   }
 

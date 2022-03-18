@@ -27,12 +27,9 @@ export class SignalRService {
     this.loadingService.present();
     const signalRServerEndPoint = 'https://matthewscremation.i4connected.cloud/api/signalr';
     this.connection = $.hubConnection(signalRServerEndPoint);
-    //this.connection.logging = true;
     await this.getAccessToken().then((token) => {
       this.connection.qs = { access_token: token };
       this.proxy = this.connection.createHubProxy('measurementHub');
-
-      //this.startConnection();
     });
 
     return this.connection;

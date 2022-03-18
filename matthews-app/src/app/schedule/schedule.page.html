@@ -43,7 +43,8 @@
             <p>
               {{case.caseName}} &mdash; {{'Status' | translate}}: {{caseStatus[case.status] | translate}}
             </p>
-            <p>{{'Schedule' | translate}}: {{case.selectedDevice}}    {{case.createdTime}}</p>
+            <p>{{'Selected Device' | translate}}: {{case.selectedDeviceAlias}}</p>
+            <p>{{'Schedule Date' | translate}}: {{case.createdTime}}</p>
           </ion-label>
         </ion-item>
     </ion-item-sliding>
