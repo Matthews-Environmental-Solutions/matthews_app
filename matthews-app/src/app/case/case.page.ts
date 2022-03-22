@@ -49,7 +49,7 @@ export class CasePage implements OnInit {
     if(!this.selectedCase.id) {
       this.updateDeviceAlias(this.selectedCase);
       this.caseStore.createCase(this.selectedCase);
-      this.currentDateTime = (new Date).toISOString();
+      this.selectedCase.createdTime = new Date((new Date()).toISOString());
       console.log(this.selectedCase);
     } else {
       this.updateDeviceAlias(this.selectedCase);

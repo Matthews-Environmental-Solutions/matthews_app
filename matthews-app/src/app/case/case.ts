@@ -13,5 +13,6 @@ export interface Case {
     isObsolete: boolean;
     createdBy: string;
     createdTime: Date;
+    scheduledTime: Date;
     selectedDeviceAlias: string;
 }
