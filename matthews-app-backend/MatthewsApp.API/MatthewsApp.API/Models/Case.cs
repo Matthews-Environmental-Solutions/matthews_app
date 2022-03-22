@@ -35,5 +35,9 @@ namespace MatthewsApp.API.Models
         public string CreatedBy { get; set; }
 
         public DateTime CreatedTime { get; set; }
+
+        public DateTime ScheduledTime { get; set; }
+
+        public string SelectedDeviceAlias { get; set; }
     }
 }

@@ -56,7 +56,13 @@ namespace MatthewsApp.API.Migrations
                     b.Property<bool>("IsObsolete")
                         .HasColumnType("bit");
 
+                    b.Property<DateTime>("ScheduledTime")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("SelectedDevice")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SelectedDeviceAlias")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Status")
