@@ -6,7 +6,7 @@ SET @ClientName = N'matthews.web';
 SET @ClientDescription = N'matthews.web Client';
 SET @secretText = '0be0470165fa49ca9631a2babc0a73d4';
 SET @RedirectUri = N'http://localhost:8100/authorizationcallback';
-SET @PostLogoutRedirectUr = N'http://localhost:8100/authorizationcallback',
+SET @PostLogoutRedirectUri = N'http://localhost:8100/authorizationcallback';
 SET @MatthewsApiName = N'matthews.api'; 
 
 -- Creating a secret
@@ -43,10 +43,10 @@ IF NOT EXISTS
       INSERT [dbo].[ClientSecrets] ([ClientId], [Description], [Value], [Expiration], [Type], [Created]) VALUES (@ClientId, NULL, @Secret, NULL, N'SharedSecret', @CreationTime)
 	
       PRINT 'Creating ClientRedirectUri: ' + @RedirectUri;
-      INSERT [dbo].[ClientRedirectUris] ([RedirectUri], [ClientId]) VALUES (@RedirectUri1, @ClientId)
+      INSERT [dbo].[ClientRedirectUris] ([RedirectUri], [ClientId]) VALUES (@RedirectUri, @ClientId)
 
       PRINT 'Creating ClientPostLogoutRedirectUris: ' + @PostLogoutRedirectUri;
-      INSERT [dbo].ClientPostLogoutRedirectUris ([PostLogoutRedirectUri], [ClientId]) VALUES (@PostLogoutRedirectUri1, @ClientId)
+      INSERT [dbo].ClientPostLogoutRedirectUris ([PostLogoutRedirectUri], [ClientId]) VALUES (@PostLogoutRedirectUri, @ClientId)
 
     END
 ELSE 
