@@ -1,0 +1,53 @@
+@import '@angular/material/theming';
+@import '@ng-matero/extensions/theming';
+@include mat-core();
+
+$my-app-primary: mat-palette($mat-blue-grey);
+$my-app-accent: mat-palette($mat-pink, 500, 900, A100);
+$my-app-warn: mat-palette($mat-deep-orange);
+
+$my-app-theme: mat-light-theme($my-app-primary, $my-app-accent, $my-app-warn);
+
+@include angular-material-theme($my-app-theme);
+@include material-extensions-theme($my-app-theme);
+
+// Create nested scss map
+$matthews-primary-map: (
+  50: #e7ebf0,
+  100: #c3ced9,
+  200: #9badbf,
+  300: #738ca5,
+  400: #557392,
+  500: #375a7f, // original primary color you built this map around
+  600: #315277,
+  700: #2a486c,
+  800: #233f62,
+  900: #162e4f,
+  A100: #8bb8ff,
+  A200: #5898ff,
+  A400: #2579ff,
+  A700: #0c69ff,
+  contrast: (
+    50: #000000,
+    100: #000000,
+    200: #000000,
+    300: #000000,
+    400: #ffffff,
+    500: #ffffff,
+    600: #ffffff,
+    700: #ffffff,
+    800: #ffffff,
+    900: #ffffff,
+    A100: #000000,
+    A200: #000000,
+    A400: #ffffff,
+    A700: #ffffff
+  )
+);
+
+.matthews-theme {
+    $alternate-primary: mat-palette($mat-blue-gray, 700);
+    $alternate-accent: mat-palette($mat-lime, A400);
+    $alternate-theme: mat-light-theme($alternate-primary, $alternate-accent);
+    @include angular-material-theme($alternate-theme);
+}

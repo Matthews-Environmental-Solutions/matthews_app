@@ -1,0 +1,73 @@
+.container {
+    width: 100%;
+    height: 100%;
+
+    display: grid;
+    background-color: lightgray;
+
+    grid-template-columns: [wc-first] 1fr [wc-end];
+    grid-template-rows: [wr-first] auto [wr-line2] 1fr [wr-last];
+}
+
+.toolbar {
+    grid-column-start: wc-first;
+    grid-column-end: wc-end;
+    grid-row-start: wr-first;
+    grid-row-end: wr-line2;
+}
+
+.logo {
+    width: 180px;
+}
+
+.spacer {
+    flex: 1 1 auto;
+}
+
+.content {
+    width: 100%;
+
+    grid-column-start: wc-first;
+    grid-column-end: wc-end;
+    grid-row-start: wr-line2;
+    grid-row-end: wr-last;
+
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: center;
+    align-content: center;
+}
+
+.welcome-card {
+    margin-top: 50px;
+    
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    grid-gap: 20px;
+    padding: 20px;
+}
+
+.card-title {
+    display: flex;
+    justify-content: center;
+    font-size: x-large;
+    margin-bottom: 15px;
+}
+
+.card-description {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 15px;
+}
+
+.btn-holder {
+    display: flex;
+    justify-content: center;
+}
+
+.card-sign-on-btn {
+    width: 100px;
+}

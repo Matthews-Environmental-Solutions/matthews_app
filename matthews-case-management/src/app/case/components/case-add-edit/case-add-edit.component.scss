@@ -1,0 +1,126 @@
+.add-edit-card {
+    display: flex;
+
+    margin: 15px;
+    height: calc(100% - 30px);
+}
+
+.card-header {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-between;
+    padding-top: 5px;
+}
+
+.add-edit-toolbar {
+    background-color: #c5d93a;
+    border-radius: var(--mdc-elevated-card-container-shape, var(--mdc-shape-medium, 4px));
+    color: #5d6771;
+}
+
+.spacer {
+    flex: 1 1 auto;
+}
+
+.add-edit-header-buttons {
+    margin-left: 10px;
+    color: #5d6771;
+    border: solid 1px #5d6771;
+}
+
+.btn-cancel {
+    background-color: transparent;
+
+}
+
+.btn-save {}
+
+.card-content {
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    height: calc(100% - 30px);
+
+    display: grid;
+
+    grid-template-columns: [ac-first] 1fr [ac-line2] 1fr [ac-end];
+    grid-template-rows: [ar-first] 1fr [ar-last];
+}
+
+.left-column {
+    grid-row-start: ar-first;
+    grid-row-end: ar-last;
+    grid-column-start: ac-first;
+    grid-column-end: ac-line2;
+
+    padding: 10px;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.right-column {
+    grid-row-start: ar-first;
+    grid-row-end: ar-last;
+    grid-column-start: ac-line2;
+    grid-column-end: ac-end;
+
+    padding: 10px;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.toggle-button-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+
+    height: 56px;
+    padding-right: 16px;
+    padding-left: 16px;
+    margin-bottom: 22px;
+}
+
+.toggle-button-label {
+    color: rgba(0, 0, 0, 0.6);
+    -webkit-font-smoothing: antialiased;
+    font-family: var(--mdc-typography-body1-font-family, var(--mdc-typography-font-family, Roboto, sans-serif));
+    font-size: var(--mdc-typography-body1-font-size, 16px);
+    line-height: var(--mdc-typography-body1-line-height, 24px);
+    font-weight: var(--mdc-typography-body1-font-weight, 400);
+    letter-spacing: var(--mdc-typography-body1-letter-spacing, 0.03125em);
+    -webkit-text-decoration: var(--mdc-typography-body1-text-decoration, inherit);
+    text-decoration: var(--mdc-typography-body1-text-decoration, inherit);
+    text-transform: var(--mdc-typography-body1-text-transform, none);
+}
+
+.schedule-start-time-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+
+    height: 76px;
+    padding-right: 16px;
+    padding-left: 16px;
+    margin-bottom: 22px;
+}
+
+.schedule-start-time-right-column {
+    display: flex;
+    flex-direction: column;
+}
+
+.right-column-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    column-gap: 25px;
+}
+
+.inline-calendar-card {
+    width: 250px;
+}

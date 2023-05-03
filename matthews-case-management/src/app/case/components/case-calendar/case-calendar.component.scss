@@ -1,0 +1,77 @@
+@import "@angular/material/theming";
+$primary: mat-palette($mat-lime, A400);
+$buttons: mat-palette($mat-blue-gray, 700);
+
+.calendar-card {
+    display: flex;
+
+    margin: 15px;
+    height: calc(100% - 30px);
+}
+
+.card-header {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-between;
+    padding-top: 5px;
+}
+
+.header-left {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: left;
+    align-items: center;
+}
+
+.header-right {
+    display: flex;
+    flex-flow: row wrap;
+    align-items: center;
+    gap: 15px;
+    padding-right: 5px;
+}
+
+.header-right-period-buttons {
+    border: solid 1px;
+    border-radius: 5px;
+}
+
+.card-header-filter {
+    display: flex;
+    justify-content: space-between;
+
+    margin-top: 5px;
+    padding: 5px 5px 5px 5px;
+    background-color: mat-color($primary);
+}
+
+.card-content-list {
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+
+
+
+
+
+.card-header-text {
+    font-size: x-large;
+}
+
+.selected-button {
+    background-color: mat-color($buttons);
+    color: white;
+}
+
+.navigation-button {
+    font-size: x-large;
+}
+
+.calendar-icon {
+    font-size: x-large;
+}
+
+.inline-calendar-card {
+    width: 250px;
+}

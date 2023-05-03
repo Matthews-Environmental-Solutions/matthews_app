@@ -1,0 +1,47 @@
+/* You can add global styles to this file, and also import other style files */
+@import '@angular/material/theming';
+@include mat-core();
+
+$matthew-background-dark-blue: mat-palette($mat-blue-gray, 700);
+
+html, body { height: 100%; width: 100%}
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+::-webkit-scrollbar {
+    width: 10px;
+    height:10px;
+}
+ 
+::-webkit-scrollbar-track {
+    // -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.8); 
+    border-radius: 6px;
+    // background-color: grey;
+    background-color:  hsl(0, 0%, 0%, 0);
+}
+ 
+::-webkit-scrollbar-thumb {
+    border-radius: 6px;
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.9); 
+    background-color: rgba(69,90,100,255);
+    // background-color:  hsl(0, 0%, 0%, 0);
+}
+
+.font-color-green {
+    color: #02708e;
+}
+
+.font-color-red {
+    color: #90131a;
+}
+
+.font-color-blue {
+    color: #29c0f1;
+}
+
+.font-color-orange {
+    color: #f15a29;
+}
+
+.btn-color-green {
+    --mdc-protected-button-container-color:  #c5d93a !important;
+}

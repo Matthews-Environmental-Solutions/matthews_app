@@ -1,0 +1,31 @@
+.unscheduled-item {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    // background-color: coral;
+    border-bottom: solid 2px #999;
+    margin-top: 20px;
+}
+
+.unscheduled-item-left {
+    display: flex;
+    flex-direction: column;
+}
+
+.unscheduled-item-right {
+    width: 30px;
+    margin-top: -15px;
+}
+
+.unscheduled-item-id {
+    font-weight: bold;
+    font-size: larger;
+}
+
+.unscheduled-item-name {
+    text-transform: uppercase;
+}
+
+.unscheduled-item-button {
+    font-size: medium;
+}
