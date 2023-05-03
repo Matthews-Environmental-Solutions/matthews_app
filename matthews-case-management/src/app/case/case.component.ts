@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Facility } from '../models/facility.model';
 import { Case } from '../models/case.model';
 import { AuthService } from '../auth/auth.service';
+import { UserInfo } from '../models/userinfo.model';
 
 @Component({
   selector: 'app-case',
@@ -27,7 +28,14 @@ export class CaseComponent {
     new Case("824KRB4", "Jane", "Tratinelli", 56, "Hardwood", "Fimale", "Dev 2")
   ];
 
+  loggedInUser: UserInfo | undefined;
+
   constructor(private authService: AuthService) {
+    let userinfoString = localStorage.getItem('id_token_claims_obj');
+    let jsonLoggedInUser = JSON.parse(userinfoString ? userinfoString : '');
+    
+    this.loggedInUser = new UserInfo();
+    this.loggedInUser.copyInto(jsonLoggedInUser);
   }
 
   logout(): void {

@@ -12,9 +12,9 @@ export const authConfig: AuthConfig = {
     responseType: 'code',
     scope: 'openid profile email offline_access api matthews.api',
 
-    sessionChecksEnabled: true,
-    showDebugInformation: true,
-    clearHashAfterLogin: false, // https://github.com/manfredsteyer/angular-oauth2-oidc/issues/457#issuecomment-431807040,
-    nonceStateSeparator: 'semicolon', // Real semicolon gets mangled by Duende ID Server's URI encoding
-    disableAtHashCheck: true,
+    // sessionChecksEnabled: true,
+    // showDebugInformation: true,
+    // clearHashAfterLogin: false, // https://github.com/manfredsteyer/angular-oauth2-oidc/issues/457#issuecomment-431807040,
+    // nonceStateSeparator: 'semicolon', // Real semicolon gets mangled by Duende ID Server's URI encoding
+    // disableAtHashCheck: true,
 };
