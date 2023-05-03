@@ -5,7 +5,6 @@ import { authAppInitializerFactory } from './auth-app-initializer.factory';
 import { AuthService } from './auth.service';
 import { authConfig } from './auth-config';
 import { authModuleConfig } from './auth-module-config';
-import { AuthGuard } from './auth-guard.service';
 
 export function storageFactory(): OAuthStorage {
   return localStorage;
@@ -16,8 +15,7 @@ export function storageFactory(): OAuthStorage {
   imports: [
     HttpClientModule,
     OAuthModule.forRoot()
-  ],
-  providers: [AuthGuard]
+  ]
 })
 export class AuthModule { 
   static forRoot(): ModuleWithProviders<AuthModule>{
