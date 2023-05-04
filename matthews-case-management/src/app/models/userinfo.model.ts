@@ -1,5 +1,5 @@
 export class UserInfo {
-    name: string | undefined;
+    name!: string;
     given_name: string | undefined;
     family_name: string | undefined;
 

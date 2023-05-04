@@ -50,6 +50,7 @@ import { MtxGridModule } from '@ng-matero/extensions/grid';
 import { MtxSelectModule } from '@ng-matero/extensions/select';
 import { MtxDatetimepickerModule } from '@ng-matero/extensions/datetimepicker';
 import { MtxNativeDatetimeModule } from '@ng-matero/extensions/core';
+import { ProfileSettingDialogComponent } from './dialogs/profile-setting/profile-setting.dialog.component';
 
 @NgModule({
   declarations: [
@@ -58,7 +59,8 @@ import { MtxNativeDatetimeModule } from '@ng-matero/extensions/core';
     CaseCalendarDailyComponent,
     CaseCalendarWeeklyComponent,
     UnscheduledCasesComponent,
-    CaseAddEditComponent
+    CaseAddEditComponent,
+    ProfileSettingDialogComponent
   ],
   imports: [
     CommonModule,

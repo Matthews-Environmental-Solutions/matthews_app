@@ -30,7 +30,7 @@
         <mat-menu #userMenu="matMenu">
           <div class="menu-item-username">{{loggedInUser?.given_name}}</div>
           <div class="menu-item-username manu-item-email">{{loggedInUser?.name}}</div>
-          <button mat-menu-item>
+          <button mat-menu-item (click)="openProfileDialog()">
             <mat-icon>person</mat-icon>
             <span>Profile setting</span>
           </button>

@@ -3,6 +3,9 @@ import { Facility } from '../models/facility.model';
 import { Case } from '../models/case.model';
 import { AuthService } from '../auth/auth.service';
 import { UserInfo } from '../models/userinfo.model';
+import { MatDialog } from '@angular/material/dialog';
+import { ProfileSettingDialogComponent } from './dialogs/profile-setting/profile-setting.dialog.component';
+import { UserSettingData } from '../models/user-setting.model';
 
 @Component({
   selector: 'app-case',
@@ -29,16 +32,50 @@ export class CaseComponent {
   ];
 
   loggedInUser: UserInfo | undefined;
+  userSetting: UserSettingData | undefined;
 
-  constructor(private authService: AuthService) {
-    let userinfoString = localStorage.getItem('id_token_claims_obj');
-    let jsonLoggedInUser = JSON.parse(userinfoString ? userinfoString : '');
+  constructor(private authService: AuthService, public dialog: MatDialog) {
+    localStorage.setItem('branislav@comdata.rs','{"username": "branislav@comdata.rs", "startDayOfWeek": 0}');
+    this.getLoggedInUser();
+    this.getUserSetting();
+
     
-    this.loggedInUser = new UserInfo();
-    this.loggedInUser.copyInto(jsonLoggedInUser);
   }
 
   logout(): void {
     this.authService.logout();
   }
+
+  openProfileDialog(): void {
+    const dialogRef = this.dialog.open(ProfileSettingDialogComponent, {
+      data: this.userSetting,
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed');
+
+    });
+  }
+
+  getLoggedInUser(): void {
+    let userinfoString = localStorage.getItem('id_token_claims_obj');
+    let jsonLoggedInUser = JSON.parse(userinfoString ? userinfoString : '');
+
+    this.loggedInUser = new UserInfo();
+    this.loggedInUser.copyInto(jsonLoggedInUser);
+  }
+
+  getUserSetting(): void {
+    let username = this.loggedInUser && this.loggedInUser.name ? this.loggedInUser.name : undefined;
+    if(username){
+      let setting = localStorage.getItem(username);
+
+      if(setting){
+        let jsonSetting = JSON.parse(setting);
+        this.userSetting =new UserSettingData();
+        this.userSetting.copyInto(jsonSetting);
+      }
+    }
+  }
+
 }
