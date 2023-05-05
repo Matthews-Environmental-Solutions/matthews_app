@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { CaseRoutingModule } from './case-routing.module';
 import { CaseComponent } from './case.component';
@@ -106,7 +106,8 @@ import { ProfileSettingDialogComponent } from './dialogs/profile-setting/profile
     MtxGridModule,
     MtxSelectModule,
     MtxDatetimepickerModule,
-    MtxNativeDatetimeModule
+    MtxNativeDatetimeModule,
+    FormsModule
   ]
 })
 export class CaseModule { }

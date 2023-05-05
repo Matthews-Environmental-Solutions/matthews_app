@@ -41,13 +41,13 @@ export class AuthService {
     private router: Router,
   ) {
     // Useful for debugging:
-    this.oauthService.events.subscribe(event => {
-      if (event instanceof OAuthErrorEvent) {
-        console.error('OAuthErrorEvent Object:', event);
-      } else {
-        console.warn('OAuthEvent Object:', event);
-      }
-    });
+    // this.oauthService.events.subscribe(event => {
+    //   if (event instanceof OAuthErrorEvent) {
+    //     console.error('OAuthErrorEvent Object:', event);
+    //   } else {
+    //     console.warn('OAuthEvent Object:', event);
+    //   }
+    // });
 
     // This is tricky, as it might cause race conditions (where access_token is set in another
     // tab before everything is said and done there.

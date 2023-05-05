@@ -1,10 +1,44 @@
 <h1 mat-dialog-title>{{data.username}} setting</h1>
-<div mat-dialog-content>
-    <p>What's your favorite animal?</p>
-    <!-- <mat-form-field appearance="fill">
-        <mat-label>Favorite Animal</mat-label>
-        <input matInput [(ngModel)]="data.startDayOfWeek">
-    </mat-form-field> -->
+<div mat-dialog-content class="dialog-content">
+
+    <div class="dialog-content-field">
+        <mat-label>First day in week:</mat-label>
+        <mat-radio-group aria-label="Select a first day in week" [(ngModel)]="data.startDayOfWeek" [value]="data.startDayOfWeek">
+            <mat-radio-button value="0">Sunday</mat-radio-button>
+            <mat-radio-button value="1">Monday</mat-radio-button>
+        </mat-radio-group>
+    </div>
+
+    <div class="dialog-content-field">
+        <mat-label>First day in week:</mat-label>
+        <mat-radio-group aria-label="Select a time format" [(ngModel)]="data.timeformat" [value]="data.timeformat">
+            <mat-radio-button value="12">12 hours</mat-radio-button>
+            <mat-radio-button value="24">24 hours</mat-radio-button>
+        </mat-radio-group>
+    </div>
+
+    <div class="dialog-content-field">
+        <mat-form-field appearance="fill">
+            <mat-label>Time zone</mat-label>
+            <mat-select [(ngModel)]="data.timezone">
+                <mat-option *ngFor="let tz of timezones" [value]="tz">
+                    {{tz}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+
+    <div class="dialog-content-field">
+        <mat-form-field appearance="fill">
+            <mat-label>Language</mat-label>
+            <mat-select [(ngModel)]="data.language">
+                <mat-option *ngFor="let language of languages" [value]="language.id">
+                    {{language.name}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+
 </div>
 <div mat-dialog-actions>
     <button mat-button [mat-dialog-close]="data" cdkFocusInitial>Save</button>

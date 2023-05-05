@@ -1,5 +1,6 @@
 import { Injectable } from "@angular/core";
 import { getWeek, startOfWeek, addDays, getDate, getMonth } from 'date-fns'
+import { listTimeZones } from 'timezone-support';
 
 @Injectable({
     providedIn: 'root'
@@ -46,6 +47,10 @@ export class CalendarService {
     getDateAndMonth(date: Date): string {
         let monthName = date.toLocaleString('en-us', { month: 'short' });
         return `${getDate(date).toString()} ${monthName}`;
+    }
+
+    getAllTimeZones(): string[] {
+        return listTimeZones();
     }
 
 }

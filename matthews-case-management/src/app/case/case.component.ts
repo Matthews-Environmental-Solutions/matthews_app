@@ -35,11 +35,8 @@ export class CaseComponent {
   userSetting: UserSettingData | undefined;
 
   constructor(private authService: AuthService, public dialog: MatDialog) {
-    localStorage.setItem('branislav@comdata.rs','{"username": "branislav@comdata.rs", "startDayOfWeek": 0}');
     this.getLoggedInUser();
     this.getUserSetting();
-
-    
   }
 
   logout(): void {
@@ -52,8 +49,10 @@ export class CaseComponent {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed');
-
+      if (result) {
+        console.log('The dialog was closed', result);
+        localStorage.setItem(result.username, JSON.stringify(result));
+      }
     });
   }
 
@@ -67,14 +66,12 @@ export class CaseComponent {
 
   getUserSetting(): void {
     let username = this.loggedInUser && this.loggedInUser.name ? this.loggedInUser.name : undefined;
-    if(username){
+    if (username) {
       let setting = localStorage.getItem(username);
 
-      if(setting){
-        let jsonSetting = JSON.parse(setting);
-        this.userSetting =new UserSettingData();
-        this.userSetting.copyInto(jsonSetting);
-      }
+      let jsonSetting = setting ? JSON.parse(setting) : JSON.parse('{"username": "' + username + '", "startDayOfWeek": "0", "language": "en", "timezone": "Europe/London", "timeformat": "24"}');
+      this.userSetting = new UserSettingData();
+      this.userSetting.copyInto(jsonSetting);
     }
   }
 
