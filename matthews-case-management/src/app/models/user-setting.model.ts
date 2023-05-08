@@ -1,6 +1,6 @@
 export class UserSettingData {
     username!: string;
-    startDayOfWeek!: string;
+    startDayOfWeek!: 0 | 1;
     language!: string;
     timezone!: string;
     timeformat!: string;

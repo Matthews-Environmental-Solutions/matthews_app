@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { Component } from '@angular/core';
 import { Facility } from '../models/facility.model';
 import { Case } from '../models/case.model';
 import { AuthService } from '../auth/auth.service';
@@ -6,6 +6,7 @@ import { UserInfo } from '../models/userinfo.model';
 import { MatDialog } from '@angular/material/dialog';
 import { ProfileSettingDialogComponent } from './dialogs/profile-setting/profile-setting.dialog.component';
 import { UserSettingData } from '../models/user-setting.model';
+import { UserSettingService } from '../services/user-setting.service';
 
 @Component({
   selector: 'app-case',
@@ -34,7 +35,7 @@ export class CaseComponent {
   loggedInUser: UserInfo | undefined;
   userSetting: UserSettingData | undefined;
   
-  constructor(private authService: AuthService, public dialog: MatDialog) {
+  constructor(private authService: AuthService, private userSettingService: UserSettingService, public dialog: MatDialog) {
     this.getLoggedInUser();
   }
 
@@ -51,6 +52,7 @@ export class CaseComponent {
       if (result) {
         console.log('The dialog was closed', result);
         localStorage.setItem(result.username, JSON.stringify(result));
+        this.userSettingService.setUserSetting(result as UserSettingData);
       }
     });
   }
@@ -76,6 +78,7 @@ export class CaseComponent {
       let jsonSetting = setting ? JSON.parse(setting) : JSON.parse('{"username": "' + username + '", "startDayOfWeek": "0", "language": "en", "timezone": "Europe/London", "timeformat": "24"}');
       this.userSetting = new UserSettingData();
       this.userSetting.copyInto(jsonSetting);
+      this.userSettingService.setUserSetting(this.userSetting);
     }
   }
 

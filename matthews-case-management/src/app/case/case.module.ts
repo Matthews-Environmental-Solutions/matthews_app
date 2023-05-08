@@ -51,6 +51,7 @@ import { MtxSelectModule } from '@ng-matero/extensions/select';
 import { MtxDatetimepickerModule } from '@ng-matero/extensions/datetimepicker';
 import { MtxNativeDatetimeModule } from '@ng-matero/extensions/core';
 import { ProfileSettingDialogComponent } from './dialogs/profile-setting/profile-setting.dialog.component';
+import { DatetimePipe } from '../pipes/datetime.pipe';
 
 @NgModule({
   declarations: [
@@ -60,7 +61,8 @@ import { ProfileSettingDialogComponent } from './dialogs/profile-setting/profile
     CaseCalendarWeeklyComponent,
     UnscheduledCasesComponent,
     CaseAddEditComponent,
-    ProfileSettingDialogComponent
+    ProfileSettingDialogComponent,
+    DatetimePipe
   ],
   imports: [
     CommonModule,

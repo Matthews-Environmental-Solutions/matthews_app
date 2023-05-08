@@ -1,9 +1,11 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatDatepickerInputEvent } from '@angular/material/datepicker';
 import { MatMenuTrigger } from '@angular/material/menu';
+import { tap } from 'rxjs';
 import { Case } from 'src/app/models/case.model';
 import { CalendarService } from 'src/app/services/calendar.service';
 import { CaseService } from 'src/app/services/cases.service';
+import { UserSettingService } from 'src/app/services/user-setting.service';
 
 @Component({
   selector: 'case-calendar',
@@ -17,19 +19,27 @@ export class CaseCalendarComponent implements OnInit {
   hiddenDayForNavigation: Date = new Date(this.selectedDay);
   days: Date[] = [];
   weekNumber: number | undefined;
+  startDayOfWeek: 0 | 1 = 1;
 
   @ViewChild('clickHoverMenuTrigger') clickHoverMenuTrigger?: MatMenuTrigger;
 
-  constructor(private caseService: CaseService, private calendarService: CalendarService) {
+  constructor(private caseService: CaseService, private calendarService: CalendarService, private userSettingService: UserSettingService) {
+    this.userSettingService.getUserSetting().subscribe(setting => {
+      this.startDayOfWeek = setting.startDayOfWeek;
+      this.getDaysAndCases();
+    });
   }
 
   ngOnInit(): void {
+    this.userSettingService.getUserSetting().pipe(
+      tap(setting => this.startDayOfWeek = setting.startDayOfWeek)
+      );
     this.getDaysAndCases();
   }
 
   getDaysAndCases() {
     this.getDays(this.selectedDay);
-    
+
     this.caseService.getCases(this.days).subscribe((response: any) => {
       console.log(response);
       this.cases = response;
@@ -51,7 +61,7 @@ export class CaseCalendarComponent implements OnInit {
   }
 
   getDays(date: Date) {
-    this.days = this.calendarService.getWeekForGivenDate(date, 0); // <---------------------Ovde proslediti pocetni dan u nedelji
+    this.days = this.calendarService.getWeekForGivenDate(date, this.startDayOfWeek);
     this.weekNumber = this.calendarService.getWeekNumberByDate(date);
   }
 
