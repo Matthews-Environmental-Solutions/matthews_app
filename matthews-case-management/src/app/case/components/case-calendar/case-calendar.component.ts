@@ -24,12 +24,16 @@ export class CaseCalendarComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.caseService.getCases().subscribe((response: any) => {
+    this.getDaysAndCases();
+  }
+
+  getDaysAndCases() {
+    this.getDays(this.selectedDay);
+    
+    this.caseService.getCases(this.days).subscribe((response: any) => {
       console.log(response);
       this.cases = response;
     });
-
-    this.getDays(this.selectedDay);
   }
 
   switchCalendarView(viewDaily: boolean) {
@@ -47,7 +51,7 @@ export class CaseCalendarComponent implements OnInit {
   }
 
   getDays(date: Date) {
-    this.days = this.calendarService.getWeekForGivenDate(date);
+    this.days = this.calendarService.getWeekForGivenDate(date, 0); // <---------------------Ovde proslediti pocetni dan u nedelji
     this.weekNumber = this.calendarService.getWeekNumberByDate(date);
   }
 

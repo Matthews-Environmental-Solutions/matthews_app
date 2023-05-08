@@ -174,7 +174,7 @@ export class AuthService {
   public logout() { this.oauthService.logOut(); }
   public refresh() { this.oauthService.silentRefresh(); }
   public hasValidToken() { return this.oauthService.hasValidAccessToken(); }
-  public loadUserProfile() { return this.oauthService.loadUserProfile(); }
+  public loadUserProfile(): Promise<Object> { return this.oauthService.loadUserProfile(); }
 
   // These normally won't be exposed from a service like this, but
   // for debugging it makes sense.

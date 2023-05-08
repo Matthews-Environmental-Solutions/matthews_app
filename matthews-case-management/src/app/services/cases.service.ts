@@ -7,7 +7,7 @@ import { Injectable } from "@angular/core";
 export class CaseService {
     constructor(public httpClient: HttpClient) { }
 
-    getCases() {
+    getCases(days: Date[]) {
         return this.httpClient.get('/assets/cases.json');
     }
 }

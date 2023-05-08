@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { Facility } from '../models/facility.model';
 import { Case } from '../models/case.model';
 import { AuthService } from '../auth/auth.service';
@@ -33,10 +33,9 @@ export class CaseComponent {
 
   loggedInUser: UserInfo | undefined;
   userSetting: UserSettingData | undefined;
-
+  
   constructor(private authService: AuthService, public dialog: MatDialog) {
     this.getLoggedInUser();
-    this.getUserSetting();
   }
 
   logout(): void {
@@ -57,11 +56,16 @@ export class CaseComponent {
   }
 
   getLoggedInUser(): void {
-    let userinfoString = localStorage.getItem('id_token_claims_obj');
-    let jsonLoggedInUser = JSON.parse(userinfoString ? userinfoString : '');
+    this.authService.loadUserProfile().then(() => {
 
-    this.loggedInUser = new UserInfo();
-    this.loggedInUser.copyInto(jsonLoggedInUser);
+      let userinfoString = localStorage.getItem('id_token_claims_obj');
+      let jsonLoggedInUser = JSON.parse(userinfoString ? userinfoString : '');
+
+      this.loggedInUser = new UserInfo();
+      this.loggedInUser.copyInto(jsonLoggedInUser);
+
+      this.getUserSetting();
+    });
   }
 
   getUserSetting(): void {

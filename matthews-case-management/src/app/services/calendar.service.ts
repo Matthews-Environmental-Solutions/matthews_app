@@ -16,17 +16,23 @@ export class CalendarService {
 
     }
 
-    getStartDayOfTheWeekForGivenDate(date: Date) {
+    /**
+     * 
+     * @param date 
+     * @param startDayOfWeek is number.   The 0 is for Sundau, while 1 is for Monday 
+     * @returns 
+     */
+    getStartDayOfTheWeekForGivenDate(date: Date, startDayOfWeek: 0 | 1) {
         const day = startOfWeek(date, {
-            weekStartsOn: 1
+            weekStartsOn: startDayOfWeek
         });
         console.log('First day of the week for given date', day);
         return day;
     }
 
-    getWeekForGivenDate(date: Date): Date[] {
+    getWeekForGivenDate(date: Date, startDayOfWeek: 0 | 1): Date[] {
         let days: Date[] = [];
-        let firstDayOfTheWeek = this.getStartDayOfTheWeekForGivenDate(date);
+        let firstDayOfTheWeek = this.getStartDayOfTheWeekForGivenDate(date, startDayOfWeek);
 
         days.push(firstDayOfTheWeek);
         days.push(addDays(firstDayOfTheWeek, 1));
