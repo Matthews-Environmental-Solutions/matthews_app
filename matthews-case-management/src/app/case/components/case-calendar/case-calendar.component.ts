@@ -1,7 +1,6 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { MatDatepickerInputEvent } from '@angular/material/datepicker';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatMenuTrigger } from '@angular/material/menu';
-import { tap } from 'rxjs';
+import { Subscription, tap } from 'rxjs';
 import { Case } from 'src/app/models/case.model';
 import { CalendarService } from 'src/app/services/calendar.service';
 import { CaseService } from 'src/app/services/cases.service';
@@ -12,7 +11,7 @@ import { UserSettingService } from 'src/app/services/user-setting.service';
   templateUrl: './case-calendar.component.html',
   styleUrls: ['./case-calendar.component.scss']
 })
-export class CaseCalendarComponent implements OnInit {
+export class CaseCalendarComponent implements OnInit, OnDestroy {
   daily: boolean = true;
   cases: Case[] = [];
   selectedDay: Date = new Date();
@@ -21,19 +20,25 @@ export class CaseCalendarComponent implements OnInit {
   weekNumber: number | undefined;
   startDayOfWeek: 0 | 1 = 1;
 
+  private subs = new Subscription();
+
   @ViewChild('clickHoverMenuTrigger') clickHoverMenuTrigger?: MatMenuTrigger;
 
   constructor(private caseService: CaseService, private calendarService: CalendarService, private userSettingService: UserSettingService) {
-    this.userSettingService.getUserSetting().subscribe(setting => {
+    this.subs.add(this.userSettingService.userSettings$.subscribe(setting => {
       this.startDayOfWeek = setting.startDayOfWeek;
       this.getDaysAndCases();
-    });
+    }));
+  }
+
+  ngOnDestroy(): void {
+    this.subs.unsubscribe();
   }
 
   ngOnInit(): void {
-    this.userSettingService.getUserSetting().pipe(
+    this.userSettingService.userSettings$.pipe(
       tap(setting => this.startDayOfWeek = setting.startDayOfWeek)
-      );
+    );
     this.getDaysAndCases();
   }
 

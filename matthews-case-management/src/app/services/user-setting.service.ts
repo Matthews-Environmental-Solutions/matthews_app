@@ -1,28 +1,24 @@
 import { Injectable } from "@angular/core";
 import { UserSettingData } from "../models/user-setting.model";
-import { BehaviorSubject } from "rxjs";
+import { BehaviorSubject, Observable } from "rxjs";
 
 @Injectable({
     providedIn: 'root'
 })
 export class UserSettingService {
-
+    public userSettings$: Observable<UserSettingData>;
     private userSettingBehaviorSubject = new BehaviorSubject<UserSettingData>(this.setDefaultUserSetting());
-    private userSetting!: UserSettingData;
 
-    constructor() { }
+    constructor() {
+        this.userSettings$ = this.userSettingBehaviorSubject;
+    }
 
     setUserSetting(setting: UserSettingData): void {
-        this.userSetting = setting;
         this.userSettingBehaviorSubject.next(setting);
     }
 
-    getUserSetting() {
-        return this.userSettingBehaviorSubject.asObservable();
-    }
-
-    getUserSettingAsObject(): UserSettingData {
-        return this.userSetting;
+    getUserSettingLastValue(): UserSettingData {
+        return this.userSettingBehaviorSubject.value;
     }
 
     setDefaultUserSetting(): UserSettingData {

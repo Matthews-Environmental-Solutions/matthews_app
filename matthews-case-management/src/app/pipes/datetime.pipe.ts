@@ -11,14 +11,9 @@ export class DatetimePipe implements PipeTransform {
     constructor(private userSettingService: UserSettingService) { }
 
     transform(date: Date | string): string | null {
-        // this.userSettingService.getUserSetting().subscribe(setting => {
-        //     date = new Date(date);  // if orginal type was a string
-        //     let format: string = setting.timeformat == '12' ? 'dd-MM-yy | hh:mm' : 'dd-MM-yy | HH:mm';
-        //     return new DatePipe('en-US').transform(date, format);
-        // })
         date = new Date(date);  // if orginal type was a string
         let dateShift = date;
-        let setting: UserSettingData = this.userSettingService.getUserSettingAsObject();
+        let setting: UserSettingData = this.userSettingService.getUserSettingLastValue();
         let format: string = 'dd-MM-yy | hh:mm a';
         if(setting){
             format = setting.timeformat == '12' ? 'dd-MM-yy | hh:mm a' : 'dd-MM-yy | HH:mm';
