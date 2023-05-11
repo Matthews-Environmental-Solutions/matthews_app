@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { Facility } from '../models/facility.model';
 import { Case } from '../models/case.model';
 import { AuthService } from '../auth/auth.service';
-import { UserInfo } from '../models/userinfo.model';
+import { UserInfoAuth } from '../models/userinfo.model';
 import { MatDialog } from '@angular/material/dialog';
 import { ProfileSettingDialogComponent } from './dialogs/profile-setting/profile-setting.dialog.component';
 import { UserSettingData } from '../models/user-setting.model';
@@ -32,11 +32,13 @@ export class CaseComponent {
     new Case("824KRB4", "Jane", "Tratinelli", 56, "Hardwood", "Fimale", "Dev 2")
   ];
 
-  loggedInUser: UserInfo | undefined;
+  loggedInUser: UserInfoAuth | undefined;
   userSetting: UserSettingData | undefined;
   
   constructor(private authService: AuthService, private userSettingService: UserSettingService, public dialog: MatDialog) {
-    this.getLoggedInUser();
+    this.loggedInUser = authService.loggedInUser;
+    this.userSetting = userSettingService.getUserSettingLastValue();
+    // this.getLoggedInUser();
   }
 
   logout(): void {
@@ -57,29 +59,29 @@ export class CaseComponent {
     });
   }
 
-  getLoggedInUser(): void {
-    this.authService.loadUserProfile().then(() => {
+  // getLoggedInUser(): void {
+  //   this.authService.loadUserProfile().then(() => {
 
-      let userinfoString = localStorage.getItem('id_token_claims_obj');
-      let jsonLoggedInUser = JSON.parse(userinfoString ? userinfoString : '');
+  //     let userinfoString = localStorage.getItem('id_token_claims_obj');
+  //     let jsonLoggedInUser = JSON.parse(userinfoString ? userinfoString : '');
 
-      this.loggedInUser = new UserInfo();
-      this.loggedInUser.copyInto(jsonLoggedInUser);
+  //     this.loggedInUser = new UserInfoAuth();
+  //     this.loggedInUser.copyInto(jsonLoggedInUser);
 
-      this.getUserSetting();
-    });
-  }
+  //     this.getUserSetting();
+  //   });
+  // }
 
-  getUserSetting(): void {
-    let username = this.loggedInUser && this.loggedInUser.name ? this.loggedInUser.name : undefined;
-    if (username) {
-      let setting = localStorage.getItem(username);
+  // getUserSetting(): void {
+  //   let username = this.loggedInUser && this.loggedInUser.name ? this.loggedInUser.name : undefined;
+  //   if (username) {
+  //     let setting = localStorage.getItem(username);
 
-      let jsonSetting = setting ? JSON.parse(setting) : JSON.parse('{"username": "' + username + '", "startDayOfWeek": "0", "language": "en", "timezone": "Europe/London", "timeformat": "24"}');
-      this.userSetting = new UserSettingData();
-      this.userSetting.copyInto(jsonSetting);
-      this.userSettingService.setUserSetting(this.userSetting);
-    }
-  }
+  //     let jsonSetting = setting ? JSON.parse(setting) : JSON.parse('{"username": "' + username + '", "startDayOfWeek": "0", "language": "en", "timezone": "Europe/London", "timeformat": "24"}');
+  //     this.userSetting = new UserSettingData();
+  //     this.userSetting.copyInto(jsonSetting);
+  //     this.userSettingService.setUserSetting(this.userSetting);
+  //   }
+  // }
 
 }

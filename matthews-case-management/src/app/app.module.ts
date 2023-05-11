@@ -42,8 +42,6 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatTreeModule } from '@angular/material/tree';
 import { WelcomeComponent } from './components/welcome/welcome.component';
 
-// import { DatetimePipe } from './pipes/datetime.pipe';
-
 import { AuthModule } from './auth/auth.module';
 
 @NgModule({

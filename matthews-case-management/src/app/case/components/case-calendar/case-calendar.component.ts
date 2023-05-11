@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatMenuTrigger } from '@angular/material/menu';
-import { Subscription, tap } from 'rxjs';
+import { Subscription, skip, tap } from 'rxjs';
 import { Case } from 'src/app/models/case.model';
 import { CalendarService } from 'src/app/services/calendar.service';
 import { CaseService } from 'src/app/services/cases.service';
@@ -25,10 +25,12 @@ export class CaseCalendarComponent implements OnInit, OnDestroy {
   @ViewChild('clickHoverMenuTrigger') clickHoverMenuTrigger?: MatMenuTrigger;
 
   constructor(private caseService: CaseService, private calendarService: CalendarService, private userSettingService: UserSettingService) {
-    this.subs.add(this.userSettingService.userSettings$.subscribe(setting => {
-      this.startDayOfWeek = setting.startDayOfWeek;
-      this.getDaysAndCases();
-    }));
+    this.subs.add(this.userSettingService.userSettings$
+      .pipe(tap(setting => this.startDayOfWeek = setting.startDayOfWeek))
+      .pipe(skip(1)).subscribe(setting => {
+        this.startDayOfWeek = setting.startDayOfWeek;
+        this.getDaysAndCases();
+      }));
   }
 
   ngOnDestroy(): void {
@@ -36,16 +38,13 @@ export class CaseCalendarComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.userSettingService.userSettings$.pipe(
-      tap(setting => this.startDayOfWeek = setting.startDayOfWeek)
-    );
     this.getDaysAndCases();
   }
 
   getDaysAndCases() {
     this.getDays(this.selectedDay);
 
-    this.caseService.getCases(this.days).subscribe((response: any) => {
+    this.caseService.getCases2(this.days).subscribe((response: any) => {
       console.log(response);
       this.cases = response;
     });

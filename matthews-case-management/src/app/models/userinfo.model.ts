@@ -1,4 +1,4 @@
-export class UserInfo {
+export class UserInfoAuth {
     name!: string;
     given_name: string | undefined;
     family_name: string | undefined;
