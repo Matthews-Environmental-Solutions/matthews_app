@@ -1,5 +1,6 @@
 ﻿using MatthewsApp.API.Models;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -32,7 +33,7 @@ namespace MatthewsApp.API.Repository
             return await context.Cases.ToArrayAsync();
         }
 
-        public async Task<Case> GetOne(int id)
+        public async Task<Case> GetOne(Guid id)
         {
             return await context.Cases.FindAsync(id);
         }

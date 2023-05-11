@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace MatthewsApp.API.Repository
@@ -9,57 +10,9 @@ namespace MatthewsApp.API.Repository
         void Create(T entity);
         void Update(T entity);
         void Delete(T entity);
-        Task<T> GetOne(int id);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        Task<T> GetOne(Guid id);
 
     }
 }
+
+

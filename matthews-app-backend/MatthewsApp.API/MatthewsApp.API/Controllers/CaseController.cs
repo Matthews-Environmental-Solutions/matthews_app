@@ -2,6 +2,7 @@
 using MatthewsApp.API.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -28,7 +29,7 @@ namespace MatthewsApp.API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCase(string id)
         {
-            if (!int.TryParse(id, out var idParsed))
+            if (!Guid.TryParse(id, out var idParsed))
             {
                 return BadRequest();
             }
@@ -44,7 +45,7 @@ namespace MatthewsApp.API.Controllers
         }
 
         [HttpPut("{id}")]
-        public ActionResult PutCase(int id, Case caseEntitry)
+        public ActionResult PutCase(Guid id, Case caseEntitry)
         {
             if (id != caseEntitry.Id)
             {
@@ -73,7 +74,7 @@ namespace MatthewsApp.API.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Case>> GetCase(string id)
         {
-            if (!int.TryParse(id, out var idParsed))
+            if (!Guid.TryParse(id, out var idParsed))
             {
                 return BadRequest();
             }

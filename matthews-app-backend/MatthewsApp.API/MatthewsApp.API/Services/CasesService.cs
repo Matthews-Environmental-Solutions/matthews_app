@@ -1,5 +1,6 @@
 ﻿using MatthewsApp.API.Models;
 using MatthewsApp.API.Repository;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,8 +13,8 @@ namespace MatthewsApp.API.Services
         void DeleteCase(Case caseEntity);
         void UpdateCase(Case caseEntity);
         Task<IEnumerable<Case>> GetAllCases();
-        Task<Case> GetCaseById(int id);
-        bool IsCaseExists(int id);
+        Task<Case> GetCaseById(Guid id);
+        bool IsCaseExists(Guid id);
     }
 
     public class CasesService : ICasesService
@@ -45,12 +46,12 @@ namespace MatthewsApp.API.Services
             return await this.repository.GetAll();
         }
 
-        public async Task<Case> GetCaseById(int id)
+        public async Task<Case> GetCaseById(Guid id)
         {
             return await this.repository.GetOne(id);
         }
 
-        public bool IsCaseExists(int id)
+        public bool IsCaseExists(Guid id)
         {
             return repository.GetAll().Result.Any(e => e.Id == id);
         }
