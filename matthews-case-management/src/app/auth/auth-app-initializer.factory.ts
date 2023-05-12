@@ -3,34 +3,37 @@ import { UserSettingService } from '../services/user-setting.service';
 import { AuthService } from './auth.service'
 
 export function authAppInitializerFactory(authService: AuthService, userSettingService: UserSettingService): () => Promise<void> {
-    return () => authService.runInitialLoginSequence()
-        .catch(er => {
-            console.log('GRESKA', er);
-        })
-        .then(res => {
+    return async () => {
+        await authService.runInitialLoginSequence();
 
-            if (authService.isAuthenticatedSubject$.value) {
-                authService.loadProfile().then(() => {
+        if (!authService.hasValidToken()) {
+            return;
+        }
 
-                    let userinfoString = localStorage.getItem('id_token_claims_obj');
-                    let jsonLoggedInUser = JSON.parse(userinfoString ? userinfoString : '');
+        await authService.loadProfile();
 
-                    authService.loggedInUser = new UserInfoAuth();
-                    authService.loggedInUser.copyInto(jsonLoggedInUser);
+        //logged in user
+        let userinfoString = localStorage.getItem('id_token_claims_obj');
+        let jsonLoggedInUser = JSON.parse(userinfoString ? userinfoString : '');
 
-                    return Promise.resolve(authService.loggedInUser);
-
-                })
-                    .catch(er => {
-                        console.log('loadProfile error', er);
-                    })
-                    .then(loggedInUser => {
-                        let user = userSettingService.getUserSettingLastValue();
-                    })
-            }
+        authService.loggedInUser = new UserInfoAuth();
+        authService.loggedInUser.copyInto(jsonLoggedInUser);
 
 
-            // .... logika
+        //user setting
+        let userSetting = localStorage.getItem(authService.loggedInUser.name);
+        if (!userSetting) {
+            let defaultSetting = userSettingService.getUserSettingLastValue();
+            defaultSetting.username = authService.loggedInUser.name;
 
-        });
+            let defaultSettingJson = JSON.stringify(defaultSetting);
+            localStorage.setItem(authService.loggedInUser.name, defaultSettingJson);
+            userSetting = defaultSettingJson;
+        }
+
+        userSettingService.setUserSetting(JSON.parse(userSetting));
+
+        // return Promise.resolve(authService.loggedInUser);
+
+    }
 }

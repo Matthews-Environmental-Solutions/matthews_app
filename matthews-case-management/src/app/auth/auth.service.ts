@@ -2,7 +2,7 @@
 
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { OAuthErrorEvent, OAuthService } from 'angular-oauth2-oidc';
+import { OAuthService } from 'angular-oauth2-oidc';
 import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { UserInfoAuth } from '../models/userinfo.model';
@@ -17,7 +17,7 @@ export class AuthService {
   // public isDoneLoading$: Observable<boolean> = this.isDoneLoadingSubject$;
   public isDoneLoading$ = this.isDoneLoadingSubject$.asObservable();
 
-  public loggedInUser: UserInfoAuth | undefined;
+  public loggedInUser: UserInfoAuth = new UserInfoAuth();
 
   /**
    * Publishes `true` if and only if (a) all the asynchronous initial
@@ -177,7 +177,7 @@ export class AuthService {
   public logout() { this.oauthService.logOut(); }
   public refresh() { this.oauthService.silentRefresh(); }
   public hasValidToken() { return this.oauthService.hasValidAccessToken(); }
-  public loadProfile(): Promise<Object> { return this.oauthService.loadUserProfile(); }
+  public async loadProfile(): Promise<Object> { return await this.oauthService.loadUserProfile(); }
 
   // These normally won't be exposed from a service like this, but
   // for debugging it makes sense.
