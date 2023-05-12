@@ -13,7 +13,7 @@ namespace MatthewsApp.API.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ClientId = table.Column<string>(type: "nvarchar(256)", nullable: false),
-                    CaseId = table.Column<string>(type: "nvarchar(16)", nullable: false),
+                    ClientCaseId = table.Column<string>(type: "nvarchar(256)", nullable: false),
                     FacilityId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     FirstName = table.Column<string>(type: "nvarchar(16)", nullable: false),
                     LastName = table.Column<string>(type: "nvarchar(16)", nullable: false),

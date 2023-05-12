@@ -43,9 +43,9 @@ namespace MatthewsApp.API.Migrations
                     b.Property<int>("Age")
                         .HasColumnType("int");
 
-                    b.Property<string>("CaseId")
+                    b.Property<string>("ClientCaseId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(16)");
+                        .HasColumnType("nvarchar(256)");
 
                     b.Property<string>("ClientId")
                         .IsRequired()

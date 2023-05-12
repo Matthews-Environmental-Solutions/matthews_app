@@ -17,9 +17,9 @@ namespace MatthewsApp.API.Models
         [Required]
         public String ClientId { get; set; } // Promeni tip nakon što saznamo format ID-a
 
-        [Column(TypeName = "nvarchar(16)")]
+        [Column(TypeName = "nvarchar(256)")]
         [Required]
-        public string CaseId { get; set; }
+        public string ClientCaseId { get; set; }
 
         [Column(TypeName = "uniqueidentifier")]
         public Guid FacilityId { get; set; }

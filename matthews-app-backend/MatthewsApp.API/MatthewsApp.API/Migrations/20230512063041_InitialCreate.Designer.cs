@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MatthewsApp.API.Migrations
 {
     [DbContext(typeof(MatthewsAppDBContext))]
-    [Migration("20230511132606_InitialCreate")]
+    [Migration("20230512063041_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -45,9 +45,9 @@ namespace MatthewsApp.API.Migrations
                     b.Property<int>("Age")
                         .HasColumnType("int");
 
-                    b.Property<string>("CaseId")
+                    b.Property<string>("ClientCaseId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(16)");
+                        .HasColumnType("nvarchar(256)");
 
                     b.Property<string>("ClientId")
                         .IsRequired()
