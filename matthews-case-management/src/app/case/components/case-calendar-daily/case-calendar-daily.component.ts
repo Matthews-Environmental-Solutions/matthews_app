@@ -18,9 +18,9 @@ export class CaseCalendarDailyComponent implements OnInit {
 
   @Output() selectedDayChange = new EventEmitter<Date>();
 
-  changeSelectedDay(value: Date) {
-    this.selectedDayChange.emit(value);
-  }
+  buttonUsed: number = 0;
+  iconName: string = 'check_circle';
+  statusDescription: string = 'cremation complete';
 
   ngOnInit(): void {
     this.checkHeaderDayButtons();
@@ -32,9 +32,10 @@ export class CaseCalendarDailyComponent implements OnInit {
     }
   }
 
-  buttonUsed: number = 0;
-  iconName: string = 'check_circle';
-  statusDescription: string = 'cremation complete';
+  checkHeaderDayButtons() {
+    let index = this.days.map(Number).indexOf(+this.selectedDay);
+    this.buttonUsed = index;
+  }
 
   getDayForButton(indexNumber: number): string {
     return `${this.days[indexNumber].getDate().toString()} ${this.days[indexNumber].toLocaleString('en-us', { month: 'short' })}`;
@@ -45,10 +46,38 @@ export class CaseCalendarDailyComponent implements OnInit {
     this.buttonUsed = dayClick;
   }
 
-  checkHeaderDayButtons() {
-    let index = this.days.map(Number).indexOf(+this.selectedDay);
-    this.buttonUsed = index;
+  changeSelectedDay(value: Date) {
+    this.selectedDayChange.emit(value);
   }
 
+  getIconName(status: number): string {
+    switch (status) {
+      case 1:
+        return 'check_circle';
+      case 2:
+        return 'local_fire_department';
+      case 3:
+        return 'arrow_circle_right';
+      case 4:
+        return 'hourglass_top';
+      default:
+        return '';
+    }
+  }
+
+  getStatusDescription(status: number): string {
+    switch (status) {
+      case 1:
+        return 'cremation complete';
+      case 2:
+        return 'in progress';
+      case 3:
+        return 'ready to cremate';
+      case 4:
+        return 'waiting for permit';
+      default:
+        return '';
+    }
+  }
 
 }

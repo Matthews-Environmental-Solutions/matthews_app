@@ -50,14 +50,15 @@
                     <div class="item-id cell">{{case.clientCaseId}}</div>
                     <div class="item-basic-data cell">
                         <span class="item-basic-data-name">{{case.firstName}} {{case.lastName}}</span>
-                        <span>{{case.weight}} kg | {{case.gender}}</span>
+                        <span>{{case.weight}} kg | {{case.genderText}} | {{case.containerTypeText}}</span> 
                     </div>
                     <div class="item-status cell">
-                        <div class="case-status case-status-color-green">
+                        <div class="case-status" 
+                        [ngClass]="{'case-status-color-green': case.status == '1', 'case-status-color-red': case.status == '2', 'case-status-color-blue': case.status == '3', 'case-status-color-orange': case.status == '4'}">
                             <mat-icon class="material-symbols-outlined ">
-                                {{iconName}}
+                                {{getIconName(+case.status)}}
                             </mat-icon>
-                            <span>{{statusDescription}}</span>
+                            <span>{{getStatusDescription(+case.status)}}</span>
                         </div>
                         <div class="case-status case-status-time">{{case.scheduledStartTime | timepipe}}</div>
                     </div>

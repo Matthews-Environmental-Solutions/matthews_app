@@ -44,7 +44,7 @@ export class CaseCalendarComponent implements OnInit, OnDestroy {
   getDaysAndCases() {
     this.getDays(this.selectedDay);
 
-    this.caseService.getCases2(this.days).subscribe((response: any) => {
+    this.caseService.getCases(this.days).subscribe((response: any) => {
       console.log(response);
       this.cases = response;
     });

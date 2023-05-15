@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { Observable, catchError, retry, throwError } from "rxjs";
+import { Observable, catchError, map, retry, throwError } from "rxjs";
 import { Case } from "../models/case.model";
 
 @Injectable({
@@ -10,12 +10,88 @@ export class CaseService {
     apiURL = 'https://localhost:5001';
     constructor(public httpClient: HttpClient) { }
 
-    getCases(days: Date[]) {
+    getCasesFromJsonFile(days: Date[]) {
         return this.httpClient.get('/assets/cases.json');
     }
 
-    getCases2(days: Date[]): Observable<Case[]> {
-        return this.httpClient.get<Case[]>(this.apiURL + '/Case').pipe(retry(1), catchError(this.handleError));
+    getCases(days: Date[]): Observable<Case[]> {
+        return this.httpClient.get<Case[]>(this.apiURL + '/Case/GetAllCases')
+            .pipe(retry(1), catchError(this.handleError))
+            .pipe(map((cases: Case[]) => {
+
+                cases = cases.map(item => {
+                    switch (item.gender) {
+                        case 0:
+                            item.genderText = 'Other';
+                            break;
+                        case 1:
+                            item.genderText = 'Male';
+                            break;
+                        case 2:
+                            item.genderText = 'Female';
+                            break;
+                    }
+
+                    switch (item.containerType) {
+                        case 0:
+                            item.containerTypeText = 'None';
+                            break;
+                        case 1:
+                            item.containerTypeText = 'Cardboard';
+                            break;
+                        case 2:
+                            item.containerTypeText = 'Fiberboard';
+                            break;
+                        case 3:
+                            item.containerTypeText = 'Hardwood';
+                            break;
+                    }
+
+                    return item;
+                });
+
+                return cases;
+            }));
+    }
+
+    getUnscheduledCases(): Observable<Case[]>{
+        return this.httpClient.get<Case[]>(this.apiURL + '/Case/GetUnscheduledCases')
+        .pipe(retry(1), catchError(this.handleError))
+        .pipe(map((cases: Case[]) => {
+
+            cases = cases.map(item => {
+                switch (item.gender) {
+                    case 0:
+                        item.genderText = 'Other';
+                        break;
+                    case 1:
+                        item.genderText = 'Male';
+                        break;
+                    case 2:
+                        item.genderText = 'Female';
+                        break;
+                }
+
+                switch (item.containerType) {
+                    case 0:
+                        item.containerTypeText = 'None';
+                        break;
+                    case 1:
+                        item.containerTypeText = 'Cardboard';
+                        break;
+                    case 2:
+                        item.containerTypeText = 'Fiberboard';
+                        break;
+                    case 3:
+                        item.containerTypeText = 'Hardwood';
+                        break;
+                }
+
+                return item;
+            });
+
+            return cases;
+        }));
     }
 
     // Error handling
