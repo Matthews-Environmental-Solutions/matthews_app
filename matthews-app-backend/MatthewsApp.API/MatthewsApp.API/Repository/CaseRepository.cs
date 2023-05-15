@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace MatthewsApp.API.Repository
@@ -30,7 +31,15 @@ namespace MatthewsApp.API.Repository
 
         public async Task<IEnumerable<Case>> GetAll()
         {
-            return await context.Cases.ToArrayAsync();
+            IEnumerable<Case> cases = await context.Cases.ToArrayAsync();
+            return cases.Where(c => c.ScheduledStartTime > DateTime.MinValue.AddDays(100) &&c.IsObsolete == false);
+        }
+
+        public async Task<IEnumerable<Case>> GetAllUnscheduled()
+        {
+            IEnumerable<Case> cases = await context.Cases.ToArrayAsync();
+
+            return cases.Where(c => c.ScheduledStartTime < DateTime.MinValue.AddDays(100) && c.IsObsolete == false).ToList();
         }
 
         public async Task<Case> GetOne(Guid id)

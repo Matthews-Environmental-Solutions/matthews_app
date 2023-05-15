@@ -1,6 +1,7 @@
 ﻿using MatthewsApp.API.Models;
 using MatthewsApp.API.Repository;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,6 +16,7 @@ namespace MatthewsApp.API.Services
         Task<IEnumerable<Case>> GetAllCases();
         Task<Case> GetCaseById(Guid id);
         bool IsCaseExists(Guid id);
+        Task<IEnumerable<Case>> GetUnscheduledCases();
     }
 
     public class CasesService : ICasesService
@@ -43,11 +45,16 @@ namespace MatthewsApp.API.Services
 
         public async Task<IEnumerable<Case>> GetAllCases()
         {
-            var cases = await repository.GetAll();
+            IEnumerable<Case> cases = await repository.GetAll();
             return cases.Select(i => { 
                 i.ScheduledStartTime = DateTime.SpecifyKind(i.ScheduledStartTime, DateTimeKind.Utc); 
                 return i;
             });
+        }
+
+        public async Task<IEnumerable<Case>> GetUnscheduledCases()
+        {
+            return await repository.GetAllUnscheduled();
         }
 
         public async Task<Case> GetCaseById(Guid id)

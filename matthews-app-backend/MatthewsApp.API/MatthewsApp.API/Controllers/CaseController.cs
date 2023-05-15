@@ -66,9 +66,17 @@ namespace MatthewsApp.API.Controllers
         }
 
         [HttpGet]
+        [Route("GetAllCases")]
         public async Task<ActionResult<IEnumerable<Case>>> GetAllCases()
         {
             return Ok(await service.GetAllCases());
+        }
+
+        [HttpGet]
+        [Route("GetUnscheduledCases")]
+        public async Task<ActionResult<IEnumerable<Case>>> GetUnscheduledCases()
+        {
+            return Ok(await service.GetUnscheduledCases());
         }
 
         [HttpGet("{id}")]

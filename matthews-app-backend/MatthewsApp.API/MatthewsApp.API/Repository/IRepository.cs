@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MatthewsApp.API.Models;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -11,7 +12,7 @@ namespace MatthewsApp.API.Repository
         void Update(T entity);
         void Delete(T entity);
         Task<T> GetOne(Guid id);
-
+        Task<IEnumerable<Case>> GetAllUnscheduled();
     }
 }
 
