@@ -7,7 +7,7 @@
   
         <button mat-raised-button class="btn-color-green" [routerLink]="['/case']" >
           <mat-icon>add_circle</mat-icon>
-          Add case
+          {{"addCase" | translate}}
         </button>
       </mat-toolbar>
     </div>
@@ -16,7 +16,7 @@
       <mat-toolbar color="primary" class="toolbar-right">
   
         <mat-form-field appearance="outline" class="facility-selector">
-          <mat-label>Selected facility</mat-label>
+          <mat-label>{{"selectedFacility" | translate}}</mat-label>
           <mat-select>
             <mat-option *ngFor="let facility of facilities" [value]="facility.value">
               {{facility.viewValue}}
@@ -32,11 +32,11 @@
           <div class="menu-item-username manu-item-email">{{loggedInUser?.name}}</div>
           <button mat-menu-item (click)="openProfileDialog()">
             <mat-icon>person</mat-icon>
-            <span>Profile setting</span>
+            <span>{{"profileSetting" | translate}}</span>
           </button>
           <button mat-menu-item (click)="logout()">
             <mat-icon>logout</mat-icon>
-            <span>Log out</span>
+            <span>{{"logout" | translate}}</span>
           </button>
         </mat-menu>
       </mat-toolbar>
@@ -49,7 +49,7 @@
     <div class="right-sidebar">
       <mat-card class="card-right-sidebar">
         <mat-card-header class="card-right-sidebar-title">
-          <span>Unscheduled cases</span>
+          <span>{{"unscheduledCases" | translate}}</span>
         </mat-card-header>
         <mat-card-content class="card-right-sidebar-list">
           <ng-container *ngFor="let case of unscheduledCases">

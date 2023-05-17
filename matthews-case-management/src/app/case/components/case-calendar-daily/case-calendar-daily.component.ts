@@ -1,4 +1,6 @@
 import { Component, Input, OnInit, Output, EventEmitter, SimpleChanges } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
+import { Observable, of, take } from 'rxjs';
 import { Case } from 'src/app/models/case.model';
 
 @Component({
@@ -21,6 +23,10 @@ export class CaseCalendarDailyComponent implements OnInit {
   buttonUsed: number = 0;
   iconName: string = 'check_circle';
   statusDescription: string = 'cremation complete';
+
+  constructor(private translate: TranslateService) {
+
+  }
 
   ngOnInit(): void {
     this.checkHeaderDayButtons();
@@ -65,18 +71,18 @@ export class CaseCalendarDailyComponent implements OnInit {
     }
   }
 
-  getStatusDescription(status: number): string {
+  getStatusDescription(status: number): Observable<string> {
     switch (status) {
       case 1:
-        return 'cremation complete';
+        return this.translate.get('cremationComplete').pipe(take(1));
       case 2:
-        return 'in progress';
+        return this.translate.get('inProgress').pipe(take(1));
       case 3:
-        return 'ready to cremate';
+        return this.translate.get('readyToCremate').pipe(take(1));
       case 4:
-        return 'waiting for permit';
+        return this.translate.get('waitingForPermit').pipe(take(1));
       default:
-        return '';
+        return of('');
     }
   }
 

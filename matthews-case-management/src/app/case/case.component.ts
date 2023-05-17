@@ -10,6 +10,7 @@ import { UserSettingService } from '../services/user-setting.service';
 import { GenderType } from '../enums/gender-type.enum';
 import { CaseStatus } from '../enums/case-status.enum';
 import { CaseService } from '../services/cases.service';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-case',
@@ -23,67 +24,11 @@ export class CaseComponent {
     { value: '3', viewValue: 'Facility 3' },
   ];
 
-  // unscheduledCases: Case[] = [
-  //   {
-  //     id: '', clientId: '', clientCaseId: '834FGF2', facilityId: '', firstName: 'John',
-  //     lastName: 'Doe', weight: 79, gender: 1, genderText: '', containerType: 1, containerTypeText: '', containerSize: 'XL',
-  //     isObsolete: false, age: 90, status: '0',
-  //     scheduledFacility: '', scheduledDevice: '', scheduledDeviceAlias: 'Dev 1', scheduledStartTime: '',
-  //     actualFacility: '', actualDevice: '', actualDeviceAlias: '', actualStartTime: '', actualEndTime: '',
-  //     createdBy: '', createdTime: '', modifiedBy: '', modifiedTime: '', performedBy: '',
-  //     fuel: '', electricity: ''
-  //   },
-  //   {
-  //     id: '', clientId: '', clientCaseId: '824KRB3', facilityId: '', firstName: 'Ekaterina',
-  //     lastName: 'Kocsorwa', weight: 16, gender: 2, genderText: '', containerType: 1, containerTypeText: '', containerSize: 'S',
-  //     isObsolete: false, age: 16, status: '0',
-  //     scheduledFacility: '', scheduledDevice: '', scheduledDeviceAlias: 'Dev 2', scheduledStartTime: '',
-  //     actualFacility: '', actualDevice: '', actualDeviceAlias: '', actualStartTime: '', actualEndTime: '',
-  //     createdBy: '', createdTime: '', modifiedBy: '', modifiedTime: '', performedBy: '',
-  //     fuel: '', electricity: ''
-  //   },
-  //   {
-  //     id: '', clientId: '', clientCaseId: '824KRB3', facilityId: '', firstName: 'Jane',
-  //     lastName: 'Tratinelli', weight: 56, gender: 0, genderText: '', containerType: 1, containerTypeText: '', containerSize: 'S',
-  //     isObsolete: false, age: 88, status: '0',
-  //     scheduledFacility: '', scheduledDevice: '', scheduledDeviceAlias: 'Dev 2', scheduledStartTime: '',
-  //     actualFacility: '', actualDevice: '', actualDeviceAlias: '', actualStartTime: '', actualEndTime: '',
-  //     createdBy: '', createdTime: '', modifiedBy: '', modifiedTime: '', performedBy: '',
-  //     fuel: '', electricity: ''
-  //   }
-  // ].map(item => {
-  //   switch (item.gender) {
-  //     case 0:
-  //       item.genderText = 'Other';
-  //       break;
-  //     case 1:
-  //       item.genderText = 'Male';
-  //       break;
-  //     case 2:
-  //       item.genderText = 'Female';
-  //       break;
-  //   }
-
-  //   switch (item.containerType) {
-  //     case 0:
-  //       item.containerTypeText = 'prvi';
-  //       break;
-  //     case 1:
-  //       item.containerTypeText = 'drugi';
-  //       break;
-  //     case 2:
-  //       item.containerTypeText = 'treci';
-  //       break;
-  //   }
-    
-
-  //   return item;
-  // });
   unscheduledCases: Case[] = [];
   loggedInUser: UserInfoAuth | undefined;
   userSetting: UserSettingData | undefined;
 
-  constructor(private authService: AuthService, private userSettingService: UserSettingService, private caseService: CaseService, public dialog: MatDialog) {
+  constructor(private authService: AuthService, private userSettingService: UserSettingService, private caseService: CaseService, public dialog: MatDialog, private translate: TranslateService) {
     this.loggedInUser = authService.loggedInUser;
     this.userSetting = userSettingService.getUserSettingLastValue();
     caseService.getUnscheduledCases().subscribe(cases => this.unscheduledCases = cases);
@@ -103,6 +48,8 @@ export class CaseComponent {
         console.log('The dialog was closed', result);
         localStorage.setItem(result.username, JSON.stringify(result));
         this.userSettingService.setUserSetting(result as UserSettingData);
+        let languageCode = (result as UserSettingData).language;
+        this.translate.use(languageCode);
       }
     });
   }

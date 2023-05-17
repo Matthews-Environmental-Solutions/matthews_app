@@ -1,16 +1,16 @@
 <mat-card class="add-edit-card">
     <form [formGroup]="caseForm" (ngSubmit)="save()">
         <mat-toolbar class="add-edit-toolbar">
-            <span>{{title}} case</span>
+            <span>{{title | translate}}</span>
             <span class="spacer"></span>
             <button mat-raised-button class="add-edit-header-buttons btn-cancel" routerLink="/">
                 <mat-icon class="material-symbols-outlined">cancel</mat-icon>
-                Cancel
+                {{"cancel" | translate}}
             </button>
             <button mat-raised-button [disabled]="!caseForm.valid" class="add-edit-header-buttons btn-save"
                 type="submit">
                 <mat-icon class="material-symbols-outlined">check_circle</mat-icon>
-                Save
+                {{"save" | translate}}
             </button>
         </mat-toolbar>
 
@@ -19,42 +19,42 @@
 
             <div class="left-column">
                 <mat-form-field class="example-full-width">
-                    <mat-label>Case ID</mat-label>
+                    <mat-label>{{"caseId" | translate}}</mat-label>
                     <input formControlName="clientCaseId" matInput placeholder="Enter case id" value="">
                 </mat-form-field>
 
                 <mat-form-field class="example-full-width">
-                    <mat-label>First Name</mat-label>
+                    <mat-label>{{"firstName" | translate}}</mat-label>
                     <input formControlName="firstName" matInput placeholder="Enter first name" value="">
                 </mat-form-field>
 
                 <mat-form-field class="example-full-width">
-                    <mat-label>Last Name</mat-label>
+                    <mat-label>{{"lastName" | translate}}</mat-label>
                     <input formControlName="lastName" matInput placeholder="Enter last name" value="">
                 </mat-form-field>
 
                 <mat-form-field class="example-full-width">
-                    <mat-label>Weight</mat-label>
+                    <mat-label>{{"weight" | translate}}</mat-label>
                     <input formControlName="weight" matInput placeholder="Enter case weight" value="">
                 </mat-form-field>
 
                 <section class="toggle-button-container">
-                    <p class="toggle-button-label">Gender</p>
+                    <p class="toggle-button-label">{{"gender" | translate}}</p>
                     <mat-button-toggle-group formControlName="gender" aria-label="Font Style">
-                        <mat-button-toggle value="male">Male</mat-button-toggle>
-                        <mat-button-toggle value="female">Female</mat-button-toggle>
-                        <mat-button-toggle value="other">Other</mat-button-toggle>
+                        <mat-button-toggle value="male">{{"male" | translate}}</mat-button-toggle>
+                        <mat-button-toggle value="female">{{"female" | translate}}</mat-button-toggle>
+                        <mat-button-toggle value="other">{{"other" | translate}}</mat-button-toggle>
                     </mat-button-toggle-group>
                 </section>
 
                 <mat-form-field class="example-full-width">
-                    <mat-label>Age</mat-label>
+                    <mat-label>{{"age" | translate}}</mat-label>
                     <input formControlName="age" matInput placeholder="Enter case age" value="">
                 </mat-form-field>
             </div>
             <div class="right-column">
                 <mat-form-field appearance="fill">
-                    <mat-label>Container type</mat-label>
+                    <mat-label>{{"containerType" | translate}}</mat-label>
                     <mat-select formControlName="containerType">
                         <mat-option *ngFor="let container of containerTypes" [value]="container.id">
                             {{container.name}}
@@ -63,7 +63,7 @@
                 </mat-form-field>
 
                 <mat-form-field appearance="fill">
-                    <mat-label>Load size</mat-label>
+                    <mat-label>{{"loadSize" | translate}}</mat-label>
                     <mat-select formControlName="loadSize">
                         <mat-option *ngFor="let loadSize of loadSizes" [value]="loadSize.id">
                             {{loadSize.name}}
@@ -72,7 +72,7 @@
                 </mat-form-field>
 
                 <mat-form-field appearance="fill">
-                    <mat-label>Case status</mat-label>
+                    <mat-label>{{"caseStatus" | translate}}</mat-label>
                     <mat-select formControlName="status">
                         <mat-option *ngFor="let caseStatus of caseStatuses" [value]="caseStatus.id">
                             {{caseStatus.name}}
@@ -81,7 +81,7 @@
                 </mat-form-field>
 
                 <mat-form-field appearance="fill">
-                    <mat-label>Cremator</mat-label>
+                    <mat-label>{{"cremator" | translate}}</mat-label>
                     <mat-select formControlName="scheduledCremator">
                         <mat-option *ngFor="let cremator of cremators" [value]="cremator.id">
                             {{cremator.name}}
@@ -90,19 +90,19 @@
                 </mat-form-field>
 
                 <section class="toggle-button-container">
-                    <p class="toggle-button-label">Burn mode</p>
+                    <p class="toggle-button-label">{{"burnMode" | translate}}</p>
                     <mat-button-toggle-group formControlName="burnMode" aria-label="Font Style">
-                        <mat-button-toggle value="simple">Simple</mat-button-toggle>
-                        <mat-button-toggle value="eco">Eco</mat-button-toggle>
-                        <mat-button-toggle value="production">Production</mat-button-toggle>
+                        <mat-button-toggle value="simple">{{"simple" | translate}}</mat-button-toggle>
+                        <mat-button-toggle value="eco">{{"eco" | translate}}</mat-button-toggle>
+                        <mat-button-toggle value="production">{{"production" | translate}}</mat-button-toggle>
                     </mat-button-toggle-group>
                 </section>
 
                 <section class="schedule-start-time-container">
-                    <p class="toggle-button-label">Scheduled start time</p>
+                    <p class="toggle-button-label">{{"scheduledStartTime" | translate}}</p>
                     <div class="schedule-start-time-right-column">
                         <mat-form-field>
-                            <mat-label>{{type}}</mat-label>
+                            <mat-label>{{type | translate}}</mat-label>
                             <mtx-datetimepicker #datetimePicker [type]="type" [mode]="mode"
                                 [multiYearSelector]="multiYearSelector" [startView]="startView"
                                 [twelvehour]="twelvehour" [timeInterval]="timeInterval" [touchUi]="touchUi"

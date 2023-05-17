@@ -1,8 +1,15 @@
+import { TranslateService } from '@ngx-translate/core';
 import { UserInfoAuth } from '../models/userinfo.model';
 import { UserSettingService } from '../services/user-setting.service';
 import { AuthService } from './auth.service'
+import { UserSettingData } from '../models/user-setting.model';
 
-export function authAppInitializerFactory(authService: AuthService, userSettingService: UserSettingService): () => Promise<void> {
+export const languageList = [
+    { code: 'en', label: 'English' },
+    { code: 'de', label: 'Deutsch' },
+];
+
+export function authAppInitializerFactory(authService: AuthService, userSettingService: UserSettingService, translate: TranslateService): () => Promise<void> {
     return async () => {
         await authService.runInitialLoginSequence();
 
@@ -32,6 +39,20 @@ export function authAppInitializerFactory(authService: AuthService, userSettingS
         }
 
         userSettingService.setUserSetting(JSON.parse(userSetting));
+
+
+        //translation
+        const userLanguageCode: string = (JSON.parse(userSetting) as UserSettingData).language;
+
+        const selectedLanguage = languageList
+            .find((language) => language.code === userLanguageCode)?.label.toString();
+
+        if (selectedLanguage) {
+            translate.use(userLanguageCode);
+        }
+
+        const currentLanguage = translate.currentLang;
+        console.log('currentLanguage', currentLanguage);
 
         // return Promise.resolve(authService.loggedInUser);
 

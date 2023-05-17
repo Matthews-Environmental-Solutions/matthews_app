@@ -6,6 +6,7 @@ import { AuthService } from './auth.service';
 import { authConfig } from './auth-config';
 import { authModuleConfig } from './auth-module-config';
 import { UserSettingService } from '../services/user-setting.service';
+import { TranslateService } from '@ngx-translate/core';
 
 export function storageFactory(): OAuthStorage {
   return localStorage;
@@ -23,7 +24,7 @@ export class AuthModule {
     return {
       ngModule: AuthModule,
       providers: [
-        { provide: APP_INITIALIZER, useFactory: authAppInitializerFactory, deps: [AuthService, UserSettingService], multi: true },
+        { provide: APP_INITIALIZER, useFactory: authAppInitializerFactory, deps: [AuthService, UserSettingService, TranslateService], multi: true },
         { provide: AuthConfig, useValue: authConfig },
         { provide: OAuthModuleConfig, useValue: authModuleConfig },
         { provide: OAuthStorage, useFactory: storageFactory },

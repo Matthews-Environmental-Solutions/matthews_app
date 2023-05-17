@@ -1,0 +1,64 @@
+{
+    "authorize": "Autorisieren",
+    "selectedFacility": "Ausgewählte Einrichtung",
+    "profileSetting": "Profileinstellung",
+    "logout": "Ausloggen",
+    "addCase": "Fall hinzufügen",
+    "day": "Tag",
+    "week": "Woche",
+    "cremationComplete": "Einäscherung abgeschlossen",
+    "inProgress": "Im Gange",
+    "readyToCremate": "Bereit zur Einäscherung",
+    "waitingForPermit": "Warten auf Genehmigung",
+    "unscheduledCases": "Außerplanmäßige Fälle",
+    "male": "Männlich",
+    "female": "Weiblich",
+    "other": "Andere",
+
+    "addNewCase": "Neuen Fall hinzufügen",
+    "editCase": "Fall bearbeiten",
+    "cancel": "Stornieren",
+    "save": "Speichern",
+
+    "caseId": "Fall-ID",
+    "firstName": "Vorname",
+    "lastName": "Nachname",
+    "weight": "Gewicht",
+    "gender": "Geschlecht",
+    "age": "Alter",
+
+    "containerType": "Containertyp",
+    "loadSize": "Ladungsgröße",
+    "caseStatus": "Fallstatus",
+    "cremator": "Kremator",
+    "burnMode": "Brennmodus",
+    "simple": "Einfach",
+    "eco": "Öko",
+    "production": "Produktion",
+    "scheduledStartTime": "Geplante Startzeit",
+    "dateTime": "Datum und Uhrzeit",
+
+    "title": "Service-Feedback für {{company}}",
+    "name": {
+        "label": "Namen",
+        "placeholder": "Name eingeben"
+    },
+    "comment": {
+        "label": "Kommentar",
+        "placeholder": "Kommentar eingeben"
+    },
+    "rating": {
+        "label": "Bewerten Sie unseren Kundenservice:",
+        "options": {
+            "excellent": "Ausgezeichnet",
+            "good": "Gute",
+            "bad": "Schlecht"
+        }
+    },
+    "submit": {
+        "label": "Senden"
+    },
+    "requiredErrorMessage": "Dies ist ein Pflichtfeld.",
+    "successfulSubmitMessage": "Vielen Dank für Ihr wertvolles Feedback!!!\nDas Feedback wurde erfolgreich übermittelt.",
+    "copyright": "Alle Rechte vorbehalten. {{currentYear}} {{company}}"
+}

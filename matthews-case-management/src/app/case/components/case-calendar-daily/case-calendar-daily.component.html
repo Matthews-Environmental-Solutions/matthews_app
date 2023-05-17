@@ -50,7 +50,7 @@
                     <div class="item-id cell">{{case.clientCaseId}}</div>
                     <div class="item-basic-data cell">
                         <span class="item-basic-data-name">{{case.firstName}} {{case.lastName}}</span>
-                        <span>{{case.weight}} kg | {{case.genderText}} | {{case.containerTypeText}}</span> 
+                        <span>{{case.weight}} kg | {{case.genderText.toLowerCase() | translate}} | {{case.containerTypeText}}</span> 
                     </div>
                     <div class="item-status cell">
                         <div class="case-status" 
@@ -58,7 +58,9 @@
                             <mat-icon class="material-symbols-outlined ">
                                 {{getIconName(+case.status)}}
                             </mat-icon>
-                            <span>{{getStatusDescription(+case.status)}}</span>
+                            <ng-container *ngIf="(getStatusDescription(+case.status) | async ) as status">
+                                <span>{{status}}</span>
+                            </ng-container>
                         </div>
                         <div class="case-status case-status-time">{{case.scheduledStartTime | timepipe}}</div>
                     </div>

@@ -62,13 +62,13 @@ export class CaseService {
             cases = cases.map(item => {
                 switch (item.gender) {
                     case 0:
-                        item.genderText = 'Other';
+                        item.genderText = 'other'; // it will be used as key for translate
                         break;
                     case 1:
-                        item.genderText = 'Male';
+                        item.genderText = 'male'; // it will be used as key for translate
                         break;
                     case 2:
-                        item.genderText = 'Female';
+                        item.genderText = 'female'; // it will be used as key for translate
                         break;
                 }
 

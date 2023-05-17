@@ -1,0 +1,64 @@
+{
+    "authorize": "Authorize",
+    "selectedFacility": "Selected facility",
+    "profileSetting": "Profile setting",
+    "logout": "Log out",
+    "addCase": "Add case",
+    "day": "Day",
+    "week": "Week",
+    "cremationComplete": "Cremation complete",
+    "inProgress": "In progress",
+    "readyToCremate": "Ready to cremate",
+    "waitingForPermit": "Waiting for permit",
+    "unscheduledCases": "Unscheduled cases",
+    "male": "Male",
+    "female": "Female",
+    "other": "Other",
+
+    "addNewCase": "Add new case",
+    "editCase": "Edit case",
+    "cancel": "Cancel",
+    "save": "Save",
+
+    "caseId": "Case ID",
+    "firstName": "Case ID",
+    "lastName": "Case ID",
+    "weight": "Case ID",
+    "gender": "Gender",
+    "age": "Case ID",
+
+    "containerType": "Container type",
+    "loadSize": "Load size",
+    "caseStatus": "Case status",
+    "cremator": "Cremator",
+    "burnMode": "Burn mode",
+    "simple": "Simple",
+    "eco": "Eco",
+    "production": "Production",
+    "scheduledStartTime": "Scheduled start time",
+    "dateTime": "Date and time",
+
+    "title": "Service feedback for {{company}}",
+    "name": {
+        "label": "Name",
+        "placeholder": "Enter Name"
+    },
+    "comment": {
+        "label": "Comment",
+        "placeholder": "Enter Comment"
+    },
+    "rating": {
+        "label": "Rate our customer service: ",
+        "options": {
+            "excellent": "Excellent",
+            "good": "Good",
+            "bad": "Bad"
+        }
+    },
+    "submit": {
+        "label": "Submit"
+    },
+    "requiredErrorMessage": "This is a required field.",
+    "successfulSubmitMessage": "Thanks for your valuable feedback!!!\nThe feedback has been submitted successfully.",
+    "copyright": "All rights reserved. {{currentYear}} {{company}}"
+}

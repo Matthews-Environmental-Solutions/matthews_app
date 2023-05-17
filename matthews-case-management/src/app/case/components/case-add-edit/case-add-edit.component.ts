@@ -48,7 +48,7 @@ export class CaseAddEditComponent implements OnInit {
   @ViewChild('clickDateHoverMenuTrigger') clickDateHoverMenuTrigger?: MatMenuTrigger;
   @ViewChild('clickTimeHoverMenuTrigger') clickTimeHoverMenuTrigger?: MatMenuTrigger;
 
-  title: string = 'Add new';
+  title: string = 'addNewCase';
 
   containerTypes: ContainerType[] = [];
   loadSizes: LoadSize[] = [];
@@ -103,7 +103,7 @@ export class CaseAddEditComponent implements OnInit {
   ngOnInit(): void {
     const caseId = this.route.snapshot.paramMap.get('id');
     // debugger;
-    this.title = caseId == null ? 'Add new' : 'Edit';
+    this.title = caseId == null ? 'addNewCase' : 'editCase';
   }
 
   save() {

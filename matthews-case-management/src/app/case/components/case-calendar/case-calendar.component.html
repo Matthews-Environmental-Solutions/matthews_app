@@ -8,7 +8,7 @@
             <button mat-icon-button aria-label="navigate next" (click)="nextWeek()">
                 <mat-icon class="navigation-button">navigate_next</mat-icon>
             </button>
-            <span class="card-header-text">Wk. {{weekNumber}} | {{getFirstWeekDate()}} - {{getLastWeekDate()}}</span>
+            <span class="card-header-text">{{"week" | translate}} {{weekNumber}} | {{getFirstWeekDate()}} - {{getLastWeekDate()}}</span>
         </div>
 
         <div class="header-right">
@@ -25,11 +25,11 @@
             <div class="header-right-period-buttons">
                 <button mat-button aria-label="pick date" [ngClass]="{'selected-button': this.daily}"
                     (click)="switchCalendarView(true)">
-                    Day
+                    {{"day" | translate}}
                 </button>
                 <button mat-button aria-label="pick date" [ngClass]="{'selected-button': !this.daily}"
                     (click)="switchCalendarView(false)">
-                    Week
+                    {{"week" | translate}}
                 </button>
             </div>
         </div>

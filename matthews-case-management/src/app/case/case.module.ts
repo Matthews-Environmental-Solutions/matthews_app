@@ -52,6 +52,7 @@ import { MtxDatetimepickerModule } from '@ng-matero/extensions/datetimepicker';
 import { MtxNativeDatetimeModule } from '@ng-matero/extensions/core';
 import { ProfileSettingDialogComponent } from './dialogs/profile-setting/profile-setting.dialog.component';
 import { DatetimePipe } from '../pipes/datetime.pipe';
+import { TranslateModule } from '@ngx-translate/core';
 
 @NgModule({
   declarations: [
@@ -109,7 +110,9 @@ import { DatetimePipe } from '../pipes/datetime.pipe';
     MtxSelectModule,
     MtxDatetimepickerModule,
     MtxNativeDatetimeModule,
-    FormsModule
+    FormsModule,
+
+    TranslateModule
   ]
 })
 export class CaseModule { }
