@@ -25,7 +25,6 @@ export class CaseCalendarDailyComponent implements OnInit {
   statusDescription: string = 'cremation complete';
 
   constructor(private translate: TranslateService) {
-
   }
 
   ngOnInit(): void {
@@ -44,7 +43,8 @@ export class CaseCalendarDailyComponent implements OnInit {
   }
 
   getDayForButton(indexNumber: number): string {
-    return `${this.days[indexNumber].getDate().toString()} ${this.days[indexNumber].toLocaleString('en-us', { month: 'short' })}`;
+    let currentLang = this.translate.store.currentLang;
+    return `${this.days[indexNumber].getDate().toString()} ${this.days[indexNumber].toLocaleString(currentLang, { month: 'short' })}`;
   }
 
   dayClick(dayClick: number) {

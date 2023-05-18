@@ -21,11 +21,11 @@
     "save": "Save",
 
     "caseId": "Case ID",
-    "firstName": "Case ID",
-    "lastName": "Case ID",
-    "weight": "Case ID",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "weight": "Weight",
     "gender": "Gender",
-    "age": "Case ID",
+    "age": "Age",
 
     "containerType": "Container type",
     "loadSize": "Load size",
