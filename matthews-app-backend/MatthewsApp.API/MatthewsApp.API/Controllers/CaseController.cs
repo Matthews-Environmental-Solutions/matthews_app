@@ -69,7 +69,16 @@ namespace MatthewsApp.API.Controllers
         [Route("GetAllCases")]
         public async Task<ActionResult<IEnumerable<Case>>> GetAllCases()
         {
-            return Ok(await service.GetAllCases());
+            
+            try
+            {
+                return Ok(await service.GetAllCases());
+            }
+            catch (Exception ex)
+            {
+
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpGet]

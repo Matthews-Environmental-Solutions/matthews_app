@@ -45,11 +45,18 @@ namespace MatthewsApp.API.Services
 
         public async Task<IEnumerable<Case>> GetAllCases()
         {
-            IEnumerable<Case> cases = await repository.GetAll();
-            return cases.Select(i => { 
-                i.ScheduledStartTime = DateTime.SpecifyKind(i.ScheduledStartTime, DateTimeKind.Utc); 
-                return i;
-            });
+            try
+            {
+                IEnumerable<Case> cases = await repository.GetAll();
+                return cases.Select(i => {
+                    i.ScheduledStartTime = DateTime.SpecifyKind(i.ScheduledStartTime, DateTimeKind.Utc);
+                    return i;
+                });
+            } catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            
         }
 
         public async Task<IEnumerable<Case>> GetUnscheduledCases()
