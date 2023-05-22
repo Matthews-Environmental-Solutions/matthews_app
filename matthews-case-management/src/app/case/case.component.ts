@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, Inject } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { Facility } from '../models/facility.model';
 import { Case } from '../models/case.model';
 import { AuthService } from '../auth/auth.service';
@@ -7,24 +7,22 @@ import { MatDialog } from '@angular/material/dialog';
 import { ProfileSettingDialogComponent } from './dialogs/profile-setting/profile-setting.dialog.component';
 import { UserSettingData } from '../models/user-setting.model';
 import { UserSettingService } from '../services/user-setting.service';
-import { GenderType } from '../enums/gender-type.enum';
-import { CaseStatus } from '../enums/case-status.enum';
 import { CaseService } from '../services/cases.service';
 import { TranslateService } from '@ngx-translate/core';
 import { DateAdapter, MAT_DATE_LOCALE } from '@angular/material/core';
+import { I4connectedService } from '../services/i4connected.service';
+import { StateService } from '../services/states.service';
+import { MatSelectChange } from '@angular/material/select';
 
 @Component({
   selector: 'app-case',
   templateUrl: './case.component.html',
   styleUrls: ['./case.component.scss'],
 })
-export class CaseComponent {
-  facilities: Facility[] = [
-    { value: '1', viewValue: 'Facility 1' },
-    { value: '2', viewValue: 'Facility 2' },
-    { value: '3', viewValue: 'Facility 3' },
-  ];
+export class CaseComponent implements OnInit {
 
+  facilities: Facility[] = [];
+  selectedFacilityId: string = '';
   unscheduledCases: Case[] = [];
   loggedInUser: UserInfoAuth | undefined;
   userSetting: UserSettingData | undefined;
@@ -33,17 +31,33 @@ export class CaseComponent {
     (private authService: AuthService,
       private userSettingService: UserSettingService,
       private caseService: CaseService,
+      private i4connectedService: I4connectedService,
+      private stateService: StateService,
       public dialog: MatDialog,
       private translate: TranslateService,
       private _adapter: DateAdapter<any>,
-      @Inject(MAT_DATE_LOCALE) private _locale: string,
-      private changeDetectorRef: ChangeDetectorRef
+      @Inject(MAT_DATE_LOCALE) private _locale: string
     ) {
     this.loggedInUser = authService.loggedInUser;
     this.userSetting = userSettingService.getUserSettingLastValue();
-    caseService.getUnscheduledCases().subscribe(cases => this.unscheduledCases = cases);
+    this.caseService.getUnscheduledCases().subscribe(cases => this.unscheduledCases = cases);
     _adapter.setLocale(this.translate.store.currentLang);
   }
+  ngOnInit(): void {
+    this.i4connectedService.getSites().subscribe(data => {
+      this.facilities = data;
+    });
+
+    this.stateService.selectedFacilityId$.subscribe(f => 
+      this.selectedFacilityId = f
+      );
+  }
+  
+  // ngOnChanges(changes: SimpleChanges) {
+  //   if (changes['selectedFacility']) {
+  //     this.stateService.setSelectedFacility(this.selectedFacilityId);
+  //   }
+  // }
 
   logout(): void {
     this.authService.logout();
@@ -63,11 +77,12 @@ export class CaseComponent {
         this.translate.use(languageCode);
         this._locale = languageCode;
         this._adapter.setLocale(this._locale);
-        setTimeout(() => {
-          this.changeDetectorRef.detectChanges();
-        }, 500);
       }
     });
+  }
+
+  facilityChanged(facilityId: MatSelectChange): void {
+    this.stateService.setSelectedFacility(facilityId.value);
   }
 
 }

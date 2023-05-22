@@ -2,8 +2,10 @@ import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { Subscription, skip, tap } from 'rxjs';
 import { Case } from 'src/app/models/case.model';
+import { Facility } from 'src/app/models/facility.model';
 import { CalendarService } from 'src/app/services/calendar.service';
 import { CaseService } from 'src/app/services/cases.service';
+import { StateService } from 'src/app/services/states.service';
 import { UserSettingService } from 'src/app/services/user-setting.service';
 
 @Component({
@@ -12,6 +14,7 @@ import { UserSettingService } from 'src/app/services/user-setting.service';
   styleUrls: ['./case-calendar.component.scss']
 })
 export class CaseCalendarComponent implements OnInit, OnDestroy {
+  selectedFacilityId: string = '';
   daily: boolean = true;
   cases: Case[] = [];
   selectedDay: Date = new Date();
@@ -24,26 +27,45 @@ export class CaseCalendarComponent implements OnInit, OnDestroy {
 
   @ViewChild('clickHoverMenuTrigger') clickHoverMenuTrigger?: MatMenuTrigger;
 
-  constructor(private caseService: CaseService, private calendarService: CalendarService, private userSettingService: UserSettingService) {
+  constructor(
+    private caseService: CaseService,
+    private stateService: StateService,
+    private calendarService: CalendarService,
+    private userSettingService: UserSettingService) {
+
     this.subs.add(this.userSettingService.userSettings$
       .pipe(tap(setting => this.startDayOfWeek = setting.startDayOfWeek))
-      .pipe(skip(1)).subscribe(setting => {
+      .pipe(skip(1))
+      .subscribe(setting => {
         this.startDayOfWeek = setting.startDayOfWeek;
-        this.getDaysAndCases();
       }));
+      
+    this.subs.add(this.stateService.selectedFacilityId$
+      .pipe(skip(1))
+      .subscribe(fId => {
+        this.selectedFacilityId = fId;
+        if (!this.isEmptyString(this.selectedFacilityId)) {
+          this.getCases();
+        }
+      })
+    );
+  }
+
+  ngOnInit(): void {
+    this.getDays(this.selectedDay);
+    this.selectedDay.setHours(0, 0, 0, 0);
   }
 
   ngOnDestroy(): void {
     this.subs.unsubscribe();
   }
 
-  ngOnInit(): void {
-    this.getDaysAndCases();
-  }
-
   getDaysAndCases() {
     this.getDays(this.selectedDay);
+    this.getCases();
+  }
 
+  getCases() {
     this.caseService.getCases(this.days).subscribe((response: any) => {
       console.log(response);
       this.cases = response;
@@ -84,4 +106,6 @@ export class CaseCalendarComponent implements OnInit, OnDestroy {
       this.clickHoverMenuTrigger?.closeMenu();
     }
   }
+
+  isEmptyString = (data: string): boolean => typeof data === "string" && data.trim().length == 0;
 }

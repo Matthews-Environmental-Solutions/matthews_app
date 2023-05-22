@@ -1,4 +1,5 @@
 export class Facility {
-    value!: string;
-    viewValue!: string;
+    icon!: string;
+    name!: string;
+    id!: string; //GUID
 }
