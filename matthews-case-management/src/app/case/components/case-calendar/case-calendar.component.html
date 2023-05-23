@@ -45,8 +45,7 @@
     </div>
 
     <div class="card-content-list">
-        <case-calendar-daily *ngIf="daily" [cases]="cases" [days]="days"
-            [(selectedDay)]="selectedDay"></case-calendar-daily>
+        <case-calendar-daily *ngIf="daily" [days]="days"></case-calendar-daily>
         <case-calendar-weekly *ngIf="!daily" [cases]="cases" [days]="days"></case-calendar-weekly>
     </div>
 </mat-card>

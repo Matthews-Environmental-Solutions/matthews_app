@@ -14,7 +14,7 @@ import { UserSettingService } from 'src/app/services/user-setting.service';
   styleUrls: ['./case-calendar.component.scss']
 })
 export class CaseCalendarComponent implements OnInit, OnDestroy {
-  selectedFacilityId: string = '';
+  // selectedFacilityId: string = '';
   daily: boolean = true;
   cases: Case[] = [];
   selectedDay: Date = new Date();
@@ -40,15 +40,15 @@ export class CaseCalendarComponent implements OnInit, OnDestroy {
         this.startDayOfWeek = setting.startDayOfWeek;
       }));
       
-    this.subs.add(this.stateService.selectedFacilityId$
-      .pipe(skip(1))
-      .subscribe(fId => {
-        this.selectedFacilityId = fId;
-        if (!this.isEmptyString(this.selectedFacilityId)) {
-          this.getCases();
-        }
-      })
-    );
+    // this.subs.add(this.stateService.selectedFacilityId$
+    //   .pipe(skip(1))
+    //   .subscribe(fId => {
+    //     this.selectedFacilityId = fId;
+    //     // if (!this.isEmptyString(this.selectedFacilityId)) {
+    //     //   this.getCases();
+    //     // }
+    //   })
+    // );
   }
 
   ngOnInit(): void {
@@ -60,17 +60,17 @@ export class CaseCalendarComponent implements OnInit, OnDestroy {
     this.subs.unsubscribe();
   }
 
-  getDaysAndCases() {
-    this.getDays(this.selectedDay);
-    this.getCases();
-  }
+  // getDaysAndCases() {
+  //   this.getDays(this.selectedDay);
+  //   this.getCases();
+  // }
 
-  getCases() {
-    this.caseService.getCases(this.days).subscribe((response: any) => {
-      console.log(response);
-      this.cases = response;
-    });
-  }
+  // getCases() {
+  //   this.caseService.getCases(this.days).subscribe((response: any) => {
+  //     console.log(response);
+  //     this.cases = response;
+  //   });
+  // }
 
   switchCalendarView(viewDaily: boolean) {
     this.daily = viewDaily;
@@ -102,6 +102,8 @@ export class CaseCalendarComponent implements OnInit, OnDestroy {
   daySelectedEvent(date: Date) {
     if (date instanceof Date) {
       this.selectedDay = date;
+      this.stateService.setSelectedDate(date);
+
       this.getDays(this.selectedDay);
       this.clickHoverMenuTrigger?.closeMenu();
     }

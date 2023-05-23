@@ -1,7 +1,9 @@
 import { Component, Input, OnInit, Output, EventEmitter, SimpleChanges } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable, of, take } from 'rxjs';
+import { Observable, Subscription, of, skip, take } from 'rxjs';
 import { Case } from 'src/app/models/case.model';
+import { CaseService } from 'src/app/services/cases.service';
+import { StateService } from 'src/app/services/states.service';
 
 @Component({
   selector: 'case-calendar-daily',
@@ -9,32 +11,61 @@ import { Case } from 'src/app/models/case.model';
   styleUrls: ['./case-calendar-daily.component.scss']
 })
 export class CaseCalendarDailyComponent implements OnInit {
-  @Input()
-  cases!: Case[];
 
   @Input()
   days!: Date[];
 
-  @Input()
-  selectedDay!: Date;
-
   @Output() selectedDayChange = new EventEmitter<Date>();
+
+  cases: Case[] = [];
+  selectedDay!: Date;
+  selectedFacilityId!: string;
 
   buttonUsed: number = 0;
   iconName: string = 'check_circle';
   statusDescription: string = 'cremation complete';
 
-  constructor(private translate: TranslateService) {
+  private subs = new Subscription();
+
+  constructor(private translate: TranslateService, private caseService: CaseService, private stateService: StateService) {
   }
 
   ngOnInit(): void {
-    this.checkHeaderDayButtons();
+
+    this.subs.add(this.stateService.selectedFacilityId$.subscribe(f => {
+      this.selectedFacilityId = f;
+      if (!this.isEmptyString(f) && this.selectedDay) {
+        this.getCasesByDate();
+      }
+    }));
+
+    this.subs.add(this.stateService.selectedDate$.subscribe(d => {
+      d.setHours(0, 0, 0, 0);
+      this.selectedDay = d;
+      this.checkHeaderDayButtons();
+
+      if (!this.isEmptyString(this.selectedFacilityId) && this.selectedDay) {
+        this.getCasesByDate();
+      }
+    }));
   }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['selectedDay'] || changes['days']) {
       this.checkHeaderDayButtons();
     }
+  }
+
+  ngOnDestroy(): void {
+    this.subs.unsubscribe();
+  }
+
+  getCasesByDate() {
+
+    this.caseService.getScheduledCasesByDay(this.selectedFacilityId, this.selectedDay).subscribe((response: any) => {
+      console.log(response);
+      this.cases = response;
+    });
   }
 
   checkHeaderDayButtons() {
@@ -48,7 +79,8 @@ export class CaseCalendarDailyComponent implements OnInit {
   }
 
   dayClick(dayClick: number) {
-    this.changeSelectedDay(this.days[dayClick])
+    this.stateService.setSelectedDate(this.days[dayClick]);
+    this.changeSelectedDay(this.days[dayClick]);
     this.buttonUsed = dayClick;
   }
 
@@ -86,4 +118,5 @@ export class CaseCalendarDailyComponent implements OnInit {
     }
   }
 
+  isEmptyString = (data: string): boolean => typeof data === "string" && data.trim().length == 0;
 }
