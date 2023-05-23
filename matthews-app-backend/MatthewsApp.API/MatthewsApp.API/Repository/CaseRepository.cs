@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MatthewsApp.API.Repository
 {
-    public class CaseRepository : IRepository<Case>
+    public class CaseRepository : ICaseRepository
     {
         protected readonly MatthewsAppDBContext context;
 
@@ -40,6 +40,18 @@ namespace MatthewsApp.API.Repository
             IEnumerable<Case> cases = await context.Cases.ToArrayAsync();
 
             return cases.Where(c => c.ScheduledStartTime < DateTime.MinValue.AddDays(100) && c.IsObsolete == false).ToList();
+        }
+
+        public async Task<IEnumerable<Case>> GetScheduledCasesByDay(Guid facilityId, DateTime date)
+        {
+            IEnumerable<Case> cases = await context.Cases.ToArrayAsync();
+            return cases.Where(c => 
+                c.IsObsolete == false
+                && c.FacilityId.Equals(facilityId)
+                && c.ScheduledStartTime.Day.Equals(date.Day)
+                && c.ScheduledStartTime.Month.Equals(date.Month)
+                && c.ScheduledStartTime.Year.Equals(date.Year)
+                ).ToList();
         }
 
         public async Task<Case> GetOne(Guid id)

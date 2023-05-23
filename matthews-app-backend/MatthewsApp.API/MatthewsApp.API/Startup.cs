@@ -55,7 +55,7 @@ namespace MatthewsApp.API
             services.AddDbContext<MatthewsAppDBContext>(options => options.UseSqlServer(connectionString));
 
             services.AddScoped<ICasesService, CasesService>();
-            services.AddScoped<IRepository<Case>, CaseRepository>();
+            services.AddScoped<ICaseRepository, CaseRepository>();
 
             services.Configure<FormOptions>(o =>
             {

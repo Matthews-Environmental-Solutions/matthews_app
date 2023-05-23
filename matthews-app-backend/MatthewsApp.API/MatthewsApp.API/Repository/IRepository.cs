@@ -12,7 +12,7 @@ namespace MatthewsApp.API.Repository
         void Update(T entity);
         void Delete(T entity);
         Task<T> GetOne(Guid id);
-        Task<IEnumerable<Case>> GetAllUnscheduled();
+        
     }
 }
 
