@@ -54,6 +54,18 @@ namespace MatthewsApp.API.Repository
                 ).ToList();
         }
 
+        public async Task<IEnumerable<Case>> GetScheduledCasesByWeek(Guid facilityId, DateTime dateStartDateOfWeek)
+        {
+            DateTime dateEnd = dateStartDateOfWeek.AddDays(7);
+            IEnumerable<Case> cases = await context.Cases.ToArrayAsync();
+            return cases.Where(c =>
+                c.IsObsolete == false
+                && c.FacilityId.Equals(facilityId)
+                && c.ScheduledStartTime.Date >= dateStartDateOfWeek.Date
+                && c.ScheduledStartTime.Date < dateEnd.Date
+                ).ToList();
+        }
+
         public async Task<Case> GetOne(Guid id)
         {
             return await context.Cases.FindAsync(id);
@@ -64,5 +76,7 @@ namespace MatthewsApp.API.Repository
             context.Entry(entity).State = EntityState.Modified;
             context.SaveChanges();
         }
+
+        
     }
 }

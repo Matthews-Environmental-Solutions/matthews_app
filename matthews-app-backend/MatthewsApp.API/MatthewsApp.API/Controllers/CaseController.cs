@@ -85,14 +85,26 @@ namespace MatthewsApp.API.Controllers
         [Route("GetScheduledCasesByDay/{facilityId}/{date}")]
         public async Task<ActionResult<IEnumerable<Case>>> GetScheduledCasesByDay(Guid facilityId, DateTime date)
         {
-
             try
             {
                 return Ok(await service.GetScheduledCasesByDay(facilityId, date));
             }
             catch (Exception ex)
             {
+                return BadRequest(ex.Message);
+            }
+        }
 
+        [HttpGet]
+        [Route("GetScheduledCasesByWeek/{facilityId}/{dateStartDateOfWeek}")]
+        public async Task<ActionResult<IEnumerable<Case>>> GetScheduledCasesByWeek(Guid facilityId, DateTime dateStartDateOfWeek)
+        {
+            try
+            {
+                return Ok(await service.GetScheduledCasesByWeek(facilityId, dateStartDateOfWeek));
+            }
+            catch (Exception ex)
+            {
                 return BadRequest(ex.Message);
             }
         }

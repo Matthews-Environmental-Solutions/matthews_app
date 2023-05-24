@@ -9,5 +9,6 @@ namespace MatthewsApp.API.Repository
     {
         Task<IEnumerable<Case>> GetAllUnscheduled();
         Task<IEnumerable<Case>> GetScheduledCasesByDay(Guid facilityId, DateTime date);
+        Task<IEnumerable<Case>> GetScheduledCasesByWeek(Guid facilityId, DateTime dateStartDateOfWeek);
     }
 }

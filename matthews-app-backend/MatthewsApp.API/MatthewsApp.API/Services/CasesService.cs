@@ -18,6 +18,7 @@ namespace MatthewsApp.API.Services
         bool IsCaseExists(Guid id);
         Task<IEnumerable<Case>> GetUnscheduledCases();
         Task<IEnumerable<Case>> GetScheduledCasesByDay(Guid facilityId, DateTime date);
+        Task<IEnumerable<Case>> GetScheduledCasesByWeek(Guid facilityId, DateTime dateStartDateOfWeek);
     }
 
     public class CasesService : ICasesService
@@ -81,6 +82,22 @@ namespace MatthewsApp.API.Services
             }
         }
 
+        public async Task<IEnumerable<Case>> GetScheduledCasesByWeek(Guid facilityId, DateTime dateStartDateOfWeek)
+        {
+            try
+            {
+                IEnumerable<Case> cases = await repository.GetScheduledCasesByWeek(facilityId, dateStartDateOfWeek);
+                return cases.Select(i => {
+                    i.ScheduledStartTime = DateTime.SpecifyKind(i.ScheduledStartTime, DateTimeKind.Utc);
+                    return i;
+                });
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
         public async Task<Case> GetCaseById(Guid id)
         {
             return await this.repository.GetOne(id);
@@ -90,7 +107,6 @@ namespace MatthewsApp.API.Services
         {
             return repository.GetAll().Result.Any(e => e.Id == id);
         }
-
-        
+                
     }
 }
