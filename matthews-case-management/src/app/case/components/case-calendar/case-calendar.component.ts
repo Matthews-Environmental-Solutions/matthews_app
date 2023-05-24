@@ -39,16 +39,6 @@ export class CaseCalendarComponent implements OnInit, OnDestroy {
       .subscribe(setting => {
         this.startDayOfWeek = setting.startDayOfWeek;
       }));
-      
-    // this.subs.add(this.stateService.selectedFacilityId$
-    //   .pipe(skip(1))
-    //   .subscribe(fId => {
-    //     this.selectedFacilityId = fId;
-    //     // if (!this.isEmptyString(this.selectedFacilityId)) {
-    //     //   this.getCases();
-    //     // }
-    //   })
-    // );
   }
 
   ngOnInit(): void {
@@ -79,6 +69,7 @@ export class CaseCalendarComponent implements OnInit, OnDestroy {
   previousWeek() {
     this.hiddenDayForNavigation = this.calendarService.addDays(this.hiddenDayForNavigation, -7);
     this.getDays(this.hiddenDayForNavigation);
+    
   }
 
   nextWeek() {
@@ -89,6 +80,7 @@ export class CaseCalendarComponent implements OnInit, OnDestroy {
   getDays(date: Date) {
     this.days = this.calendarService.getWeekForGivenDate(date, this.startDayOfWeek);
     this.weekNumber = this.calendarService.getWeekNumberByDate(date);
+    this.stateService.setFirstDateInWeek(this.days[0]); // proclame the first day in week
   }
 
   getFirstWeekDate(): string {

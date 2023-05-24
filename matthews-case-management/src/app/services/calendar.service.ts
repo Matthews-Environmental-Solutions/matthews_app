@@ -22,7 +22,7 @@ export class CalendarService {
     /**
      * 
      * @param date 
-     * @param startDayOfWeek is number.   The 0 is for Sundau, while 1 is for Monday 
+     * @param startDayOfWeek is number.   The 0 is for Sunday, while 1 is for Monday 
      * @returns 
      */
     getStartDayOfTheWeekForGivenDate(date: Date, startDayOfWeek: 0 | 1) {

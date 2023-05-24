@@ -135,6 +135,47 @@ export class CaseService {
         }));
     }
 
+    getScheduledCasesByWeek(facilityId: string, dateStartDateOfWeek: Date): Observable<Case[]>{
+        let formatedStartDateOfWeek: string = this.formatDate(dateStartDateOfWeek);
+        return this.httpClient.get<Case[]>(`${this.apiURL}/Case/GetScheduledCasesByWeek/${facilityId}/${formatedStartDateOfWeek}`)
+        .pipe(retry(1), catchError(this.handleError))
+        .pipe(map((cases: Case[]) => {
+
+            cases = cases.map(item => {
+                switch (item.gender) {
+                    case 0:
+                        item.genderText = 'other'; // it will be used as key for translate
+                        break;
+                    case 1:
+                        item.genderText = 'male'; // it will be used as key for translate
+                        break;
+                    case 2:
+                        item.genderText = 'female'; // it will be used as key for translate
+                        break;
+                }
+
+                switch (item.containerType) {
+                    case 0:
+                        item.containerTypeText = 'None';
+                        break;
+                    case 1:
+                        item.containerTypeText = 'Cardboard';
+                        break;
+                    case 2:
+                        item.containerTypeText = 'Fiberboard';
+                        break;
+                    case 3:
+                        item.containerTypeText = 'Hardwood';
+                        break;
+                }
+
+                return item;
+            });
+
+            return cases;
+        }));
+    }
+
     formatDate(date: Date): string {
         return date.getFullYear() + "-" + (date.getMonth()+1) + "-" + date.getDate() + " 00:00:00";
     }
