@@ -18,6 +18,14 @@ export class CaseCalendarWeeklyComponent implements OnInit {
   selectedFacilityId!: string;
   firstDateInWeek!: Date;
 
+  casesForDay1: Case[] = [];
+  casesForDay2: Case[] = [];
+  casesForDay3: Case[] = [];
+  casesForDay4: Case[] = [];
+  casesForDay5: Case[] = [];
+  casesForDay6: Case[] = [];
+  casesForDay7: Case[] = [];
+
   private subs = new Subscription();
 
   constructor(private caseService: CaseService, private stateService: StateService) {
@@ -47,11 +55,55 @@ export class CaseCalendarWeeklyComponent implements OnInit {
     this.caseService.getScheduledCasesByWeek(this.selectedFacilityId, this.firstDateInWeek).subscribe((response: any) => {
       console.log(response);
       this.cases = response;
+      this.parseCasesByDays();
     });
+  }
+
+  parseCasesByDays(): void {
+    this.casesForDay1 = [];
+    this.casesForDay2 = [];
+    this.casesForDay3 = [];
+    this.casesForDay4 = [];
+    this.casesForDay5 = [];
+    this.casesForDay6 = [];
+    this.casesForDay7 = [];
+
+    this.cases.forEach(c => {
+      if (this.formatStringDate(c.scheduledStartTime) == this.formatDate(this.days[0])) {
+        this.casesForDay1.push(c);
+      }
+      if (this.formatStringDate(c.scheduledStartTime) == this.formatDate(this.days[1])) {
+        this.casesForDay2.push(c);
+      }
+      if (this.formatStringDate(c.scheduledStartTime) == this.formatDate(this.days[2])) {
+        this.casesForDay3.push(c);
+      }
+      if (this.formatStringDate(c.scheduledStartTime) == this.formatDate(this.days[3])) {
+        this.casesForDay4.push(c);
+      }
+      if (this.formatStringDate(c.scheduledStartTime) == this.formatDate(this.days[4])) {
+        this.casesForDay5.push(c);
+      }
+      if (this.formatStringDate(c.scheduledStartTime) == this.formatDate(this.days[5])) {
+        this.casesForDay6.push(c);
+      }
+      if (this.formatStringDate(c.scheduledStartTime) == this.formatDate(this.days[6])) {
+        this.casesForDay7.push(c);
+      }
+    })
   }
 
   getDayForButton(indexNumber: number): string {
     return `${this.days[indexNumber].getDate().toString()} ${this.days[indexNumber].toLocaleString('en-us', { month: 'short' })}`;
+  }
+
+  formatStringDate(dateString: string): string {
+    let date = new Date(dateString);
+    return date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " 00:00:00";
+  }
+
+  formatDate(date: Date): string {
+    return date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " 00:00:00";
   }
 
   isEmptyString = (data: string): boolean => typeof data === "string" && data.trim().length == 0;
