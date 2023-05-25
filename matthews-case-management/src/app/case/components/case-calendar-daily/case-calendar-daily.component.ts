@@ -24,6 +24,7 @@ export class CaseCalendarDailyComponent implements OnInit {
   buttonUsed: number = 0;
   iconName: string = 'check_circle';
   statusDescription: string = 'cremation complete';
+  loader: boolean = false;
 
   private subs = new Subscription();
 
@@ -61,10 +62,11 @@ export class CaseCalendarDailyComponent implements OnInit {
   }
 
   getCasesByDate() {
-
+    this.loader = true;
     this.caseService.getScheduledCasesByDay(this.selectedFacilityId, this.selectedDay).subscribe((response: any) => {
       console.log(response);
       this.cases = response;
+      this.loader = false;
     });
   }
 

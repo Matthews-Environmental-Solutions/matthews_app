@@ -65,6 +65,13 @@ $buttons: mat-palette($mat-blue-gray, 700);
     width: 100%;
 }
 
+.indeterminate-progress-bar {
+    grid-row-start: dr-first;
+    grid-row-end: dr-line2;
+    grid-column-start: dc-first;
+    grid-column-end: dc-end;
+}
+
 .daily-list {
     grid-row-start: dr-line2;
     grid-row-end: dr-end;

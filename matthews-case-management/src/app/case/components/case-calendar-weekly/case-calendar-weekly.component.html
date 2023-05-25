@@ -28,6 +28,8 @@
         {{getDayForButton(6)}}
     </mat-card>
 
+    <mat-progress-bar *ngIf="loader" mode="indeterminate" class="indeterminate-progress-bar"></mat-progress-bar>
+
     <div class="weekly-list">
         <div class="weekly-list-1">
             <ng-container *ngFor="let case of casesForDay1">
@@ -43,6 +45,9 @@
                     <div class="weekly-item-row-2">{{case.firstName}} {{case.lastName}}</div>
                 </div>
             </ng-container>
+            <div class="weekly-item-skeleton" *ngIf="loader">
+                <ngx-skeleton-loader [theme]="{height: '48px'}"></ngx-skeleton-loader>
+            </div>
         </div>
 
         <div class="weekly-list-2">
@@ -59,6 +64,9 @@
                     <div class="weekly-item-row-2">{{case.firstName}} {{case.lastName}}</div>
                 </div>
             </ng-container>
+            <div class="weekly-item-skeleton" *ngIf="loader">
+                <ngx-skeleton-loader [theme]="{height: '48px'}"></ngx-skeleton-loader>
+            </div>
         </div>
 
         <div class="weekly-list-3">
@@ -75,6 +83,9 @@
                     <div class="weekly-item-row-2">{{case.firstName}} {{case.lastName}}</div>
                 </div>
             </ng-container>
+            <div class="weekly-item-skeleton" *ngIf="loader">
+                <ngx-skeleton-loader [theme]="{height: '48px'}"></ngx-skeleton-loader>
+            </div>
         </div>
 
         <div class="weekly-list-4">
@@ -91,6 +102,9 @@
                     <div class="weekly-item-row-2">{{case.firstName}} {{case.lastName}}</div>
                 </div>
             </ng-container>
+            <div class="weekly-item-skeleton" *ngIf="loader">
+                <ngx-skeleton-loader [theme]="{height: '48px'}"></ngx-skeleton-loader>
+            </div>
         </div>
 
         <div class="weekly-list-5">
@@ -107,6 +121,9 @@
                     <div class="weekly-item-row-2">{{case.firstName}} {{case.lastName}}</div>
                 </div>
             </ng-container>
+            <div class="weekly-item-skeleton" *ngIf="loader">
+                <ngx-skeleton-loader [theme]="{height: '48px'}"></ngx-skeleton-loader>
+            </div>
         </div>
 
         <div class="weekly-list-6">
@@ -123,6 +140,9 @@
                     <div class="weekly-item-row-2">{{case.firstName}} {{case.lastName}}</div>
                 </div>
             </ng-container>
+            <div class="weekly-item-skeleton" *ngIf="loader">
+                <ngx-skeleton-loader [theme]="{height: '48px'}"></ngx-skeleton-loader>
+            </div>
         </div>
 
         <div class="weekly-list-7">
@@ -139,7 +159,9 @@
                     <div class="weekly-item-row-2">{{case.firstName}} {{case.lastName}}</div>
                 </div>
             </ng-container>
-
+            <div class="weekly-item-skeleton" *ngIf="loader">
+                <ngx-skeleton-loader [theme]="{height: '48px'}"></ngx-skeleton-loader>
+            </div>
         </div>
     </div>
 

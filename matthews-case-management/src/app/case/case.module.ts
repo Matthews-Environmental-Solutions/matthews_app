@@ -55,6 +55,7 @@ import { DatetimePipe } from '../pipes/datetime.pipe';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { MAT_DATE_LOCALE } from '@angular/material/core';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 
 @NgModule({
   declarations: [
@@ -115,6 +116,9 @@ import { MAT_DATE_LOCALE } from '@angular/material/core';
     FormsModule,
 
     TranslateModule,
+    NgxSkeletonLoaderModule.forRoot({
+      animation: 'pulse', loadingText: 'This item is actually loading...'
+    }) 
     
   ],
   providers: [

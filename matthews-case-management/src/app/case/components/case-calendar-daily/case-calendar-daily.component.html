@@ -41,6 +41,7 @@
             {{getDayForButton(6)}}
         </button>
     </div>
+    <mat-progress-bar *ngIf="loader" mode="indeterminate" class="indeterminate-progress-bar"></mat-progress-bar>
 
     <div class="daily-list">
         <ng-container *ngFor="let case of cases">
@@ -50,11 +51,12 @@
                     <div class="item-id cell">{{case.clientCaseId}}</div>
                     <div class="item-basic-data cell">
                         <span class="item-basic-data-name">{{case.firstName}} {{case.lastName}}</span>
-                        <span>{{case.weight}} kg | {{case.genderText.toLowerCase() | translate}} | {{case.containerTypeText}}</span> 
+                        <span>{{case.weight}} kg | {{case.genderText.toLowerCase() | translate}} |
+                            {{case.containerTypeText}}</span>
                     </div>
                     <div class="item-status cell">
-                        <div class="case-status" 
-                        [ngClass]="{'case-status-color-green': case.status == '1', 'case-status-color-red': case.status == '2', 'case-status-color-blue': case.status == '3', 'case-status-color-orange': case.status == '4'}">
+                        <div class="case-status"
+                            [ngClass]="{'case-status-color-green': case.status == '1', 'case-status-color-red': case.status == '2', 'case-status-color-blue': case.status == '3', 'case-status-color-orange': case.status == '4'}">
                             <mat-icon class="material-symbols-outlined ">
                                 {{getIconName(+case.status)}}
                             </mat-icon>
@@ -74,5 +76,22 @@
 
             </div>
         </ng-container>
+
+        <div class="daily-list-item" *ngIf="loader">
+            <div class="left-cells">
+                <div class="item-id cell"><ngx-skeleton-loader></ngx-skeleton-loader></div>
+                <div class="item-basic-data cell">
+                    <span class="item-basic-data-name"><ngx-skeleton-loader></ngx-skeleton-loader></span>
+                    <span><ngx-skeleton-loader></ngx-skeleton-loader></span>
+                </div>
+                <div class="item-status cell">
+                    <div>
+                        <span><ngx-skeleton-loader></ngx-skeleton-loader></span>
+                    </div>
+                    <div><ngx-skeleton-loader></ngx-skeleton-loader></div>
+                </div>
+            </div>
+        </div>
+        
     </div>
 </div>

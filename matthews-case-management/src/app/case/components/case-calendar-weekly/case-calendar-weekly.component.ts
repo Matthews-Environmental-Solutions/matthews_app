@@ -17,6 +17,7 @@ export class CaseCalendarWeeklyComponent implements OnInit {
   cases: Case[] = [];
   selectedFacilityId!: string;
   firstDateInWeek!: Date;
+  loader: boolean = false;
 
   casesForDay1: Case[] = [];
   casesForDay2: Case[] = [];
@@ -52,10 +53,12 @@ export class CaseCalendarWeeklyComponent implements OnInit {
   }
 
   getCasesByWeek(): void {
+    this.loader = true;
     this.caseService.getScheduledCasesByWeek(this.selectedFacilityId, this.firstDateInWeek).subscribe((response: any) => {
       console.log(response);
       this.cases = response;
       this.parseCasesByDays();
+      this.loader = false;
     });
   }
 
