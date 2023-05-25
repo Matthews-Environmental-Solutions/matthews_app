@@ -33,9 +33,11 @@
             <ng-container *ngFor="let case of casesForDay1">
                 <div class="weekly-item">
                     <div class="weekly-item-row-1">
-                        <div class="weekly-item-row-1-cell-1">ID {{case.clientCaseId}}</div>
-                        <div class="weekly-item-row-1-cell-2">
-                            <mat-icon>check_circle</mat-icon>
+                        <div class="weekly-item-row-1-cell-1" 
+                        [ngClass]="{'case-status-color-green': case.status == '1', 'case-status-color-red': case.status == '2', 'case-status-color-blue': case.status == '3', 'case-status-color-orange': case.status == '4'}">ID {{case.clientCaseId}}</div>
+                        <div class="weekly-item-row-1-cell-2" 
+                        [ngClass]="{'case-status-color-green': case.status == '1', 'case-status-color-red': case.status == '2', 'case-status-color-blue': case.status == '3', 'case-status-color-orange': case.status == '4'}">
+                            <mat-icon>{{getIconName(+case.status)}}</mat-icon>
                         </div>
                     </div>
                     <div class="weekly-item-row-2">{{case.firstName}} {{case.lastName}}</div>
@@ -47,9 +49,11 @@
             <ng-container *ngFor="let case of casesForDay2">
                 <div class="weekly-item">
                     <div class="weekly-item-row-1">
-                        <div class="weekly-item-row-1-cell-1">ID {{case.clientCaseId}}</div>
-                        <div class="weekly-item-row-1-cell-2">
-                            <mat-icon>check_circle</mat-icon>
+                        <div class="weekly-item-row-1-cell-1" 
+                        [ngClass]="{'case-status-color-green': case.status == '1', 'case-status-color-red': case.status == '2', 'case-status-color-blue': case.status == '3', 'case-status-color-orange': case.status == '4'}">ID {{case.clientCaseId}}</div>
+                        <div class="weekly-item-row-1-cell-2" 
+                        [ngClass]="{'case-status-color-green': case.status == '1', 'case-status-color-red': case.status == '2', 'case-status-color-blue': case.status == '3', 'case-status-color-orange': case.status == '4'}">
+                            <mat-icon>{{getIconName(+case.status)}}</mat-icon>
                         </div>
                     </div>
                     <div class="weekly-item-row-2">{{case.firstName}} {{case.lastName}}</div>
@@ -61,9 +65,11 @@
             <ng-container *ngFor="let case of casesForDay3">
                 <div class="weekly-item">
                     <div class="weekly-item-row-1">
-                        <div class="weekly-item-row-1-cell-1">ID {{case.clientCaseId}}</div>
-                        <div class="weekly-item-row-1-cell-2">
-                            <mat-icon>check_circle</mat-icon>
+                        <div class="weekly-item-row-1-cell-1" 
+                        [ngClass]="{'case-status-color-green': case.status == '1', 'case-status-color-red': case.status == '2', 'case-status-color-blue': case.status == '3', 'case-status-color-orange': case.status == '4'}">ID {{case.clientCaseId}}</div>
+                        <div class="weekly-item-row-1-cell-2"
+                        [ngClass]="{'case-status-color-green': case.status == '1', 'case-status-color-red': case.status == '2', 'case-status-color-blue': case.status == '3', 'case-status-color-orange': case.status == '4'}">
+                            <mat-icon>{{getIconName(+case.status)}}</mat-icon>
                         </div>
                     </div>
                     <div class="weekly-item-row-2">{{case.firstName}} {{case.lastName}}</div>
@@ -75,9 +81,11 @@
             <ng-container *ngFor="let case of casesForDay4">
                 <div class="weekly-item">
                     <div class="weekly-item-row-1">
-                        <div class="weekly-item-row-1-cell-1 font-color-orange">ID {{case.clientCaseId}}</div>
-                        <div class="weekly-item-row-1-cell-2 font-color-orange">
-                            <mat-icon>hourglass_top</mat-icon>
+                        <div class="weekly-item-row-1-cell-1 font-color-orange"
+                        [ngClass]="{'case-status-color-green': case.status == '1', 'case-status-color-red': case.status == '2', 'case-status-color-blue': case.status == '3', 'case-status-color-orange': case.status == '4'}">ID {{case.clientCaseId}}</div>
+                        <div class="weekly-item-row-1-cell-2 font-color-orange"
+                        [ngClass]="{'case-status-color-green': case.status == '1', 'case-status-color-red': case.status == '2', 'case-status-color-blue': case.status == '3', 'case-status-color-orange': case.status == '4'}">
+                            <mat-icon>{{getIconName(+case.status)}}</mat-icon>
                         </div>
                     </div>
                     <div class="weekly-item-row-2">{{case.firstName}} {{case.lastName}}</div>
@@ -89,9 +97,11 @@
             <ng-container *ngFor="let case of casesForDay5">
                 <div class="weekly-item">
                     <div class="weekly-item-row-1">
-                        <div class="weekly-item-row-1-cell-1 font-color-blue">ID {{case.clientCaseId}}</div>
-                        <div class="weekly-item-row-1-cell-2 font-color-blue">
-                            <mat-icon>arrow_circle_right</mat-icon>
+                        <div class="weekly-item-row-1-cell-1 font-color-blue"
+                        [ngClass]="{'case-status-color-green': case.status == '1', 'case-status-color-red': case.status == '2', 'case-status-color-blue': case.status == '3', 'case-status-color-orange': case.status == '4'}">ID {{case.clientCaseId}}</div>
+                        <div class="weekly-item-row-1-cell-2 font-color-blue"
+                        [ngClass]="{'case-status-color-green': case.status == '1', 'case-status-color-red': case.status == '2', 'case-status-color-blue': case.status == '3', 'case-status-color-orange': case.status == '4'}">
+                            <mat-icon>{{getIconName(+case.status)}}</mat-icon>
                         </div>
                     </div>
                     <div class="weekly-item-row-2">{{case.firstName}} {{case.lastName}}</div>
@@ -103,9 +113,11 @@
             <ng-container *ngFor="let case of casesForDay6">
                 <div class="weekly-item">
                     <div class="weekly-item-row-1">
-                        <div class="weekly-item-row-1-cell-1">ID {{case.clientCaseId}}</div>
-                        <div class="weekly-item-row-1-cell-2">
-                            <mat-icon>check_circle</mat-icon>
+                        <div class="weekly-item-row-1-cell-1" 
+                        [ngClass]="{'case-status-color-green': case.status == '1', 'case-status-color-red': case.status == '2', 'case-status-color-blue': case.status == '3', 'case-status-color-orange': case.status == '4'}">ID {{case.clientCaseId}}</div>
+                        <div class="weekly-item-row-1-cell-2"
+                        [ngClass]="{'case-status-color-green': case.status == '1', 'case-status-color-red': case.status == '2', 'case-status-color-blue': case.status == '3', 'case-status-color-orange': case.status == '4'}">
+                            <mat-icon>{{getIconName(+case.status)}}</mat-icon>
                         </div>
                     </div>
                     <div class="weekly-item-row-2">{{case.firstName}} {{case.lastName}}</div>
@@ -117,9 +129,11 @@
             <ng-container *ngFor="let case of casesForDay7">
                 <div class="weekly-item">
                     <div class="weekly-item-row-1">
-                        <div class="weekly-item-row-1-cell-1">ID {{case.clientCaseId}}</div>
-                        <div class="weekly-item-row-1-cell-2">
-                            <mat-icon>check_circle</mat-icon>
+                        <div class="weekly-item-row-1-cell-1" 
+                        [ngClass]="{'case-status-color-green': case.status == '1', 'case-status-color-red': case.status == '2', 'case-status-color-blue': case.status == '3', 'case-status-color-orange': case.status == '4'}">ID {{case.clientCaseId}}</div>
+                        <div class="weekly-item-row-1-cell-2"
+                        [ngClass]="{'case-status-color-green': case.status == '1', 'case-status-color-red': case.status == '2', 'case-status-color-blue': case.status == '3', 'case-status-color-orange': case.status == '4'}">
+                            <mat-icon>{{getIconName(+case.status)}}</mat-icon>
                         </div>
                     </div>
                     <div class="weekly-item-row-2">{{case.firstName}} {{case.lastName}}</div>

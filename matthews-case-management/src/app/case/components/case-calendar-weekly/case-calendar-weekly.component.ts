@@ -102,6 +102,21 @@ export class CaseCalendarWeeklyComponent implements OnInit {
     return date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " 00:00:00";
   }
 
+  getIconName(status: number): string {
+    switch (status) {
+      case 1:
+        return 'check_circle';
+      case 2:
+        return 'local_fire_department';
+      case 3:
+        return 'arrow_circle_right';
+      case 4:
+        return 'hourglass_top';
+      default:
+        return '';
+    }
+  }
+
   formatDate(date: Date): string {
     return date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " 00:00:00";
   }

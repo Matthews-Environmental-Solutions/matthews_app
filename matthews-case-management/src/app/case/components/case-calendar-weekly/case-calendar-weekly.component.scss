@@ -180,3 +180,19 @@ $buttons: mat-palette($mat-blue-gray, 700);
     color: var(--mdc-protected-button-label-text-color, inherit);
     letter-spacing: 1px;
 }
+
+.case-status-color-green {
+    color: #02708e;
+}
+
+.case-status-color-red {
+    color: #90131a;
+}
+
+.case-status-color-blue {
+    color: #29c0f1;
+}
+
+.case-status-color-orange {
+    color: #f15a29;
+}
