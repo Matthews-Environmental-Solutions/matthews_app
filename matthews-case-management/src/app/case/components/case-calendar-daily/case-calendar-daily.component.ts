@@ -1,4 +1,5 @@
 import { Component, Input, OnInit, Output, EventEmitter, SimpleChanges } from '@angular/core';
+import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, Subscription, of, skip, take } from 'rxjs';
 import { Case } from 'src/app/models/case.model';
@@ -29,7 +30,8 @@ export class CaseCalendarDailyComponent implements OnInit {
 
   private subs = new Subscription();
 
-  constructor(private translate: TranslateService, private caseService: CaseService, private stateService: StateService, private userSettingService: UserSettingService) {
+  constructor(private translate: TranslateService, private caseService: CaseService, private stateService: StateService, private userSettingService: UserSettingService,
+    private router: Router) {
   }
 
   ngOnInit(): void {
@@ -95,6 +97,10 @@ export class CaseCalendarDailyComponent implements OnInit {
 
   changeSelectedDay(value: Date) {
     this.selectedDayChange.emit(value);
+  }
+
+  gotoCaseEdit(caseId: string) {
+    this.router.navigate([`case/${caseId}`]);
   }
 
   getIconName(status: number): string {

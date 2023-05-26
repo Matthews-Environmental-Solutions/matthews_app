@@ -14,170 +14,104 @@ export class CaseService {
         return this.httpClient.get('/assets/cases.json');
     }
 
+    getCaseById(caseId: string): Observable<Case> {
+        return this.httpClient.get<Case>(`${this.apiURL}/Case/${caseId}`)
+            .pipe(retry(1), catchError(this.handleError))
+            .pipe(map(item => this.remapCase(item)));
+    }
+
     getCases(days: Date[]): Observable<Case[]> {
         return this.httpClient.get<Case[]>(this.apiURL + '/Case/GetAllCases')
             .pipe(retry(1), catchError(this.handleError))
             .pipe(map((cases: Case[]) => {
-
-                cases = cases.map(item => {
-                    switch (item.gender) {
-                        case 0:
-                            item.genderText = 'Other';
-                            break;
-                        case 1:
-                            item.genderText = 'Male';
-                            break;
-                        case 2:
-                            item.genderText = 'Female';
-                            break;
-                    }
-
-                    switch (item.containerType) {
-                        case 0:
-                            item.containerTypeText = 'None';
-                            break;
-                        case 1:
-                            item.containerTypeText = 'Cardboard';
-                            break;
-                        case 2:
-                            item.containerTypeText = 'Fiberboard';
-                            break;
-                        case 3:
-                            item.containerTypeText = 'Hardwood';
-                            break;
-                    }
-
-                    return item;
-                });
-
+                cases = cases.map(item => this.remapCase(item));
                 return cases;
             }));
     }
 
-    getUnscheduledCases(): Observable<Case[]>{
+    getUnscheduledCases(): Observable<Case[]> {
         return this.httpClient.get<Case[]>(this.apiURL + '/Case/GetUnscheduledCases')
-        .pipe(retry(1), catchError(this.handleError))
-        .pipe(map((cases: Case[]) => {
-
-            cases = cases.map(item => {
-                switch (item.gender) {
-                    case 0:
-                        item.genderText = 'other'; // it will be used as key for translate
-                        break;
-                    case 1:
-                        item.genderText = 'male'; // it will be used as key for translate
-                        break;
-                    case 2:
-                        item.genderText = 'female'; // it will be used as key for translate
-                        break;
-                }
-
-                switch (item.containerType) {
-                    case 0:
-                        item.containerTypeText = 'None';
-                        break;
-                    case 1:
-                        item.containerTypeText = 'Cardboard';
-                        break;
-                    case 2:
-                        item.containerTypeText = 'Fiberboard';
-                        break;
-                    case 3:
-                        item.containerTypeText = 'Hardwood';
-                        break;
-                }
-
-                return item;
-            });
-
-            return cases;
-        }));
+            .pipe(retry(1), catchError(this.handleError))
+            .pipe(map((cases: Case[]) => {
+                cases = cases.map(item => this.remapCase(item));
+                return cases;
+            }));
     }
 
-    getScheduledCasesByDay(facilityId: string, date: Date): Observable<Case[]>{
+    getScheduledCasesByDay(facilityId: string, date: Date): Observable<Case[]> {
         let formatedDate: string = this.formatDate(date);
         return this.httpClient.get<Case[]>(`${this.apiURL}/Case/GetScheduledCasesByDay/${facilityId}/${formatedDate}`)
-        .pipe(retry(1), catchError(this.handleError))
-        .pipe(map((cases: Case[]) => {
-
-            cases = cases.map(item => {
-                switch (item.gender) {
-                    case 0:
-                        item.genderText = 'other'; // it will be used as key for translate
-                        break;
-                    case 1:
-                        item.genderText = 'male'; // it will be used as key for translate
-                        break;
-                    case 2:
-                        item.genderText = 'female'; // it will be used as key for translate
-                        break;
-                }
-
-                switch (item.containerType) {
-                    case 0:
-                        item.containerTypeText = 'None';
-                        break;
-                    case 1:
-                        item.containerTypeText = 'Cardboard';
-                        break;
-                    case 2:
-                        item.containerTypeText = 'Fiberboard';
-                        break;
-                    case 3:
-                        item.containerTypeText = 'Hardwood';
-                        break;
-                }
-
-                return item;
-            });
-
-            return cases;
-        }));
+            .pipe(retry(1), catchError(this.handleError))
+            .pipe(map((cases: Case[]) => {
+                cases = cases.map(item => this.remapCase(item));
+                return cases;
+            }));
     }
 
-    getScheduledCasesByWeek(facilityId: string, dateStartDateOfWeek: Date): Observable<Case[]>{
+    getScheduledCasesByWeek(facilityId: string, dateStartDateOfWeek: Date): Observable<Case[]> {
         let formatedStartDateOfWeek: string = this.formatDate(dateStartDateOfWeek);
         return this.httpClient.get<Case[]>(`${this.apiURL}/Case/GetScheduledCasesByWeek/${facilityId}/${formatedStartDateOfWeek}`)
-        .pipe(retry(1), catchError(this.handleError))
-        .pipe(map((cases: Case[]) => {
-
-            cases = cases.map(item => {
-                switch (item.gender) {
-                    case 0:
-                        item.genderText = 'other'; // it will be used as key for translate
-                        break;
-                    case 1:
-                        item.genderText = 'male'; // it will be used as key for translate
-                        break;
-                    case 2:
-                        item.genderText = 'female'; // it will be used as key for translate
-                        break;
-                }
-
-                switch (item.containerType) {
-                    case 0:
-                        item.containerTypeText = 'None';
-                        break;
-                    case 1:
-                        item.containerTypeText = 'Cardboard';
-                        break;
-                    case 2:
-                        item.containerTypeText = 'Fiberboard';
-                        break;
-                    case 3:
-                        item.containerTypeText = 'Hardwood';
-                        break;
-                }
-
-                return item;
-            });
-
-            return cases;
-        }));
+            .pipe(retry(1), catchError(this.handleError))
+            .pipe(map((cases: Case[]) => {
+                cases = cases.map(item => this.remapCase(item));
+                return cases;
+            }));
     }
 
     formatDate(date: Date): string {
-        return date.getFullYear() + "-" + (date.getMonth()+1) + "-" + date.getDate() + " 00:00:00";
+        return date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " 00:00:00";
+    }
+
+    // map case
+    remapCase(item: Case): Case {
+        switch (item.gender) {
+            case 0:
+                item.genderText = 'Other';
+                break;
+            case 1:
+                item.genderText = 'Male';
+                break;
+            case 2:
+                item.genderText = 'Female';
+                break;
+        }
+
+        switch (item.containerType) {
+            case 0:
+                item.containerTypeText = 'None';
+                break;
+            case 1:
+                item.containerTypeText = 'Cardboard';
+                break;
+            case 2:
+                item.containerTypeText = 'Hardwood';
+                break;
+            case 3:
+                item.containerTypeText = 'MDF Particle board';
+                break;
+            case 4:
+                item.containerTypeText = 'Bag/Shroud';
+                break;
+            case 5:
+                item.containerTypeText = 'Other';
+                break;
+        }
+
+        switch (item.containerSize) {
+            case 0:
+                item.containerSizeText = 'None';
+                break;
+            case 1:
+                item.containerSizeText = 'Infant';
+                break;
+            case 2:
+                item.containerSizeText = 'Standard';
+                break;
+            case 3:
+                item.containerSizeText = 'Bariatric';
+                break;
+        }
+        return item;
     }
 
     // Error handling

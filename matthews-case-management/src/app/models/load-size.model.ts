@@ -1,4 +1,4 @@
-export class LoadSize {
+export class ContainerSize {
     id!: number;
     name!: string;
 }

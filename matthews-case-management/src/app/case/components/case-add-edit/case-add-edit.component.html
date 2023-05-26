@@ -41,9 +41,9 @@
                 <section class="toggle-button-container">
                     <p class="toggle-button-label">{{"gender" | translate}}</p>
                     <mat-button-toggle-group formControlName="gender" aria-label="Font Style">
-                        <mat-button-toggle value="male">{{"male" | translate}}</mat-button-toggle>
-                        <mat-button-toggle value="female">{{"female" | translate}}</mat-button-toggle>
-                        <mat-button-toggle value="other">{{"other" | translate}}</mat-button-toggle>
+                        <mat-button-toggle value="1">{{"male" | translate}}</mat-button-toggle>
+                        <mat-button-toggle value="2">{{"female" | translate}}</mat-button-toggle>
+                        <mat-button-toggle value="0">{{"other" | translate}}</mat-button-toggle>
                     </mat-button-toggle-group>
                 </section>
 
@@ -64,8 +64,8 @@
 
                 <mat-form-field appearance="fill">
                     <mat-label>{{"loadSize" | translate}}</mat-label>
-                    <mat-select formControlName="loadSize">
-                        <mat-option *ngFor="let loadSize of loadSizes" [value]="loadSize.id">
+                    <mat-select formControlName="containerSize">
+                        <mat-option *ngFor="let loadSize of containerSizes" [value]="loadSize.id">
                             {{loadSize.name}}
                         </mat-option>
                     </mat-select>
