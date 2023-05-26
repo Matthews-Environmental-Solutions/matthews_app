@@ -38,6 +38,17 @@
     "scheduledStartTime": "Geplante Startzeit",
     "dateTime": "Datum und Uhrzeit",
 
+    "none": "Keiner",
+    "cardboard": "Karton",
+    "hardwood": "Hartholz",
+    "mdfParticleBoard": "MDF-Spanplatte",
+    "bagShroud": "Tasche / Leichentuch",
+
+    "infant": "Kleinkind",
+    "standard": "Standard",
+    "bariatric": "Bariatrisch",
+
+
     "title": "Service-Feedback für {{company}}",
     "name": {
         "label": "Namen",

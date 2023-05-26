@@ -38,6 +38,17 @@
     "scheduledStartTime": "Scheduled start time",
     "dateTime": "Date and time",
 
+    "none": "None",
+    "cardboard": "Cardboard",
+    "hardwood": "Hardwood",
+    "mdfParticleBoard": "MDF Particle board",
+    "bagShroud": "Bag / Shroud",
+
+    "infant": "Infant",
+    "standard": "Standard",
+    "bariatric": "Bariatric",
+
+
     "title": "Service feedback for {{company}}",
     "name": {
         "label": "Name",

@@ -2,13 +2,14 @@ import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable, catchError, map, retry, throwError } from "rxjs";
 import { Case } from "../models/case.model";
+import { TranslateService } from "@ngx-translate/core";
 
 @Injectable({
     providedIn: 'root'
 })
 export class CaseService {
     apiURL = 'https://localhost:5001';
-    constructor(public httpClient: HttpClient) { }
+    constructor(public httpClient: HttpClient, private translate: TranslateService) { }
 
     getCasesFromJsonFile(days: Date[]) {
         return this.httpClient.get('/assets/cases.json');
@@ -66,49 +67,49 @@ export class CaseService {
     remapCase(item: Case): Case {
         switch (item.gender) {
             case 0:
-                item.genderText = 'Other';
+                item.genderText = this.translate.instant('other');
                 break;
             case 1:
-                item.genderText = 'Male';
+                item.genderText = this.translate.instant('male');
                 break;
             case 2:
-                item.genderText = 'Female';
+                item.genderText = this.translate.instant('female');
                 break;
         }
 
         switch (item.containerType) {
             case 0:
-                item.containerTypeText = 'None';
+                item.containerTypeText = this.translate.instant('none');
                 break;
             case 1:
-                item.containerTypeText = 'Cardboard';
+                item.containerTypeText = this.translate.instant('cardboard');
                 break;
             case 2:
-                item.containerTypeText = 'Hardwood';
+                item.containerTypeText = this.translate.instant('hardwood');
                 break;
             case 3:
-                item.containerTypeText = 'MDF Particle board';
+                item.containerTypeText = this.translate.instant('mdfParticleBoard');
                 break;
             case 4:
-                item.containerTypeText = 'Bag/Shroud';
+                item.containerTypeText = this.translate.instant('bagShroud');
                 break;
             case 5:
-                item.containerTypeText = 'Other';
+                item.containerTypeText = this.translate.instant('other');
                 break;
         }
 
         switch (item.containerSize) {
             case 0:
-                item.containerSizeText = 'None';
+                item.containerSizeText = this.translate.instant('none');
                 break;
             case 1:
-                item.containerSizeText = 'Infant';
+                item.containerSizeText = this.translate.instant('Infant');
                 break;
             case 2:
-                item.containerSizeText = 'Standard';
+                item.containerSizeText = this.translate.instant('Standard');
                 break;
             case 3:
-                item.containerSizeText = 'Bariatric';
+                item.containerSizeText = this.translate.instant('Bariatric');
                 break;
         }
         return item;

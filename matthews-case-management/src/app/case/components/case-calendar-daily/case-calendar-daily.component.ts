@@ -73,7 +73,6 @@ export class CaseCalendarDailyComponent implements OnInit {
   getCasesByDate() {
     this.loader = true;
     this.caseService.getScheduledCasesByDay(this.selectedFacilityId, this.selectedDay).subscribe((response: any) => {
-      console.log(response);
       this.cases = response;
       this.loader = false;
     });

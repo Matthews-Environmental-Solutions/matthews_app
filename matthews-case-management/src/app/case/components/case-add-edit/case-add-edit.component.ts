@@ -21,15 +21,13 @@ export class CaseAddEditComponent implements OnInit {
   @ViewChild('clickDateHoverMenuTrigger') clickDateHoverMenuTrigger?: MatMenuTrigger;
   @ViewChild('clickTimeHoverMenuTrigger') clickTimeHoverMenuTrigger?: MatMenuTrigger;
 
-  // (Infant/Standard/Bariatric
-
   title: string = 'addNewCase';
 
-  containerTypes: ContainerType[] = [{id: 0, name: 'None'}, {id: 1, name: 'Cardboard'}, {id: 2, name: 'Hardwood'}, {id: 3, name: 'MDF Particle board'}, {id: 4, name: 'Bag/Shroud'}, {id: 4, name: 'Other'}];
-  containerSizes: ContainerSize[] = [{id: 0, name: 'None'}, {id: 1, name: 'Infant'}, {id: 2, name: 'Standard'}, {id: 3, name: 'Bariatric'}];
+  containerTypes: ContainerType[] = [{ id: 0, name: 'None' }, { id: 1, name: 'Cardboard' }, { id: 2, name: 'Hardwood' }, { id: 3, name: 'MDF Particle board' }, { id: 4, name: 'Bag/Shroud' }, { id: 4, name: 'Other' }];
+  containerSizes: ContainerSize[] = [{ id: 0, name: 'None' }, { id: 1, name: 'Infant' }, { id: 2, name: 'Standard' }, { id: 3, name: 'Bariatric' }];
   caseStatuses: CaseStatus[] = [];
   cremators: Cremator[] = [];
- 
+
   caseForm: FormGroup;
 
   type: MtxDatetimepickerType = 'datetime';
@@ -41,7 +39,7 @@ export class CaseAddEditComponent implements OnInit {
   timeInterval = 1;
   timeInput = true;
 
-  constructor(private route: ActivatedRoute, private fb: FormBuilder, private caseService: CaseService) { 
+  constructor(private route: ActivatedRoute, private fb: FormBuilder, private caseService: CaseService) {
     this.caseForm = new FormGroup({
       clientCaseId: new FormControl('', { nonNullable: true }),
       firstName: new FormControl('', { nonNullable: true }),
@@ -59,13 +57,18 @@ export class CaseAddEditComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const caseId = this.route.snapshot.paramMap.get('id');
+    this.route.paramMap.subscribe(param => {
+      let id = param.get('id');
+      this.title = id == null ? 'addNewCase' : 'editCase';
+      if (id) {
+        this.getCaseFromApi(id);
+      }
+    });
     // debugger;
-    this.title = caseId == null ? 'addNewCase' : 'editCase';
+  }
 
-    if(caseId){
-      this.caseService.getCaseById(caseId)
-      
+  getCaseFromApi(caseId: string): void {
+    this.caseService.getCaseById(caseId)
       .subscribe(response => {
         this.case = response;
         this.caseForm.get('clientCaseId')?.setValue(response.clientCaseId);
@@ -75,17 +78,13 @@ export class CaseAddEditComponent implements OnInit {
         this.caseForm.get('gender')?.setValue(response.gender.toString());
         this.caseForm.get('age')?.setValue(response.age);
 
-
         this.caseForm.get('containerType')?.setValue(response.containerType);
         this.caseForm.get('containerSize')?.setValue(response.containerSize);
 
-        if(response.scheduledStartTime !== '0001-01-01T00:00:00'){
+        if (response.scheduledStartTime !== '0001-01-01T00:00:00') {
           this.caseForm.get('scheduledStartDateTime')?.setValue(new Date(response.scheduledStartTime));
         }
-        
-        
       });
-    }
   }
 
   save() {
