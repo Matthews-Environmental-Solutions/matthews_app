@@ -54,6 +54,14 @@ export class CaseCalendarWeeklyComponent implements OnInit {
 
   getCasesByWeek(): void {
     this.loader = true;
+    this.casesForDay1 = [];
+    this.casesForDay2 = [];
+    this.casesForDay3 = [];
+    this.casesForDay4 = [];
+    this.casesForDay5 = [];
+    this.casesForDay6 = [];
+    this.casesForDay7 = [];
+
     this.caseService.getScheduledCasesByWeek(this.selectedFacilityId, this.firstDateInWeek).subscribe((response: any) => {
       console.log(response);
       this.cases = response;
@@ -63,14 +71,6 @@ export class CaseCalendarWeeklyComponent implements OnInit {
   }
 
   parseCasesByDays(): void {
-    this.casesForDay1 = [];
-    this.casesForDay2 = [];
-    this.casesForDay3 = [];
-    this.casesForDay4 = [];
-    this.casesForDay5 = [];
-    this.casesForDay6 = [];
-    this.casesForDay7 = [];
-
     this.cases.forEach(c => {
       if (this.formatStringDate(c.scheduledStartTime) == this.formatDate(this.days[0])) {
         this.casesForDay1.push(c);

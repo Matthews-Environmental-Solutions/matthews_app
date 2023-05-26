@@ -2,9 +2,7 @@ import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { Subscription, skip, tap } from 'rxjs';
 import { Case } from 'src/app/models/case.model';
-import { Facility } from 'src/app/models/facility.model';
 import { CalendarService } from 'src/app/services/calendar.service';
-import { CaseService } from 'src/app/services/cases.service';
 import { StateService } from 'src/app/services/states.service';
 import { UserSettingService } from 'src/app/services/user-setting.service';
 
@@ -14,7 +12,7 @@ import { UserSettingService } from 'src/app/services/user-setting.service';
   styleUrls: ['./case-calendar.component.scss']
 })
 export class CaseCalendarComponent implements OnInit, OnDestroy {
-  // selectedFacilityId: string = '';
+
   daily: boolean = true;
   cases: Case[] = [];
   selectedDay: Date = new Date();
@@ -28,7 +26,6 @@ export class CaseCalendarComponent implements OnInit, OnDestroy {
   @ViewChild('clickHoverMenuTrigger') clickHoverMenuTrigger?: MatMenuTrigger;
 
   constructor(
-    private caseService: CaseService,
     private stateService: StateService,
     private calendarService: CalendarService,
     private userSettingService: UserSettingService) {
@@ -39,6 +36,10 @@ export class CaseCalendarComponent implements OnInit, OnDestroy {
       .subscribe(setting => {
         this.startDayOfWeek = setting.startDayOfWeek;
       }));
+
+    this.subs.add(this.userSettingService.userSettings$.subscribe(s => {
+        this.getDays(this.hiddenDayForNavigation);
+    }));
   }
 
   ngOnInit(): void {
@@ -50,18 +51,6 @@ export class CaseCalendarComponent implements OnInit, OnDestroy {
     this.subs.unsubscribe();
   }
 
-  // getDaysAndCases() {
-  //   this.getDays(this.selectedDay);
-  //   this.getCases();
-  // }
-
-  // getCases() {
-  //   this.caseService.getCases(this.days).subscribe((response: any) => {
-  //     console.log(response);
-  //     this.cases = response;
-  //   });
-  // }
-
   switchCalendarView(viewDaily: boolean) {
     this.daily = viewDaily;
   }
@@ -69,7 +58,7 @@ export class CaseCalendarComponent implements OnInit, OnDestroy {
   previousWeek() {
     this.hiddenDayForNavigation = this.calendarService.addDays(this.hiddenDayForNavigation, -7);
     this.getDays(this.hiddenDayForNavigation);
-    
+
   }
 
   nextWeek() {
@@ -80,7 +69,7 @@ export class CaseCalendarComponent implements OnInit, OnDestroy {
   getDays(date: Date) {
     this.days = this.calendarService.getWeekForGivenDate(date, this.startDayOfWeek);
     this.weekNumber = this.calendarService.getWeekNumberByDate(date);
-    this.stateService.setFirstDateInWeek(this.days[0]); // proclame the first day in week
+    this.stateService.setFirstDateInWeek(this.days[0]); // proclame the first date in week
   }
 
   getFirstWeekDate(): string {

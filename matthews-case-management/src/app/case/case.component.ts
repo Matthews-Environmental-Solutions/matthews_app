@@ -13,6 +13,7 @@ import { DateAdapter, MAT_DATE_LOCALE } from '@angular/material/core';
 import { I4connectedService } from '../services/i4connected.service';
 import { StateService } from '../services/states.service';
 import { MatSelectChange } from '@angular/material/select';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-case',
@@ -26,6 +27,8 @@ export class CaseComponent implements OnInit {
   unscheduledCases: Case[] = [];
   loggedInUser: UserInfoAuth | undefined;
   userSetting: UserSettingData | undefined;
+
+  private subs = new Subscription();
 
   constructor
     (private authService: AuthService,
@@ -44,20 +47,18 @@ export class CaseComponent implements OnInit {
     _adapter.setLocale(this.translate.store.currentLang);
   }
   ngOnInit(): void {
-    this.i4connectedService.getSites().subscribe(data => {
+    this.subs.add(this.i4connectedService.getSites().subscribe(data => {
       this.facilities = data;
-    });
+    }));
 
-    this.stateService.selectedFacilityId$.subscribe(f => 
+    this.subs.add(this.stateService.selectedFacilityId$.subscribe(f =>
       this.selectedFacilityId = f
-      );
+    ));
   }
-  
-  // ngOnChanges(changes: SimpleChanges) {
-  //   if (changes['selectedFacility']) {
-  //     this.stateService.setSelectedFacility(this.selectedFacilityId);
-  //   }
-  // }
+
+  ngOnDestroy(): void {
+    this.subs.unsubscribe();
+  }
 
   logout(): void {
     this.authService.logout();

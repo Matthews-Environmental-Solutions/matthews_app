@@ -4,6 +4,7 @@ import { Observable, Subscription, of, skip, take } from 'rxjs';
 import { Case } from 'src/app/models/case.model';
 import { CaseService } from 'src/app/services/cases.service';
 import { StateService } from 'src/app/services/states.service';
+import { UserSettingService } from 'src/app/services/user-setting.service';
 
 @Component({
   selector: 'case-calendar-daily',
@@ -28,10 +29,16 @@ export class CaseCalendarDailyComponent implements OnInit {
 
   private subs = new Subscription();
 
-  constructor(private translate: TranslateService, private caseService: CaseService, private stateService: StateService) {
+  constructor(private translate: TranslateService, private caseService: CaseService, private stateService: StateService, private userSettingService: UserSettingService) {
   }
 
   ngOnInit(): void {
+
+    this.subs.add(this.userSettingService.userSettings$.subscribe(s => {
+      if (!this.isEmptyString(this.selectedFacilityId) && this.selectedDay) {
+        this.getCasesByDate();
+      }
+    }));
 
     this.subs.add(this.stateService.selectedFacilityId$.subscribe(f => {
       this.selectedFacilityId = f;
