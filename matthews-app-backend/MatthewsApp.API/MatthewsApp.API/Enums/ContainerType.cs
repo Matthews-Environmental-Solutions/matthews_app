@@ -4,7 +4,9 @@
     {
         NONE,
         CARDBOARD,
-        FIBERBOARD,
-        HARDWOOD
+        HARDWOOD,
+        MDF_PARTICLE_BOARD,
+        BAG_SHROUD,
+        OTHER
     }
 }
