@@ -13,7 +13,8 @@ import { DateAdapter, MAT_DATE_LOCALE } from '@angular/material/core';
 import { I4connectedService } from '../services/i4connected.service';
 import { StateService } from '../services/states.service';
 import { MatSelectChange } from '@angular/material/select';
-import { Subscription } from 'rxjs';
+import { Subscription, skip } from 'rxjs';
+import { Device } from '../models/device.model';
 
 @Component({
   selector: 'app-case',
@@ -51,9 +52,9 @@ export class CaseComponent implements OnInit {
       this.facilities = data;
     }));
 
-    this.subs.add(this.stateService.selectedFacilityId$.subscribe(f =>
-      this.selectedFacilityId = f
-    ));
+    this.subs.add(this.stateService.selectedFacilityId$.pipe(skip(1)).subscribe(fId => {
+      this.selectedFacilityId = fId;
+    }));
   }
 
   ngOnDestroy(): void {

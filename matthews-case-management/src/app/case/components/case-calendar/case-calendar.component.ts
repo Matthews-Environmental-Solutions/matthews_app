@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { Subscription, skip, tap } from 'rxjs';
 import { Case } from 'src/app/models/case.model';
+import { Device } from 'src/app/models/device.model';
 import { CalendarService } from 'src/app/services/calendar.service';
 import { StateService } from 'src/app/services/states.service';
 import { UserSettingService } from 'src/app/services/user-setting.service';
@@ -20,6 +21,7 @@ export class CaseCalendarComponent implements OnInit, OnDestroy {
   days: Date[] = [];
   weekNumber: number | undefined;
   startDayOfWeek: 0 | 1 = 1;
+  devices: Device[] = [];
 
   private subs = new Subscription();
 
@@ -39,6 +41,11 @@ export class CaseCalendarComponent implements OnInit, OnDestroy {
 
     this.subs.add(this.userSettingService.userSettings$.subscribe(s => {
         this.getDays(this.hiddenDayForNavigation);
+    }));
+
+    this.subs.add(this.stateService.devicesFromSite$.pipe(skip(1)).subscribe(devices => {
+      this.devices = devices;
+      console.log('devices of site:', devices);
     }));
   }
 
