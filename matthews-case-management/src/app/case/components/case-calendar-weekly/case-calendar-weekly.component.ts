@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Subscription, skip } from 'rxjs';
 import { Case } from 'src/app/models/case.model';
 import { CaseService } from 'src/app/services/cases.service';
 import { StateService } from 'src/app/services/states.service';
@@ -44,7 +44,7 @@ export class CaseCalendarWeeklyComponent implements OnInit {
       }
     }));
 
-    this.subs.add(this.stateService.devicesFromSite$.subscribe(devices => {
+    this.subs.add(this.stateService.devicesFromSite$.pipe(skip(1)).subscribe(devices => {
       if (!this.isEmptyString(this.selectedFacilityId) && this.firstDateInWeek) {
         this.getCasesByWeek();
       }

@@ -1,7 +1,6 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { Subscription, skip, tap } from 'rxjs';
-import { Case } from 'src/app/models/case.model';
 import { Device } from 'src/app/models/device.model';
 import { CalendarService } from 'src/app/services/calendar.service';
 import { StateService } from 'src/app/services/states.service';

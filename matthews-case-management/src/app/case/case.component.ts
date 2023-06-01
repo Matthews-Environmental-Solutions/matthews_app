@@ -14,7 +14,6 @@ import { I4connectedService } from '../services/i4connected.service';
 import { StateService } from '../services/states.service';
 import { MatSelectChange } from '@angular/material/select';
 import { Subscription, skip } from 'rxjs';
-import { Device } from '../models/device.model';
 
 @Component({
   selector: 'app-case',

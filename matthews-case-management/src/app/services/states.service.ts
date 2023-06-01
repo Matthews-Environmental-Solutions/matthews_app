@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { BehaviorSubject, Observable, Subject } from "rxjs";
+import { BehaviorSubject, Observable } from "rxjs";
 import { CalendarService } from "./calendar.service";
 import { UserSettingService } from "./user-setting.service";
 import { Device } from "../models/device.model";
@@ -38,6 +38,8 @@ export class StateService {
         this.numberOfCasesToShowAsFilter$ = this.numberOfCasesToShowAsFilterBehaviorSubject;
     }
 
+
+    // selectedFacilityIdBehaviorSubject
     setSelectedFacility(facility: string): void {
         this.selectedFacilityIdBehaviorSubject.next(facility);
         this.i4connectedService.getDevicesByFacility(facility).subscribe(devices => {
@@ -54,6 +56,7 @@ export class StateService {
     }
 
 
+    // selectedDateBehaviorSubject
     setSelectedDate(date: Date): void {
         this.selectedDateBehaviorSubject.next(date);
     }
@@ -67,6 +70,7 @@ export class StateService {
     }
 
 
+    // firstDateInWeekBehaviorSubject
     setFirstDateInWeek(date: Date): void {
         this.firstDateInWeekBehaviorSubject.next(date);
     }
@@ -81,6 +85,7 @@ export class StateService {
     }
 
 
+    // devicesFromSiteBehaviorSubject
     setDevicesFromSite(devices: Device[]): void {
         this.devicesFromSiteBehaviorSubject.next(devices);
     }
@@ -94,6 +99,7 @@ export class StateService {
     }
 
 
+    // devicesToShowAsFilterBehaviorSubject
     setDevicesToShowAsFilter(devices: Device[]): void {
         this.devicesToShowAsFilterBehaviorSubject.next(devices);
     }

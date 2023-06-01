@@ -1,16 +1,16 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { Observable, catchError, forkJoin, map, mergeAll, mergeMap, of, pipe, retry, switchMap, tap, throwError } from "rxjs";
+import { Observable, catchError, forkJoin, map, retry, switchMap, throwError } from "rxjs";
 import { Facility } from "../models/facility.model";
 import { Device } from "../models/device.model";
-import { de } from "date-fns/locale";
+import { environment } from "src/environments/environment";
 
 @Injectable({
     providedIn: 'root'
 })
 export class I4connectedService {
 
-    apiUrl: string = 'https://matthewscremation.i4connected.cloud/api';
+    apiUrl: string = environment.i4connectedApiUrl;
 
     constructor(public httpClient: HttpClient) { }
 

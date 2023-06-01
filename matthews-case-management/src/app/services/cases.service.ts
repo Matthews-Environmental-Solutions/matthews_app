@@ -1,14 +1,15 @@
-import { HttpClient, HttpHeaders } from "@angular/common/http";
+import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable, catchError, map, retry, throwError } from "rxjs";
 import { Case } from "../models/case.model";
 import { TranslateService } from "@ngx-translate/core";
+import { environment } from "src/environments/environment";
 
 @Injectable({
     providedIn: 'root'
 })
 export class CaseService {
-    apiURL = 'https://localhost:5001';
+    apiURL = environment.apiUrl;
     constructor(public httpClient: HttpClient, private translate: TranslateService) { }
 
     getCasesFromJsonFile(days: Date[]) {
