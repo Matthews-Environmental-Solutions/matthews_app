@@ -39,7 +39,7 @@
 
     <div class="card-header-filter">
         <span>
-            ALL ({{numberOfCases}})
+            {{"all" | translate}} ({{numberOfCases}})
             <ng-container *ngFor="let device of devices">
                 | {{device.alias}} ({{device.numberOfAttachedCases}})
             </ng-container>

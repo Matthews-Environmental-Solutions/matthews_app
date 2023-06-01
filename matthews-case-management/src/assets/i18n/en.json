@@ -48,6 +48,8 @@
     "standard": "Standard",
     "bariatric": "Bariatric",
 
+    "all": "All",
+
 
     "title": "Service feedback for {{company}}",
     "name": {
