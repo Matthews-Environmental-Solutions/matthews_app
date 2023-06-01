@@ -35,13 +35,16 @@ export class CaseCalendarWeeklyComponent implements OnInit {
   ngOnInit(): void {
     this.subs.add(this.stateService.selectedFacilityId$.subscribe(f => {
       this.selectedFacilityId = f;
-      if (!this.isEmptyString(f) && this.firstDateInWeek) {
-        this.getCasesByWeek();
-      }
     }));
 
     this.subs.add(this.stateService.firstDateInWeek$.subscribe(d => {
       this.firstDateInWeek = d;
+      if (!this.isEmptyString(this.selectedFacilityId) && this.firstDateInWeek) {
+        this.getCasesByWeek();
+      }
+    }));
+
+    this.subs.add(this.stateService.devicesFromSite$.subscribe(devices => {
       if (!this.isEmptyString(this.selectedFacilityId) && this.firstDateInWeek) {
         this.getCasesByWeek();
       }
@@ -66,6 +69,7 @@ export class CaseCalendarWeeklyComponent implements OnInit {
       console.log(response);
       this.cases = response;
       this.parseCasesByDays();
+      this.stateService.parseCasesByDevices(this.cases);
       this.loader = false;
     });
   }

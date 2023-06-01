@@ -15,7 +15,6 @@ export class CalendarService {
         const result = getWeek(date, {
             weekStartsOn: 1
         });
-        console.log('Week number', result);
         return result;
     }
 
@@ -29,7 +28,6 @@ export class CalendarService {
         const day = startOfWeek(date, {
             weekStartsOn: startDayOfWeek
         });
-        console.log('First day of the week for given date', day);
         return day;
     }
 
@@ -45,7 +43,6 @@ export class CalendarService {
         days.push(addDays(firstDayOfTheWeek, 5));
         days.push(addDays(firstDayOfTheWeek, 6));
 
-        console.log('Days of the week', days);
         return days;
     }
 

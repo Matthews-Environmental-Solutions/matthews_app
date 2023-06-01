@@ -44,9 +44,6 @@ export class CaseCalendarDailyComponent implements OnInit {
 
     this.subs.add(this.stateService.selectedFacilityId$.subscribe(f => {
       this.selectedFacilityId = f;
-      if (!this.isEmptyString(f) && this.selectedDay) {
-        this.getCasesByDate();
-      }
     }));
 
     this.subs.add(this.stateService.selectedDate$.subscribe(d => {
@@ -54,6 +51,12 @@ export class CaseCalendarDailyComponent implements OnInit {
       this.selectedDay = d;
       this.checkHeaderDayButtons();
 
+      if (!this.isEmptyString(this.selectedFacilityId) && this.selectedDay) {
+        this.getCasesByDate();
+      }
+    }));
+
+    this.subs.add(this.stateService.devicesFromSite$.subscribe(devices => {
       if (!this.isEmptyString(this.selectedFacilityId) && this.selectedDay) {
         this.getCasesByDate();
       }
@@ -74,6 +77,7 @@ export class CaseCalendarDailyComponent implements OnInit {
     this.loader = true;
     this.caseService.getScheduledCasesByDay(this.selectedFacilityId, this.selectedDay).subscribe((response: any) => {
       this.cases = response;
+      this.stateService.parseCasesByDevices(this.cases);
       this.loader = false;
     });
   }

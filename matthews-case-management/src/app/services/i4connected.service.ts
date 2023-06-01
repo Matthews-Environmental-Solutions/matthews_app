@@ -30,7 +30,7 @@ export class I4connectedService {
                     return forkJoin(obs).pipe(
                         map((devices: Device[]) => {
                             let objs: Device[] = [];
-                            devices.forEach(d => objs.push(new Device (d.id, d.alias, d.adapterId)));
+                            devices.forEach(d => objs.push(new Device (d.id, d.alias, d.adapterId, 0)));
 
                             return objs.filter(d => d.adapterId != null);
                         })

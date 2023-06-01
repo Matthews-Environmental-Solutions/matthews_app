@@ -52,7 +52,6 @@ export function authAppInitializerFactory(authService: AuthService, userSettingS
         }
 
         const currentLanguage = translate.currentLang;
-        console.log('currentLanguage', currentLanguage);
 
     }
 }

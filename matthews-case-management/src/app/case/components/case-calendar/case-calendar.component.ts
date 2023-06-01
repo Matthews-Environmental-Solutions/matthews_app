@@ -15,7 +15,7 @@ import { UserSettingService } from 'src/app/services/user-setting.service';
 export class CaseCalendarComponent implements OnInit, OnDestroy {
 
   daily: boolean = true;
-  cases: Case[] = [];
+  numberOfCases: number = 0;
   selectedDay: Date = new Date();
   hiddenDayForNavigation: Date = new Date(this.selectedDay);
   days: Date[] = [];
@@ -43,10 +43,12 @@ export class CaseCalendarComponent implements OnInit, OnDestroy {
         this.getDays(this.hiddenDayForNavigation);
     }));
 
-    this.subs.add(this.stateService.devicesFromSite$.pipe(skip(1)).subscribe(devices => {
+    this.subs.add(this.stateService.devicesToShowAsFilter$.pipe(skip(1)).subscribe(devices => {
       this.devices = devices;
       console.log('devices of site:', devices);
     }));
+
+    this.subs.add(this.stateService.numberOfCasesToShowAsFilter$.pipe(skip(1)).subscribe(numberOfCases => this.numberOfCases = numberOfCases));
   }
 
   ngOnInit(): void {

@@ -39,9 +39,9 @@
 
     <div class="card-header-filter">
         <span>
-            ALL (35)
+            ALL ({{numberOfCases}})
             <ng-container *ngFor="let device of devices">
-                | {{device.alias}} (number)
+                | {{device.alias}} ({{device.numberOfAttachedCases}})
             </ng-container>
         </span>
 
