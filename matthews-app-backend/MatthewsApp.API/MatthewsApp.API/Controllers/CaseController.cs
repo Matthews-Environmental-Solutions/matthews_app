@@ -1,4 +1,6 @@
-﻿using MatthewsApp.API.Models;
+﻿using MatthewsApp.API.Dtos;
+using MatthewsApp.API.Mappers;
+using MatthewsApp.API.Models;
 using MatthewsApp.API.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -19,11 +21,21 @@ namespace MatthewsApp.API.Controllers
         }
 
         [HttpPost]
-        public ActionResult<Case> PostCase(Case caseEntity)
+        [Route("Save")]
+        public ActionResult<Case> PostCase([FromBody]CaseDto caseDto)
         {
-            service.CreateCase(caseEntity);
+            try
+            {
+                var caseEntity = caseDto.ToEntity();
+                caseEntity.Id = Guid.NewGuid();
+                service.CreateCase(caseEntity);
 
-            return CreatedAtAction(nameof(PostCase), new { id = caseEntity.Id }, caseEntity);
+                return CreatedAtAction(nameof(PostCase), new { id = caseEntity.Id }, caseEntity);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpDelete("{id}")]
@@ -44,25 +56,23 @@ namespace MatthewsApp.API.Controllers
             return Ok();
         }
 
-        [HttpPut("{id}")]
-        public ActionResult PutCase(Guid id, Case caseEntitry)
+        [HttpPut]
+        [Route("Update")]
+        public ActionResult PutCase([FromBody] CaseDto caseDto)
         {
-            if (id != caseEntitry.Id)
-            {
-                return BadRequest();
-            }
             try
             {
-                service.UpdateCase(caseEntitry);
+                service.UpdateCase(caseDto.ToEntity());
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!service.IsCaseExists(id))
+                if (!service.IsCaseExists(caseDto.Id))
                 {
                     return NotFound();
                 }
+                return BadRequest();
             }
-            return Ok(caseEntitry.Id);
+            return Ok(caseDto.Id);
         }
 
         [HttpGet]

@@ -15,7 +15,7 @@ namespace MatthewsApp.API.Models
 
         [Column(TypeName = "nvarchar(256)")]
         [Required]
-        public String ClientId { get; set; } // Promeni tip nakon što saznamo format ID-a
+        public string ClientId { get; set; } // Promeni tip nakon što saznamo format ID-a
 
         [Column(TypeName = "nvarchar(256)")]
         [Required]
