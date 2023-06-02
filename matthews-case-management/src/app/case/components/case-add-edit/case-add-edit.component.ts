@@ -6,7 +6,6 @@ import { FormGroup, FormControl, FormBuilder } from '@angular/forms';
 import { CaseStatus } from 'src/app/models/case-status.model';
 import { Case } from 'src/app/models/case.model';
 import { ContainerType } from 'src/app/models/container-type.model';
-import { Cremator } from 'src/app/models/cremator.model';
 import { ContainerSize } from 'src/app/models/load-size.model';
 import { MtxCalendarView, MtxDatetimepickerMode, MtxDatetimepickerType } from '@ng-matero/extensions/datetimepicker';
 import { CaseService } from 'src/app/services/cases.service';
@@ -79,6 +78,10 @@ export class CaseAddEditComponent implements OnInit {
         this.getCaseFromApi(id);
       }
     });
+
+    if(!this.selectedFacilityId){
+      this.router.navigate(['']);
+    }
     // debugger;
   }
 
