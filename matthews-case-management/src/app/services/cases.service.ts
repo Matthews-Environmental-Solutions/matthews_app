@@ -60,6 +60,16 @@ export class CaseService {
             }));
     }
 
+    save(caseForSave: Case): Observable<void> {
+        return this.httpClient.post<void>(`${this.apiURL}/Case/Save`, caseForSave)
+        .pipe(catchError(this.handleError));
+    }
+
+    update(caseForSave: Case): Observable<void> {
+        return this.httpClient.put<void>(`${this.apiURL}/Case/Update`, caseForSave)
+        .pipe(catchError(this.handleError));
+    }
+
     formatDate(date: Date): string {
         return date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " 00:00:00";
     }

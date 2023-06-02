@@ -5,7 +5,7 @@
       <img alt="logo" src="assets/Matthews Environmental Updated logo.png" class="logo" />
       <span class="spacer"></span>
 
-      <button mat-raised-button class="btn-color-green" [routerLink]="['/case']">
+      <button mat-raised-button class="btn-color-green" [routerLink]="['/case']" [disabled]="!selectedFacilityId">
         <mat-icon>add_circle</mat-icon>
         {{"addCase" | translate}}
       </button>

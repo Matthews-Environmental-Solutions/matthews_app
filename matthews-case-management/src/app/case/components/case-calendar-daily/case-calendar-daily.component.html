@@ -56,7 +56,7 @@
                     </div>
                     <div class="item-status cell">
                         <div class="case-status"
-                            [ngClass]="{'case-status-color-green': case.status == '1', 'case-status-color-red': case.status == '2', 'case-status-color-blue': case.status == '3', 'case-status-color-orange': case.status == '4'}">
+                            [ngClass]="{'case-status-color-green': case.status == 1, 'case-status-color-red': case.status == 2, 'case-status-color-blue': case.status == 3, 'case-status-color-orange': case.status == 4}">
                             <mat-icon class="material-symbols-outlined ">
                                 {{getIconName(+case.status)}}
                             </mat-icon>

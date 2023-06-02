@@ -41,9 +41,9 @@
                 <section class="toggle-button-container">
                     <p class="toggle-button-label">{{"gender" | translate}}</p>
                     <mat-button-toggle-group formControlName="gender" aria-label="Font Style">
-                        <mat-button-toggle value="1">{{"male" | translate}}</mat-button-toggle>
-                        <mat-button-toggle value="2">{{"female" | translate}}</mat-button-toggle>
-                        <mat-button-toggle value="0">{{"other" | translate}}</mat-button-toggle>
+                        <mat-button-toggle value=1>{{"male" | translate}}</mat-button-toggle>
+                        <mat-button-toggle value=2>{{"female" | translate}}</mat-button-toggle>
+                        <mat-button-toggle value=0>{{"other" | translate}}</mat-button-toggle>
                     </mat-button-toggle-group>
                 </section>
 
@@ -84,7 +84,7 @@
                     <mat-label>{{"cremator" | translate}}</mat-label>
                     <mat-select formControlName="scheduledCremator">
                         <mat-option *ngFor="let cremator of cremators" [value]="cremator.id">
-                            {{cremator.name}}
+                            {{cremator.alias}}
                         </mat-option>
                     </mat-select>
                 </mat-form-field>

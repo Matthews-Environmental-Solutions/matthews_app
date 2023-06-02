@@ -18,7 +18,7 @@ export interface ICase {
     containerSizeText: string;
     isObsolete: boolean;
     age: number;
-    status: string;
+    status: number;
 
     scheduledFacility: string;
     scheduledDevice: string;
@@ -42,11 +42,11 @@ export interface ICase {
 }
 
 export class Case implements ICase{
-    id: string = '';
-    clientId: string = '';
+    id: string = '00000000-0000-0000-0000-000000000000';
+    clientId: string = '1'; // get ID from some API
     clientCaseId: string = '';
 
-    facilityId: string = '';
+    facilityId: string = '00000000-0000-0000-0000-000000000000';
     firstName: string = '';
     lastName: string = '';
     weight: number = 100;
@@ -58,24 +58,24 @@ export class Case implements ICase{
     containerSizeText: string = '';
     isObsolete: boolean = false;
     age: number = 100;
-    status: string = '';
+    status: number = 0;
     
-    scheduledFacility: string = '';
-    scheduledDevice: string = '';
+    scheduledFacility: string = '00000000-0000-0000-0000-000000000000';
+    scheduledDevice: string = '00000000-0000-0000-0000-000000000000';
     scheduledDeviceAlias: string = '';
     scheduledStartTime: string = '';
     
-    actualFacility: string = '';
-    actualDevice: string = '';
+    actualFacility: string = '00000000-0000-0000-0000-000000000000';
+    actualDevice: string = '00000000-0000-0000-0000-000000000000';
     actualDeviceAlias: string = '';
-    actualStartTime: string = '';
-    actualEndTime: string = '';
+    actualStartTime: string = '0001-01-01T00:00:00';
+    actualEndTime: string = '0001-01-01T00:00:00';
 
-    createdBy: string = '';
-    createdTime: string = '';
-    modifiedBy: string = '';
-    modifiedTime: string = '';
-    performedBy: string = '';
+    createdBy: string = '00000000-0000-0000-0000-000000000000';
+    createdTime: string = '0001-01-01T00:00:00';
+    modifiedBy: string = '00000000-0000-0000-0000-000000000000';
+    modifiedTime: string = '0001-01-01T00:00:00';
+    performedBy: string = '00000000-0000-0000-0000-000000000000';
 
     fuel: string = '';
     electricity: string = '';
