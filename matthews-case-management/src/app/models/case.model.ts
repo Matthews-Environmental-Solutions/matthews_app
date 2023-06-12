@@ -6,7 +6,6 @@ export interface ICase {
     clientId: string;
     clientCaseId: string;
 
-    facilityId: string;
     firstName: string;
     lastName: string;
     weight: number;
@@ -20,22 +19,22 @@ export interface ICase {
     age: number;
     status: number;
 
-    scheduledFacility: string;
-    scheduledDevice: string;
+    scheduledFacility?: string;
+    scheduledDevice?: string;
     scheduledDeviceAlias: string;
-    scheduledStartTime: string;
+    scheduledStartTime?: string;
     
-    actualFacility: string;
-    actualDevice: string;
+    actualFacility?: string;
+    actualDevice?: string;
     actualDeviceAlias: string;
-    actualStartTime: string;
-    actualEndTime: string;
+    actualStartTime?: string;
+    actualEndTime?: string;
 
     createdBy: string;
     createdTime: string;
-    modifiedBy: string;
-    modifiedTime: string;
-    performedBy: string;
+    modifiedBy?: string;
+    modifiedTime?: string;
+    performedBy?: string;
 
     fuel: string;
     electricity: string;
@@ -46,7 +45,6 @@ export class Case implements ICase{
     clientId: string = '1'; // get ID from some API
     clientCaseId: string = '';
 
-    facilityId: string = '00000000-0000-0000-0000-000000000000';
     firstName: string = '';
     lastName: string = '';
     weight: number = 100;
@@ -60,22 +58,22 @@ export class Case implements ICase{
     age: number = 100;
     status: number = 0;
     
-    scheduledFacility: string = '00000000-0000-0000-0000-000000000000';
-    scheduledDevice: string = '00000000-0000-0000-0000-000000000000';
+    scheduledFacility?: string;
+    scheduledDevice?: string;
     scheduledDeviceAlias: string = '';
-    scheduledStartTime: string = '';
+    scheduledStartTime?: string = '';
     
-    actualFacility: string = '00000000-0000-0000-0000-000000000000';
-    actualDevice: string = '00000000-0000-0000-0000-000000000000';
+    actualFacility?: string;
+    actualDevice?: string;
     actualDeviceAlias: string = '';
-    actualStartTime: string = '0001-01-01T00:00:00';
-    actualEndTime: string = '0001-01-01T00:00:00';
+    actualStartTime?: string;
+    actualEndTime?: string;
 
     createdBy: string = '00000000-0000-0000-0000-000000000000';
     createdTime: string = '0001-01-01T00:00:00';
-    modifiedBy: string = '00000000-0000-0000-0000-000000000000';
-    modifiedTime: string = '0001-01-01T00:00:00';
-    performedBy: string = '00000000-0000-0000-0000-000000000000';
+    modifiedBy?: string;
+    modifiedTime?: string;
+    performedBy?: string;
 
     fuel: string = '';
     electricity: string = '';

@@ -49,6 +49,15 @@
     "bariatric": "Bariatric",
 
     "all": "All",
+    "caseSuccessfullySaved": "Case successfully saved",
+    "caseSuccessfullyUpdated": "Case successfully updated",
+
+    "success": "Success",
+    "warning": "Warning",
+    "error": "Error",
+
+    "profilSuccessfullySaved": "Profil successfully saved",
+    "profilNotSaved": "Profil is not saved",
 
 
     "title": "Service feedback for {{company}}",

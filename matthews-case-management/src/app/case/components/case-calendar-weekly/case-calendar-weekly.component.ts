@@ -104,7 +104,10 @@ export class CaseCalendarWeeklyComponent implements OnInit {
     return `${this.days[indexNumber].getDate().toString()} ${this.days[indexNumber].toLocaleString('en-us', { month: 'short' })}`;
   }
 
-  formatStringDate(dateString: string): string {
+  formatStringDate(dateString: string | undefined): string {
+    if(!dateString){
+      return '';
+    }
     let date = new Date(dateString);
     return date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " 00:00:00";
   }

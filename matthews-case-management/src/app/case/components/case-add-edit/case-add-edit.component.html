@@ -18,28 +18,64 @@
         <div class="card-content">
 
             <div class="left-column">
+                <mat-error *ngIf="caseForm.get('clientCaseId')?.invalid && (caseForm.get('clientCaseId')?.dirty || caseForm.get('clientCaseId')?.touched)">
+                    <span *ngIf="caseForm.get('clientCaseId')?.errors?.['required']">
+                        Case id is required.
+                    </span>
+                </mat-error>
                 <mat-form-field class="example-full-width">
                     <mat-label>{{"caseId" | translate}}</mat-label>
                     <input formControlName="clientCaseId" matInput placeholder="Enter case id" value="">
                 </mat-form-field>
 
+
+                <mat-error *ngIf="caseForm.get('firstName')?.invalid && (caseForm.get('firstName')?.dirty || caseForm.get('firstName')?.touched)">
+                    <span *ngIf="caseForm.get('firstName')?.errors?.['required']">
+                        First name is required.
+                    </span>
+                    <span *ngIf="caseForm.get('firstName')?.errors?.['minlength']">
+                        Name must be at least 4 characters long.
+                    </span>
+                    <span *ngIf="caseForm.get('firstName')?.errors?.['forbiddenName']">
+                        Name cannot be Bob.
+                    </span>
+                </mat-error>
                 <mat-form-field class="example-full-width">
                     <mat-label>{{"firstName" | translate}}</mat-label>
-                    <input formControlName="firstName" matInput placeholder="Enter first name" value="">
+                    <input formControlName="firstName" matInput placeholder="Enter first name" value="" id="firstName">
                 </mat-form-field>
 
+
+                <mat-error *ngIf="caseForm.get('lastName')?.invalid && (caseForm.get('lastName')?.dirty || caseForm.get('lastName')?.touched)">
+                    <span *ngIf="caseForm.get('lastName')?.errors?.['required']">
+                        Last name is required.
+                    </span>
+                </mat-error>
                 <mat-form-field class="example-full-width">
                     <mat-label>{{"lastName" | translate}}</mat-label>
                     <input formControlName="lastName" matInput placeholder="Enter last name" value="">
                 </mat-form-field>
 
+
+                <mat-error *ngIf="caseForm.get('weight')?.invalid && (caseForm.get('weight')?.dirty || caseForm.get('weight')?.touched)">
+                    <span *ngIf="caseForm.get('weight')?.errors?.['required']">
+                        Weight is required.
+                    </span>
+                </mat-error>
                 <mat-form-field class="example-full-width">
                     <mat-label>{{"weight" | translate}}</mat-label>
-                    <input formControlName="weight" matInput placeholder="Enter case weight" value="">
+                    <input formControlName="weight" matInput placeholder="Enter case weight" value="" type="number">
                 </mat-form-field>
 
+
+                <mat-error *ngIf="caseForm.get('gender')?.invalid && (caseForm.get('gender')?.dirty || caseForm.get('gender')?.touched)">
+                    <span *ngIf="caseForm.get('gender')?.errors?.['required']">
+                        Gender is required.
+                    </span>
+                </mat-error>
                 <section class="toggle-button-container">
-                    <p class="toggle-button-label">{{"gender" | translate}}</p>
+                    <!-- <p class="toggle-button-label">{{"gender" | translate}}</p> -->
+                    <mat-label class="toggle-button-label">{{"gender" | translate}}</mat-label>
                     <mat-button-toggle-group formControlName="gender" aria-label="Font Style">
                         <mat-button-toggle value=1>{{"male" | translate}}</mat-button-toggle>
                         <mat-button-toggle value=2>{{"female" | translate}}</mat-button-toggle>
@@ -47,12 +83,26 @@
                     </mat-button-toggle-group>
                 </section>
 
+
+                <mat-error *ngIf="caseForm.get('age')?.invalid && (caseForm.get('age')?.dirty || caseForm.get('age')?.touched)">
+                    <span *ngIf="caseForm.get('age')?.errors?.['required']">
+                        Age is required.
+                    </span>
+                </mat-error>
                 <mat-form-field class="example-full-width">
                     <mat-label>{{"age" | translate}}</mat-label>
-                    <input formControlName="age" matInput placeholder="Enter case age" value="">
+                    <input formControlName="age" matInput placeholder="Enter case age" value="" type="number">
                 </mat-form-field>
             </div>
+
+
+
             <div class="right-column">
+                <mat-error *ngIf="caseForm.get('containerType')?.invalid && (caseForm.get('containerType')?.dirty || caseForm.get('containerType')?.touched)">
+                    <span *ngIf="caseForm.get('containerType')?.errors?.['required']">
+                        Container type is required.
+                    </span>
+                </mat-error>
                 <mat-form-field appearance="fill">
                     <mat-label>{{"containerType" | translate}}</mat-label>
                     <mat-select formControlName="containerType">
@@ -62,6 +112,12 @@
                     </mat-select>
                 </mat-form-field>
 
+
+                <mat-error *ngIf="caseForm.get('containerSize')?.invalid && (caseForm.get('containerSize')?.dirty || caseForm.get('containerSize')?.touched)">
+                    <span *ngIf="caseForm.get('containerSize')?.errors?.['required']">
+                        Container size is required.
+                    </span>
+                </mat-error>
                 <mat-form-field appearance="fill">
                     <mat-label>{{"loadSize" | translate}}</mat-label>
                     <mat-select formControlName="containerSize">
@@ -90,7 +146,7 @@
                 </mat-form-field>
 
                 <section class="toggle-button-container">
-                    <p class="toggle-button-label">{{"burnMode" | translate}}</p>
+                    <mat-label class="toggle-button-label">{{"burnMode" | translate}}</mat-label >
                     <mat-button-toggle-group formControlName="burnMode" aria-label="Font Style">
                         <mat-button-toggle value="simple">{{"simple" | translate}}</mat-button-toggle>
                         <mat-button-toggle value="eco">{{"eco" | translate}}</mat-button-toggle>
@@ -99,7 +155,7 @@
                 </section>
 
                 <section class="schedule-start-time-container">
-                    <p class="toggle-button-label">{{"scheduledStartTime" | translate}}</p>
+                    <mat-label class="toggle-button-label">{{"scheduledStartTime" | translate}}</mat-label >
                     <div class="schedule-start-time-right-column">
                         <mat-form-field>
                             <mat-label>{{type | translate}}</mat-label>

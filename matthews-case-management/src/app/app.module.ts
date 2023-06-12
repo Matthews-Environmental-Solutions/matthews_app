@@ -47,6 +47,7 @@ import { AuthModule } from './auth/auth.module';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { TranslateModule, TranslateLoader, TranslateCompiler } from '@ngx-translate/core';
 import { TranslateMessageFormatCompiler } from 'ngx-translate-messageformat-compiler';
+import { WfactorySnackBarComponent } from './components/wfactory-snack-bar/wfactory-snack-bar.component';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http,
@@ -58,7 +59,7 @@ export function HttpLoaderFactory(http: HttpClient) {
   declarations: [
     AppComponent,
     WelcomeComponent,
-    
+    WfactorySnackBarComponent,
   ],
   imports: [
     BrowserModule,
@@ -117,7 +118,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     MatTreeModule,
     
   ],
-  exports: [TranslateModule],
+  exports: [TranslateModule, WfactorySnackBarComponent],
   providers: [],
   bootstrap: [AppComponent]
 })

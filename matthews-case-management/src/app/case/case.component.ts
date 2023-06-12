@@ -14,6 +14,7 @@ import { I4connectedService } from '../services/i4connected.service';
 import { StateService } from '../services/states.service';
 import { MatSelectChange } from '@angular/material/select';
 import { Subscription, skip } from 'rxjs';
+import { WfactorySnackBarService } from '../components/wfactory-snack-bar/wfactory-snack-bar.service';
 
 @Component({
   selector: 'app-case',
@@ -39,6 +40,7 @@ export class CaseComponent implements OnInit {
       public dialog: MatDialog,
       private translate: TranslateService,
       private _adapter: DateAdapter<any>,
+      private _shackBar: WfactorySnackBarService,
       @Inject(MAT_DATE_LOCALE) private _locale: string
     ) {
     this.loggedInUser = authService.loggedInUser;
@@ -69,17 +71,24 @@ export class CaseComponent implements OnInit {
       data: this.userSetting,
     });
 
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        console.log('The dialog was closed', result);
-        localStorage.setItem(result.username, JSON.stringify(result));
-        this.userSettingService.setUserSetting(result as UserSettingData);
-        let languageCode = (result as UserSettingData).language;
-        this.translate.use(languageCode);
-        this._locale = languageCode;
-        this._adapter.setLocale(this._locale);
-      }
-    });
+    dialogRef.afterClosed().subscribe(
+      {
+        next: result => {
+          if (result) {
+            console.log('The dialog was closed', result);
+            this._shackBar.showNotification(this.translate.instant('profilSuccessfullySaved'), 'success');
+            localStorage.setItem(result.username, JSON.stringify(result));
+            this.userSettingService.setUserSetting(result as UserSettingData);
+            let languageCode = (result as UserSettingData).language;
+            this.translate.use(languageCode);
+            this._locale = languageCode;
+            this._adapter.setLocale(this._locale);
+          }
+        },
+        error: err => {
+          this._shackBar.showNotification(this.translate.instant('profilNotSaved') + ' ' + err, 'error');
+        }
+      });
   }
 
   facilityChanged(facilityId: MatSelectChange): void {

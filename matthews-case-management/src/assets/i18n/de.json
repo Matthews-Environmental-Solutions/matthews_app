@@ -49,6 +49,15 @@
     "bariatric": "Bariatrisch",
 
     "all": "Alle",
+    "caseSuccessfullySaved": "Fall erfolgreich gespeichert",
+    "caseSuccessfullyUpdated": "Fall erfolgreich aktualisiert",
+
+    "success": "Erfolg",
+    "warning": "Warnung",
+    "error": "Fehler",
+
+    "profilSuccessfullySaved": "Profil erfolgreich gespeichert",
+    "profilNotSaved": "Profil wird nicht gespeichert",
 
 
     "title": "Service-Feedback für {{company}}",
