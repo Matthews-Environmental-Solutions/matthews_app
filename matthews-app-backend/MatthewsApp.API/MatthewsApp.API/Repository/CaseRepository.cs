@@ -57,10 +57,10 @@ namespace MatthewsApp.API.Repository
             IEnumerable<Case> cases = await context.Cases.ToArrayAsync();
             return cases.Where(c => 
                 c.IsObsolete == false
-                && c.FacilityId.Equals(facilityId)
-                && c.ScheduledStartTime.Day.Equals(date.Day)
-                && c.ScheduledStartTime.Month.Equals(date.Month)
-                && c.ScheduledStartTime.Year.Equals(date.Year)
+                && c.ScheduledFacility.Equals(facilityId)
+                && c.ScheduledStartTime.Value.Day.Equals(date.Day)
+                && c.ScheduledStartTime.Value.Month.Equals(date.Month)
+                && c.ScheduledStartTime.Value.Year.Equals(date.Year)
                 ).ToList();
         }
 
@@ -70,9 +70,9 @@ namespace MatthewsApp.API.Repository
             IEnumerable<Case> cases = await context.Cases.ToArrayAsync();
             return cases.Where(c =>
                 c.IsObsolete == false
-                && c.FacilityId.Equals(facilityId)
-                && c.ScheduledStartTime.Date >= dateStartDateOfWeek.Date
-                && c.ScheduledStartTime.Date < dateEnd.Date
+                && c.ScheduledFacility.Equals(facilityId)
+                && c.ScheduledStartTime.Value.Date >= dateStartDateOfWeek.Date
+                && c.ScheduledStartTime.Value.Date < dateEnd.Date
                 ).ToList();
         }
 

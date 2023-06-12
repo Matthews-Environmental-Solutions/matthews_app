@@ -21,8 +21,8 @@ namespace MatthewsApp.API.Models
         [Required]
         public string ClientCaseId { get; set; }
 
-        [Column(TypeName = "uniqueidentifier")]
-        public Guid FacilityId { get; set; }
+
+
 
         [Column(TypeName = "nvarchar(16)")]
         [Required]
@@ -37,9 +37,9 @@ namespace MatthewsApp.API.Models
         [Required]
         public GenderType Gender { get; set; }
 
-        public ContainerType ContainerType { get; set; } // Pitati Stojana odakle dolaze podaci za ContainerType i zasto je to string
+        public ContainerType ContainerType { get; set; } 
 
-        public ContainerSize ContainerSize { get; set; } // Pitati Stojana odakle dolaze podaci za ContainerSize
+        public ContainerSize ContainerSize { get; set; } 
 
         [Required]
         public bool IsObsolete { get; set; } = false;
@@ -50,33 +50,39 @@ namespace MatthewsApp.API.Models
         public CaseStatus Status { get; set; } = CaseStatus.UNSCHEDULED;
 
 
-        [Column(TypeName = "uniqueidentifier")]
-        public Guid ScheduledFacility { get; set; } = Guid.Empty;
+
 
         [Column(TypeName = "uniqueidentifier")]
-        public Guid ScheduledDevice { get; set; } = Guid.Empty;
+        public Guid? ScheduledFacility { get; set; }
+
+        [Column(TypeName = "uniqueidentifier")]
+        public Guid? ScheduledDevice { get; set; }
 
         [Column(TypeName = "nvarchar(564)")]
         public string ScheduledDeviceAlias { get; set; }
 
         [Column(TypeName = "datetime2(7)")]
-        public DateTime ScheduledStartTime { get; set; } = DateTime.MinValue;
+        public DateTime? ScheduledStartTime { get; set; }
+
+
 
 
         [Column(TypeName = "uniqueidentifier")]
-        public Guid ActualFacility { get; set; } = Guid.Empty;
+        public Guid? ActualFacility { get; set; }
 
         [Column(TypeName = "uniqueidentifier")]
-        public Guid ActualDevice { get; set; } = Guid.Empty;
+        public Guid? ActualDevice { get; set; }
 
         [Column(TypeName = "nvarchar(564)")]
         public string ActualDeviceAlias { get; set; }
 
         [Column(TypeName = "datetime2(7)")]
-        public DateTime ActualStartTime { get; set; } = DateTime.MinValue;
+        public DateTime? ActualStartTime { get; set; }
 
         [Column(TypeName = "datetime2(7)")]
-        public DateTime ActualEndTime { get; set; } = DateTime.MinValue;
+        public DateTime? ActualEndTime { get; set; }
+
+
 
 
         [Column(TypeName = "uniqueidentifier")]
@@ -86,13 +92,15 @@ namespace MatthewsApp.API.Models
         public DateTime CreatedTime { get; set; } = DateTime.MinValue;
 
         [Column(TypeName = "uniqueidentifier")]
-        public Guid ModifiedBy { get; set; } = Guid.Empty;
+        public Guid? ModifiedBy { get; set; }
 
         [Column(TypeName = "datetime2(7)")]
-        public DateTime ModifiedTime { get; set; } = DateTime.MinValue;
+        public DateTime? ModifiedTime { get; set; }
 
         [Column(TypeName = "uniqueidentifier")]
-        public Guid PerformedBy { get; set; } = Guid.Empty;
+        public Guid? PerformedBy { get; set; }
+
+
 
 
         public string Fuel { get; set; }

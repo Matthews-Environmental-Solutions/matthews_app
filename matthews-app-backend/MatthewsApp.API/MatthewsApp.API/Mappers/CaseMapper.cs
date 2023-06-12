@@ -1,13 +1,7 @@
 ﻿using MatthewsApp.API.Dtos;
-using MatthewsApp.API.Enums;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using System.Reflection;
-using System;
-using Microsoft.AspNetCore.Cors.Infrastructure;
 using System.Collections.Generic;
 using System.Linq;
 using MatthewsApp.API.Models;
-using IdentityModel;
 
 namespace MatthewsApp.API.Mappers
 {
@@ -35,7 +29,7 @@ namespace MatthewsApp.API.Mappers
                 entity.CreatedBy,
                 entity.CreatedTime,
                 entity.Electricity,
-                entity.FacilityId,
+                //entity.FacilityId,
                 entity.FirstName,
                 entity.Fuel,
                 entity.Gender,
@@ -76,7 +70,7 @@ namespace MatthewsApp.API.Mappers
                 CreatedBy = dto.CreatedBy,
                 CreatedTime = dto.CreatedTime,
                 Electricity = dto.Electricity,
-                FacilityId = dto.FacilityId,
+                //FacilityId = dto.FacilityId,
                 FirstName = dto.FirstName,
                 Fuel = dto.Fuel,
                 Gender = dto.Gender,

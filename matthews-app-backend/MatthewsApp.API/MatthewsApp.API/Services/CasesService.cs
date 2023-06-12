@@ -51,7 +51,7 @@ namespace MatthewsApp.API.Services
             {
                 IEnumerable<Case> cases = await repository.GetAll();
                 return cases.Select(i => {
-                    i.ScheduledStartTime = DateTime.SpecifyKind(i.ScheduledStartTime, DateTimeKind.Utc);
+                    i.ScheduledStartTime = DateTime.SpecifyKind(i.ScheduledStartTime.Value, DateTimeKind.Utc);
                     return i;
                 });
             } catch (Exception ex)
@@ -72,7 +72,7 @@ namespace MatthewsApp.API.Services
             {
                 IEnumerable<Case> cases = await repository.GetScheduledCasesByDay(facilityId, date);
                 return cases.Select(i => {
-                    i.ScheduledStartTime = DateTime.SpecifyKind(i.ScheduledStartTime, DateTimeKind.Utc);
+                    i.ScheduledStartTime = DateTime.SpecifyKind(i.ScheduledStartTime.Value, DateTimeKind.Utc);
                     return i;
                 });
             }
@@ -88,7 +88,7 @@ namespace MatthewsApp.API.Services
             {
                 IEnumerable<Case> cases = await repository.GetScheduledCasesByWeek(facilityId, dateStartDateOfWeek);
                 return cases.Select(i => {
-                    i.ScheduledStartTime = DateTime.SpecifyKind(i.ScheduledStartTime, DateTimeKind.Utc);
+                    i.ScheduledStartTime = DateTime.SpecifyKind(i.ScheduledStartTime.Value, DateTimeKind.Utc);
                     return i;
                 });
             }
