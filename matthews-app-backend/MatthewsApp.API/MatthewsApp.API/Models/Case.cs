@@ -2,17 +2,16 @@
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Newtonsoft.Json;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MatthewsApp.API.Models
 {
-    public class Case
+    public class Case : BaseEntity
     {
-        [Key]
-        [Column(TypeName = "uniqueidentifier")]
-        public Guid Id { get; set; }
-
+        
         [Column(TypeName = "nvarchar(256)")]
         [Required]
         public string ClientId { get; set; } // Promeni tip nakon što saznamo format ID-a
@@ -20,7 +19,6 @@ namespace MatthewsApp.API.Models
         [Column(TypeName = "nvarchar(256)")]
         [Required]
         public string ClientCaseId { get; set; }
-
 
 
 
@@ -83,19 +81,7 @@ namespace MatthewsApp.API.Models
         public DateTime? ActualEndTime { get; set; }
 
 
-
-
-        [Column(TypeName = "uniqueidentifier")]
-        public Guid CreatedBy { get; set; } = Guid.Empty;
-
-        [Column(TypeName = "datetime2(7)")]
-        public DateTime CreatedTime { get; set; } = DateTime.MinValue;
-
-        [Column(TypeName = "uniqueidentifier")]
-        public Guid? ModifiedBy { get; set; }
-
-        [Column(TypeName = "datetime2(7)")]
-        public DateTime? ModifiedTime { get; set; }
+        
 
         [Column(TypeName = "uniqueidentifier")]
         public Guid? PerformedBy { get; set; }

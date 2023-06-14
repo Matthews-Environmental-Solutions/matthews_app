@@ -28,7 +28,7 @@ namespace MatthewsApp.API.Controllers
             {
                 var caseEntity = caseDto.ToEntity();
                 caseEntity.Id = Guid.NewGuid();
-                service.CreateCase(caseEntity);
+                service.Create(caseEntity);
 
                 return CreatedAtAction(nameof(PostCase), new { id = caseEntity.Id }, caseEntity);
             }
@@ -46,13 +46,13 @@ namespace MatthewsApp.API.Controllers
                 return BadRequest();
             }
 
-            Case caseEntitry = await service.GetCaseById(idParsed);
+            Case caseEntitry = await service.GetById(idParsed);
             if (caseEntitry == null)
             {
                 return NotFound();
             }
 
-            service.DeleteCase(caseEntitry);
+            service.Delete(caseEntitry);
             return Ok();
         }
 
@@ -62,7 +62,7 @@ namespace MatthewsApp.API.Controllers
         {
             try
             {
-                service.UpdateCase(caseDto.ToEntity());
+                service.Update(caseDto.ToEntity());
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -82,7 +82,7 @@ namespace MatthewsApp.API.Controllers
             
             try
             {
-                return Ok(await service.GetAllCases());
+                return Ok(await service.GetAll());
             }
             catch (Exception ex)
             {
@@ -134,7 +134,7 @@ namespace MatthewsApp.API.Controllers
                 return BadRequest();
             }
 
-            Case announcement = await service.GetCaseById(idParsed);
+            Case announcement = await service.GetById(idParsed);
 
             if (announcement == null)
             {

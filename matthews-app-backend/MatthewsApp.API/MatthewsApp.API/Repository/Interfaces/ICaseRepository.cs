@@ -3,9 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace MatthewsApp.API.Repository
+namespace MatthewsApp.API.Repository.Interfaces
 {
-    public interface ICaseRepository : IRepository<Case>
+    public interface ICaseRepository : IBaseRepository<Case, Guid>
     {
         Task<IEnumerable<Case>> GetAllUnscheduled();
         Task<IEnumerable<Case>> GetScheduledCasesByDay(Guid facilityId, DateTime date);

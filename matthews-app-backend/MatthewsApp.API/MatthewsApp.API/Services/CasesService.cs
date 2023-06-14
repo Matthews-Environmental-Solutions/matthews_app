@@ -1,5 +1,5 @@
 ﻿using MatthewsApp.API.Models;
-using MatthewsApp.API.Repository;
+using MatthewsApp.API.Repository.Interfaces;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -10,11 +10,11 @@ namespace MatthewsApp.API.Services
 {
     public interface ICasesService
     {
-        void CreateCase(Case caseEntity);
-        void DeleteCase(Case caseEntity);
-        void UpdateCase(Case caseEntity);
-        Task<IEnumerable<Case>> GetAllCases();
-        Task<Case> GetCaseById(Guid id);
+        void Create(Case caseEntity);
+        void Delete(Case caseEntity);
+        void Update(Case caseEntity);
+        Task<IEnumerable<Case>> GetAll();
+        Task<Case> GetById(Guid id);
         bool IsCaseExists(Guid id);
         Task<IEnumerable<Case>> GetUnscheduledCases();
         Task<IEnumerable<Case>> GetScheduledCasesByDay(Guid facilityId, DateTime date);
@@ -23,33 +23,33 @@ namespace MatthewsApp.API.Services
 
     public class CasesService : ICasesService
     {
-        private readonly ICaseRepository repository;
+        private readonly ICaseRepository _repository;
 
         public CasesService(ICaseRepository repository)
         {
-            this.repository = repository;
+            _repository = repository;
         }
 
-        public void CreateCase(Case caseEntity)
+        public void Create(Case entity)
         {
-            this.repository.Create(caseEntity);
+            _repository.Create(entity);
         }
 
-        public void DeleteCase(Case caseEntity)
+        public void Delete(Case entity)
         {
-            this.repository.Delete(caseEntity);
+            _repository.Delete(entity.Id);
         }
 
-        public void UpdateCase(Case caseEntity)
+        public void Update(Case entity)
         {
-            this.repository.Update(caseEntity);
+            _repository.Update(entity);
         }
 
-        public async Task<IEnumerable<Case>> GetAllCases()
+        public async Task<IEnumerable<Case>> GetAll()
         {
             try
             {
-                IEnumerable<Case> cases = await repository.GetAll();
+                IEnumerable<Case> cases = await _repository.GetAll();
                 return cases.Select(i => {
                     i.ScheduledStartTime = DateTime.SpecifyKind(i.ScheduledStartTime.Value, DateTimeKind.Utc);
                     return i;
@@ -63,14 +63,14 @@ namespace MatthewsApp.API.Services
 
         public async Task<IEnumerable<Case>> GetUnscheduledCases()
         {
-            return await repository.GetAllUnscheduled();
+            return await _repository.GetAllUnscheduled();
         }
 
         public async Task<IEnumerable<Case>> GetScheduledCasesByDay(Guid facilityId, DateTime date)
         {
             try
             {
-                IEnumerable<Case> cases = await repository.GetScheduledCasesByDay(facilityId, date);
+                IEnumerable<Case> cases = await _repository.GetScheduledCasesByDay(facilityId, date);
                 return cases.Select(i => {
                     i.ScheduledStartTime = DateTime.SpecifyKind(i.ScheduledStartTime.Value, DateTimeKind.Utc);
                     return i;
@@ -86,7 +86,7 @@ namespace MatthewsApp.API.Services
         {
             try
             {
-                IEnumerable<Case> cases = await repository.GetScheduledCasesByWeek(facilityId, dateStartDateOfWeek);
+                IEnumerable<Case> cases = await _repository.GetScheduledCasesByWeek(facilityId, dateStartDateOfWeek);
                 return cases.Select(i => {
                     i.ScheduledStartTime = DateTime.SpecifyKind(i.ScheduledStartTime.Value, DateTimeKind.Utc);
                     return i;
@@ -98,14 +98,14 @@ namespace MatthewsApp.API.Services
             }
         }
 
-        public async Task<Case> GetCaseById(Guid id)
+        public async Task<Case> GetById(Guid id)
         {
-            return await this.repository.GetOne(id);
+            return await _repository.GetOne(id);
         }
 
         public bool IsCaseExists(Guid id)
         {
-            return repository.GetAll().Result.Any(e => e.Id == id);
+            return _repository.GetAll().Result.Any(e => e.Id == id);
         }
                 
     }

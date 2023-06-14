@@ -2,6 +2,7 @@
 using IdentityModel.AspNetCore.OAuth2Introspection;
 using MatthewsApp.API.Models;
 using MatthewsApp.API.Repository;
+using MatthewsApp.API.Repository.Interfaces;
 using MatthewsApp.API.Services;
 using MatthewsApp.API.Swagger.Filters;
 using Microsoft.AspNetCore.Builder;
@@ -52,10 +53,13 @@ namespace MatthewsApp.API
             });
 
             var connectionString = Configuration["connectionStrings:MatthewsAppDBConnectionString"];
-            services.AddDbContext<MatthewsAppDBContext>(options => options.UseSqlServer(connectionString));
+            services.AddScoped<IMatthewsAppDBContext, MatthewsAppDBContext>();
+            services.AddDbContext<IMatthewsAppDBContext, MatthewsAppDBContext>(options => options.UseSqlServer(connectionString));
 
             services.AddScoped<ICasesService, CasesService>();
             services.AddScoped<ICaseRepository, CaseRepository>();
+            services.AddScoped<IFacilityStatusService, FacilityStatusService>();
+            services.AddScoped<IFacilityStatusRepository, FacilityStatusRepository>();
 
             services.Configure<FormOptions>(o =>
             {
