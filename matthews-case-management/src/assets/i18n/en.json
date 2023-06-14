@@ -59,6 +59,10 @@
     "profilSuccessfullySaved": "Profil successfully saved",
     "profilNotSaved": "Profil is not saved",
 
+    "facilityStates": "Facility states",
+    "search": "Search",
+    "searchPlaceholder": "Search facility by name",
+
 
     "title": "Service feedback for {{company}}",
     "name": {

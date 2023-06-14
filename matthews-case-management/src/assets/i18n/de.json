@@ -59,6 +59,10 @@
     "profilSuccessfullySaved": "Profil erfolgreich gespeichert",
     "profilNotSaved": "Profil wird nicht gespeichert",
 
+    "facilityStates": "Einrichtungszustände",
+    "search": "Suchen",
+    "searchPlaceholder": "Suchfunktion nach Namen",
+
 
     "title": "Service-Feedback für {{company}}",
     "name": {

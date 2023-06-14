@@ -56,6 +56,7 @@ import { TranslateModule } from '@ngx-translate/core';
 
 import { MAT_DATE_LOCALE } from '@angular/material/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+import { FacilityComponent } from './components/facility/facility.component';
 
 @NgModule({
   declarations: [
@@ -66,7 +67,8 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
     UnscheduledCasesComponent,
     CaseAddEditComponent,
     ProfileSettingDialogComponent,
-    DatetimePipe
+    DatetimePipe,
+    FacilityComponent
   ],
   imports: [
     CommonModule,

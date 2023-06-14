@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { CaseCalendarComponent } from './components/case-calendar/case-calendar.component';
 import { CaseAddEditComponent } from './components/case-add-edit/case-add-edit.component';
 import { CaseComponent } from './case.component';
+import { FacilityComponent } from './components/facility/facility.component';
 
 const routes: Routes = [
   {
@@ -18,6 +19,10 @@ const routes: Routes = [
       {
         path: 'case/:id',
         component: CaseAddEditComponent
+      },
+      {
+        path: 'facility',
+        component: FacilityComponent
       }
     ]
   }

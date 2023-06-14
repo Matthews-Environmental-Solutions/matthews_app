@@ -15,7 +15,12 @@ export class I4connectedService {
     constructor(public httpClient: HttpClient) { }
 
     getSites(): Observable<Facility[]> {
-        return this.httpClient.get<Facility[]>(this.apiUrl + '/api/sites/list')
+        return this.httpClient.get<Facility[]>(`${this.apiUrl}/api/sites/list`)
+            .pipe(retry(1), catchError(this.handleError));
+    }
+
+    getSite(id: string): Observable<Facility> {
+        return this.httpClient.get<Facility>(`${this.apiUrl}/api/sites/${id}/details`)
             .pipe(retry(1), catchError(this.handleError));
     }
 

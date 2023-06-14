@@ -1,0 +1,23 @@
+.facility-card {
+    display: flex;
+
+    margin: 15px;
+    height: calc(100% - 30px);
+}
+
+.card-header {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-between;
+    padding-top: 5px;
+}
+
+.facility-toolbar {
+    background-color: #c5d93a;
+    border-radius: var(--mdc-elevated-card-container-shape, var(--mdc-shape-medium, 4px));
+    color: #5d6771;
+}
+
+.spacer {
+    flex: 1 1 auto;
+}
