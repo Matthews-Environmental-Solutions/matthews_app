@@ -5,10 +5,18 @@
       <img alt="logo" src="assets/Matthews Environmental Updated logo.png" class="logo" />
       <span class="spacer"></span>
 
-      <button mat-raised-button class="btn-color-green" [routerLink]="['/case']">
-        <mat-icon>add_circle</mat-icon>
-        {{"addCase" | translate}}
-      </button>
+      <div class="toolbar-buttons">
+        <button mat-raised-button class="btn-color-green padding-left" [routerLink]="['/case']">
+          <mat-icon>add_circle</mat-icon>
+          {{"addCase" | translate}}
+        </button>
+  
+        <button mat-raised-button class="btn-color-green padding-left" [routerLink]="['/facility']">
+          <mat-icon>other_houses</mat-icon>
+          {{"facilityStatuses" | translate}}
+        </button>
+      </div>
+      
     </mat-toolbar>
   </div>
 

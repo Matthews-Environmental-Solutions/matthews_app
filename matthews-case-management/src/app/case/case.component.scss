@@ -17,6 +17,9 @@
   grid-row-end: r-line2;
 
   background-color: #999;
+
+  display: flex;
+  column-gap: 10px;
 }
 
 .header-right {
@@ -122,4 +125,14 @@
   font-size: smaller;
   font-style: italic;
   border-bottom: solid #999;
+}
+
+.padding-left{
+  padding-left: 10px;;
+}
+
+.toolbar-buttons {
+  display: flex;
+  flex-direction: row;
+  column-gap: 10px;
 }

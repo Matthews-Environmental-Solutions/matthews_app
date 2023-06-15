@@ -59,9 +59,15 @@
     "profilSuccessfullySaved": "Profil successfully saved",
     "profilNotSaved": "Profil is not saved",
 
-    "facilityStates": "Facility states",
+    "facilityStatuses": "Facility statuses",
     "search": "Search",
     "searchPlaceholder": "Search facility by name",
+    "statusCode": "Status code",
+    "statusName": "Status name",
+    "statusIcon": "Icon",
+    "startProcess": "Start process",
+    "addNewStatus": "Add new status",
+    "backToCalendar": "Calendar",
 
 
     "title": "Service feedback for {{company}}",

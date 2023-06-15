@@ -59,9 +59,15 @@
     "profilSuccessfullySaved": "Profil erfolgreich gespeichert",
     "profilNotSaved": "Profil wird nicht gespeichert",
 
-    "facilityStates": "Einrichtungszustände",
+    "facilityStatuses": "Einrichtungsstatus",
     "search": "Suchen",
     "searchPlaceholder": "Suchfunktion nach Namen",
+    "statusCode": "Statuscode",
+    "statusName": "Statusname",
+    "statusIcon": "Symbol",
+    "startProcess": "Vorgang starten",
+    "addNewStatus": "Neuen Status hinzufügen",
+    "backToCalendar": "Kalender",
 
 
     "title": "Service-Feedback für {{company}}",
