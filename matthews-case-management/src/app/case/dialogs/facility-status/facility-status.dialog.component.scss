@@ -1,0 +1,11 @@
+.dialog-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.field-icon-button {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: space-between;
+}

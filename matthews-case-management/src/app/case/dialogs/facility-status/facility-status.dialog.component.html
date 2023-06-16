@@ -1,0 +1,49 @@
+<h1 mat-dialog-title>{{title}}</h1>
+<form [formGroup]="statusForm">
+    <div mat-dialog-content class="dialog-content">
+
+        <mat-error
+            *ngIf="statusForm.get('statusCode')?.invalid && (statusForm.get('statusCode')?.dirty || statusForm.get('statusCode')?.touched)">
+            <span *ngIf="statusForm.get('statusCode')?.errors?.['required']">
+                Status Code is required.
+            </span>
+        </mat-error>
+        <mat-form-field class="example-full-width">
+            <mat-label>{{"statusCode" | translate}}</mat-label>
+            <input formControlName="statusCode" matInput placeholder="{{'enterStatusCode' | translate}}" value="">
+        </mat-form-field>
+
+        <mat-error
+            *ngIf="statusForm.get('statusName')?.invalid && (statusForm.get('statusName')?.dirty || statusForm.get('statusName')?.touched)">
+            <span *ngIf="statusForm.get('statusName')?.errors?.['required']">
+                Status Name is required.
+            </span>
+        </mat-error>
+        <mat-form-field class="example-full-width">
+            <mat-label>{{"statusName" | translate}}</mat-label>
+            <input formControlName="statusName" matInput placeholder="{{'enterStatusName' | translate}}" value="">
+        </mat-form-field>
+
+        <mat-error
+            *ngIf="statusForm.get('statusIcon')?.invalid && (statusForm.get('statusIcon')?.dirty || statusForm.get('statusIcon')?.touched)">
+            <span *ngIf="statusForm.get('statusIcon')?.errors?.['required']">
+                Status Name is required.
+            </span>
+        </mat-error>
+        <div class="field-icon-button">
+            <mat-form-field class="full-width">
+                <mat-label>{{"statusIcon" | translate}}</mat-label>
+                <input formControlName="statusIcon" matInput placeholder="{{'enterStatusIcon' | translate}}" value="">
+            </mat-form-field>
+            <button mat-flat-button><mat-icon matSuffix>add_photo_alternate</mat-icon> Pick other icon</button>
+        </div>
+
+        <mat-slide-toggle formControlName="startProcess">{{'startProcess' | translate}}</mat-slide-toggle>
+
+    </div>
+</form>
+
+<div mat-dialog-actions>
+    <button mat-button (click)="save()" cdkFocusInitial [disabled]="!statusForm.valid">Save</button>
+    <button mat-button (click)="onNoClick()">Cancel</button>
+</div>

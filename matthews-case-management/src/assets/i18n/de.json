@@ -14,19 +14,16 @@
     "male": "Männlich",
     "female": "Weiblich",
     "other": "Andere",
-
     "addNewCase": "Neuen Fall hinzufügen",
     "editCase": "Fall bearbeiten",
     "cancel": "Stornieren",
     "save": "Speichern",
-
     "caseId": "Fall-ID",
     "firstName": "Vorname",
     "lastName": "Nachname",
     "weight": "Gewicht",
     "gender": "Geschlecht",
     "age": "Alter",
-
     "containerType": "Containertyp",
     "loadSize": "Ladungsgröße",
     "caseStatus": "Fallstatus",
@@ -37,28 +34,22 @@
     "production": "Produktion",
     "scheduledStartTime": "Geplante Startzeit",
     "dateTime": "Datum und Uhrzeit",
-
     "none": "Keiner",
     "cardboard": "Karton",
     "hardwood": "Hartholz",
     "mdfParticleBoard": "MDF-Spanplatte",
     "bagShroud": "Tasche / Leichentuch",
-
     "infant": "Kleinkind",
     "standard": "Standard",
     "bariatric": "Bariatrisch",
-
     "all": "Alle",
     "caseSuccessfullySaved": "Fall erfolgreich gespeichert",
     "caseSuccessfullyUpdated": "Fall erfolgreich aktualisiert",
-
     "success": "Erfolg",
     "warning": "Warnung",
     "error": "Fehler",
-
     "profilSuccessfullySaved": "Profil erfolgreich gespeichert",
     "profilNotSaved": "Profil wird nicht gespeichert",
-
     "facilityStatuses": "Einrichtungsstatus",
     "search": "Suchen",
     "searchPlaceholder": "Suchfunktion nach Namen",
@@ -68,6 +59,17 @@
     "startProcess": "Vorgang starten",
     "addNewStatus": "Neuen Status hinzufügen",
     "backToCalendar": "Kalender",
+    "facilityStatusSuccessfullySaved": "Status erfolgreich gespeichert",
+    "facilityStatusNotSaved": "Status wird nicht gespeichert",
+    "addNewFacilityStatus": "Neuen Einrichtungsstatus hinzufügen",
+    "editFacilityStatus": "Bearbeiten Sie den Einrichtungsstatus",
+    "enterStatusCode": "Geben Sie den Statuscode ein",
+    "enterStatusName": "Geben Sie den Statusnamen ein",
+    "yes": "Ja",
+    "no": "Nein",
+    "facilityStatusSuccessfullyDeleted": "Der Einrichtungsstatus wurde erfolgreich gelöscht",
+    "facilityStatusNotDeleted": "Der Einrichtungsstatus wird nicht gelöscht",
+    "deleteStatusConfirmation": "Möchten Sie den Status wirklich löschen?",
 
 
     "title": "Service-Feedback für {{company}}",

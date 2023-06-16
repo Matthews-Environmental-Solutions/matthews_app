@@ -42,52 +42,6 @@ export class I4connectedService {
                     );
                 })
             );
-
-
-
-        // tap((listOfDevicesIds: string[]) => {
-        //     console.log(listOfDevicesIds);
-
-        //     const obs: Observable<string>[] = listOfDevicesIds.map(deviceId => {
-        //         return this.httpClient.get<string>(`${this.apiUrl}/api/devices/${deviceId}/name`);
-        //     });
-
-        //     return forkJoin(obs).pipe(
-        //         map((deviceNames: string[]) => {
-        //             let device = new Device();
-        //             const obj = new Map();
-
-        //             deviceNames.forEach((deviceName, index) => {
-        //                 obj.set(obs[index], deviceName);
-        //             });
-
-        //             return obj;
-        //         })
-        //     );
-        // }),
-
-        // mergeMap((listOfDevicesIds: string[]) => {
-        //     console.log(listOfDevicesIds);
-        // })
-        // mergeMap((listOfDevicesIds: string[]) => {
-
-        //     // console.log('devices', listOfDevicesIds);
-
-        //     // const obs: Observable<string[]> = listOfDevicesIds.map(deviceId => {
-        //     //     return this.httpClient.get<string>(`${this.apiUrl}/api/devices/${deviceId}/name`);
-        //     // });
-
-        //     // return forkJoin(obs).pipe(
-        //     //     map(deviceNames: string[] => {
-        //     //         const obj = new Device();
-        //     //         return obj;
-        //     //     })
-        //     // );
-        // })
-
-
-        // ).subscribe(nesto => console.log('nesto', nesto));
-
     }
 
     // Error handling

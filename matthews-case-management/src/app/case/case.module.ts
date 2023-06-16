@@ -57,6 +57,8 @@ import { TranslateModule } from '@ngx-translate/core';
 import { MAT_DATE_LOCALE } from '@angular/material/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { FacilityComponent } from './components/facility/facility.component';
+import { FacilityStatusDialogComponent } from './dialogs/facility-status/facility-status.dialog.component';
+import { DeleteFacilityStatusDialogComponent } from './dialogs/delete-facility-status/delete-facility-status.dialog.component';
 
 @NgModule({
   declarations: [
@@ -68,7 +70,9 @@ import { FacilityComponent } from './components/facility/facility.component';
     CaseAddEditComponent,
     ProfileSettingDialogComponent,
     DatetimePipe,
-    FacilityComponent
+    FacilityComponent,
+    FacilityStatusDialogComponent,
+    DeleteFacilityStatusDialogComponent
   ],
   imports: [
     CommonModule,

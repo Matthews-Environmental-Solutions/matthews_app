@@ -1,12 +1,12 @@
 export class FacilityStatus {
-    id!: string; //GUID
+    id: string = '00000000-0000-0000-0000-000000000000'; //GUID
     createdBy!: string; //GUID
-    createdTime!: Date;
+    createdTime!: string;
     modifiedBy!: string; //GUID
-    modifiedTime!: Date;
+    modifiedTime!: string;
     facilityId!: string;
     statusCode!: number;
     statusName!: string;
     statusIcon!: string;
-    startProcess!: boolean;
+    startProcess: boolean = false;
 }

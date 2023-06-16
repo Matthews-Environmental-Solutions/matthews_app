@@ -14,19 +14,16 @@
     "male": "Male",
     "female": "Female",
     "other": "Other",
-
     "addNewCase": "Add new case",
     "editCase": "Edit case",
     "cancel": "Cancel",
     "save": "Save",
-
     "caseId": "Case ID",
     "firstName": "First name",
     "lastName": "Last name",
     "weight": "Weight",
     "gender": "Gender",
     "age": "Age",
-
     "containerType": "Container type",
     "loadSize": "Load size",
     "caseStatus": "Case status",
@@ -37,28 +34,22 @@
     "production": "Production",
     "scheduledStartTime": "Scheduled start time",
     "dateTime": "Date and time",
-
     "none": "None",
     "cardboard": "Cardboard",
     "hardwood": "Hardwood",
     "mdfParticleBoard": "MDF Particle board",
     "bagShroud": "Bag / Shroud",
-
     "infant": "Infant",
     "standard": "Standard",
     "bariatric": "Bariatric",
-
     "all": "All",
     "caseSuccessfullySaved": "Case successfully saved",
     "caseSuccessfullyUpdated": "Case successfully updated",
-
     "success": "Success",
     "warning": "Warning",
     "error": "Error",
-
     "profilSuccessfullySaved": "Profil successfully saved",
     "profilNotSaved": "Profil is not saved",
-
     "facilityStatuses": "Facility statuses",
     "search": "Search",
     "searchPlaceholder": "Search facility by name",
@@ -68,6 +59,17 @@
     "startProcess": "Start process",
     "addNewStatus": "Add new status",
     "backToCalendar": "Calendar",
+    "facilityStatusSuccessfullySaved": "Status successfully saved",
+    "facilityStatusNotSaved": "Status is not saved",
+    "addNewFacilityStatus": "Add new facility status",
+    "editFacilityStatus": "Edit facility status",
+    "enterStatusCode": "Enter status code",
+    "enterStatusName": "Enter status name",
+    "yes": "Yes",
+    "no": "No",
+    "facilityStatusSuccessfullyDeleted": "Facility status is successfully deleted",
+    "facilityStatusNotDeleted": "Facility status is not deleted",
+    "deleteStatusConfirmation": "Are you sure to delete status?",
 
 
     "title": "Service feedback for {{company}}",
