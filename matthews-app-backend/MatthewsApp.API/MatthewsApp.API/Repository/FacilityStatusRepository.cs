@@ -6,19 +6,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MatthewsApp.API.Repository
+namespace MatthewsApp.API.Repository;
+
+public class FacilityStatusRepository : BaseRepository<FacilityStatus, Guid>, IFacilityStatusRepository
 {
-    public class FacilityStatusRepository : BaseRepository<FacilityStatus, Guid>, IFacilityStatusRepository
+
+    public FacilityStatusRepository(IMatthewsAppDBContext context) : base(context)
     {
+    }
 
-        public FacilityStatusRepository(IMatthewsAppDBContext context) : base(context)
-        {
-        }
-
-        public async Task<IEnumerable<FacilityStatus>> GetAllByFacility(Guid id)
-        {
-            return (await _dataContext.FacilityStatuses.ToArrayAsync())
-                .Where(f => f.FacilityId == id);
-        }
+    public async Task<IEnumerable<FacilityStatus>> GetAllByFacility(Guid id)
+    {
+        return (await _dataContext.FacilityStatuses.ToArrayAsync())
+            .Where(f => f.FacilityId == id);
     }
 }

@@ -1,12 +1,11 @@
-﻿namespace MatthewsApp.API.Enums
-{
-    public enum CaseStatus
+﻿namespace MatthewsApp.API.Enums;
 
-    {
-        UNSCHEDULED,
-        CREMATION_COMPLETE,
-        IN_PROGRESS,
-        READY_TO_CREMATE,
-        WAITING_FOR_PERMIT
-    }
+public enum CaseStatus
+
+{
+    UNSCHEDULED,
+    CREMATION_COMPLETE,
+    IN_PROGRESS,
+    READY_TO_CREMATE,
+    WAITING_FOR_PERMIT
 }

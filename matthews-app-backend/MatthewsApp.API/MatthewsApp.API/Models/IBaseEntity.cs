@@ -3,18 +3,17 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using System;
 
-namespace MatthewsApp.API.Models
+namespace MatthewsApp.API.Models;
+
+public interface IBaseEntity
 {
-    public interface IBaseEntity
-    {
-        Guid Id { get; set; }
+    Guid Id { get; set; }
 
-        Guid CreatedBy { get; set; }
+    Guid CreatedBy { get; set; }
 
-        DateTime CreatedTime { get; set; }
+    DateTime CreatedTime { get; set; }
 
-        Guid? ModifiedBy { get; set; }
+    Guid? ModifiedBy { get; set; }
 
-        DateTime? ModifiedTime { get; set; }
-    }
+    DateTime? ModifiedTime { get; set; }
 }

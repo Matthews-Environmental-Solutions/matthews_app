@@ -1,12 +1,11 @@
-﻿namespace MatthewsApp.API.Enums
+﻿namespace MatthewsApp.API.Enums;
+
+public enum ContainerType
 {
-    public enum ContainerType
-    {
-        NONE,
-        CARDBOARD,
-        HARDWOOD,
-        MDF_PARTICLE_BOARD,
-        BAG_SHROUD,
-        OTHER
-    }
+    NONE,
+    CARDBOARD,
+    HARDWOOD,
+    MDF_PARTICLE_BOARD,
+    BAG_SHROUD,
+    OTHER
 }

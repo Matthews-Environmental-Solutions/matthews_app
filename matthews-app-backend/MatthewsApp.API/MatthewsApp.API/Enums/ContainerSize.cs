@@ -1,10 +1,9 @@
-﻿namespace MatthewsApp.API.Enums
+﻿namespace MatthewsApp.API.Enums;
+
+public enum ContainerSize
 {
-    public enum ContainerSize
-    {
-        NONE,
-        INFANT,
-        STANDARD,
-        BARIATRIC
-    }
+    NONE,
+    INFANT,
+    STANDARD,
+    BARIATRIC
 }

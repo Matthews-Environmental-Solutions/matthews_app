@@ -8,139 +8,146 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace MatthewsApp.API.Controllers
+namespace MatthewsApp.API.Controllers;
+
+[Route("[controller]")]
+[ApiController]
+public class CaseController : Controller
 {
-    [Route("[controller]")]
-    [ApiController]
-    public class CaseController : Controller
+    private readonly ICasesService service;
+    public CaseController(ICasesService service)
     {
-        private readonly ICasesService service;
-        public CaseController(ICasesService service)
+        this.service = service;
+    }
+
+    [HttpPost]
+    [Route("Save")]
+    public ActionResult<Case> PostCase([FromBody]CaseDto caseDto)
+    {
+        try
         {
-            this.service = service;
+            var caseEntity = caseDto.ToEntity();
+            caseEntity.Id = Guid.NewGuid();
+            service.Create(caseEntity);
+
+            return CreatedAtAction(nameof(PostCase), new { id = caseEntity.Id }, caseEntity);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteCase(string id)
+    {
+        if (!Guid.TryParse(id, out var idParsed))
+        {
+            return BadRequest();
         }
 
-        [HttpPost]
-        [Route("Save")]
-        public ActionResult<Case> PostCase([FromBody]CaseDto caseDto)
+        Case caseEntitry = await service.GetById(idParsed);
+        if (caseEntitry == null)
         {
-            try
-            {
-                var caseEntity = caseDto.ToEntity();
-                caseEntity.Id = Guid.NewGuid();
-                service.Create(caseEntity);
-
-                return CreatedAtAction(nameof(PostCase), new { id = caseEntity.Id }, caseEntity);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            return NotFound();
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteCase(string id)
-        {
-            if (!Guid.TryParse(id, out var idParsed))
-            {
-                return BadRequest();
-            }
+        service.Delete(caseEntitry);
+        return Ok();
+    }
 
-            Case caseEntitry = await service.GetById(idParsed);
-            if (caseEntitry == null)
+    [HttpPut]
+    [Route("Update")]
+    public ActionResult PutCase([FromBody] CaseDto caseDto)
+    {
+        try
+        {
+            service.Update(caseDto.ToEntity());
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!service.IsCaseExists(caseDto.Id))
             {
                 return NotFound();
             }
-
-            service.Delete(caseEntitry);
-            return Ok();
+            return BadRequest();
         }
+        return Ok(caseDto.Id);
+    }
 
-        [HttpPut]
-        [Route("Update")]
-        public ActionResult PutCase([FromBody] CaseDto caseDto)
+    [HttpGet]
+    [Route("GetAllCases")]
+    public async Task<ActionResult<IEnumerable<Case>>> GetAllCases()
+    {
+        
+        try
         {
-            try
-            {
-                service.Update(caseDto.ToEntity());
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!service.IsCaseExists(caseDto.Id))
-                {
-                    return NotFound();
-                }
-                return BadRequest();
-            }
-            return Ok(caseDto.Id);
+            return Ok(await service.GetAll());
         }
-
-        [HttpGet]
-        [Route("GetAllCases")]
-        public async Task<ActionResult<IEnumerable<Case>>> GetAllCases()
+        catch (Exception ex)
         {
-            
-            try
-            {
-                return Ok(await service.GetAll());
-            }
-            catch (Exception ex)
-            {
 
-                return BadRequest(ex.Message);
-            }
+            return BadRequest(ex.Message);
         }
+    }
 
-        [HttpGet]
-        [Route("GetScheduledCasesByDay/{facilityId}/{date}")]
-        public async Task<ActionResult<IEnumerable<Case>>> GetScheduledCasesByDay(Guid facilityId, DateTime date)
+    [HttpGet]
+    [Route("GetScheduledCasesByDay/{facilityId}/{date}")]
+    public async Task<ActionResult<IEnumerable<Case>>> GetScheduledCasesByDay(Guid facilityId, DateTime date)
+    {
+        try
         {
-            try
-            {
-                return Ok(await service.GetScheduledCasesByDay(facilityId, date));
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            return Ok(await service.GetScheduledCasesByDay(facilityId, date));
         }
-
-        [HttpGet]
-        [Route("GetScheduledCasesByWeek/{facilityId}/{dateStartDateOfWeek}")]
-        public async Task<ActionResult<IEnumerable<Case>>> GetScheduledCasesByWeek(Guid facilityId, DateTime dateStartDateOfWeek)
+        catch (Exception ex)
         {
-            try
-            {
-                return Ok(await service.GetScheduledCasesByWeek(facilityId, dateStartDateOfWeek));
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            return BadRequest(ex.Message);
         }
+    }
 
-        [HttpGet]
-        [Route("GetUnscheduledCases")]
-        public async Task<ActionResult<IEnumerable<Case>>> GetUnscheduledCases()
+    [HttpGet]
+    [Route("GetScheduledCasesByWeek/{facilityId}/{dateStartDateOfWeek}")]
+    public async Task<ActionResult<IEnumerable<Case>>> GetScheduledCasesByWeek(Guid facilityId, DateTime dateStartDateOfWeek)
+    {
+        try
+        {
+            return Ok(await service.GetScheduledCasesByWeek(facilityId, dateStartDateOfWeek));
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+    [HttpGet]
+    [Route("GetUnscheduledCases")]
+    public async Task<ActionResult<IEnumerable<Case>>> GetUnscheduledCases()
+    {
+        try
         {
             return Ok(await service.GetUnscheduledCases());
         }
-
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Case>> GetCase(string id)
+        catch (Exception ex)
         {
-            if (!Guid.TryParse(id, out var idParsed))
-            {
-                return BadRequest();
-            }
 
-            Case announcement = await service.GetById(idParsed);
-
-            if (announcement == null)
-            {
-                return NotFound();
-            }
-            return Ok(announcement);
+            return BadRequest(ex.Message);
         }
+    }
+
+    [HttpGet("{id}")]
+    public async Task<ActionResult<Case>> GetCase(string id)
+    {
+        if (!Guid.TryParse(id, out var idParsed))
+        {
+            return BadRequest();
+        }
+
+        Case announcement = await service.GetById(idParsed);
+
+        if (announcement == null)
+        {
+            return NotFound();
+        }
+        return Ok(announcement);
     }
 }

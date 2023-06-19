@@ -8,86 +8,85 @@ using MatthewsApp.API.Mappers;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 
-namespace MatthewsApp.API.Controllers
+namespace MatthewsApp.API.Controllers;
+
+[Route("[controller]")]
+[ApiController]
+public class FacilityStatusController : Controller
 {
-    [Route("[controller]")]
-    [ApiController]
-    public class FacilityStatusController : Controller
+    private readonly IFacilityStatusService service;
+
+    public FacilityStatusController(IFacilityStatusService service)
     {
-        private readonly IFacilityStatusService service;
+        this.service = service;
+    }
 
-        public FacilityStatusController(IFacilityStatusService service)
+    [HttpPost]
+    [Route("Create")]
+    public ActionResult<FacilityStatusDto> Create([FromBody] FacilityStatusDto dto)
+    {
+        try
         {
-            this.service = service;
+            var entity = dto.ToEntity();
+            entity.Id = Guid.NewGuid();
+            service.Create(entity);
+
+            return CreatedAtAction(nameof(Create), new { id = entity.Id }, entity.ToDTO());
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(string id)
+    {
+        if (!Guid.TryParse(id, out var idParsed))
+        {
+            return BadRequest();
         }
 
-        [HttpPost]
-        [Route("Create")]
-        public ActionResult<FacilityStatusDto> Create([FromBody] FacilityStatusDto dto)
+        FacilityStatus caseEntitry = await service.GetById(idParsed);
+        if (caseEntitry == null)
         {
-            try
-            {
-                var entity = dto.ToEntity();
-                entity.Id = Guid.NewGuid();
-                service.Create(entity);
-
-                return CreatedAtAction(nameof(Create), new { id = entity.Id }, entity.ToDTO());
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            return NotFound();
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(string id)
-        {
-            if (!Guid.TryParse(id, out var idParsed))
-            {
-                return BadRequest();
-            }
+        service.Delete(caseEntitry);
+        return Ok();
+    }
 
-            FacilityStatus caseEntitry = await service.GetById(idParsed);
-            if (caseEntitry == null)
+    [HttpPut]
+    [Route("Update")]
+    public ActionResult<FacilityStatusDto> Update([FromBody] FacilityStatusDto dto)
+    {
+        try
+        {
+            service.Update(dto.ToEntity());
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!service.IsFacilityStatusExists(dto.Id))
             {
                 return NotFound();
             }
-
-            service.Delete(caseEntitry);
-            return Ok();
+            return BadRequest();
         }
+        return Ok(dto);
+    }
 
-        [HttpPut]
-        [Route("Update")]
-        public ActionResult<FacilityStatusDto> Update([FromBody] FacilityStatusDto dto)
+    [HttpGet]
+    [Route("GetFacilityStatusesByFacility/{facilityId}")]
+    public async Task<ActionResult<IEnumerable<FacilityStatus>>> GetScheduledCasesByDay(Guid facilityId)
+    {
+        try
         {
-            try
-            {
-                service.Update(dto.ToEntity());
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!service.IsFacilityStatusExists(dto.Id))
-                {
-                    return NotFound();
-                }
-                return BadRequest();
-            }
-            return Ok(dto);
+            return Ok(await service.GetAllByFacility(facilityId));
         }
-
-        [HttpGet]
-        [Route("GetFacilityStatusesByFacility/{facilityId}")]
-        public async Task<ActionResult<IEnumerable<FacilityStatus>>> GetScheduledCasesByDay(Guid facilityId)
+        catch (Exception ex)
         {
-            try
-            {
-                return Ok(await service.GetAllByFacility(facilityId));
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            return BadRequest(ex.Message);
         }
     }
 }

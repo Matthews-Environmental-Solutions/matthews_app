@@ -6,107 +6,106 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MatthewsApp.API.Services
+namespace MatthewsApp.API.Services;
+
+public interface ICasesService
 {
-    public interface ICasesService
+    void Create(Case caseEntity);
+    void Delete(Case caseEntity);
+    void Update(Case caseEntity);
+    Task<IEnumerable<Case>> GetAll();
+    Task<Case> GetById(Guid id);
+    bool IsCaseExists(Guid id);
+    Task<IEnumerable<Case>> GetUnscheduledCases();
+    Task<IEnumerable<Case>> GetScheduledCasesByDay(Guid facilityId, DateTime date);
+    Task<IEnumerable<Case>> GetScheduledCasesByWeek(Guid facilityId, DateTime dateStartDateOfWeek);
+}
+
+public class CasesService : ICasesService
+{
+    private readonly ICaseRepository _repository;
+
+    public CasesService(ICaseRepository repository)
     {
-        void Create(Case caseEntity);
-        void Delete(Case caseEntity);
-        void Update(Case caseEntity);
-        Task<IEnumerable<Case>> GetAll();
-        Task<Case> GetById(Guid id);
-        bool IsCaseExists(Guid id);
-        Task<IEnumerable<Case>> GetUnscheduledCases();
-        Task<IEnumerable<Case>> GetScheduledCasesByDay(Guid facilityId, DateTime date);
-        Task<IEnumerable<Case>> GetScheduledCasesByWeek(Guid facilityId, DateTime dateStartDateOfWeek);
+        _repository = repository;
     }
 
-    public class CasesService : ICasesService
+    public void Create(Case entity)
     {
-        private readonly ICaseRepository _repository;
+        _repository.Create(entity);
+    }
 
-        public CasesService(ICaseRepository repository)
+    public void Delete(Case entity)
+    {
+        _repository.Delete(entity.Id);
+    }
+
+    public void Update(Case entity)
+    {
+        _repository.Update(entity);
+    }
+
+    public async Task<IEnumerable<Case>> GetAll()
+    {
+        try
         {
-            _repository = repository;
+            IEnumerable<Case> cases = await _repository.GetAll();
+            return cases.Select(i => {
+                i.ScheduledStartTime = DateTime.SpecifyKind(i.ScheduledStartTime.Value, DateTimeKind.Utc);
+                return i;
+            });
+        } catch (Exception ex)
+        {
+            throw new Exception(ex.Message);
         }
+        
+    }
 
-        public void Create(Case entity)
+    public async Task<IEnumerable<Case>> GetUnscheduledCases()
+    {
+        return await _repository.GetAllUnscheduled();
+    }
+
+    public async Task<IEnumerable<Case>> GetScheduledCasesByDay(Guid facilityId, DateTime date)
+    {
+        try
         {
-            _repository.Create(entity);
+            IEnumerable<Case> cases = await _repository.GetScheduledCasesByDay(facilityId, date);
+            return cases.Select(i => {
+                i.ScheduledStartTime = DateTime.SpecifyKind(i.ScheduledStartTime.Value, DateTimeKind.Utc);
+                return i;
+            });
         }
-
-        public void Delete(Case entity)
+        catch (Exception ex)
         {
-            _repository.Delete(entity.Id);
+            throw new Exception(ex.Message);
         }
+    }
 
-        public void Update(Case entity)
+    public async Task<IEnumerable<Case>> GetScheduledCasesByWeek(Guid facilityId, DateTime dateStartDateOfWeek)
+    {
+        try
         {
-            _repository.Update(entity);
+            IEnumerable<Case> cases = await _repository.GetScheduledCasesByWeek(facilityId, dateStartDateOfWeek);
+            return cases.Select(i => {
+                i.ScheduledStartTime = DateTime.SpecifyKind(i.ScheduledStartTime.Value, DateTimeKind.Utc);
+                return i;
+            });
         }
-
-        public async Task<IEnumerable<Case>> GetAll()
+        catch (Exception ex)
         {
-            try
-            {
-                IEnumerable<Case> cases = await _repository.GetAll();
-                return cases.Select(i => {
-                    i.ScheduledStartTime = DateTime.SpecifyKind(i.ScheduledStartTime.Value, DateTimeKind.Utc);
-                    return i;
-                });
-            } catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
+            throw new Exception(ex.Message);
+        }
+    }
+
+    public async Task<Case> GetById(Guid id)
+    {
+        return await _repository.GetOne(id);
+    }
+
+    public bool IsCaseExists(Guid id)
+    {
+        return _repository.GetAll().Result.Any(e => e.Id == id);
+    }
             
-        }
-
-        public async Task<IEnumerable<Case>> GetUnscheduledCases()
-        {
-            return await _repository.GetAllUnscheduled();
-        }
-
-        public async Task<IEnumerable<Case>> GetScheduledCasesByDay(Guid facilityId, DateTime date)
-        {
-            try
-            {
-                IEnumerable<Case> cases = await _repository.GetScheduledCasesByDay(facilityId, date);
-                return cases.Select(i => {
-                    i.ScheduledStartTime = DateTime.SpecifyKind(i.ScheduledStartTime.Value, DateTimeKind.Utc);
-                    return i;
-                });
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
-
-        public async Task<IEnumerable<Case>> GetScheduledCasesByWeek(Guid facilityId, DateTime dateStartDateOfWeek)
-        {
-            try
-            {
-                IEnumerable<Case> cases = await _repository.GetScheduledCasesByWeek(facilityId, dateStartDateOfWeek);
-                return cases.Select(i => {
-                    i.ScheduledStartTime = DateTime.SpecifyKind(i.ScheduledStartTime.Value, DateTimeKind.Utc);
-                    return i;
-                });
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
-
-        public async Task<Case> GetById(Guid id)
-        {
-            return await _repository.GetOne(id);
-        }
-
-        public bool IsCaseExists(Guid id)
-        {
-            return _repository.GetAll().Result.Any(e => e.Id == id);
-        }
-                
-    }
 }

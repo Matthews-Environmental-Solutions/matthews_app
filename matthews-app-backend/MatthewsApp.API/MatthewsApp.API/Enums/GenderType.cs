@@ -1,9 +1,8 @@
-﻿namespace MatthewsApp.API.Enums
+﻿namespace MatthewsApp.API.Enums;
+
+public enum GenderType
 {
-    public enum GenderType
-    {
-        OTHER,
-        MALE,
-        FEMALE
-    }
+    OTHER,
+    MALE,
+    FEMALE
 }
