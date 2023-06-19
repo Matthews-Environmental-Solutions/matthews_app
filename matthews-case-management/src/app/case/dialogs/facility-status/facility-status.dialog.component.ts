@@ -4,6 +4,8 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
 import { AuthService } from 'src/app/auth/auth.service';
 import { FacilityStatus } from 'src/app/models/facility-status.model';
+import { Icon } from 'src/app/models/icon.model';
+import { FacilityStatusService } from 'src/app/services/facility-status.service';
 
 @Component({
   selector: 'app-facility-status.dialog',
@@ -15,11 +17,13 @@ export class FacilityStatusDialogComponent implements OnInit {
   private GUID_EMPTY: string = '00000000-0000-0000-0000-000000000000';
   title!: string;
   statusForm: FormGroup;
+  icons: Icon[] = [];
 
   constructor(
     public dialogRef: MatDialogRef<FacilityStatusDialogComponent>,
     private translate: TranslateService,
     private authService: AuthService,
+    private facilityStatusService: FacilityStatusService,
     @Inject(MAT_DIALOG_DATA) public data: FacilityStatus) {
 
 /**
@@ -47,6 +51,7 @@ export class FacilityStatusDialogComponent implements OnInit {
   ngOnInit(): void {
     console.log('data', this.data);
     this.title = this.data.id == this.GUID_EMPTY ? this.translate.instant('addNewFacilityStatus') : this.translate.instant('editFacilityStatus');
+    this.facilityStatusService.getIconsFromJsonFile().subscribe(icons => this.icons = icons);
   }
 
   onNoClick(): void {
@@ -67,6 +72,11 @@ export class FacilityStatusDialogComponent implements OnInit {
     this.data.statusIcon = this.statusForm.get('statusIcon')?.value;
     this.data.startProcess = this.statusForm.get('startProcess')?.value;
     this.dialogRef.close(this.data);
+  }
+
+  onIconClick(iconKey: string) {
+    this.statusForm.get('statusIcon')?.setValue(iconKey);
+    this.data.statusIcon = iconKey;
   }
 
   formatDate(date: Date) {

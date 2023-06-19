@@ -46,4 +46,8 @@ export class FacilityStatusService {
         });
     }
 
+    getIconsFromJsonFile(): Observable<any> {
+        return this.httpClient.get('/assets/icons.json');
+    }
+
 }

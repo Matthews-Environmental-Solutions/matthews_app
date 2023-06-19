@@ -8,7 +8,7 @@
                 Status Code is required.
             </span>
         </mat-error>
-        <mat-form-field class="example-full-width">
+        <mat-form-field>
             <mat-label>{{"statusCode" | translate}}</mat-label>
             <input formControlName="statusCode" matInput placeholder="{{'enterStatusCode' | translate}}" value="">
         </mat-form-field>
@@ -19,7 +19,7 @@
                 Status Name is required.
             </span>
         </mat-error>
-        <mat-form-field class="example-full-width">
+        <mat-form-field>
             <mat-label>{{"statusName" | translate}}</mat-label>
             <input formControlName="statusName" matInput placeholder="{{'enterStatusName' | translate}}" value="">
         </mat-form-field>
@@ -27,18 +27,37 @@
         <mat-error
             *ngIf="statusForm.get('statusIcon')?.invalid && (statusForm.get('statusIcon')?.dirty || statusForm.get('statusIcon')?.touched)">
             <span *ngIf="statusForm.get('statusIcon')?.errors?.['required']">
-                Status Name is required.
+                Icon is required.
             </span>
         </mat-error>
         <div class="field-icon-button">
             <mat-form-field class="full-width">
+                <mat-icon>{{data.statusIcon}}</mat-icon>
                 <mat-label>{{"statusIcon" | translate}}</mat-label>
-                <input formControlName="statusIcon" matInput placeholder="{{'enterStatusIcon' | translate}}" value="">
+                <input formControlName="statusIcon" matInput placeholder="{{'enterStatusIcon' | translate}}" value="" hidden>
             </mat-form-field>
-            <button mat-flat-button><mat-icon matSuffix>add_photo_alternate</mat-icon> Pick other icon</button>
         </div>
 
-        <mat-slide-toggle formControlName="startProcess">{{'startProcess' | translate}}</mat-slide-toggle>
+        <mat-expansion-panel hideToggle>
+            <mat-expansion-panel-header>
+                <mat-panel-title>Pick the icon</mat-panel-title>
+            </mat-expansion-panel-header>
+            <div class="icons-container">
+                <ng-container *ngFor="let ico of icons">
+                    <div class="icon" (click)="onIconClick(ico.key)">
+                        <div class="icon-icon">
+                            <mat-icon>{{ico.key}}</mat-icon>
+                        </div>
+                        <span>{{ico.name}}</span>
+                    </div>
+                </ng-container>
+            </div>
+        </mat-expansion-panel>
+
+        <div class="toggle-button">
+            <mat-slide-toggle formControlName="startProcess">{{'startProcess' | translate}}</mat-slide-toggle>
+        </div>
+        
 
     </div>
 </form>
