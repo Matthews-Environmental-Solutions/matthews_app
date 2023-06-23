@@ -1,5 +1,5 @@
-import { CaseStatus } from "../enums/case-status.enum";
-import { GenderType } from "../enums/gender-type.enum";
+import { CaseToFacilityStatus } from "./case-to-facility-status.model";
+import { FacilityStatus } from "./facility-status.model";
 
 export interface ICase {
     id: string;
@@ -38,6 +38,8 @@ export interface ICase {
 
     fuel: string;
     electricity: string;
+
+    caseToFacilityStatuses: CaseToFacilityStatus[];
 }
 
 export class Case implements ICase{
@@ -63,30 +65,20 @@ export class Case implements ICase{
     scheduledDeviceAlias: string = '';
     scheduledStartTime?: string = '';
     
-    actualFacility?: string;
-    actualDevice?: string;
+    actualFacility?: string = '00000000-0000-0000-0000-000000000000';
+    actualDevice?: string = '00000000-0000-0000-0000-000000000000';
     actualDeviceAlias: string = '';
-    actualStartTime?: string;
-    actualEndTime?: string;
+    actualStartTime?: string = '0001-01-01T00:00:00';
+    actualEndTime?: string = '0001-01-01T00:00:00';
 
     createdBy: string = '00000000-0000-0000-0000-000000000000';
     createdTime: string = '0001-01-01T00:00:00';
-    modifiedBy?: string;
-    modifiedTime?: string;
-    performedBy?: string;
+    modifiedBy?: string = '00000000-0000-0000-0000-000000000000';
+    modifiedTime?: string = '0001-01-01T00:00:00';
+    performedBy?: string = '00000000-0000-0000-0000-000000000000';
 
     fuel: string = '';
     electricity: string = '';
 
-    // constructor(id: string, clientId: string, clientCaseId: string, firstName: string, lastName: string, weight: number, containerType: string, gender: string, scheduledCremator: string){
-    //     this.id = id;
-    //     this.clientId = clientId;
-    //     this.clientCaseId = clientCaseId;
-    //     this.firstName = firstName;
-    //     this.lastName = lastName;
-    //     this.weight = weight;
-    //     this.containerType = containerType;
-    //     this.gender = gender;
-    //     this.scheduledCremator = scheduledCremator;
-    // }
+    caseToFacilityStatuses: CaseToFacilityStatus[] = [];
 }

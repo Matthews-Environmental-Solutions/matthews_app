@@ -1,6 +1,6 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { Observable, catchError, throwError } from "rxjs";
+import { Observable, catchError, tap, throwError } from "rxjs";
 import { environment } from "src/environments/environment";
 import { FacilityStatus } from "../models/facility-status.model";
 
@@ -28,6 +28,11 @@ export class FacilityStatusService {
 
     getAllStatusesByFacility(facilityId: string): Observable<FacilityStatus[]> {
         return this.httpClient.get<FacilityStatus[]>(`${this.apiURL}/FacilityStatus/GetFacilityStatusesByFacility/${facilityId}`)
+        .pipe(
+            tap(results => results.sort((a, b) => {
+              return a.statusCode < b.statusCode ? -1 : 1;
+            }))
+          )
         .pipe(catchError(this.handleError));
     }
 

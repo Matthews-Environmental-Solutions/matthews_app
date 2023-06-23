@@ -54,11 +54,8 @@ export class FacilityComponent implements OnInit {
   getDataOnOpen(id: string) {
     this.i4connectedService.getSite(id).subscribe(data => {
       this.selectedFacility = data;
-      this.facilityStatusService.getAllStatusesByFacility(this.selectedFacility.id).pipe(
-        tap(results => results.sort((a, b) => {
-          return a.statusCode < b.statusCode ? -1 : 1;
-        }))
-      ).subscribe(statuses => {
+      this.facilityStatusService.getAllStatusesByFacility(this.selectedFacility.id)
+      .subscribe(statuses => {
         this.facilityStatuses = statuses;
         console.log('facilityStatuses', this.facilityStatuses);
       });

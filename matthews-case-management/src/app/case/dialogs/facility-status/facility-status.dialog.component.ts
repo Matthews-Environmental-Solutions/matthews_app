@@ -79,7 +79,7 @@ export class FacilityStatusDialogComponent implements OnInit {
     this.data.statusIcon = iconKey;
   }
 
-  formatDate(date: Date) {
+  formatDate(date: Date): string {
     var d = new Date(date),
       month = '' + (d.getMonth() + 1),
       day = '' + d.getDate(),
