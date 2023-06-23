@@ -1,4 +1,5 @@
-﻿using MatthewsApp.API.Models;
+﻿using MatthewsApp.API.Dtos;
+using MatthewsApp.API.Models;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -10,4 +11,5 @@ public interface ICaseRepository : IBaseRepository<Case, Guid>
     Task<IEnumerable<Case>> GetAllUnscheduled();
     Task<IEnumerable<Case>> GetScheduledCasesByDay(Guid facilityId, DateTime date);
     Task<IEnumerable<Case>> GetScheduledCasesByWeek(Guid facilityId, DateTime dateStartDateOfWeek);
+    Task UpdateWithStatuses(CaseWithStatusesDto dto);
 }

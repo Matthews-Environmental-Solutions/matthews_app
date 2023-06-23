@@ -7,19 +7,23 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
+#nullable disable
+
 namespace MatthewsApp.API.Migrations
 {
     [DbContext(typeof(MatthewsAppDBContext))]
-    [Migration("20230614092738_InitialCreate")]
+    [Migration("20230620123208_InitialCreate")]
     partial class InitialCreate
     {
+        /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("ProductVersion", "5.0.12")
-                .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                .HasAnnotation("ProductVersion", "7.0.7")
+                .HasAnnotation("Relational:MaxIdentifierLength", 128);
+
+            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
             modelBuilder.Entity("MatthewsApp.API.Models.Case", b =>
                 {
@@ -117,6 +121,36 @@ namespace MatthewsApp.API.Migrations
                     b.ToTable("Cases");
                 });
 
+            modelBuilder.Entity("MatthewsApp.API.Models.CaseToFacilityStatus", b =>
+                {
+                    b.Property<Guid>("CaseId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("FacilityStatusId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedTime")
+                        .HasColumnType("datetime2(7)");
+
+                    b.Property<bool>("IsDone")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid?>("ModifiedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("ModifiedTime")
+                        .HasColumnType("datetime2(7)");
+
+                    b.HasKey("CaseId", "FacilityStatusId");
+
+                    b.HasIndex("FacilityStatusId");
+
+                    b.ToTable("CaseToFacilityStatus");
+                });
+
             modelBuilder.Entity("MatthewsApp.API.Models.FacilityStatus", b =>
                 {
                     b.Property<Guid>("Id")
@@ -154,6 +188,35 @@ namespace MatthewsApp.API.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("FacilityStatuses");
+                });
+
+            modelBuilder.Entity("MatthewsApp.API.Models.CaseToFacilityStatus", b =>
+                {
+                    b.HasOne("MatthewsApp.API.Models.Case", "Case")
+                        .WithMany("CaseToFacilityStatuses")
+                        .HasForeignKey("CaseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MatthewsApp.API.Models.FacilityStatus", "FacilityStatus")
+                        .WithMany("CaseToFacilityStatuses")
+                        .HasForeignKey("FacilityStatusId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Case");
+
+                    b.Navigation("FacilityStatus");
+                });
+
+            modelBuilder.Entity("MatthewsApp.API.Models.Case", b =>
+                {
+                    b.Navigation("CaseToFacilityStatuses");
+                });
+
+            modelBuilder.Entity("MatthewsApp.API.Models.FacilityStatus", b =>
+                {
+                    b.Navigation("CaseToFacilityStatuses");
                 });
 #pragma warning restore 612, 618
         }

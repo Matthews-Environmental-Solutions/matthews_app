@@ -1,10 +1,14 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
+#nullable disable
+
 namespace MatthewsApp.API.Migrations
 {
+    /// <inheritdoc />
     public partial class InitialCreate : Migration
     {
+        /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
@@ -32,13 +36,13 @@ namespace MatthewsApp.API.Migrations
                     ActualDeviceAlias = table.Column<string>(type: "nvarchar(564)", nullable: true),
                     ActualStartTime = table.Column<DateTime>(type: "datetime2(7)", nullable: true),
                     ActualEndTime = table.Column<DateTime>(type: "datetime2(7)", nullable: true),
+                    PerformedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    Fuel = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Electricity = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedTime = table.Column<DateTime>(type: "datetime2(7)", nullable: false),
                     ModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2(7)", nullable: true),
-                    PerformedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    Fuel = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Electricity = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    ModifiedTime = table.Column<DateTime>(type: "datetime2(7)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -64,10 +68,48 @@ namespace MatthewsApp.API.Migrations
                 {
                     table.PrimaryKey("PK_FacilityStatuses", x => x.Id);
                 });
+
+            migrationBuilder.CreateTable(
+                name: "CaseToFacilityStatus",
+                columns: table => new
+                {
+                    CaseId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    FacilityStatusId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    IsDone = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedTime = table.Column<DateTime>(type: "datetime2(7)", nullable: false),
+                    ModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "datetime2(7)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CaseToFacilityStatus", x => new { x.CaseId, x.FacilityStatusId });
+                    table.ForeignKey(
+                        name: "FK_CaseToFacilityStatus_Cases_CaseId",
+                        column: x => x.CaseId,
+                        principalTable: "Cases",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CaseToFacilityStatus_FacilityStatuses_FacilityStatusId",
+                        column: x => x.FacilityStatusId,
+                        principalTable: "FacilityStatuses",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CaseToFacilityStatus_FacilityStatusId",
+                table: "CaseToFacilityStatus",
+                column: "FacilityStatusId");
         }
 
+        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "CaseToFacilityStatus");
+
             migrationBuilder.DropTable(
                 name: "Cases");
 

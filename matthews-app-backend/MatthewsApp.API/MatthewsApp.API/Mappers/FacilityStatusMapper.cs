@@ -1,5 +1,6 @@
 ﻿using MatthewsApp.API.Dtos;
 using MatthewsApp.API.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -26,6 +27,7 @@ public static class FacilityStatusMapper
             entity.StatusName,
             entity.StatusIcon,
             entity.StartProcess
+            //entity.CaseToFacilityStatuses != null && entity.CaseToFacilityStatuses.First(f => f.FacilityStatusId == entity.Id) is not null ? entity.CaseToFacilityStatuses.First(f => f.FacilityStatusId == entity.Id).IsDone : null
         );
     }
 

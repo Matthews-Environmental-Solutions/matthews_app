@@ -58,11 +58,30 @@ public class CaseController : Controller
 
     [HttpPut]
     [Route("Update")]
-    public ActionResult PutCase([FromBody] CaseDto caseDto)
+    public ActionResult Update([FromBody] CaseDto caseDto)
     {
         try
         {
             service.Update(caseDto.ToEntity());
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!service.IsCaseExists(caseDto.Id))
+            {
+                return NotFound();
+            }
+            return BadRequest();
+        }
+        return Ok(caseDto.Id);
+    }
+
+    [HttpPut]
+    [Route("UpdateWithStatuses")]
+    public ActionResult UpdateWithStatuses([FromBody] CaseWithStatusesDto caseDto)
+    {
+        try
+        {
+            service.UpdateWithStatuses(caseDto);
         }
         catch (DbUpdateConcurrencyException)
         {
@@ -93,11 +112,11 @@ public class CaseController : Controller
 
     [HttpGet]
     [Route("GetScheduledCasesByDay/{facilityId}/{date}")]
-    public async Task<ActionResult<IEnumerable<Case>>> GetScheduledCasesByDay(Guid facilityId, DateTime date)
+    public async Task<ActionResult<IEnumerable<CaseDto>>> GetScheduledCasesByDay(Guid facilityId, DateTime date)
     {
         try
         {
-            return Ok(await service.GetScheduledCasesByDay(facilityId, date));
+            return Ok((await service.GetScheduledCasesByDay(facilityId, date)).ToDTOs());
         }
         catch (Exception ex)
         {
@@ -107,11 +126,11 @@ public class CaseController : Controller
 
     [HttpGet]
     [Route("GetScheduledCasesByWeek/{facilityId}/{dateStartDateOfWeek}")]
-    public async Task<ActionResult<IEnumerable<Case>>> GetScheduledCasesByWeek(Guid facilityId, DateTime dateStartDateOfWeek)
+    public async Task<ActionResult<IEnumerable<CaseDto>>> GetScheduledCasesByWeek(Guid facilityId, DateTime dateStartDateOfWeek)
     {
         try
         {
-            return Ok(await service.GetScheduledCasesByWeek(facilityId, dateStartDateOfWeek));
+            return Ok((await service.GetScheduledCasesByWeek(facilityId, dateStartDateOfWeek)).ToDTOs());
         }
         catch (Exception ex)
         {
@@ -121,11 +140,11 @@ public class CaseController : Controller
 
     [HttpGet]
     [Route("GetUnscheduledCases")]
-    public async Task<ActionResult<IEnumerable<Case>>> GetUnscheduledCases()
+    public async Task<ActionResult<IEnumerable<CaseDto>>> GetUnscheduledCases()
     {
         try
         {
-            return Ok(await service.GetUnscheduledCases());
+            return Ok((await service.GetUnscheduledCases()).ToDTOs());
         }
         catch (Exception ex)
         {
@@ -135,19 +154,19 @@ public class CaseController : Controller
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<Case>> GetCase(string id)
+    public async Task<ActionResult<CaseWithStatusesDto>> GetCase(string id)
     {
         if (!Guid.TryParse(id, out var idParsed))
         {
             return BadRequest();
         }
 
-        Case announcement = await service.GetById(idParsed);
+        Case Case = await service.GetById(idParsed);
 
-        if (announcement == null)
+        if (Case == null)
         {
             return NotFound();
         }
-        return Ok(announcement);
+        return Ok(Case.ToDTOWithStatuses());
     }
 }

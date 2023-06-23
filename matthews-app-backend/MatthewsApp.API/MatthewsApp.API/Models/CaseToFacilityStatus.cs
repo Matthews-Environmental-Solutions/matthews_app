@@ -10,10 +10,12 @@ public class CaseToFacilityStatus
     [Key]
     [Column(TypeName = "uniqueidentifier")]
     public Guid CaseId { get; set; }
+    public Case Case { get; set; } = null!;
 
     [Key]
     [Column(TypeName = "uniqueidentifier")]
     public Guid FacilityStatusId { get; set; }
+    public FacilityStatus FacilityStatus { get; set; } = null!;
 
     public bool IsDone { get; set; }
 

@@ -1,9 +1,17 @@
-﻿using MatthewsApp.API.Models;
+﻿using Humanizer;
+using MatthewsApp.API.Dtos;
+using MatthewsApp.API.Enums;
+using MatthewsApp.API.Extensions;
+using MatthewsApp.API.Mappers;
+using MatthewsApp.API.Models;
 using MatthewsApp.API.Repository.Interfaces;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace MatthewsApp.API.Repository;
@@ -26,6 +34,14 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
         entity.ModifiedTime = DateTime.Now;
         _dataContext.Context.Entry(entity).State = EntityState.Modified;
         _dataContext.Context.SaveChanges();
+    }
+
+    public override async Task<Case> GetOne(Guid id)
+    {
+        return await _dataContext.Cases
+            .Include(c => c.CaseToFacilityStatuses)
+            //.AsNoTracking()
+            .FirstAsync(c => c.Id == id);
     }
 
     //ToDo: Ovo treba ukloniti.
@@ -66,26 +82,80 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ).ToList();
     }
 
-    //public async Task<Case> GetOne(Guid id)
-    //{
-    //    return await context.Cases.FindAsync(id);
-    //}
+    public async Task UpdateWithStatuses(CaseWithStatusesDto dto)
+    {
+        DbContext? context = _dataContext.Context;
+        var transaction = context.Database.BeginTransaction();
+        try
+        {
 
-    //public void Update(Case entity)
-    //{
-    //    var transaction = context.Database.BeginTransaction();
-    //    try
-    //    {
-    //        context.Entry(entity).State = EntityState.Modified;
-    //        context.SaveChanges();
-    //        transaction.Commit();
-    //    }
-    //    catch (Exception)
-    //    {
-    //        transaction.Rollback();
-    //        throw;
-    //    }
-    //}
+            var entity = _dataContext.Cases.Include(c => c.CaseToFacilityStatuses).First(c => c.Id == dto.Id);
 
-    
+            entity = UpdateFields(entity, dto);
+            entity.ModifiedTime = DateTime.Now;
+
+            // Remove unchecked statuses
+            for (int i = entity.CaseToFacilityStatuses.Count - 1; i >= 0; i--)
+            {
+                var statusFromEntity = entity.CaseToFacilityStatuses[i];
+                var statusFromDto = dto.CaseToFacilityStatuses.FirstOrDefault(fs => fs.CaseId == statusFromEntity.CaseId && fs.FacilityStatusId == statusFromEntity.FacilityStatusId);
+                if (statusFromDto.IsDone == false)
+                {
+                    entity.CaseToFacilityStatuses.RemoveAt(i);
+                }
+            }
+
+            // Add checked (new) statuses
+            foreach(var status in dto.CaseToFacilityStatuses)
+            {
+                bool founded = entity.CaseToFacilityStatuses.Any(fs => fs.CaseId == status.CaseId && fs.FacilityStatusId == status.FacilityStatusId);
+                if (status.IsDone && !founded)
+                {
+                    entity.CaseToFacilityStatuses.Add(status.ToEntity());
+                }
+            }
+
+            context.Set<Case>().Attach(entity);
+            context.Entry(entity).State = EntityState.Modified;
+            context.SaveChanges();
+            transaction.Commit();
+        }
+        catch (Exception ex)
+        {
+            transaction.Rollback();
+            throw;
+        }
+    }
+
+    private Case UpdateFields(Case entity, CaseWithStatusesDto dto)
+    {
+        entity.ActualDevice = dto.ActualDevice;
+        entity.ActualDeviceAlias = dto.ActualDeviceAlias;
+        entity.ActualEndTime = dto.ActualEndTime;
+        entity.ActualFacility = dto.ActualFacility;
+        entity.ActualStartTime = dto.ActualStartTime;
+        entity.Age = dto.Age;
+        entity.ClientCaseId = dto.ClientCaseId;
+        entity.ClientId = dto.ClientId;
+        entity.ContainerSize = dto.ContainerSize;
+        entity.ContainerType = dto.ContainerType;
+        entity.CreatedBy = dto.CreatedBy;
+        entity.CreatedTime = dto.CreatedTime;
+        entity.Electricity = dto.Electricity;
+        entity.FirstName = dto.FirstName;
+        entity.Fuel = dto.Fuel;
+        entity.Gender = dto.Gender;
+        entity.IsObsolete = dto.IsObsolete;
+        entity.LastName = dto.LastName;
+        entity.ModifiedBy = dto.ModifiedBy;
+        entity.ModifiedTime = dto.ModifiedTime;
+        entity.PerformedBy = dto.PerformedBy;
+        entity.ScheduledDevice = dto.ScheduledDevice;
+        entity.ScheduledDeviceAlias = dto.ScheduledDeviceAlias;
+        entity.ScheduledFacility = dto.ScheduledFacility;
+        entity.ScheduledStartTime = dto.ScheduledStartTime;
+        entity.Status = dto.Status;
+        entity.Weight = dto.Weight;
+        return entity;
+    }
 }

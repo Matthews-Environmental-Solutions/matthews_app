@@ -1,5 +1,6 @@
 ﻿using MatthewsApp.API.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
 
 namespace MatthewsApp.API;
 
@@ -17,6 +18,8 @@ public class MatthewsAppDBContext : DbContext, IMatthewsAppDBContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        // Case
+
         modelBuilder.Entity<Case>()
             .Property(c => c.ScheduledFacility)
             .IsRequired(false);
@@ -61,7 +64,7 @@ public class MatthewsAppDBContext : DbContext, IMatthewsAppDBContext
             .Property(c => c.PerformedBy)
             .IsRequired(false);
 
-
+        // FacilityStatus 
 
         modelBuilder.Entity<FacilityStatus>()
             .Property(c => c.StatusIcon)
@@ -74,6 +77,26 @@ public class MatthewsAppDBContext : DbContext, IMatthewsAppDBContext
         modelBuilder.Entity<FacilityStatus>()
             .Property(c => c.ModifiedTime)
             .IsRequired(false);
+
+
+        // many-to-many Case - FacilityStatus 
+
+        modelBuilder.Entity<CaseToFacilityStatus>().HasKey(cf => new { cf.CaseId, cf.FacilityStatusId });
+
+        modelBuilder.Entity<Case>()
+        .HasMany(e => e.FacilityStatuses)
+        .WithMany(e => e.Cases)
+        .UsingEntity<CaseToFacilityStatus>();
+
+        //modelBuilder.Entity<CaseToFacilityStatus>()
+        //    .HasOne<Case>(cf => cf.Case)
+        //    .WithMany(c => c.CaseToFacilityStatuses)
+        //    .HasForeignKey(c => c.CaseId);
+
+        //modelBuilder.Entity<CaseToFacilityStatus>()
+        //    .HasOne<FacilityStatus>(cf => cf.FacilityStatus)
+        //    .WithMany(c => c.CaseToFacilityStatuses)
+        //    .HasForeignKey(c => c.FacilityStatusId);
 
 
         base.OnModelCreating(modelBuilder);

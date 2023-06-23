@@ -1,5 +1,6 @@
 ﻿using MatthewsApp.API.Enums;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -7,7 +8,7 @@ namespace MatthewsApp.API.Models;
 
 public class Case : BaseEntity
 {
-    
+
     [Column(TypeName = "nvarchar(256)")]
     [Required]
     public string ClientId { get; set; } // Promeni tip nakon što saznamo format ID-a
@@ -31,9 +32,9 @@ public class Case : BaseEntity
     [Required]
     public GenderType Gender { get; set; }
 
-    public ContainerType ContainerType { get; set; } 
+    public ContainerType ContainerType { get; set; }
 
-    public ContainerSize ContainerSize { get; set; } 
+    public ContainerSize ContainerSize { get; set; }
 
     [Required]
     public bool IsObsolete { get; set; } = false;
@@ -77,7 +78,7 @@ public class Case : BaseEntity
     public DateTime? ActualEndTime { get; set; }
 
 
-    
+
 
     [Column(TypeName = "uniqueidentifier")]
     public Guid? PerformedBy { get; set; }
@@ -89,4 +90,7 @@ public class Case : BaseEntity
 
     public string Electricity { get; set; }
 
+
+    public IList<CaseToFacilityStatus> CaseToFacilityStatuses { get; set; }
+    public IList<FacilityStatus> FacilityStatuses { get; set; }
 }

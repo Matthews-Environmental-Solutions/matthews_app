@@ -53,13 +53,14 @@ public class Startup
         });
 
         var connectionString = Configuration["connectionStrings:MatthewsAppDBConnectionString"];
-        services.AddScoped<IMatthewsAppDBContext, MatthewsAppDBContext>();
+        //services.AddScoped<IMatthewsAppDBContext, MatthewsAppDBContext>();
         services.AddDbContext<IMatthewsAppDBContext, MatthewsAppDBContext>(options => options.UseSqlServer(connectionString));
 
         services.AddScoped<ICasesService, CasesService>();
         services.AddScoped<ICaseRepository, CaseRepository>();
         services.AddScoped<IFacilityStatusService, FacilityStatusService>();
         services.AddScoped<IFacilityStatusRepository, FacilityStatusRepository>();
+        services.AddScoped<ICaseToFacilityStatusRepository, CaseToFacilityStatusRepository>();
 
         services.Configure<FormOptions>(o =>
         {

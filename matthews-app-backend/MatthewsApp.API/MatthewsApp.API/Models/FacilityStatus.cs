@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using System;
+using System.Collections.Generic;
 
 namespace MatthewsApp.API.Models;
 
@@ -23,5 +24,8 @@ public class FacilityStatus : BaseEntity
     public string? StatusIcon { get; set; }
 
     public bool StartProcess { get; set; }
+
+    public IEnumerable<CaseToFacilityStatus> CaseToFacilityStatuses { get; set; }
+    public IEnumerable<Case> Cases { get; set; }
 
 }
