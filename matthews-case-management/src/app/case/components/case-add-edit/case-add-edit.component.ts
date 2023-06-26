@@ -18,7 +18,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { WfactorySnackBarService } from 'src/app/components/wfactory-snack-bar/wfactory-snack-bar.service';
 import { FacilityStatus } from 'src/app/models/facility-status.model';
 import { FacilityStatusService } from 'src/app/services/facility-status.service';
-import { MatSelectionList, MatSelectionListChange } from '@angular/material/list';
+import { MatSelectionList } from '@angular/material/list';
 import { CaseToFacilityStatus } from 'src/app/models/case-to-facility-status.model';
 
 @Component({
@@ -33,6 +33,7 @@ export class CaseAddEditComponent implements OnInit {
 
   @ViewChild('statuses') statuses?: MatSelectionList;
 
+  private UNSCHEDULED: number = 0;
   private WAITING_FOR_PERMIT: number = 4;
   private GUID_EMPTY: string = '00000000-0000-0000-0000-000000000000';
 
@@ -81,7 +82,7 @@ export class CaseAddEditComponent implements OnInit {
       containerType: new FormControl('', [Validators.required]),
       containerSize: new FormControl('', [Validators.required]),
       status: new FormControl('', { nonNullable: true }),
-      scheduledCremator: new FormControl('', { nonNullable: false }),
+      scheduledDevice: new FormControl('', { nonNullable: false }),
       burnMode: new FormControl('', { nonNullable: true }),
       scheduledStartDateTime: new FormControl('', { nonNullable: false }),
       selectedFacilityStatuses: new FormControl([], { nonNullable: false })
@@ -127,7 +128,7 @@ export class CaseAddEditComponent implements OnInit {
 
         this.caseForm.get('containerType')?.setValue(response.containerType);
         this.caseForm.get('containerSize')?.setValue(response.containerSize);
-        this.caseForm.get('scheduledCremator')?.setValue(response.scheduledDevice);
+        this.caseForm.get('scheduledDevice')?.setValue(response.scheduledDevice);
 
         if (response.scheduledStartTime && response.scheduledStartTime !== '0001-01-01T00:00:00') {
           this.caseForm.get('scheduledStartDateTime')?.setValue(new Date(response.scheduledStartTime));
@@ -153,6 +154,9 @@ export class CaseAddEditComponent implements OnInit {
       this.case.id = this.GUID_EMPTY;
       this.case.createdBy = this.authService.loggedInUser.sub;
       this.case.createdTime = this.formatDate(new Date());
+    } else {
+      this.case.modifiedBy = this.authService.loggedInUser.sub;
+      this.case.modifiedTime = this.formatDate(new Date());
     }
 
     this.case.clientCaseId = this.caseForm.get('clientCaseId')?.value;
@@ -164,36 +168,40 @@ export class CaseAddEditComponent implements OnInit {
 
     this.case.containerType = this.caseForm.get('containerType')?.value;
     this.case.containerSize = this.caseForm.get('containerSize')?.value;
-    this.case.scheduledDevice = this.caseForm.get('scheduledCremator')?.value;
+
+    this.case.scheduledDevice = (this.caseForm.get('scheduledDevice')?.value == '') ? this.GUID_EMPTY : this.caseForm.get('scheduledDevice')?.value;
     this.case.scheduledStartTime = this.caseForm.get('scheduledStartDateTime')?.value;
-    this.case.scheduledFacility = this.selectedFacilityId;
-    // this.case.facilityStatuses = this.caseForm.get('selectedFacilityStatuses')?.value;
-
+    this.case.scheduledFacility = this.selectedFacilityId.length == 0 ? this.GUID_EMPTY : this.selectedFacilityId;
     this.selectedFacilityStatuses = this.caseForm.get('selectedFacilityStatuses')?.value;
-
 
     this.case.caseToFacilityStatuses.map(s => s.isDone = false);
     this.selectedFacilityStatuses.forEach(selected => {
       if (!this.case) return;
 
       let founded = this.case.caseToFacilityStatuses.find(f => f.facilityStatusId == selected.id);
-      if(founded){
+      if (founded) {
         founded.isDone = true;
         founded.ModifiedBy = this.authService.loggedInUser.sub;
         founded.ModifiedTime = this.formatDate(new Date());
       } else {
-        let status = new CaseToFacilityStatus();
-        status.caseId = this.case?.id;
-        status.facilityStatusId = selected.id
-        status.isDone = true;
-        status.createdBy = this.authService.loggedInUser.sub;
-        status.createdTime = this.formatDate(new Date());
-        this.case?.caseToFacilityStatuses.push(status);
+        let fStatus = new CaseToFacilityStatus();
+        fStatus.caseId = this.case?.id;
+        fStatus.facilityStatusId = selected.id
+        fStatus.isDone = true;
+        fStatus.createdBy = this.authService.loggedInUser.sub;
+        fStatus.createdTime = this.formatDate(new Date());
+        this.case?.caseToFacilityStatuses.push(fStatus);
       }
-      
+
     });
 
-    if (this.case.scheduledDevice != this.GUID_EMPTY && this.case.scheduledStartTime != '0001-01-01T00:00:00') {
+    // set STATUS to UNSCHEDULED
+    if (this.case.scheduledDevice == this.GUID_EMPTY || this.case.scheduledStartTime == '0001-01-01T00:00:00' || this.case.scheduledFacility == this.GUID_EMPTY){
+      this.case.status = this.UNSCHEDULED; // 0
+    }
+
+    // set STATUS to WAITING_FOR_PERMIT
+    if (this.case.scheduledDevice != this.GUID_EMPTY && this.case.scheduledStartTime != '0001-01-01T00:00:00' && this.case.scheduledFacility != this.GUID_EMPTY) {
       this.case.status = this.WAITING_FOR_PERMIT; // 4
     }
 
@@ -203,6 +211,7 @@ export class CaseAddEditComponent implements OnInit {
         next: (response) => {
           this._shackBar.showNotification(this.translate.instant('caseSuccessfullySaved'), 'success');
           this.router.navigate([``]);
+          this.stateService.setCaseSavedBehaviorSubject(); // trigger new loading of unscheduled cases
         },
 
         error: (err) => {
@@ -215,6 +224,7 @@ export class CaseAddEditComponent implements OnInit {
         next: (response) => {
           this._shackBar.showNotification(this.translate.instant('caseSuccessfullyUpdated'), 'success');
           this.router.navigate([``]);
+          this.stateService.setCaseSavedBehaviorSubject(); // trigger new loading of unscheduled cases
         },
 
         error: (err) => {

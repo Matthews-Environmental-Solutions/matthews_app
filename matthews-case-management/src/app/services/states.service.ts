@@ -5,6 +5,7 @@ import { UserSettingService } from "./user-setting.service";
 import { Device } from "../models/device.model";
 import { I4connectedService } from "./i4connected.service";
 import { Case } from "../models/case.model";
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable({
     providedIn: 'root'
@@ -29,6 +30,9 @@ export class StateService {
     public numberOfCasesToShowAsFilter$: Observable<number>;
     private numberOfCasesToShowAsFilterBehaviorSubject = new BehaviorSubject<number>(0);
 
+    public caseSaved$: Observable<string>;
+    private caseSavedBehaviorSubject = new BehaviorSubject<string>(this.getDefaultCaseSaved());
+
     constructor(private calendarService: CalendarService, private userSettingService: UserSettingService, private i4connectedService: I4connectedService) {
         this.selectedFacilityId$ = this.selectedFacilityIdBehaviorSubject;
         this.selectedDate$ = this.selectedDateBehaviorSubject;
@@ -36,6 +40,7 @@ export class StateService {
         this.devicesFromSite$ = this.devicesFromSiteBehaviorSubject;
         this.devicesToShowAsFilter$ = this.devicesToShowAsFilterBehaviorSubject;
         this.numberOfCasesToShowAsFilter$ = this.numberOfCasesToShowAsFilterBehaviorSubject;
+        this.caseSaved$ = this.caseSavedBehaviorSubject;
     }
 
 
@@ -133,5 +138,15 @@ export class StateService {
 
         this.setNumberOfCasesToShowAsFilter(cases.length);
         this.setDevicesToShowAsFilter(devicesFromSite);
+    }
+
+
+    // caseSavedBehaviorSubject
+    setCaseSavedBehaviorSubject() {
+        this.caseSavedBehaviorSubject.next(uuidv4());
+    }
+
+    getDefaultCaseSaved(): string{
+        return uuidv4();
     }
 }

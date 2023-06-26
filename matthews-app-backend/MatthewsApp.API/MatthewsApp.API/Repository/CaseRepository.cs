@@ -55,7 +55,17 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
     {
         IEnumerable<Case> cases = await _dataContext.Cases.ToArrayAsync();
 
-        return cases.Where(c => c.ScheduledStartTime < DateTime.MinValue.AddDays(100) && c.IsObsolete == false).ToList();
+        return cases.Where(c => 
+             (
+                c.ScheduledStartTime < DateTime.MinValue.AddDays(100) 
+                || c.Status == CaseStatus.UNSCHEDULED
+                || c.ScheduledFacility == Guid.Empty
+                || c.ScheduledDevice == Guid.Empty
+             )
+
+            && c.IsObsolete == false
+            )
+            .ToList();
     }
 
     public async Task<IEnumerable<Case>> GetScheduledCasesByDay(Guid facilityId, DateTime date)
@@ -64,6 +74,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
         return cases.Where(c => 
             c.IsObsolete == false
             && c.ScheduledFacility.Equals(facilityId)
+            && !c.ScheduledDevice.Equals(Guid.Empty)
             && c.ScheduledStartTime.Value.Day.Equals(date.Day)
             && c.ScheduledStartTime.Value.Month.Equals(date.Month)
             && c.ScheduledStartTime.Value.Year.Equals(date.Year)
@@ -91,7 +102,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
 
             var entity = _dataContext.Cases.Include(c => c.CaseToFacilityStatuses).First(c => c.Id == dto.Id);
 
-            entity = UpdateFields(entity, dto);
+            entity = entity.UpdateFieldsFromDto(dto);
             entity.ModifiedTime = DateTime.Now;
 
             // Remove unchecked statuses
@@ -127,35 +138,4 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
         }
     }
 
-    private Case UpdateFields(Case entity, CaseWithStatusesDto dto)
-    {
-        entity.ActualDevice = dto.ActualDevice;
-        entity.ActualDeviceAlias = dto.ActualDeviceAlias;
-        entity.ActualEndTime = dto.ActualEndTime;
-        entity.ActualFacility = dto.ActualFacility;
-        entity.ActualStartTime = dto.ActualStartTime;
-        entity.Age = dto.Age;
-        entity.ClientCaseId = dto.ClientCaseId;
-        entity.ClientId = dto.ClientId;
-        entity.ContainerSize = dto.ContainerSize;
-        entity.ContainerType = dto.ContainerType;
-        entity.CreatedBy = dto.CreatedBy;
-        entity.CreatedTime = dto.CreatedTime;
-        entity.Electricity = dto.Electricity;
-        entity.FirstName = dto.FirstName;
-        entity.Fuel = dto.Fuel;
-        entity.Gender = dto.Gender;
-        entity.IsObsolete = dto.IsObsolete;
-        entity.LastName = dto.LastName;
-        entity.ModifiedBy = dto.ModifiedBy;
-        entity.ModifiedTime = dto.ModifiedTime;
-        entity.PerformedBy = dto.PerformedBy;
-        entity.ScheduledDevice = dto.ScheduledDevice;
-        entity.ScheduledDeviceAlias = dto.ScheduledDeviceAlias;
-        entity.ScheduledFacility = dto.ScheduledFacility;
-        entity.ScheduledStartTime = dto.ScheduledStartTime;
-        entity.Status = dto.Status;
-        entity.Weight = dto.Weight;
-        return entity;
-    }
 }

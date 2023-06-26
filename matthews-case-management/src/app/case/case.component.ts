@@ -56,6 +56,10 @@ export class CaseComponent implements OnInit {
     this.subs.add(this.stateService.selectedFacilityId$.pipe(skip(1)).subscribe(fId => {
       this.selectedFacilityId = fId;
     }));
+
+    this.subs.add(this.stateService.caseSaved$.pipe(skip(1)).subscribe(c => {
+      this.caseService.getUnscheduledCases().subscribe(cases => this.unscheduledCases = cases);
+    }));
   }
 
   ngOnDestroy(): void {

@@ -63,7 +63,7 @@ public class CasesService : ICasesService
         {
             IEnumerable<Case> cases = await _caseRepository.GetAll();
             return cases.Select(i => {
-                i.ScheduledStartTime = DateTime.SpecifyKind(i.ScheduledStartTime.Value, DateTimeKind.Utc);
+                i.ScheduledStartTime = DateTime.SpecifyKind(i.ScheduledStartTime is null ? DateTime.MinValue : i.ScheduledStartTime.Value, DateTimeKind.Utc);
                 return i;
             });
         } catch (Exception ex)
@@ -77,7 +77,7 @@ public class CasesService : ICasesService
     {
         IEnumerable<Case> cases = await _caseRepository.GetAllUnscheduled();
         return cases.Select(i => {
-            i.ScheduledStartTime = DateTime.SpecifyKind(i.ScheduledStartTime.Value, DateTimeKind.Utc);
+            i.ScheduledStartTime = DateTime.SpecifyKind(i.ScheduledStartTime is null ? DateTime.MinValue : i.ScheduledStartTime.Value, DateTimeKind.Utc);
             return i;
         });
     }
@@ -88,7 +88,7 @@ public class CasesService : ICasesService
         {
             IEnumerable<Case> cases = await _caseRepository.GetScheduledCasesByDay(facilityId, date);
             return cases.Select(i => {
-                i.ScheduledStartTime = DateTime.SpecifyKind(i.ScheduledStartTime.Value, DateTimeKind.Utc);
+                i.ScheduledStartTime = DateTime.SpecifyKind(i.ScheduledStartTime is null ? DateTime.MinValue : i.ScheduledStartTime.Value, DateTimeKind.Utc);
                 return i;
             });
         }
@@ -104,7 +104,7 @@ public class CasesService : ICasesService
         {
             IEnumerable<Case> cases = await _caseRepository.GetScheduledCasesByWeek(facilityId, dateStartDateOfWeek);
             return cases.Select(i => {
-                i.ScheduledStartTime = DateTime.SpecifyKind(i.ScheduledStartTime.Value, DateTimeKind.Utc);
+                i.ScheduledStartTime = DateTime.SpecifyKind(i.ScheduledStartTime is null ? DateTime.MinValue : i.ScheduledStartTime.Value, DateTimeKind.Utc);
                 return i;
             });
         }
@@ -119,7 +119,7 @@ public class CasesService : ICasesService
         try
         {
             Case Case = await _caseRepository.GetOne(id);
-            Case.ScheduledStartTime = DateTime.SpecifyKind(Case.ScheduledStartTime.Value, DateTimeKind.Utc);
+            Case.ScheduledStartTime = DateTime.SpecifyKind(Case.ScheduledStartTime is null ? DateTime.MinValue : Case.ScheduledStartTime.Value, DateTimeKind.Utc);
             return Case;
         }
         catch (Exception ex)

@@ -60,10 +60,10 @@ export class Case implements ICase{
     age: number = 100;
     status: number = 0;
     
-    scheduledFacility?: string;
-    scheduledDevice?: string;
+    scheduledFacility?: string = '00000000-0000-0000-0000-000000000000';
+    scheduledDevice?: string = '00000000-0000-0000-0000-000000000000';
     scheduledDeviceAlias: string = '';
-    scheduledStartTime?: string = '';
+    scheduledStartTime?: string = '0001-01-01T00:00:00';
     
     actualFacility?: string = '00000000-0000-0000-0000-000000000000';
     actualDevice?: string = '00000000-0000-0000-0000-000000000000';

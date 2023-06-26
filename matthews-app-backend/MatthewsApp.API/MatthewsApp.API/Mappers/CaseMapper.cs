@@ -123,7 +123,7 @@ public static class CaseMapper
             ScheduledDevice = dto.ScheduledDevice,
             ScheduledDeviceAlias = dto.ScheduledDeviceAlias,
             ScheduledFacility = dto.ScheduledFacility,
-            ScheduledStartTime = dto.ScheduledStartTime,
+            ScheduledStartTime = dto.ScheduledStartTime is null ? DateTime.MinValue : dto.ScheduledStartTime,
             Status = dto.Status,
             Weight = dto.Weight
         };
@@ -162,7 +162,7 @@ public static class CaseMapper
             ScheduledDevice = dto.ScheduledDevice,
             ScheduledDeviceAlias = dto.ScheduledDeviceAlias,
             ScheduledFacility = dto.ScheduledFacility,
-            ScheduledStartTime = dto.ScheduledStartTime,
+            ScheduledStartTime = dto.ScheduledStartTime is null ? DateTime.MinValue : dto.ScheduledStartTime,
             Status = dto.Status,
             Weight = dto.Weight,
             CaseToFacilityStatuses = dto.CaseToFacilityStatuses.ToEntities()
@@ -182,5 +182,37 @@ public static class CaseMapper
     public static IEnumerable<CaseWithStatusesDto> ToDTOsWithStatuses(this IEnumerable<Case> entities)
     {
         return entities.Select(e => e.ToDTOWithStatuses());
+    }
+
+    public static Case UpdateFieldsFromDto(this Case entity, CaseWithStatusesDto dto)
+    {
+        entity.ActualDevice = dto.ActualDevice;
+        entity.ActualDeviceAlias = dto.ActualDeviceAlias;
+        entity.ActualEndTime = dto.ActualEndTime;
+        entity.ActualFacility = dto.ActualFacility;
+        entity.ActualStartTime = dto.ActualStartTime;
+        entity.Age = dto.Age;
+        entity.ClientCaseId = dto.ClientCaseId;
+        entity.ClientId = dto.ClientId;
+        entity.ContainerSize = dto.ContainerSize;
+        entity.ContainerType = dto.ContainerType;
+        entity.CreatedBy = dto.CreatedBy;
+        entity.CreatedTime = dto.CreatedTime;
+        entity.Electricity = dto.Electricity;
+        entity.FirstName = dto.FirstName;
+        entity.Fuel = dto.Fuel;
+        entity.Gender = dto.Gender;
+        entity.IsObsolete = dto.IsObsolete;
+        entity.LastName = dto.LastName;
+        entity.ModifiedBy = dto.ModifiedBy;
+        entity.ModifiedTime = dto.ModifiedTime;
+        entity.PerformedBy = dto.PerformedBy;
+        entity.ScheduledDevice = dto.ScheduledDevice;
+        entity.ScheduledDeviceAlias = dto.ScheduledDeviceAlias;
+        entity.ScheduledFacility = dto.ScheduledFacility;
+        entity.ScheduledStartTime = dto.ScheduledStartTime is null ? DateTime.MinValue : dto.ScheduledStartTime;
+        entity.Status = dto.Status;
+        entity.Weight = dto.Weight;
+        return entity;
     }
 }
