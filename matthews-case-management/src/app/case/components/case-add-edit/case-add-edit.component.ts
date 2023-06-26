@@ -9,7 +9,7 @@ import { ContainerType } from 'src/app/models/container-type.model';
 import { ContainerSize } from 'src/app/models/load-size.model';
 import { MtxCalendarView, MtxDatetimepickerMode, MtxDatetimepickerType } from '@ng-matero/extensions/datetimepicker';
 import { CaseService } from 'src/app/services/cases.service';
-import { Subscription } from 'rxjs';
+import { Subscription, skip } from 'rxjs';
 import { StateService } from 'src/app/services/states.service';
 import { Device } from 'src/app/models/device.model';
 import { AuthService } from 'src/app/auth/auth.service';
@@ -90,8 +90,11 @@ export class CaseAddEditComponent implements OnInit {
 
     this.subs.add(this.stateService.devicesFromSite$.subscribe(devices => this.cremators = devices));
 
-    this.subs.add(this.stateService.selectedFacilityId$.subscribe(f => {
+    this.subs.add(this.stateService.selectedFacilityId$.pipe(skip(1)).subscribe(f => {
       this.selectedFacilityId = f;
+      // this.router.navigate([``]);
+      this.subs.add(this.facilityStatusService.getAllStatusesByFacility(this.selectedFacilityId)
+            .subscribe(fStatuses => this.allFacilityStatuses = fStatuses));
     }));
 
     this.twelvehour = this.userSettingService.getUserSettingLastValue().timeformat == '12' ?? false;
@@ -105,8 +108,6 @@ export class CaseAddEditComponent implements OnInit {
         this.getCaseFromApi(id);
       }
     });
-
-    // this._shackBar.showNotification('Neka poruka', 'warning');
 
     // debugger;
   }
@@ -134,9 +135,12 @@ export class CaseAddEditComponent implements OnInit {
           this.caseForm.get('scheduledStartDateTime')?.setValue(new Date(response.scheduledStartTime));
         }
 
-        if (response.scheduledFacility != undefined) {
+        if (response.scheduledFacility != undefined && response.scheduledFacility != this.GUID_EMPTY) {
+          this.stateService.setSelectedFacility(response.scheduledFacility);
           this.subs.add(this.facilityStatusService.getAllStatusesByFacility(response.scheduledFacility)
             .subscribe(fStatuses => this.allFacilityStatuses = fStatuses));
+        } else {
+          this.router.navigate([``]);
         }
       });
   }

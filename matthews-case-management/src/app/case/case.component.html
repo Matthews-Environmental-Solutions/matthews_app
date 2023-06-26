@@ -6,7 +6,7 @@
       <span class="spacer"></span>
 
       <div class="toolbar-buttons">
-        <button mat-raised-button class="btn-color-green padding-left" [routerLink]="['/case']">
+        <button mat-raised-button class="btn-color-green padding-left" [routerLink]="['/case']" [disabled]="this.selectedFacilityId == ''">
           <mat-icon>add_circle</mat-icon>
           {{"addCase" | translate}}
         </button>

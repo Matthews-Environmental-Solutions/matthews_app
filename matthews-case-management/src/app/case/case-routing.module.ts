@@ -4,6 +4,7 @@ import { CaseCalendarComponent } from './components/case-calendar/case-calendar.
 import { CaseAddEditComponent } from './components/case-add-edit/case-add-edit.component';
 import { CaseComponent } from './case.component';
 import { FacilityComponent } from './components/facility/facility.component';
+import { CaseAddEditGuard } from './case-add-edit-guard.service';
 
 const routes: Routes = [
   {
@@ -14,11 +15,12 @@ const routes: Routes = [
       },
       {
         path: 'case',
-        component: CaseAddEditComponent
+        component: CaseAddEditComponent,
+        canActivate: [CaseAddEditGuard]
       },
       {
         path: 'case/:id',
-        component: CaseAddEditComponent
+        component: CaseAddEditComponent,
       },
       {
         path: 'facility',
