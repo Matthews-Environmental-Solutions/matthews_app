@@ -39,6 +39,7 @@ export class CaseAddEditComponent implements OnInit {
   private UNSCHEDULED: number = 0;
   private WAITING_FOR_PERMIT: number = 4;
   private GUID_EMPTY: string = '00000000-0000-0000-0000-000000000000';
+  private DATETIME_MIN: string = '0001-01-01T00:00:00';
 
   title: string = 'addNewCase';
 
@@ -146,7 +147,7 @@ export class CaseAddEditComponent implements OnInit {
         this.caseForm.get('containerSize')?.setValue(response.containerSize);
 
 
-        if (response.scheduledStartTime && response.scheduledStartTime !== '0001-01-01T00:00:00') {
+        if (response.scheduledStartTime && response.scheduledStartTime !== this.DATETIME_MIN) {
           this.caseForm.get('scheduledStartDateTime')?.setValue(new Date(response.scheduledStartTime));
         }
 
@@ -229,12 +230,12 @@ export class CaseAddEditComponent implements OnInit {
     });
 
     // set STATUS to UNSCHEDULED
-    if (this.case.scheduledDevice == this.GUID_EMPTY || this.case.scheduledStartTime == '0001-01-01T00:00:00' || this.case.scheduledFacility == this.GUID_EMPTY) {
+    if (this.case.scheduledDevice == this.GUID_EMPTY || this.case.scheduledStartTime == this.DATETIME_MIN || this.case.scheduledFacility == this.GUID_EMPTY) {
       this.case.status = this.UNSCHEDULED; // 0
     }
 
     // set STATUS to WAITING_FOR_PERMIT
-    if (this.case.scheduledDevice != this.GUID_EMPTY && this.case.scheduledStartTime != '0001-01-01T00:00:00' && this.case.scheduledFacility != this.GUID_EMPTY) {
+    if (this.case.scheduledDevice != this.GUID_EMPTY && this.case.scheduledStartTime != this.DATETIME_MIN && this.case.scheduledFacility != this.GUID_EMPTY) {
       this.case.status = this.WAITING_FOR_PERMIT; // 4
     }
 
