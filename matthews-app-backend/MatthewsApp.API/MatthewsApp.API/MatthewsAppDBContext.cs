@@ -88,17 +88,6 @@ public class MatthewsAppDBContext : DbContext, IMatthewsAppDBContext
         .WithMany(e => e.Cases)
         .UsingEntity<CaseToFacilityStatus>();
 
-        //modelBuilder.Entity<CaseToFacilityStatus>()
-        //    .HasOne<Case>(cf => cf.Case)
-        //    .WithMany(c => c.CaseToFacilityStatuses)
-        //    .HasForeignKey(c => c.CaseId);
-
-        //modelBuilder.Entity<CaseToFacilityStatus>()
-        //    .HasOne<FacilityStatus>(cf => cf.FacilityStatus)
-        //    .WithMany(c => c.CaseToFacilityStatuses)
-        //    .HasForeignKey(c => c.FacilityStatusId);
-
-
         base.OnModelCreating(modelBuilder);
     }
 }

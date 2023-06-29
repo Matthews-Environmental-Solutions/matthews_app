@@ -154,14 +154,9 @@ public class CaseController : Controller
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<CaseWithStatusesDto>> GetCase(string id)
+    public async Task<ActionResult<CaseWithStatusesDto>> GetCase(Guid id)
     {
-        if (!Guid.TryParse(id, out var idParsed))
-        {
-            return BadRequest();
-        }
-
-        Case Case = await service.GetById(idParsed);
+        Case Case = await service.GetById(id);
 
         if (Case == null)
         {
