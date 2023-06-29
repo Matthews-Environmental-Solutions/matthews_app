@@ -51,6 +51,8 @@ export class CaseComponent implements OnInit {
   ngOnInit(): void {
     this.subs.add(this.i4connectedService.getSites().subscribe(data => {
       this.facilities = data;
+      this.userSetting = this.userSettingService.getUserSettingLastValue();
+      this.selectedFacilityId = this.userSetting.lastUsedFacilityId;
     }));
 
     this.subs.add(this.stateService.selectedFacilityId$.pipe(skip(1)).subscribe(fId => {
@@ -97,6 +99,11 @@ export class CaseComponent implements OnInit {
 
   facilityChanged(facilityId: MatSelectChange): void {
     this.stateService.setSelectedFacility(facilityId.value);
+
+    this.userSetting = this.userSettingService.getUserSettingLastValue();
+    this.userSetting.lastUsedFacilityId = facilityId.value;
+    localStorage.setItem(this.userSetting.username, JSON.stringify(this.userSetting));
+    this.userSettingService.setUserSetting(this.userSetting);
   }
 
 }
