@@ -49,6 +49,12 @@ export class CaseCalendarWeeklyComponent implements OnInit {
         this.getCasesByWeek();
       }
     }));
+
+    this.subs.add(this.stateService.caseSaved$.pipe(skip(1)).subscribe(data => {
+      if (!this.isEmptyString(this.selectedFacilityId) && this.firstDateInWeek) {
+        this.getCasesByWeek();
+      }
+    }));
   }
 
   ngOnDestroy(): void {

@@ -53,6 +53,7 @@ export class CaseComponent implements OnInit {
       this.facilities = data;
       this.userSetting = this.userSettingService.getUserSettingLastValue();
       this.selectedFacilityId = this.userSetting.lastUsedFacilityId;
+      this.stateService.setSelectedFacility( this.selectedFacilityId);
     }));
 
     this.subs.add(this.stateService.selectedFacilityId$.pipe(skip(1)).subscribe(fId => {
