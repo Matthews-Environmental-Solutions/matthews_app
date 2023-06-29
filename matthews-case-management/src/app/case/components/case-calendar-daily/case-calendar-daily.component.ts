@@ -1,7 +1,7 @@
 import { Component, Input, OnInit, Output, EventEmitter, SimpleChanges } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable, Subscription, of, take } from 'rxjs';
+import { Observable, Subscription, of, skip, take } from 'rxjs';
 import { Case } from 'src/app/models/case.model';
 import { CaseService } from 'src/app/services/cases.service';
 import { StateService } from 'src/app/services/states.service';
@@ -57,6 +57,12 @@ export class CaseCalendarDailyComponent implements OnInit {
     }));
 
     this.subs.add(this.stateService.devicesFromSite$.subscribe(devices => {
+      if (!this.isEmptyString(this.selectedFacilityId) && this.selectedDay) {
+        this.getCasesByDate();
+      }
+    }));
+
+    this.subs.add(this.stateService.caseSaved$.pipe(skip(1)).subscribe(data => {
       if (!this.isEmptyString(this.selectedFacilityId) && this.selectedDay) {
         this.getCasesByDate();
       }
