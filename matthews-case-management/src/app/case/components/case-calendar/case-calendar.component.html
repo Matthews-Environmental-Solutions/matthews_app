@@ -25,12 +25,12 @@
             </mat-menu>
 
             <div class="header-right-period-buttons">
-                <button mat-button aria-label="pick date" [ngClass]="{'selected-button': this.daily}"
-                    (click)="switchCalendarView(true)">
+                <button mat-button aria-label="pick date" [ngClass]="{'selected-button': this.calendarView == 'byDay'}"
+                    (click)="switchCalendarView('byDay')">
                     {{"day" | translate}}
                 </button>
-                <button mat-button aria-label="pick date" [ngClass]="{'selected-button': !this.daily}"
-                    (click)="switchCalendarView(false)">
+                <button mat-button aria-label="pick date" [ngClass]="{'selected-button': this.calendarView == 'byWeek'}"
+                    (click)="switchCalendarView('byWeek')">
                     {{"week" | translate}}
                 </button>
             </div>
@@ -52,7 +52,7 @@
     </div>
 
     <div class="card-content-list">
-        <case-calendar-daily *ngIf="daily" [days]="days"></case-calendar-daily>
-        <case-calendar-weekly *ngIf="!daily" [days]="days"></case-calendar-weekly>
+        <case-calendar-daily *ngIf="calendarView == 'byDay'" [days]="days"></case-calendar-daily>
+        <case-calendar-weekly *ngIf="calendarView == 'byWeek'" [days]="days"></case-calendar-weekly>
     </div>
 </mat-card>

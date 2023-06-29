@@ -13,7 +13,7 @@ import { UserSettingService } from 'src/app/services/user-setting.service';
 })
 export class CaseCalendarComponent implements OnInit, OnDestroy {
 
-  daily: boolean = true;
+  calendarView: 'byDay' | 'byWeek' = 'byDay';
   numberOfCases: number = 0;
   selectedDay: Date = new Date();
   hiddenDayForNavigation: Date = new Date(this.selectedDay);
@@ -36,6 +36,7 @@ export class CaseCalendarComponent implements OnInit, OnDestroy {
       .pipe(skip(1))
       .subscribe(setting => {
         this.startDayOfWeek = setting.startDayOfWeek;
+        this.calendarView = setting.lastUsedCalendarView;
       }));
 
     this.subs.add(this.userSettingService.userSettings$.subscribe(s => {
@@ -53,14 +54,19 @@ export class CaseCalendarComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.getDays(this.selectedDay);
     this.selectedDay.setHours(0, 0, 0, 0);
+    this.calendarView = this.userSettingService.getUserSettingLastValue().lastUsedCalendarView;
   }
 
   ngOnDestroy(): void {
     this.subs.unsubscribe();
   }
 
-  switchCalendarView(viewDaily: boolean) {
-    this.daily = viewDaily;
+  switchCalendarView(viewDaily: 'byDay' | 'byWeek') {
+    this.calendarView = viewDaily;
+    let userSetting = this.userSettingService.getUserSettingLastValue();
+    userSetting.lastUsedCalendarView = viewDaily;
+    localStorage.setItem(userSetting.username, JSON.stringify(userSetting));
+    this.userSettingService.setUserSetting(userSetting);
   }
 
   previousWeek() {
