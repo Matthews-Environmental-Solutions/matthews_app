@@ -71,29 +71,14 @@
     "facilityStatusNotDeleted": "Facility status is not deleted",
     "deleteStatusConfirmation": "Are you sure to delete status?",
     "facility": "Facility",
+    "allCases": "All cases",
+    "selectedFacilityOnly": "By selected facility",
+    "pickIcon": "Pick the icon",
 
 
     "title": "Service feedback for {{company}}",
     "name": {
         "label": "Name",
         "placeholder": "Enter Name"
-    },
-    "comment": {
-        "label": "Comment",
-        "placeholder": "Enter Comment"
-    },
-    "rating": {
-        "label": "Rate our customer service: ",
-        "options": {
-            "excellent": "Excellent",
-            "good": "Good",
-            "bad": "Bad"
-        }
-    },
-    "submit": {
-        "label": "Submit"
-    },
-    "requiredErrorMessage": "This is a required field.",
-    "successfulSubmitMessage": "Thanks for your valuable feedback!!!\nThe feedback has been submitted successfully.",
-    "copyright": "All rights reserved. {{currentYear}} {{company}}"
+    }
 }

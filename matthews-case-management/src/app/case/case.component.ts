@@ -26,8 +26,10 @@ export class CaseComponent implements OnInit {
   facilities: Facility[] = [];
   selectedFacilityId: string = '';
   unscheduledCases: Case[] = [];
+  filteredUnscheduledCases: Case[] = [];
   loggedInUser: UserInfoAuth | undefined;
   userSetting: UserSettingData | undefined;
+  clickedFacilityFilterButton: string = 'all';
 
   private subs = new Subscription();
 
@@ -58,10 +60,15 @@ export class CaseComponent implements OnInit {
 
     this.subs.add(this.stateService.selectedFacilityId$.pipe(skip(1)).subscribe(fId => {
       this.selectedFacilityId = fId;
+      this.caseService.getUnscheduledCases().subscribe(cases => this.filterCases(cases));
     }));
 
     this.subs.add(this.stateService.caseSaved$.pipe(skip(1)).subscribe(c => {
-      this.caseService.getUnscheduledCases().subscribe(cases => this.unscheduledCases = cases);
+      this.caseService.getUnscheduledCases().subscribe(cases => this.filterCases(cases));
+    }));
+
+    this.subs.add(this.stateService.filterUnscheduledCasesByFacilityId$.subscribe(c => {
+      this.caseService.getUnscheduledCases().subscribe(cases => this.filterCases(cases));
     }));
   }
 
@@ -107,4 +114,17 @@ export class CaseComponent implements OnInit {
     this.userSettingService.setUserSetting(this.userSetting);
   }
 
+  onFacilityFilterClick(facilityIdFilter: 'all' | 'bySelectedFacility') {
+    this.clickedFacilityFilterButton = facilityIdFilter;
+    this.stateService.setFilterUnscheduledCasesByFacilityId(facilityIdFilter);
+  }
+
+  wasIClicked(buttonId : string) : 'primary' | 'accent' {
+    return this.clickedFacilityFilterButton == buttonId ? 'accent' : 'primary';
+  }
+
+  filterCases(cases: Case[]){
+    this.unscheduledCases = cases;
+    this.filteredUnscheduledCases = this.clickedFacilityFilterButton == 'all' ? this.unscheduledCases : this.unscheduledCases.filter(c => c.scheduledFacility == this.selectedFacilityId);
+  }
 }

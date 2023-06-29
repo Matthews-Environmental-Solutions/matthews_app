@@ -62,12 +62,12 @@ export class CaseService {
 
     save(caseForSave: Case): Observable<void> {
         return this.httpClient.post<void>(`${this.apiURL}/Case/Save`, caseForSave)
-        .pipe(catchError(this.handleError));
+            .pipe(catchError(this.handleError));
     }
 
     update(caseForSave: Case): Observable<void> {
         return this.httpClient.put<void>(`${this.apiURL}/Case/UpdateWithStatuses`, caseForSave)
-        .pipe(catchError(this.handleError));
+            .pipe(catchError(this.handleError));
     }
 
     formatDate(date: Date): string {
@@ -126,7 +126,7 @@ export class CaseService {
 
         item.scheduledStartTime = item.scheduledStartTime && item.scheduledStartTime?.length > 0 ? this.formatDateAndTime(item.scheduledStartTime) : '';
 
-        
+
         return item;
     }
 
@@ -148,24 +148,24 @@ export class CaseService {
 
     formatDateAndTime(date: string): string {
         var d = new Date(date),
-          month = '' + (d.getMonth() + 1),
-          day = '' + d.getDate(),
-          year = d.getFullYear(),
-          hour = '' + d.getHours(),
-          minute = '' + d.getMinutes(),
-          second = '' + d.getSeconds();
-    
+            month = '' + (d.getMonth() + 1),
+            day = '' + d.getDate(),
+            year = d.getFullYear(),
+            hour = '' + d.getHours(),
+            minute = '' + d.getMinutes(),
+            second = '' + d.getSeconds();
+
         if (month.length < 2)
-          month = '0' + month;
+            month = '0' + month;
         if (day.length < 2)
-          day = '0' + day;
+            day = '0' + day;
         if (hour.length < 2)
-        hour = '0' + hour;
+            hour = '0' + hour;
         if (minute.length < 2)
-        minute = '0' + minute;
+            minute = '0' + minute;
         if (second.length < 2)
-        second = '0' + second;
-    
+            second = '0' + second;
+
         return year + '-' + month + '-' + day + 'T' + hour + ':' + minute + ':' + second;
-      }
+    }
 }

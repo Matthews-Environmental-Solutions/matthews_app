@@ -20,8 +20,10 @@ export class CaseCalendarDailyComponent implements OnInit {
   @Output() selectedDayChange = new EventEmitter<Date>();
 
   cases: Case[] = [];
+  filteredCases: Case[] = [];
   selectedDay!: Date;
   selectedFacilityId!: string;
+  filterDeviceId: string = 'all';
 
   buttonUsed: number = 0;
   iconName: string = 'check_circle';
@@ -67,6 +69,13 @@ export class CaseCalendarDailyComponent implements OnInit {
         this.getCasesByDate();
       }
     }));
+
+    this.subs.add(this.stateService.filterCasesByDeviceId$.subscribe(criterium => {
+      this.filterDeviceId = criterium;
+      if (!this.isEmptyString(this.selectedFacilityId) && this.selectedDay) {
+        this.getCasesByDate();
+      }
+    }));
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -83,6 +92,7 @@ export class CaseCalendarDailyComponent implements OnInit {
     this.loader = true;
     this.caseService.getScheduledCasesByDay(this.selectedFacilityId, this.selectedDay).subscribe((response: any) => {
       this.cases = response;
+      this.filteredCases = this.filterDeviceId == 'all' ? response : this.cases.filter(c => c.scheduledDevice == this.filterDeviceId);
       this.stateService.parseCasesByDevices(this.cases);
       this.loader = false;
     });

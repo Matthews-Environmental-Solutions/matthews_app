@@ -71,29 +71,14 @@
     "facilityStatusNotDeleted": "Der Einrichtungsstatus wird nicht gelöscht",
     "deleteStatusConfirmation": "Möchten Sie den Status wirklich löschen?",
     "facility": "Einrichtung",
+    "allCases": "Alle Fälle",
+    "selectedFacilityOnly": "Nach ausgewählter Einrichtung",
+    "pickIcon": "Wählen Sie das Symbol aus",
 
 
     "title": "Service-Feedback für {{company}}",
     "name": {
         "label": "Namen",
         "placeholder": "Name eingeben"
-    },
-    "comment": {
-        "label": "Kommentar",
-        "placeholder": "Kommentar eingeben"
-    },
-    "rating": {
-        "label": "Bewerten Sie unseren Kundenservice:",
-        "options": {
-            "excellent": "Ausgezeichnet",
-            "good": "Gute",
-            "bad": "Schlecht"
-        }
-    },
-    "submit": {
-        "label": "Senden"
-    },
-    "requiredErrorMessage": "Dies ist ein Pflichtfeld.",
-    "successfulSubmitMessage": "Vielen Dank für Ihr wertvolles Feedback!!!\nDas Feedback wurde erfolgreich übermittelt.",
-    "copyright": "Alle Rechte vorbehalten. {{currentYear}} {{company}}"
+    }
 }

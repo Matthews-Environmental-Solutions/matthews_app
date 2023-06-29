@@ -33,6 +33,12 @@ export class StateService {
     public caseSaved$: Observable<string>;
     private caseSavedBehaviorSubject = new BehaviorSubject<string>(this.getDefaultCaseSaved());
 
+    public filterCasesByDeviceId$: Observable<string>;
+    private filterCasesByDeviceIdBehaviorSubject = new BehaviorSubject<string>(this.getDefaultFilterCasesByDeviceId());
+
+    public filterUnscheduledCasesByFacilityId$: Observable<'all' | 'bySelectedFacility'>;
+    private filterUnscheduledCasesByFacilityIdBehaviorSubject = new BehaviorSubject<'all' | 'bySelectedFacility'>(this.getDefaultFilterUnscheduledCasesByFacilityId());
+
     constructor(private calendarService: CalendarService, private userSettingService: UserSettingService, private i4connectedService: I4connectedService) {
         this.selectedFacilityId$ = this.selectedFacilityIdBehaviorSubject;
         this.selectedDate$ = this.selectedDateBehaviorSubject;
@@ -41,6 +47,8 @@ export class StateService {
         this.devicesToShowAsFilter$ = this.devicesToShowAsFilterBehaviorSubject;
         this.numberOfCasesToShowAsFilter$ = this.numberOfCasesToShowAsFilterBehaviorSubject;
         this.caseSaved$ = this.caseSavedBehaviorSubject;
+        this.filterCasesByDeviceId$ = this.filterCasesByDeviceIdBehaviorSubject;
+        this.filterUnscheduledCasesByFacilityId$ = this.filterUnscheduledCasesByFacilityIdBehaviorSubject;
     }
 
 
@@ -149,4 +157,33 @@ export class StateService {
     getDefaultCaseSaved(): string{
         return uuidv4();
     }
+
+
+    // filterCasesByDeviceIdBehaviorSubject
+    setFilterCasesByDeviceId(deviceId: string): void {
+        this.filterCasesByDeviceIdBehaviorSubject.next(deviceId);
+    }
+
+    getFilterCasesByDeviceId(): string {
+        return this.filterCasesByDeviceIdBehaviorSubject.value;
+    }
+
+    getDefaultFilterCasesByDeviceId() : string {
+        return 'all';
+    }
+
+
+    // filterUnscheduledCasesByFacilityIdBehaviorSubject
+    setFilterUnscheduledCasesByFacilityId(facilityId: 'all' | 'bySelectedFacility'): void {
+        this.filterUnscheduledCasesByFacilityIdBehaviorSubject.next(facilityId);
+    }
+
+    getFilterUnscheduledCasesByFacilityId(): string {
+        return this.filterUnscheduledCasesByFacilityIdBehaviorSubject.value;
+    }
+
+    getDefaultFilterUnscheduledCasesByFacilityId() : 'all' | 'bySelectedFacility' {
+        return 'all';
+    }
+
 }

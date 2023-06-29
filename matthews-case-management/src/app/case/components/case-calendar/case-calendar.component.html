@@ -39,16 +39,16 @@
 
     <div class="card-header-filter">
         <span>
-            {{"all" | translate}} ({{numberOfCases}})
+            <button mat-button color="{{wasIClicked('all')}}" (click)="onDeviceFilterClick('all')">{{"all" | translate}} ({{numberOfCases}})</button>
             <ng-container *ngFor="let device of devices">
-                | {{device.alias}} ({{device.numberOfAttachedCases}})
+                | <button mat-button color="{{wasIClicked(device.id)}}" (click)="onDeviceFilterClick(device.id)">{{device.alias}} ({{device.numberOfAttachedCases}})</button>
             </ng-container>
         </span>
 
         <!-- <span>ALL (35) | DEV 1 (17) | DEV 2 (4) | DEV 3 (14)</span> -->
-        <div>
+        <!-- <div>
             <span>Order by:</span>
-        </div>
+        </div> -->
     </div>
 
     <div class="card-content-list">

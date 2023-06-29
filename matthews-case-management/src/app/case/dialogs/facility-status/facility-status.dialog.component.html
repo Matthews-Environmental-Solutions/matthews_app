@@ -40,7 +40,7 @@
 
         <mat-expansion-panel hideToggle>
             <mat-expansion-panel-header>
-                <mat-panel-title>Pick the icon</mat-panel-title>
+                <mat-panel-title>{{'pickIcon' | translate}}</mat-panel-title>
             </mat-expansion-panel-header>
             <div class="icons-container">
                 <ng-container *ngFor="let ico of icons">
@@ -63,6 +63,6 @@
 </form>
 
 <div mat-dialog-actions>
-    <button mat-button (click)="save()" cdkFocusInitial [disabled]="!statusForm.valid">Save</button>
-    <button mat-button (click)="onNoClick()">Cancel</button>
+    <button mat-button (click)="save()" cdkFocusInitial [disabled]="!statusForm.valid">{{'save' | translate}}</button>
+    <button mat-button (click)="onNoClick()">{{'cancel' | translate}}</button>
 </div>

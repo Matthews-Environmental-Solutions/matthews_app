@@ -44,7 +44,7 @@
     <mat-progress-bar *ngIf="loader" mode="indeterminate" class="indeterminate-progress-bar"></mat-progress-bar>
 
     <div class="daily-list">
-        <ng-container *ngFor="let case of cases">
+        <ng-container *ngFor="let case of filteredCases">
             <div class="daily-list-item">
 
                 <div class="left-cells">

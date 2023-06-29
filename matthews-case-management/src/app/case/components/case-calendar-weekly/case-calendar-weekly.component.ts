@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 import { Subscription, skip } from 'rxjs';
 import { Case } from 'src/app/models/case.model';
 import { CaseService } from 'src/app/services/cases.service';
@@ -15,9 +16,11 @@ export class CaseCalendarWeeklyComponent implements OnInit {
   days!: Date[];
 
   cases: Case[] = [];
+  filteredCases: Case[] = [];
   selectedFacilityId!: string;
   firstDateInWeek!: Date;
   loader: boolean = false;
+  filterDeviceId: string = 'all';
 
   casesForDay1: Case[] = [];
   casesForDay2: Case[] = [];
@@ -29,7 +32,7 @@ export class CaseCalendarWeeklyComponent implements OnInit {
 
   private subs = new Subscription();
 
-  constructor(private caseService: CaseService, private stateService: StateService) {
+  constructor(private translate: TranslateService, private caseService: CaseService, private stateService: StateService) {
   }
 
   ngOnInit(): void {
@@ -55,6 +58,13 @@ export class CaseCalendarWeeklyComponent implements OnInit {
         this.getCasesByWeek();
       }
     }));
+
+    this.subs.add(this.stateService.filterCasesByDeviceId$.subscribe(criterium => {
+      this.filterDeviceId = criterium;
+      if (!this.isEmptyString(this.selectedFacilityId) && this.firstDateInWeek) {
+        this.getCasesByWeek();
+      }
+    }));
   }
 
   ngOnDestroy(): void {
@@ -63,17 +73,18 @@ export class CaseCalendarWeeklyComponent implements OnInit {
 
   getCasesByWeek(): void {
     this.loader = true;
-    this.casesForDay1 = [];
-    this.casesForDay2 = [];
-    this.casesForDay3 = [];
-    this.casesForDay4 = [];
-    this.casesForDay5 = [];
-    this.casesForDay6 = [];
-    this.casesForDay7 = [];
 
     this.caseService.getScheduledCasesByWeek(this.selectedFacilityId, this.firstDateInWeek).subscribe((response: any) => {
-      console.log(response);
+      this.casesForDay1 = [];
+      this.casesForDay2 = [];
+      this.casesForDay3 = [];
+      this.casesForDay4 = [];
+      this.casesForDay5 = [];
+      this.casesForDay6 = [];
+      this.casesForDay7 = [];
+
       this.cases = response;
+      this.filteredCases = this.filterDeviceId == 'all' ? response : this.cases.filter(c => c.scheduledDevice == this.filterDeviceId);
       this.parseCasesByDays();
       this.stateService.parseCasesByDevices(this.cases);
       this.loader = false;
@@ -81,7 +92,7 @@ export class CaseCalendarWeeklyComponent implements OnInit {
   }
 
   parseCasesByDays(): void {
-    this.cases.forEach(c => {
+    this.filteredCases.forEach(c => {
       if (this.formatStringDate(c.scheduledStartTime) == this.formatDate(this.days[0])) {
         this.casesForDay1.push(c);
       }
@@ -107,11 +118,12 @@ export class CaseCalendarWeeklyComponent implements OnInit {
   }
 
   getDayForButton(indexNumber: number): string {
-    return `${this.days[indexNumber].getDate().toString()} ${this.days[indexNumber].toLocaleString('en-us', { month: 'short' })}`;
+    let currentLang = this.translate.store.currentLang;
+    return `${this.days[indexNumber].getDate().toString()} ${this.days[indexNumber].toLocaleString(currentLang, { month: 'short' })}`;
   }
 
   formatStringDate(dateString: string | undefined): string {
-    if(!dateString){
+    if (!dateString) {
       return '';
     }
     let date = new Date(dateString);

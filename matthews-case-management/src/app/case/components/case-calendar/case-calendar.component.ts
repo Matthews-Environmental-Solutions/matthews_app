@@ -21,6 +21,7 @@ export class CaseCalendarComponent implements OnInit, OnDestroy {
   weekNumber: number | undefined;
   startDayOfWeek: 0 | 1 = 1;
   devices: Device[] = [];
+  clickedDeviceFilterButton: string = 'all';
 
   private subs = new Subscription();
 
@@ -105,4 +106,13 @@ export class CaseCalendarComponent implements OnInit, OnDestroy {
   }
 
   isEmptyString = (data: string): boolean => typeof data === "string" && data.trim().length == 0;
+
+  onDeviceFilterClick(deviceIdFilter: string) {
+    this.clickedDeviceFilterButton = deviceIdFilter;
+    this.stateService.setFilterCasesByDeviceId(deviceIdFilter);
+  }
+
+  wasIClicked(buttonId : string) : 'primary' | 'accent' {
+    return this.clickedDeviceFilterButton == buttonId ? 'accent' : 'primary';
+  }
 }
