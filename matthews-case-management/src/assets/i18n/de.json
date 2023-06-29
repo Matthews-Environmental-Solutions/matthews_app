@@ -70,6 +70,7 @@
     "facilityStatusSuccessfullyDeleted": "Der Einrichtungsstatus wurde erfolgreich gelöscht",
     "facilityStatusNotDeleted": "Der Einrichtungsstatus wird nicht gelöscht",
     "deleteStatusConfirmation": "Möchten Sie den Status wirklich löschen?",
+    "facility": "Einrichtung",
 
 
     "title": "Service-Feedback für {{company}}",

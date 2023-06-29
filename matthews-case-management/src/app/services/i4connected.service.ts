@@ -38,6 +38,7 @@ export class I4connectedService {
                             devices.forEach(d => objs.push(new Device (d.id, d.alias, d.adapterId, 0)));
 
                             return objs.filter(d => d.adapterId != null);
+                            // return objs;
                         })
                     );
                 })

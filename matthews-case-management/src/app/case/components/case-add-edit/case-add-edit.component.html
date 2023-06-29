@@ -3,11 +3,11 @@
         <mat-toolbar class="add-edit-toolbar">
             <span>{{title | translate}}</span>
             <span class="spacer"></span>
-            <button mat-raised-button class="add-edit-header-buttons btn-cancel" routerLink="/">
+            <button mat-raised-button class="add-edit-header-buttons" routerLink="/">
                 <mat-icon class="material-symbols-outlined">cancel</mat-icon>
                 {{"cancel" | translate}}
             </button>
-            <button mat-raised-button [disabled]="!caseForm.valid" class="add-edit-header-buttons btn-save"
+            <button mat-raised-button [disabled]="!caseForm.valid" class="add-edit-header-buttons"
                 type="submit">
                 <mat-icon class="material-symbols-outlined">check_circle</mat-icon>
                 {{"save" | translate}}
@@ -105,6 +105,30 @@
 
             <div class="middle-column">
                 <mat-error
+                    *ngIf="caseForm.get('facility')?.invalid && (caseForm.get('facility')?.dirty || caseForm.get('facility')?.touched)">
+                    <span *ngIf="caseForm.get('facility')?.errors?.['required']">
+                        Facility is required.
+                    </span>
+                </mat-error>
+                <mat-form-field appearance="fill">
+                    <mat-label>{{"facility" | translate}}</mat-label>
+                    <mat-select formControlName="facility" (selectionChange)="facilityChanged($event)">
+                        <mat-option *ngFor="let facility of facilities" [value]="facility.id">
+                            {{facility.name}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+
+                <mat-form-field appearance="fill">
+                    <mat-label>{{"cremator" | translate}}</mat-label>
+                    <mat-select formControlName="scheduledDevice">
+                        <mat-option *ngFor="let cremator of cremators" [value]="cremator.id">
+                            {{cremator.alias}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+
+                <mat-error
                     *ngIf="caseForm.get('containerType')?.invalid && (caseForm.get('containerType')?.dirty || caseForm.get('containerType')?.touched)">
                     <span *ngIf="caseForm.get('containerType')?.errors?.['required']">
                         Container type is required.
@@ -119,7 +143,6 @@
                     </mat-select>
                 </mat-form-field>
 
-
                 <mat-error
                     *ngIf="caseForm.get('containerSize')?.invalid && (caseForm.get('containerSize')?.dirty || caseForm.get('containerSize')?.touched)">
                     <span *ngIf="caseForm.get('containerSize')?.errors?.['required']">
@@ -131,15 +154,6 @@
                     <mat-select formControlName="containerSize">
                         <mat-option *ngFor="let loadSize of containerSizes" [value]="loadSize.id">
                             {{loadSize.name}}
-                        </mat-option>
-                    </mat-select>
-                </mat-form-field>
-
-                <mat-form-field appearance="fill">
-                    <mat-label>{{"cremator" | translate}}</mat-label>
-                    <mat-select formControlName="scheduledDevice">
-                        <mat-option *ngFor="let cremator of cremators" [value]="cremator.id">
-                            {{cremator.alias}}
                         </mat-option>
                     </mat-select>
                 </mat-form-field>

@@ -16,7 +16,7 @@ const routes: Routes = [
       {
         path: 'case',
         component: CaseAddEditComponent,
-        canActivate: [CaseAddEditGuard]
+        // canActivate: [CaseAddEditGuard]
       },
       {
         path: 'case/:id',

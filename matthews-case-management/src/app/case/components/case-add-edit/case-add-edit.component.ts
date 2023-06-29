@@ -9,7 +9,7 @@ import { ContainerType } from 'src/app/models/container-type.model';
 import { ContainerSize } from 'src/app/models/load-size.model';
 import { MtxCalendarView, MtxDatetimepickerMode, MtxDatetimepickerType } from '@ng-matero/extensions/datetimepicker';
 import { CaseService } from 'src/app/services/cases.service';
-import { Subscription, skip } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { StateService } from 'src/app/services/states.service';
 import { Device } from 'src/app/models/device.model';
 import { AuthService } from 'src/app/auth/auth.service';
@@ -20,6 +20,9 @@ import { FacilityStatus } from 'src/app/models/facility-status.model';
 import { FacilityStatusService } from 'src/app/services/facility-status.service';
 import { MatSelectionList } from '@angular/material/list';
 import { CaseToFacilityStatus } from 'src/app/models/case-to-facility-status.model';
+import { Facility } from 'src/app/models/facility.model';
+import { I4connectedService } from 'src/app/services/i4connected.service';
+import { MatSelectChange } from '@angular/material/select';
 
 @Component({
   selector: 'case-add-edit',
@@ -43,7 +46,8 @@ export class CaseAddEditComponent implements OnInit {
   containerSizes: ContainerSize[] = [{ id: 0, name: 'None' }, { id: 1, name: 'Infant' }, { id: 2, name: 'Standard' }, { id: 3, name: 'Bariatric' }];
   caseStatuses: CaseStatus[] = [];
   cremators: Device[] = [];
-  selectedFacilityId!: string;
+  facilities: Facility[] = [];
+  selectedFacilityId: string = this.GUID_EMPTY;
   allFacilityStatuses: FacilityStatus[] = [];
   selectedFacilityStatuses: FacilityStatus[] = [];
 
@@ -70,6 +74,7 @@ export class CaseAddEditComponent implements OnInit {
     private userSettingService: UserSettingService,
     private translate: TranslateService,
     private facilityStatusService: FacilityStatusService,
+    private i4connectedService: I4connectedService,
     private _shackBar: WfactorySnackBarService
   ) {
     this.caseForm = new FormGroup({
@@ -79,6 +84,7 @@ export class CaseAddEditComponent implements OnInit {
       weight: new FormControl('', [Validators.required]),
       gender: new FormControl('', [Validators.required]),
       age: new FormControl('', [Validators.required, Validators.pattern("^[0-9]*$"), Validators.maxLength(3)]),
+      facility: new FormControl('', [Validators.required]),
       containerType: new FormControl('', [Validators.required]),
       containerSize: new FormControl('', [Validators.required]),
       status: new FormControl('', { nonNullable: true }),
@@ -88,14 +94,20 @@ export class CaseAddEditComponent implements OnInit {
       selectedFacilityStatuses: new FormControl([], { nonNullable: false })
     });
 
-    this.subs.add(this.stateService.devicesFromSite$.subscribe(devices => this.cremators = devices));
+    // this.subs.add(this.stateService.devicesFromSite$.subscribe(devices => this.cremators = devices));
 
-    this.subs.add(this.stateService.selectedFacilityId$.pipe(skip(1)).subscribe(f => {
-      this.selectedFacilityId = f;
-      // this.router.navigate([``]);
-      this.subs.add(this.facilityStatusService.getAllStatusesByFacility(this.selectedFacilityId)
-            .subscribe(fStatuses => this.allFacilityStatuses = fStatuses));
+    this.subs.add(this.i4connectedService.getSites().subscribe(data => {
+      this.facilities = data;
     }));
+
+    // this.subs.add(this.stateService.selectedFacilityId$
+    //   // .pipe(skip(1))
+    //   .subscribe(f => {
+    //   this.selectedFacilityId = f;
+    //   // this.router.navigate([``]);
+    //   this.subs.add(this.facilityStatusService.getAllStatusesByFacility(this.selectedFacilityId)
+    //         .subscribe(fStatuses => this.allFacilityStatuses = fStatuses));
+    // }));
 
     this.twelvehour = this.userSettingService.getUserSettingLastValue().timeformat == '12' ?? false;
   }
@@ -120,6 +132,7 @@ export class CaseAddEditComponent implements OnInit {
     this.caseService.getCaseById(caseId)
       .subscribe(response => {
         this.case = response;
+        this.selectedFacilityId = response.scheduledFacility;
         this.caseForm.get('clientCaseId')?.setValue(response.clientCaseId);
         this.caseForm.get('firstName')?.setValue(response.firstName);
         this.caseForm.get('lastName')?.setValue(response.lastName);
@@ -127,18 +140,24 @@ export class CaseAddEditComponent implements OnInit {
         this.caseForm.get('gender')?.setValue(response.gender.toString());
         this.caseForm.get('age')?.setValue(response.age);
 
+        this.caseForm.get('facility')?.setValue(response.scheduledFacility);
+        this.caseForm.get('scheduledDevice')?.setValue(response.scheduledDevice);
         this.caseForm.get('containerType')?.setValue(response.containerType);
         this.caseForm.get('containerSize')?.setValue(response.containerSize);
-        this.caseForm.get('scheduledDevice')?.setValue(response.scheduledDevice);
+
 
         if (response.scheduledStartTime && response.scheduledStartTime !== '0001-01-01T00:00:00') {
           this.caseForm.get('scheduledStartDateTime')?.setValue(new Date(response.scheduledStartTime));
         }
 
         if (response.scheduledFacility != undefined && response.scheduledFacility != this.GUID_EMPTY) {
-          this.stateService.setSelectedFacility(response.scheduledFacility);
+          // this.stateService.setSelectedFacility(response.scheduledFacility);
           this.subs.add(this.facilityStatusService.getAllStatusesByFacility(response.scheduledFacility)
             .subscribe(fStatuses => this.allFacilityStatuses = fStatuses));
+
+          this.subs.add(this.i4connectedService.getDevicesByFacility(response.scheduledFacility)
+            .subscribe(devices => this.cremators = devices));
+
         } else {
           this.router.navigate([``]);
         }
@@ -148,6 +167,16 @@ export class CaseAddEditComponent implements OnInit {
   isStatusSelected(facilityStatus: FacilityStatus): boolean {
     let status = this.case?.caseToFacilityStatuses.find(f => f.facilityStatusId == facilityStatus.id);
     return (status != null) ? true : false;
+  }
+
+  facilityChanged(facilityId: MatSelectChange): void {
+    this.selectedFacilityId = facilityId.value;
+
+    this.subs.add(this.facilityStatusService.getAllStatusesByFacility(this.selectedFacilityId)
+      .subscribe(fStatuses => this.allFacilityStatuses = fStatuses));
+
+    this.subs.add(this.i4connectedService.getDevicesByFacility(this.selectedFacilityId)
+      .subscribe(devices => this.cremators = devices));
   }
 
   save() {
@@ -200,7 +229,7 @@ export class CaseAddEditComponent implements OnInit {
     });
 
     // set STATUS to UNSCHEDULED
-    if (this.case.scheduledDevice == this.GUID_EMPTY || this.case.scheduledStartTime == '0001-01-01T00:00:00' || this.case.scheduledFacility == this.GUID_EMPTY){
+    if (this.case.scheduledDevice == this.GUID_EMPTY || this.case.scheduledStartTime == '0001-01-01T00:00:00' || this.case.scheduledFacility == this.GUID_EMPTY) {
       this.case.status = this.UNSCHEDULED; // 0
     }
 

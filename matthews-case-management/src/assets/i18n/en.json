@@ -70,6 +70,7 @@
     "facilityStatusSuccessfullyDeleted": "Facility status is successfully deleted",
     "facilityStatusNotDeleted": "Facility status is not deleted",
     "deleteStatusConfirmation": "Are you sure to delete status?",
+    "facility": "Facility",
 
 
     "title": "Service feedback for {{company}}",
