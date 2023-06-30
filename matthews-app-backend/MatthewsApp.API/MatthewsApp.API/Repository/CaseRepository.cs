@@ -138,4 +138,12 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
         }
     }
 
+    public async Task<IEnumerable<Case>> GetCasesByFacility(Guid facilityId)
+    {
+        IEnumerable<Case> cases = await _dataContext.Cases.ToArrayAsync();
+        return cases.Where(c =>
+            c.IsObsolete == false
+            && c.ScheduledFacility.Equals(facilityId)
+            ).ToList();
+    }
 }

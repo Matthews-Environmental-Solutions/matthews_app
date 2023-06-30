@@ -23,6 +23,7 @@ public interface ICasesService
     Task<IEnumerable<Case>> GetUnscheduledCases();
     Task<IEnumerable<Case>> GetScheduledCasesByDay(Guid facilityId, DateTime date);
     Task<IEnumerable<Case>> GetScheduledCasesByWeek(Guid facilityId, DateTime dateStartDateOfWeek);
+    Task<IEnumerable<Case>> GetAllCasesByFacility(Guid facilityId);
 }
 
 public class CasesService : ICasesService
@@ -114,6 +115,22 @@ public class CasesService : ICasesService
         }
     }
 
+    public async Task<IEnumerable<Case>> GetAllCasesByFacility(Guid facilityId)
+    {
+        try
+        {
+            IEnumerable<Case> cases = await _caseRepository.GetCasesByFacility(facilityId);
+            return cases.Select(i => {
+                i.ScheduledStartTime = DateTime.SpecifyKind(i.ScheduledStartTime is null ? DateTime.MinValue : i.ScheduledStartTime.Value, DateTimeKind.Utc);
+                return i;
+            });
+        }
+        catch (Exception ex)
+        {
+            throw new Exception(ex.Message);
+        }
+    }
+
     public async Task<Case> GetById(Guid id)
     {
         try
@@ -132,5 +149,6 @@ public class CasesService : ICasesService
     {
         return _caseRepository.GetAll().Result.Any(e => e.Id == id);
     }
-            
+
+    
 }

@@ -9,6 +9,7 @@ namespace MatthewsApp.API.Repository.Interfaces;
 public interface ICaseRepository : IBaseRepository<Case, Guid>
 {
     Task<IEnumerable<Case>> GetAllUnscheduled();
+    Task<IEnumerable<Case>> GetCasesByFacility(Guid facilityId);
     Task<IEnumerable<Case>> GetScheduledCasesByDay(Guid facilityId, DateTime date);
     Task<IEnumerable<Case>> GetScheduledCasesByWeek(Guid facilityId, DateTime dateStartDateOfWeek);
     Task UpdateWithStatuses(CaseWithStatusesDto dto);

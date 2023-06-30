@@ -95,17 +95,15 @@ public class CaseController : Controller
     }
 
     [HttpGet]
-    [Route("GetAllCases")]
-    public async Task<ActionResult<IEnumerable<Case>>> GetAllCases()
+    [Route("GetAllCasesByFacility/{facilityId}")]
+    public async Task<ActionResult<IEnumerable<CaseDto>>> GetAllCasesByFacility(Guid facilityId)
     {
-        
         try
         {
-            return Ok(await service.GetAll());
+            return Ok((await service.GetAllCasesByFacility(facilityId)).ToDTOs());
         }
         catch (Exception ex)
         {
-
             return BadRequest(ex.Message);
         }
     }
