@@ -1,6 +1,7 @@
 
 using IdentityModel.AspNetCore.OAuth2Introspection;
 using MatthewsApp.API.Models;
+using MatthewsApp.API.Mqtt;
 using MatthewsApp.API.Repository;
 using MatthewsApp.API.Repository.Interfaces;
 using MatthewsApp.API.Services;
@@ -56,6 +57,7 @@ public class Startup
         //services.AddScoped<IMatthewsAppDBContext, MatthewsAppDBContext>();
         services.AddDbContext<IMatthewsAppDBContext, MatthewsAppDBContext>(options => options.UseSqlServer(connectionString));
 
+        services.AddHostedService<CaseMqttService>();
         services.AddScoped<ICasesService, CasesService>();
         services.AddScoped<ICaseRepository, CaseRepository>();
         services.AddScoped<IFacilityStatusService, FacilityStatusService>();
