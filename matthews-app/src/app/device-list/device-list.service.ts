@@ -1,8 +1,11 @@
+/* eslint-disable @typescript-eslint/quotes */
+/* eslint-disable max-len */
+/* eslint-disable quote-props */
 import { Injectable } from '@angular/core';
 import { AuthHttpService } from '../core/auth-http.service';
 import { environment } from '../../environments/environment';
 import { Device } from './device';
-import { Signal } from './Signal';
+import { Signal } from './signal';
 
 @Injectable({
   providedIn: 'root'

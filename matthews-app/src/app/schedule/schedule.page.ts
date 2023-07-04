@@ -1,3 +1,4 @@
+/* eslint-disable @angular-eslint/component-selector */
 import { Component, OnInit } from '@angular/core';
 import { AppStoreService } from '../app.store.service';
 import { ModalController } from '@ionic/angular';
@@ -40,8 +41,8 @@ export class SchedulePage implements OnInit {
 
   presentModal(selectedCase?: Case) {
     this.caseStore.openCaseModal(selectedCase ?
-      { ...selectedCase, facilityId: this.selectedFacilityId ?? this.defaultFacilityId } :
-      { facilityId : this.selectedFacilityId ?? this.defaultFacilityId } as Case);
+      { ...selectedCase, scheduledFacility: this.selectedFacilityId ?? this.defaultFacilityId } :
+      { scheduledFacility : this.selectedFacilityId ?? this.defaultFacilityId } as Case);
   }
 
   setDefaultValues() {

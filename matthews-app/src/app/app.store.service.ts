@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /* eslint-disable @typescript-eslint/member-ordering */
 import { Injectable } from '@angular/core';
 import { ModalController } from '@ionic/angular';
@@ -17,7 +18,7 @@ import { AuthService, ConsoleLogObserver } from 'ionic-appauth';
 import { LoadingService } from './core/loading.service';
 import { CremationProcessService } from './cremation-process/cremation-process.service';
 import { Measurement, SignalRService } from './core/signal-r.service';
-import { Signal } from './device-list/Signal';
+import { Signal } from './device-list/signal';
 
 export interface AppState {
     cases: Case[];
@@ -106,7 +107,7 @@ export class AppStoreService extends ComponentStore<AppState> {
 
     readonly updateSelectedDevice = this.updater((state: AppState, selectedDeviceId: string) => ({
       ...state,
-      selectedDevice: state.deviceList.find(device => device.id == selectedDeviceId)
+      selectedDevice: state.deviceList.find(device => device.id === selectedDeviceId)
     }));
 
     readonly updateSelectedFacility = this.updater((state: AppState, selectedFacility: Facility) => ({
@@ -141,7 +142,8 @@ export class AppStoreService extends ComponentStore<AppState> {
 
     filterCasesByDevice(cases: Case[], selectedDevice: Device): Case[] {
       console.log(cases);
-      return cases.filter(x => (x.selectedDevice === selectedDevice.id || !x.selectedDevice) && x.status === '1');
+      //return cases.filter(x => (x.scheduledDevice === selectedDevice.id || !x.scheduledDevice) && x.status === '1');
+      return cases;
     }
 
     readonly updateSelectedCase = this.updater((state: AppState, selectedCase: Case) => ({
@@ -200,14 +202,12 @@ export class AppStoreService extends ComponentStore<AppState> {
                   this.signalRService.proxy.invoke('SubscribeAll', signals.map(x => x.id))
                     .done((measurements) => {
                       measurements.forEach(measurement => {
-                        signals.find(signal => signal.id == measurement.signalId).value = measurement.value;
+                        signals.find(signal => signal.id === measurement.signalId).value = measurement.value;
                       });
                       const deviceSignalsMap: [string, Signal[]] = [device.id, signals];
                       this.updateDeviceSignals(deviceSignalsMap);
                     });
-                  })});
-
-
+                  });});
 
           this.loadingService.dismiss();
         }))
@@ -216,9 +216,9 @@ export class AppStoreService extends ComponentStore<AppState> {
     addMeasurementListener(devices: Device[]) {
       this.signalRService.addListener((measurement: Measurement) => {
         devices.forEach(device => {
-            if(device.signals.find(signal => signal.id == measurement.signalId)?.value)
+            if(device.signals.find(signal => signal.id === measurement.signalId)?.value)
             {
-              device.signals.find(signal => signal.id == measurement.signalId).value = measurement.value ;
+              device.signals.find(signal => signal.id === measurement.signalId).value = measurement.value ;
               const deviceSignalsMap: [string, Signal[]] = [device.id, device.signals];
               this.updateDeviceSignals(deviceSignalsMap);
             }
@@ -228,19 +228,20 @@ export class AppStoreService extends ComponentStore<AppState> {
 
     readonly getCases = this.effect<string>(cases$ => cases$.pipe(
       tap(() => this.loadingService.present()),
-      switchMap((facilityId) => this.caseService.getCases().then(
+      switchMap((facilityId) => this.caseService.getCases(facilityId).then(
         (response: Case[]) => {
-          this.updateCases(response.filter((caseToFilter) => caseToFilter.facilityId === facilityId && caseToFilter.isObsolete === false));
+          this.updateCases(response.filter((caseToFilter) => caseToFilter.scheduledFacility === facilityId && caseToFilter.isObsolete === false));
           this.loadingService.dismiss();
         }))
     ));
 
     readonly getCasesFilteredByDevice = this.effect<string>(cases$ => cases$.pipe(
       tap(() => this.loadingService.present()),
-      switchMap((facilityId) => this.caseService.getCases().then(
+      switchMap((facilityId) => this.caseService.getCases(facilityId).then(
         (response: Case[]) => {
           // eslint-disable-next-line max-len
-          this.updateCasesByDeviceId(response.filter((caseToFilter) => caseToFilter.facilityId === facilityId && caseToFilter.isObsolete === false));
+          const f = response.filter((caseToFilter) => caseToFilter.scheduledFacility === facilityId && caseToFilter.isObsolete === false);
+          this.updateCasesByDeviceId(f);
           this.loadingService.dismiss();
         }))
     ));
@@ -249,7 +250,7 @@ export class AppStoreService extends ComponentStore<AppState> {
       tap(() => this.loadingService.present()),
       switchMap((selectedCase) => this.caseService.createCase(selectedCase).then(
         () => {
-          this.getCases(selectedCase.facilityId);
+          this.getCases(selectedCase.scheduledFacility);
           this.loadingService.dismiss();
         })),
         catchError(() => this.loadingService.dismiss())
@@ -259,7 +260,7 @@ export class AppStoreService extends ComponentStore<AppState> {
       tap(() => this.loadingService.present()),
       switchMap((selectedCase) => this.caseService.updateCase(selectedCase.id, selectedCase).then(
         () => {
-          this.getCases(selectedCase.facilityId);
+          this.getCases(selectedCase.scheduledFacility);
           this.loadingService.dismiss();
         }))
     ));
@@ -268,7 +269,7 @@ export class AppStoreService extends ComponentStore<AppState> {
       tap(() => this.loadingService.present()),
       switchMap((selectedCase) => this.caseService.deleteCase(selectedCase.id.toString()).then(
         () => {
-          this.getCases(selectedCase.facilityId);
+          this.getCases(selectedCase.scheduledFacility);
           this.loadingService.dismiss();
         }))
     ));

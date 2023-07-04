@@ -9,7 +9,7 @@ export interface UserInfo {
   departmentId: number;
   department: string;
   name: string;
-  id: string
+  id: string;
   photoBase64: string;
   imageBlob: Blob;
 }

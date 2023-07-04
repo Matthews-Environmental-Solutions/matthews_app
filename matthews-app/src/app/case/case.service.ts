@@ -11,15 +11,17 @@ export class CaseService {
   constructor(private httpService: AuthHttpService) {
   }
 
-  getCases() {
-    return this.httpService.request<Case[]>('GET', environment.casesApiUrl);
+  getCases(facilityId: string) {
+    const getScheduleUrl = `${environment.casesApiUrl}/GetAllCasesByFacility/${facilityId}`;
+    return this.httpService.request<Case[]>('GET', getScheduleUrl, facilityId);
   }
 
   createCase(caseToAdd: Case) {
-    return this.httpService.request<Case>('POST', environment.casesApiUrl, caseToAdd);
+    const postCaseUrl = `${environment.casesApiUrl}/Save`;
+    return this.httpService.request<Case>('POST', postCaseUrl, caseToAdd);
   }
 
-  updateCase(id: number, caseToUpdate: Case) {
+  updateCase(id: string, caseToUpdate: Case) {
     const updateCaseUrl = `${environment.casesApiUrl}/${id}`;
     return this.httpService.request<Case>('PUT', updateCaseUrl, caseToUpdate);
   }

@@ -1,3 +1,4 @@
+/* eslint-disable eol-last */
 import { Platform } from '@ionic/angular';
 import { StorageBackend, Requestor } from '@openid/appauth';
 import { AuthService, Browser } from 'ionic-appauth';
@@ -5,7 +6,7 @@ import { App, URLOpenListenerEvent } from '@capacitor/app';
 import { environment } from 'src/environments/environment';
 import { NgZone } from '@angular/core';
 
-export let authFactory = (platform: Platform, ngZone: NgZone,
+export const authFactory = (platform: Platform, ngZone: NgZone,
     requestor: Requestor, browser: Browser,  storage: StorageBackend) => {
 
     const authService = new AuthService(browser, storage, requestor);

@@ -23,7 +23,7 @@ export class DeviceDetailsPage implements OnInit {
   ngOnInit() {
     this.deviceListVm$.subscribe((response) => {
       console.log(response);
-    })
+    });
   }
 
 }

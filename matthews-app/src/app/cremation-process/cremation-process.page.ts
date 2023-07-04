@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-shadow */
 /* eslint-disable max-len */
 /* eslint-disable @angular-eslint/component-selector */
 import { Component, OnInit } from '@angular/core';
@@ -45,19 +46,19 @@ export class CremationProcessPage implements OnInit {
               private translateService: TranslateService,
               private matStepperIntl: MatStepperIntl,
               private route: ActivatedRoute,
-              private cremationProcessService:CremationProcessService,
+              private cremationProcessService: CremationProcessService,
               public alertController: AlertController) {}
 
   ngOnInit() {
-    this.matStepperIntl.optionalLabel ="";
+    this.matStepperIntl.optionalLabel ='';
     this.matStepperIntl.changes.next();
     this.deviceId = this.route.snapshot.paramMap.get('id');
   }
 
   startPreheat(selectedDevice: Device) {
     this.isPreheatStarted = true;
-    const signal = selectedDevice.signals.find(signal => signal.name == "Ewon_Preheat");
-    console.log("SignalId" + signal.id);
+    const signal = selectedDevice.signals.find(signal => signal.name === 'PREHEAT');
+    console.log('SignalId' + signal.id);
     this.cremationProcessService.writeSignalValue(signal?.id, 1);
   }
 
@@ -75,7 +76,7 @@ export class CremationProcessPage implements OnInit {
           role: 'confirm',
           handler: () => {
             this.isPreheatStarted = false;
-            const signal = selectedDevice.signals.find(signal => signal.name == "Ewon_Preheat");
+            const signal = selectedDevice.signals.find(signal => signal.name === 'PREHEAT');
             this.cremationProcessService.writeSignalValue(signal?.id, 0);
           }
         }
@@ -96,7 +97,7 @@ export class CremationProcessPage implements OnInit {
   startCycle(selectedDevice: Device) {
     this.isCycleStarted = true;
 
-    const signal = selectedDevice.signals.find(signal => signal.name == "Ewon_Start_Cremation");
+    const signal = selectedDevice.signals.find(signal => signal.name === 'START_CREMATION');
     this.cremationProcessService.writeSignalValue(signal?.id, 1);
   }
 
@@ -114,7 +115,7 @@ export class CremationProcessPage implements OnInit {
           role: 'yes',
           handler: () => {
             this.isCyclePaused = true;
-            const signal = selectedDevice.signals.find(signal => signal.name == "Ewon_Pause_Cremation");
+            const signal = selectedDevice.signals.find(signal => signal.name === 'PAUSE_CREMATION');
             this.cremationProcessService.writeSignalValue(signal?.id, 1);
           }
         }
@@ -138,7 +139,7 @@ export class CremationProcessPage implements OnInit {
           role: 'yes',
           handler: () => {
             this.isCyclePaused = false;
-            const signal = selectedDevice.signals.find(signal => signal.name == "Ewon_Pause_Cremation");
+            const signal = selectedDevice.signals.find(signal => signal.name === 'PAUSE_CREMATION');
             this.cremationProcessService.writeSignalValue(signal?.id, 0);
           }
         }
@@ -175,7 +176,7 @@ export class CremationProcessPage implements OnInit {
           text: this.translateService.instant('Confirm'),
           role: 'confirm',
           handler: () => {
-            const signal = selectedDevice.signals.find(signal => signal.name == "Ewon_Stop_Cremation");
+            const signal = selectedDevice.signals.find(signal => signal.name === 'STOP_CREMATION');
             this.cremationProcessService.writeSignalValue(signal?.id, 1);
             this.goToNextStep(stepper);
           }
@@ -188,13 +189,14 @@ export class CremationProcessPage implements OnInit {
 
   coolDown(selectedDevice: Device) {
     this.isCoolDownStarted = true;
-    const signal = selectedDevice.signals.find(signal => signal.name == "Ewon_Cooldown");
+    const signal = selectedDevice.signals.find(signal => signal.name === 'COOLDOWN');
+    console.log('Signal ID: ' + signal?.id);
     this.cremationProcessService.writeSignalValue(signal?.id, 1);
   }
 
   rakeOut(selectedDevice: Device) {
     this.isRakeOutStarted = true;
-    const signal = selectedDevice.signals.find(signal => signal.name == "Ewon_Rake_Out");
+    const signal = selectedDevice.signals.find(signal => signal.name === 'RAKE_OUT');
     this.cremationProcessService.writeSignalValue(signal?.id, 1);
   }
 
@@ -212,7 +214,7 @@ export class CremationProcessPage implements OnInit {
           role: 'confirm',
           handler: () => {
             this.resetStepper(stepper);
-            const signal = selectedDevice.signals.find(signal => signal.name == "Ewon_Rake_Complete");
+            const signal = selectedDevice.signals.find(signal => signal.name === 'RAKE_COMPLETE');
             this.cremationProcessService.writeSignalValue(signal?.id, 1);
           }
         }
@@ -256,7 +258,7 @@ export class CremationProcessPage implements OnInit {
     this.isCoolDownStarted = false;
     this.isRakeOutStarted = false;
     this.appStore.updateSelectedCase( {} as Case);
-    this.matStepperIntl.optionalLabel ="";
+    this.matStepperIntl.optionalLabel ='';
   }
 
   presentCasesModal(facilityId: string) {
@@ -265,7 +267,7 @@ export class CremationProcessPage implements OnInit {
 
     this.selectedCase$.subscribe(res => {
       if(res !== undefined) {
-        this.matStepperIntl.optionalLabel = res.caseName + " - " + res.caseId;
+        this.matStepperIntl.optionalLabel = res.firstName + ' ' + res.lastName + ' - ' + res.clientCaseId;
         this.matStepperIntl.changes.next();
       }
     });
@@ -276,6 +278,6 @@ export class CremationProcessPage implements OnInit {
 
   goToNextStep(stepper: MatStepper) {
     stepper.next();
-    console.log("Stepper");
+    console.log('Stepper');
   }
 }

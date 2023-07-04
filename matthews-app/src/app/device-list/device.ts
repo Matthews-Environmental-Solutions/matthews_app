@@ -1,4 +1,7 @@
-import { Signal } from "./Signal";
+/* eslint-disable @typescript-eslint/quotes */
+
+import { Signal } from "./signal";
+
 
 export interface Device {
   id: string;

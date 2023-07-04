@@ -6,6 +6,38 @@
   margin-top: 16px;
 }
 
-// ion-content {
-//   --ion-background-color:#E9EBED;
+ion-segment {
+  --background: #cbe5c0;
+  font-size: 1rem;
+  margin-top: 5px;
+}
+
+// ion-segment-button {
+//   --indicator-color: #2dd36f;
+//   min-width: auto;
+//   font-size: small;
 // }
+
+ion-segment-button {
+  --indicator-color: #c5d93a;
+  font-size: small;
+}
+
+/* Material Design styles */
+ion-segment-button.md {
+  --color: #000;
+  --color-checked: #c5d93a;
+  --indicator-height: 4px;
+}
+
+/* iOS styles */
+ion-segment-button.ios {
+  --color: #c5d93a;
+  --color-checked: #fff;
+  --border-radius: 20px;
+}
+
+
+.btnsuccess {
+  --background:#c5d93a;
+}

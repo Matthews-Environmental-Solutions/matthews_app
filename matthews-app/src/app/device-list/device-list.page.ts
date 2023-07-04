@@ -1,3 +1,4 @@
+/* eslint-disable @angular-eslint/component-selector */
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NavController } from '@ionic/angular';
@@ -19,6 +20,7 @@ export class DeviceListPage implements OnInit {
   devices$ = this.appStore.deviceList$;
   selectedFacility$ = this.appStore.selectedFacility$;
 
+  // eslint-disable-next-line max-len
   constructor(private route: ActivatedRoute, private appStore: AppStoreService, private navCtrl: NavController, private signalRService: SignalRService) { }
 
   ngOnInit() {
@@ -26,13 +28,13 @@ export class DeviceListPage implements OnInit {
     //this.appStore.getDevices();
     this.signalRService.initializeSignalRConnection().then((response) => {
       response.start().done(() => {
-        console.log("Connection started!");
+        console.log('Connection started!');
         this.appStore.getDeviceListWithSignalR(facilityId);
         //this.loadingService.dismiss();
       }).catch((error: any) => {
         console.log(error);
       });
-    })
+    });
 
 
   }

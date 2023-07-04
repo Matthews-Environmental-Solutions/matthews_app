@@ -1,3 +1,7 @@
+/* eslint-disable @typescript-eslint/naming-convention */
+/* eslint-disable quote-props */
+/* eslint-disable object-shorthand */
+/* eslint-disable space-before-function-paren */
 import { Injectable } from '@angular/core';
 import { TokenResponse, Requestor } from '@openid/appauth';
 import { AuthService } from 'ionic-appauth';

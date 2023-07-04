@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/type-annotation-spacing */
 /* eslint-disable @typescript-eslint/naming-convention */
 /* eslint-disable @typescript-eslint/member-ordering */
 import { Injectable } from '@angular/core';
@@ -8,7 +9,7 @@ declare let $: any;
 
 export interface Measurement {
   signalId: string;
-  signalName: string
+  signalName: string;
  // timestamp: Date
   value: string;
 }
@@ -37,7 +38,7 @@ export class SignalRService {
 
   public startConnection() {
     this.connection.start().done(() => {
-      console.log("Connection started!");
+      console.log('Connection started!');
       this.loadingService.dismiss();
     }).catch((error: any) => {
       console.log(error);
@@ -45,12 +46,12 @@ export class SignalRService {
   }
 
   public addListener( func: (measurement) => void) : void {
-    console.log("addListener");
+    console.log('addListener');
     this.proxy.on('onMeasurement', func);
   }
 
   public subscribeToSignalValues(signalId: string[]) {
-    console.log("subscribeToSignalValues");
+    console.log('subscribeToSignalValues');
     this.proxy.invoke('SubscribeAll', signalId)
             .done((measurement) => {
                 console.log('SubscribeAll:  =>' + JSON.stringify(measurement));
@@ -58,7 +59,7 @@ export class SignalRService {
   }
 
   public readValueFromSignal(signalId: string) {
-    console.log("readValueFromSignal");
+    console.log('readValueFromSignal');
     this.proxy.invoke('Read', signalId)
             .done((measurement) => {
                 console.log(measurement);
@@ -67,7 +68,7 @@ export class SignalRService {
 
   public stopConnection() {
     this.connection.stop();
-    console.log("Connection stopped!");
+    console.log('Connection stopped!');
   }
 
   // public initializeSignalRConnection(signalId: string, func: (measurement) => void): void { //
