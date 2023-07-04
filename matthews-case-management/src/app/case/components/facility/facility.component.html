@@ -1,0 +1,84 @@
+<mat-card class="facility-card">
+
+    <mat-toolbar class="facility-toolbar">
+        <span>{{title | translate}}</span>
+
+        <span class="spacer"></span>
+
+        <input matInput [(ngModel)]="searchTerm" placeholder="{{'searchPlaceholder' | translate}}" />
+        <button mat-raised-button aria-label="pick date" class="facility-status-header-buttons btn-save"
+            (click)="filterFacilities(searchTerm)">
+            <mat-icon>search</mat-icon> {{'search' | translate}}
+        </button>
+        <button mat-raised-button aria-label="pick date" class="facility-status-header-buttons btn-save"
+            (click)="backToCalendar()">
+            <mat-icon>arrow_back</mat-icon> {{'backToCalendar' | translate}}
+        </button>
+    </mat-toolbar>
+
+    <div class="card-content">
+        <mat-accordion>
+            <ng-container *ngFor="let facility of facilities">
+                <mat-expansion-panel (opened)="getDataOnOpen(facility.id)" (closed)="panelOpenState = false">
+                    <mat-expansion-panel-header>
+                        <mat-panel-title>
+                            {{facility.name}}
+                        </mat-panel-title>
+                    </mat-expansion-panel-header>
+                    <div class="facility-status-container">
+                        <div class="header-1">{{'statusCode' | translate}}</div>
+                        <div class="header-2">{{'statusName' | translate}}</div>
+                        <div class="header-3">{{'statusIcon' | translate}}</div>
+                        <div class="header-4">{{'startProcess' | translate}}</div>
+                        <div class="header-5"></div>
+                        <ng-template matExpansionPanelContent>
+                            <div class="facility-status-list">
+                                <ng-container *ngFor="let fStatus of facilityStatuses">
+                                    <div class="facility-status-row">
+                                        <div class="item-1">
+                                            <div class="facility-status-item">{{fStatus.statusCode}}</div>
+                                        </div>
+                                        <div class="item-2">
+                                            <div class="facility-status-item">{{fStatus.statusName}}</div>
+                                        </div>
+                                        <div class="item-3">
+                                            <div class="facility-status-item"><mat-icon>{{fStatus.statusIcon}}</mat-icon></div>
+                                        </div>
+                                        <div class="item-4">
+                                            <div class="facility-status-item">
+                                                {{startProcessToString(fStatus.startProcess)}}
+                                            </div>
+                                        </div>
+                                        <div class="item-5">
+                                            <div class="facility-status-item">
+
+                                                <button mat-icon-button aria-label="edit button"
+                                                    (click)="editStatus(fStatus)">
+                                                    <mat-icon class="navigation-button"
+                                                        class="font-orangered">edit</mat-icon>
+                                                </button>
+                                                <button mat-icon-button aria-label="delete button"
+                                                    (click)="deleteStatus(fStatus)">
+                                                    <mat-icon class="navigation-button"
+                                                        class="font-red">delete</mat-icon>
+                                                </button>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </ng-container>
+                            </div>
+
+                        </ng-template>
+                    </div>
+
+
+                    <mat-action-row>
+                        <button mat-raised-button class="btn-color-green font-gray" color="primary"
+                            (click)="addNewStatus()">{{'addNewStatus' | translate}}</button>
+                    </mat-action-row>
+                </mat-expansion-panel>
+            </ng-container>
+        </mat-accordion>
+    </div>
+</mat-card>

@@ -1,36 +1,57 @@
+import { TranslateService } from '@ngx-translate/core';
 import { UserInfoAuth } from '../models/userinfo.model';
 import { UserSettingService } from '../services/user-setting.service';
 import { AuthService } from './auth.service'
+import { UserSettingData } from '../models/user-setting.model';
 
-export function authAppInitializerFactory(authService: AuthService, userSettingService: UserSettingService): () => Promise<void> {
-    return () => authService.runInitialLoginSequence()
-        .catch(er => {
-            console.log('GRESKA', er);
-        })
-        .then(res => {
+export const languageList = [
+    { code: 'en', label: 'English' },
+    { code: 'de', label: 'Deutsch' },
+];
 
-            if (authService.isAuthenticatedSubject$.value) {
-                authService.loadProfile().then(() => {
+export function authAppInitializerFactory(authService: AuthService, userSettingService: UserSettingService, translate: TranslateService): () => Promise<void> {
+    return async () => {
+        await authService.runInitialLoginSequence();
 
-                    let userinfoString = localStorage.getItem('id_token_claims_obj');
-                    let jsonLoggedInUser = JSON.parse(userinfoString ? userinfoString : '');
+        if (!authService.hasValidToken()) {
+            return;
+        }
 
-                    authService.loggedInUser = new UserInfoAuth();
-                    authService.loggedInUser.copyInto(jsonLoggedInUser);
+        await authService.loadProfile();
 
-                    return Promise.resolve(authService.loggedInUser);
+        //logged in user
+        let userinfoString = localStorage.getItem('id_token_claims_obj');
+        let jsonLoggedInUser = JSON.parse(userinfoString ? userinfoString : '');
 
-                })
-                    .catch(er => {
-                        console.log('loadProfile error', er);
-                    })
-                    .then(loggedInUser => {
-                        let user = userSettingService.getUserSettingLastValue();
-                    })
-            }
+        authService.loggedInUser = new UserInfoAuth();
+        authService.loggedInUser.copyInto(jsonLoggedInUser);
 
 
-            // .... logika
+        //user setting
+        let userSetting = localStorage.getItem(authService.loggedInUser.name);
+        if (!userSetting) {
+            let defaultSetting = userSettingService.getUserSettingLastValue();
+            defaultSetting.username = authService.loggedInUser.name;
 
-        });
+            let defaultSettingJson = JSON.stringify(defaultSetting);
+            localStorage.setItem(authService.loggedInUser.name, defaultSettingJson);
+            userSetting = defaultSettingJson;
+        }
+
+        userSettingService.setUserSetting(JSON.parse(userSetting));
+
+
+        //translation
+        const userLanguageCode: string = (JSON.parse(userSetting) as UserSettingData).language;
+
+        const selectedLanguage = languageList
+            .find((language) => language.code === userLanguageCode)?.label.toString();
+
+        if (selectedLanguage) {
+            translate.use(userLanguageCode);
+        }
+
+        const currentLanguage = translate.currentLang;
+
+    }
 }

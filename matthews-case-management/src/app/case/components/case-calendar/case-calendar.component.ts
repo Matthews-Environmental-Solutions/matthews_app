@@ -1,9 +1,9 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { Subscription, skip, tap } from 'rxjs';
-import { Case } from 'src/app/models/case.model';
+import { Device } from 'src/app/models/device.model';
 import { CalendarService } from 'src/app/services/calendar.service';
-import { CaseService } from 'src/app/services/cases.service';
+import { StateService } from 'src/app/services/states.service';
 import { UserSettingService } from 'src/app/services/user-setting.service';
 
 @Component({
@@ -12,51 +12,68 @@ import { UserSettingService } from 'src/app/services/user-setting.service';
   styleUrls: ['./case-calendar.component.scss']
 })
 export class CaseCalendarComponent implements OnInit, OnDestroy {
-  daily: boolean = true;
-  cases: Case[] = [];
+
+  calendarView: 'byDay' | 'byWeek' = 'byDay';
+  numberOfCases: number = 0;
   selectedDay: Date = new Date();
   hiddenDayForNavigation: Date = new Date(this.selectedDay);
   days: Date[] = [];
   weekNumber: number | undefined;
   startDayOfWeek: 0 | 1 = 1;
+  devices: Device[] = [];
+  clickedDeviceFilterButton: string = 'all';
 
   private subs = new Subscription();
 
   @ViewChild('clickHoverMenuTrigger') clickHoverMenuTrigger?: MatMenuTrigger;
 
-  constructor(private caseService: CaseService, private calendarService: CalendarService, private userSettingService: UserSettingService) {
+  constructor(
+    private stateService: StateService,
+    private calendarService: CalendarService,
+    private userSettingService: UserSettingService) {
+
     this.subs.add(this.userSettingService.userSettings$
       .pipe(tap(setting => this.startDayOfWeek = setting.startDayOfWeek))
-      .pipe(skip(1)).subscribe(setting => {
+      .pipe(skip(1))
+      .subscribe(setting => {
         this.startDayOfWeek = setting.startDayOfWeek;
-        this.getDaysAndCases();
+        this.calendarView = setting.lastUsedCalendarView;
       }));
+
+    this.subs.add(this.userSettingService.userSettings$.subscribe(s => {
+        this.getDays(this.hiddenDayForNavigation);
+    }));
+
+    this.subs.add(this.stateService.devicesToShowAsFilter$.pipe(skip(1)).subscribe(devices => {
+      this.devices = devices;
+      console.log('devices of site:', devices);
+    }));
+
+    this.subs.add(this.stateService.numberOfCasesToShowAsFilter$.pipe(skip(1)).subscribe(numberOfCases => this.numberOfCases = numberOfCases));
+  }
+
+  ngOnInit(): void {
+    this.getDays(this.selectedDay);
+    this.selectedDay.setHours(0, 0, 0, 0);
+    this.calendarView = this.userSettingService.getUserSettingLastValue().lastUsedCalendarView;
   }
 
   ngOnDestroy(): void {
     this.subs.unsubscribe();
   }
 
-  ngOnInit(): void {
-    this.getDaysAndCases();
-  }
-
-  getDaysAndCases() {
-    this.getDays(this.selectedDay);
-
-    this.caseService.getCases2(this.days).subscribe((response: any) => {
-      console.log(response);
-      this.cases = response;
-    });
-  }
-
-  switchCalendarView(viewDaily: boolean) {
-    this.daily = viewDaily;
+  switchCalendarView(viewDaily: 'byDay' | 'byWeek') {
+    this.calendarView = viewDaily;
+    let userSetting = this.userSettingService.getUserSettingLastValue();
+    userSetting.lastUsedCalendarView = viewDaily;
+    localStorage.setItem(userSetting.username, JSON.stringify(userSetting));
+    this.userSettingService.setUserSetting(userSetting);
   }
 
   previousWeek() {
     this.hiddenDayForNavigation = this.calendarService.addDays(this.hiddenDayForNavigation, -7);
     this.getDays(this.hiddenDayForNavigation);
+
   }
 
   nextWeek() {
@@ -67,6 +84,7 @@ export class CaseCalendarComponent implements OnInit, OnDestroy {
   getDays(date: Date) {
     this.days = this.calendarService.getWeekForGivenDate(date, this.startDayOfWeek);
     this.weekNumber = this.calendarService.getWeekNumberByDate(date);
+    this.stateService.setFirstDateInWeek(this.days[0]); // proclame the first date in week
   }
 
   getFirstWeekDate(): string {
@@ -80,8 +98,21 @@ export class CaseCalendarComponent implements OnInit, OnDestroy {
   daySelectedEvent(date: Date) {
     if (date instanceof Date) {
       this.selectedDay = date;
+      this.stateService.setSelectedDate(date);
+
       this.getDays(this.selectedDay);
       this.clickHoverMenuTrigger?.closeMenu();
     }
+  }
+
+  isEmptyString = (data: string): boolean => typeof data === "string" && data.trim().length == 0;
+
+  onDeviceFilterClick(deviceIdFilter: string) {
+    this.clickedDeviceFilterButton = deviceIdFilter;
+    this.stateService.setFilterCasesByDeviceId(deviceIdFilter);
+  }
+
+  wasIClicked(buttonId : string) : 'primary' | 'accent' {
+    return this.clickedDeviceFilterButton == buttonId ? 'accent' : 'primary';
   }
 }

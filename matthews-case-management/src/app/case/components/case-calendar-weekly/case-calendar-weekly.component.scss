@@ -65,6 +65,13 @@ $buttons: mat-palette($mat-blue-gray, 700);
     width: 100%;
 }
 
+.indeterminate-progress-bar {
+    grid-row-start: dr-first;
+    grid-row-end: dr-line2;
+    grid-column-start: dc-first;
+    grid-column-end: dc-end;
+}
+
 .weekly-list {
     width: 100%;
     margin-top: 5px;
@@ -146,6 +153,12 @@ $buttons: mat-palette($mat-blue-gray, 700);
     box-shadow: 1px 1px #888888;
 }
 
+.weekly-item-skeleton {
+    padding: 3px;
+    margin: 5px 12px 5px 5px;
+    border-radius: 5px;
+}
+
 .weekly-item-row-1 {
     width: 100%;
     display: flex;
@@ -179,4 +192,20 @@ $buttons: mat-palette($mat-blue-gray, 700);
     height: 36px;
     color: var(--mdc-protected-button-label-text-color, inherit);
     letter-spacing: 1px;
+}
+
+.case-status-color-green {
+    color: #02708e;
+}
+
+.case-status-color-red {
+    color: #90131a;
+}
+
+.case-status-color-blue {
+    color: #29c0f1;
+}
+
+.case-status-color-orange {
+    color: #f15a29;
 }

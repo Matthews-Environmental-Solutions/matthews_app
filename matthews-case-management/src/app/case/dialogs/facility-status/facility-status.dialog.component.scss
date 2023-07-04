@@ -1,0 +1,57 @@
+.dialog-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.field-icon-button {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: space-between;
+}
+
+.icons-container {
+    width: 100%;
+    height: 150px;;
+    // min-height: 150px;
+    // max-height: 250px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.icon {
+    width: 60px; max-height: 80px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    align-content:flex-start;
+    margin: 5px 5px 5px 5px;
+    cursor: pointer;
+
+    .icon-icon {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        mat-icon {
+            font-size: 26px;
+        }
+    }
+    
+    span {
+        font-size: smaller;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        align-content:flex-start;
+        text-align: center;
+    }
+}
+
+.toggle-button {
+    margin-top: 20px;
+}

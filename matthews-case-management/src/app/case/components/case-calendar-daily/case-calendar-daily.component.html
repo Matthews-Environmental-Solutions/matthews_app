@@ -41,35 +41,57 @@
             {{getDayForButton(6)}}
         </button>
     </div>
+    <mat-progress-bar *ngIf="loader" mode="indeterminate" class="indeterminate-progress-bar"></mat-progress-bar>
 
     <div class="daily-list">
-        <ng-container *ngFor="let case of cases">
+        <ng-container *ngFor="let case of filteredCases">
             <div class="daily-list-item">
 
                 <div class="left-cells">
                     <div class="item-id cell">{{case.clientCaseId}}</div>
                     <div class="item-basic-data cell">
                         <span class="item-basic-data-name">{{case.firstName}} {{case.lastName}}</span>
-                        <span>{{case.weight}} kg | {{case.gender}}</span>
+                        <span>{{case.weight}} kg | {{case.genderText.toLowerCase() | translate}} |
+                            {{case.containerTypeText}}</span>
                     </div>
                     <div class="item-status cell">
-                        <div class="case-status case-status-color-green">
+                        <div class="case-status"
+                            [ngClass]="{'case-status-color-green': case.status == 1, 'case-status-color-red': case.status == 2, 'case-status-color-blue': case.status == 3, 'case-status-color-orange': case.status == 4}">
                             <mat-icon class="material-symbols-outlined ">
-                                {{iconName}}
+                                {{getIconName(+case.status)}}
                             </mat-icon>
-                            <span>{{statusDescription}}</span>
+                            <ng-container *ngIf="(getStatusDescription(+case.status) | async ) as status">
+                                <span>{{status}}</span>
+                            </ng-container>
                         </div>
-                        <div class="case-status case-status-time">{{case.scheduledStartTimeDate | timepipe}}</div>
+                        <div class="case-status case-status-time">{{case.scheduledStartTime | timepipe}}</div>
                     </div>
                 </div>
 
                 <div class="right-cells">
-                    <button mat-icon-button aria-label="edit icon">
+                    <button mat-icon-button aria-label="edit icon" (click)="gotoCaseEdit(case.id)">
                         <mat-icon class="item-button">open_in_new</mat-icon>
                     </button>
                 </div>
 
             </div>
         </ng-container>
+
+        <div class="daily-list-item" *ngIf="loader">
+            <div class="left-cells">
+                <div class="item-id cell"><ngx-skeleton-loader></ngx-skeleton-loader></div>
+                <div class="item-basic-data cell">
+                    <span class="item-basic-data-name"><ngx-skeleton-loader></ngx-skeleton-loader></span>
+                    <span><ngx-skeleton-loader></ngx-skeleton-loader></span>
+                </div>
+                <div class="item-status cell">
+                    <div>
+                        <span><ngx-skeleton-loader></ngx-skeleton-loader></span>
+                    </div>
+                    <div><ngx-skeleton-loader></ngx-skeleton-loader></div>
+                </div>
+            </div>
+        </div>
+        
     </div>
 </div>

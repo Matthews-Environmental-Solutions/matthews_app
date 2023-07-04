@@ -1,0 +1,13 @@
+<div *ngIf="showMe" 
+    class="snackBarBottomLeft"
+    [ngClass]="{'success': data.type === 'success', 'error': data.type === 'error', 'warning': data.type === 'warning'}">
+    
+    <div class="header">
+        <mat-icon class="icon">{{data.icon}}</mat-icon>
+        <label>{{data.titleText | titlecase}}</label>
+        <mat-icon class="cancel" (click)="onCloseClick()">cancel</mat-icon>
+    </div>
+    <div class="message">
+        {{data.message}}
+    </div>
+</div>

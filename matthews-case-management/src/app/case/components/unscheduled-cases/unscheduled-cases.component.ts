@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { Router } from '@angular/router';
 import { Case } from 'src/app/models/case.model';
 
 @Component({
@@ -9,4 +10,12 @@ import { Case } from 'src/app/models/case.model';
 export class UnscheduledCasesComponent {
   @Input()
   case!: Case;
+
+  constructor(private router: Router) {
+
+  }
+
+  gotoCaseEdit() {
+    this.router.navigate([`case/${this.case.id}`]);
+  }
 }

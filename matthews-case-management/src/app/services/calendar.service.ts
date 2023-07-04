@@ -1,4 +1,5 @@
 import { Injectable } from "@angular/core";
+import { TranslateService } from "@ngx-translate/core";
 import { getWeek, startOfWeek, addDays, getDate, getMonth } from 'date-fns'
 import { listTimeZones } from 'timezone-support';
 
@@ -7,26 +8,26 @@ import { listTimeZones } from 'timezone-support';
 })
 export class CalendarService {
 
+    constructor(private translate: TranslateService) {
+    }
+
     getWeekNumberByDate(date: Date): number {
         const result = getWeek(date, {
             weekStartsOn: 1
         });
-        console.log('Week number', result);
         return result;
-
     }
 
     /**
      * 
      * @param date 
-     * @param startDayOfWeek is number.   The 0 is for Sundau, while 1 is for Monday 
+     * @param startDayOfWeek is number.   The 0 is for Sunday, while 1 is for Monday 
      * @returns 
      */
     getStartDayOfTheWeekForGivenDate(date: Date, startDayOfWeek: 0 | 1) {
         const day = startOfWeek(date, {
             weekStartsOn: startDayOfWeek
         });
-        console.log('First day of the week for given date', day);
         return day;
     }
 
@@ -42,7 +43,6 @@ export class CalendarService {
         days.push(addDays(firstDayOfTheWeek, 5));
         days.push(addDays(firstDayOfTheWeek, 6));
 
-        console.log('Days of the week', days);
         return days;
     }
 
@@ -51,7 +51,8 @@ export class CalendarService {
     }
 
     getDateAndMonth(date: Date): string {
-        let monthName = date.toLocaleString('en-us', { month: 'short' });
+        let currentLang = this.translate.store.currentLang;
+        let monthName = date.toLocaleString(currentLang, { month: 'short' });
         return `${getDate(date).toString()} ${monthName}`;
     }
 

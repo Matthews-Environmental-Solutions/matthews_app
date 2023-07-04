@@ -28,147 +28,140 @@
         {{getDayForButton(6)}}
     </mat-card>
 
+    <mat-progress-bar *ngIf="loader" mode="indeterminate" class="indeterminate-progress-bar"></mat-progress-bar>
+
     <div class="weekly-list">
         <div class="weekly-list-1">
-            <ng-container>
+            <ng-container *ngFor="let case of casesForDay1">
                 <div class="weekly-item">
                     <div class="weekly-item-row-1">
-                        <div class="weekly-item-row-1-cell-1">ID 834FGF3</div>
-                        <div class="weekly-item-row-1-cell-2">
-                            <mat-icon>check_circle</mat-icon>
+                        <div class="weekly-item-row-1-cell-1" 
+                        [ngClass]="{'case-status-color-green': case.status == 1, 'case-status-color-red': case.status == 2, 'case-status-color-blue': case.status == 3, 'case-status-color-orange': case.status == 4}">ID {{case.clientCaseId}}</div>
+                        <div class="weekly-item-row-1-cell-2" 
+                        [ngClass]="{'case-status-color-green': case.status == 1, 'case-status-color-red': case.status == 2, 'case-status-color-blue': case.status == 3, 'case-status-color-orange': case.status == 4}">
+                            <mat-icon>{{getIconName(+case.status)}}</mat-icon>
                         </div>
                     </div>
-                    <div class="weekly-item-row-2">EKATERINA KOCSORWA KOCSORWA</div>
+                    <div class="weekly-item-row-2">{{case.firstName}} {{case.lastName}}</div>
                 </div>
             </ng-container>
+            <div class="weekly-item-skeleton" *ngIf="loader">
+                <ngx-skeleton-loader [theme]="{height: '48px'}"></ngx-skeleton-loader>
+            </div>
         </div>
 
         <div class="weekly-list-2">
-            <ng-container>
+            <ng-container *ngFor="let case of casesForDay2">
                 <div class="weekly-item">
                     <div class="weekly-item-row-1">
-                        <div class="weekly-item-row-1-cell-1">ID 834FGF3</div>
-                        <div class="weekly-item-row-1-cell-2">
-                            <mat-icon>check_circle</mat-icon>
+                        <div class="weekly-item-row-1-cell-1" 
+                        [ngClass]="{'case-status-color-green': case.status == 1, 'case-status-color-red': case.status == 2, 'case-status-color-blue': case.status == 3, 'case-status-color-orange': case.status == 4}">ID {{case.clientCaseId}}</div>
+                        <div class="weekly-item-row-1-cell-2" 
+                        [ngClass]="{'case-status-color-green': case.status == 1, 'case-status-color-red': case.status == 2, 'case-status-color-blue': case.status == 3, 'case-status-color-orange': case.status == 4}">
+                            <mat-icon>{{getIconName(+case.status)}}</mat-icon>
                         </div>
                     </div>
-                    <div class="weekly-item-row-2">JOHN DOE</div>
+                    <div class="weekly-item-row-2">{{case.firstName}} {{case.lastName}}</div>
                 </div>
             </ng-container>
+            <div class="weekly-item-skeleton" *ngIf="loader">
+                <ngx-skeleton-loader [theme]="{height: '48px'}"></ngx-skeleton-loader>
+            </div>
         </div>
 
         <div class="weekly-list-3">
-            <ng-container>
+            <ng-container *ngFor="let case of casesForDay3">
                 <div class="weekly-item">
                     <div class="weekly-item-row-1">
-                        <div class="weekly-item-row-1-cell-1">ID 834FGF3</div>
-                        <div class="weekly-item-row-1-cell-2">
-                            <mat-icon>check_circle</mat-icon>
+                        <div class="weekly-item-row-1-cell-1" 
+                        [ngClass]="{'case-status-color-green': case.status == 1, 'case-status-color-red': case.status == 2, 'case-status-color-blue': case.status == 3, 'case-status-color-orange': case.status == 4}">ID {{case.clientCaseId}}</div>
+                        <div class="weekly-item-row-1-cell-2"
+                        [ngClass]="{'case-status-color-green': case.status == 1, 'case-status-color-red': case.status == 2, 'case-status-color-blue': case.status == 3, 'case-status-color-orange': case.status == 4}">
+                            <mat-icon>{{getIconName(+case.status)}}</mat-icon>
                         </div>
                     </div>
-                    <div class="weekly-item-row-2">JOHN DOE</div>
+                    <div class="weekly-item-row-2">{{case.firstName}} {{case.lastName}}</div>
                 </div>
             </ng-container>
+            <div class="weekly-item-skeleton" *ngIf="loader">
+                <ngx-skeleton-loader [theme]="{height: '48px'}"></ngx-skeleton-loader>
+            </div>
         </div>
 
         <div class="weekly-list-4">
-            <ng-container>
+            <ng-container *ngFor="let case of casesForDay4">
                 <div class="weekly-item">
                     <div class="weekly-item-row-1">
-                        <div class="weekly-item-row-1-cell-1 font-color-orange">ID 834FGF3</div>
-                        <div class="weekly-item-row-1-cell-2 font-color-orange">
-                            <mat-icon>hourglass_top</mat-icon>
+                        <div class="weekly-item-row-1-cell-1 font-color-orange"
+                        [ngClass]="{'case-status-color-green': case.status == 1, 'case-status-color-red': case.status == 2, 'case-status-color-blue': case.status == 3, 'case-status-color-orange': case.status == 4}">ID {{case.clientCaseId}}</div>
+                        <div class="weekly-item-row-1-cell-2 font-color-orange"
+                        [ngClass]="{'case-status-color-green': case.status == 1, 'case-status-color-red': case.status == 2, 'case-status-color-blue': case.status == 3, 'case-status-color-orange': case.status == 4}">
+                            <mat-icon>{{getIconName(+case.status)}}</mat-icon>
                         </div>
                     </div>
-                    <div class="weekly-item-row-2">JOHN DOE</div>
-                </div>
-                <div class="weekly-item">
-                    <div class="weekly-item-row-1">
-                        <div class="weekly-item-row-1-cell-1 font-color-green">ID 834FGF3</div>
-                        <div class="weekly-item-row-1-cell-2 font-color-green">
-                            <mat-icon>check_circle</mat-icon>
-                        </div>
-                    </div>
-                    <div class="weekly-item-row-2">JOHN DOE</div>
+                    <div class="weekly-item-row-2">{{case.firstName}} {{case.lastName}}</div>
                 </div>
             </ng-container>
+            <div class="weekly-item-skeleton" *ngIf="loader">
+                <ngx-skeleton-loader [theme]="{height: '48px'}"></ngx-skeleton-loader>
+            </div>
         </div>
 
         <div class="weekly-list-5">
-            <ng-container>
+            <ng-container *ngFor="let case of casesForDay5">
                 <div class="weekly-item">
                     <div class="weekly-item-row-1">
-                        <div class="weekly-item-row-1-cell-1 font-color-blue">ID 834FGF3</div>
-                        <div class="weekly-item-row-1-cell-2 font-color-blue">
-                            <mat-icon>arrow_circle_right</mat-icon>
+                        <div class="weekly-item-row-1-cell-1 font-color-blue"
+                        [ngClass]="{'case-status-color-green': case.status == 1, 'case-status-color-red': case.status == 2, 'case-status-color-blue': case.status == 3, 'case-status-color-orange': case.status == 4}">ID {{case.clientCaseId}}</div>
+                        <div class="weekly-item-row-1-cell-2 font-color-blue"
+                        [ngClass]="{'case-status-color-green': case.status == 1, 'case-status-color-red': case.status == 2, 'case-status-color-blue': case.status == 3, 'case-status-color-orange': case.status == 4}">
+                            <mat-icon>{{getIconName(+case.status)}}</mat-icon>
                         </div>
                     </div>
-                    <div class="weekly-item-row-2">JOHN DOE</div>
+                    <div class="weekly-item-row-2">{{case.firstName}} {{case.lastName}}</div>
                 </div>
             </ng-container>
+            <div class="weekly-item-skeleton" *ngIf="loader">
+                <ngx-skeleton-loader [theme]="{height: '48px'}"></ngx-skeleton-loader>
+            </div>
         </div>
 
         <div class="weekly-list-6">
-            <ng-container>
+            <ng-container *ngFor="let case of casesForDay6">
                 <div class="weekly-item">
                     <div class="weekly-item-row-1">
-                        <div class="weekly-item-row-1-cell-1">ID 834FGF3</div>
-                        <div class="weekly-item-row-1-cell-2">
-                            <mat-icon>check_circle</mat-icon>
+                        <div class="weekly-item-row-1-cell-1" 
+                        [ngClass]="{'case-status-color-green': case.status == 1, 'case-status-color-red': case.status == 2, 'case-status-color-blue': case.status == 3, 'case-status-color-orange': case.status == 4}">ID {{case.clientCaseId}}</div>
+                        <div class="weekly-item-row-1-cell-2"
+                        [ngClass]="{'case-status-color-green': case.status == 1, 'case-status-color-red': case.status == 2, 'case-status-color-blue': case.status == 3, 'case-status-color-orange': case.status == 4}">
+                            <mat-icon>{{getIconName(+case.status)}}</mat-icon>
                         </div>
                     </div>
-                    <div class="weekly-item-row-2">JOHN DOE</div>
+                    <div class="weekly-item-row-2">{{case.firstName}} {{case.lastName}}</div>
                 </div>
             </ng-container>
-            <span>fdfdff</span><span>fdfdff</span><span>fdfdff</span><span>fdfdff</span><span>fdfdff</span><span>fdfdff</span><span>fdfdff</span><span>fdfdff</span>
-            <span>fdfdff</span><span>fdfdff</span><span>fdfdff</span><span>fdfdff</span><span>fdfdff</span><span>fdfdff</span><span>fdfdff</span><span>fdfdff</span><span>fdfdff</span><span>fdfdff</span><span>fdfdff</span><span>fdfdff</span><span>fdfdff</span><span>fdfdff</span><span>fdfdff</span><span>fdfdff</span>
-            <span>fdfdff</span><span>fdfdff</span><span>fdfdff</span><span>fdfdff</span><span>fdfdff</span><span>fdfdff</span><span>fdfdff</span><span>fdfdff</span><span>fdfdff</span><span>fdfdff</span><span>fdfdff</span><span>fdfdff</span><span>fdfdff</span><span>fdfdff</span><span>fdfdff</span><span>fdfdff</span>
-            <span>fdfdff</span><span>fdfdff</span><span>fdfdff</span><span>fdfdff</span><span>fdfdff</span><span>fdfdff</span><span>fdfdff</span><span>fdfdff</span>
+            <div class="weekly-item-skeleton" *ngIf="loader">
+                <ngx-skeleton-loader [theme]="{height: '48px'}"></ngx-skeleton-loader>
+            </div>
         </div>
 
         <div class="weekly-list-7">
-            <ng-container>
+            <ng-container *ngFor="let case of casesForDay7">
                 <div class="weekly-item">
                     <div class="weekly-item-row-1">
-                        <div class="weekly-item-row-1-cell-1">ID 834FGF3</div>
-                        <div class="weekly-item-row-1-cell-2">
-                            <mat-icon>check_circle</mat-icon>
+                        <div class="weekly-item-row-1-cell-1" 
+                        [ngClass]="{'case-status-color-green': case.status == 1, 'case-status-color-red': case.status == 2, 'case-status-color-blue': case.status == 3, 'case-status-color-orange': case.status == 4}">ID {{case.clientCaseId}}</div>
+                        <div class="weekly-item-row-1-cell-2"
+                        [ngClass]="{'case-status-color-green': case.status == 1, 'case-status-color-red': case.status == 2, 'case-status-color-blue': case.status == 3, 'case-status-color-orange': case.status == 4}">
+                            <mat-icon>{{getIconName(+case.status)}}</mat-icon>
                         </div>
                     </div>
-                    <div class="weekly-item-row-2">JOHN DOE</div>
-                </div>
-                <div class="weekly-item">
-                    <div class="weekly-item-row-1">
-                        <div class="weekly-item-row-1-cell-1">ID 834FGF3</div>
-                        <div class="weekly-item-row-1-cell-2">
-                            <mat-icon>check_circle</mat-icon>
-                        </div>
-                    </div>
-                    <div class="weekly-item-row-2">JOHN DOE</div>
-                </div>
-                <div class="weekly-item">
-                    <div class="weekly-item-row-1">
-                        <div class="weekly-item-row-1-cell-1 font-color-red">ID 834FGF3</div>
-                        <div class="weekly-item-row-1-cell-2 font-color-red">
-                            <mat-icon>local_fire_department</mat-icon>
-                        </div>
-                    </div>
-                    <div class="weekly-item-row-2">JOHN DOE</div>
-                </div>
-                <div class="weekly-item">
-                    <div class="weekly-item-row-1">
-                        <div class="weekly-item-row-1-cell-1">ID 834FGF3</div>
-                        <div class="weekly-item-row-1-cell-2">
-                            <mat-icon>check_circle</mat-icon>
-                        </div>
-                    </div>
-                    <div class="weekly-item-row-2">JOHN DOE</div>
+                    <div class="weekly-item-row-2">{{case.firstName}} {{case.lastName}}</div>
                 </div>
             </ng-container>
-            <span>fdfdff</span><span>fdfdff</span><span>fdfdff</span><span>fdfdff</span><span>fdfdff</span><span>fdfdff</span><span>fdfdff</span><span>fdfdff</span>
-            <span>fdfdff</span><span>fdfdff</span><span>fdfdff</span><span>fdfdff</span><span>fdfdff</span><span>fdfdff</span><span>fdfdff</span><span>fdfdff</span>
-
-
+            <div class="weekly-item-skeleton" *ngIf="loader">
+                <ngx-skeleton-loader [theme]="{height: '48px'}"></ngx-skeleton-loader>
+            </div>
         </div>
     </div>
 

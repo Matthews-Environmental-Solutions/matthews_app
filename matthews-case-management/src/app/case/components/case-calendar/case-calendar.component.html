@@ -8,7 +8,8 @@
             <button mat-icon-button aria-label="navigate next" (click)="nextWeek()">
                 <mat-icon class="navigation-button">navigate_next</mat-icon>
             </button>
-            <span class="card-header-text">Wk. {{weekNumber}} | {{getFirstWeekDate()}} - {{getLastWeekDate()}}</span>
+            <span class="card-header-text">{{"week" | translate}} {{weekNumber}} | {{getFirstWeekDate()}} -
+                {{getLastWeekDate()}}</span>
         </div>
 
         <div class="header-right">
@@ -18,33 +19,40 @@
             </button>
             <mat-menu #calendarMenu="matMenu" xPosition="before">
                 <mat-card class="inline-calendar-card" (click)="$event.stopPropagation();">
-                    <mat-calendar #calendar [(selected)]="selectedDay" (selectedChange)="daySelectedEvent($event)"></mat-calendar>
+                    <mat-calendar #calendar [(selected)]="selectedDay"
+                        (selectedChange)="daySelectedEvent($event)"></mat-calendar>
                 </mat-card>
             </mat-menu>
 
             <div class="header-right-period-buttons">
-                <button mat-button aria-label="pick date" [ngClass]="{'selected-button': this.daily}"
-                    (click)="switchCalendarView(true)">
-                    Day
+                <button mat-button aria-label="pick date" [ngClass]="{'selected-button': this.calendarView == 'byDay'}"
+                    (click)="switchCalendarView('byDay')">
+                    {{"day" | translate}}
                 </button>
-                <button mat-button aria-label="pick date" [ngClass]="{'selected-button': !this.daily}"
-                    (click)="switchCalendarView(false)">
-                    Week
+                <button mat-button aria-label="pick date" [ngClass]="{'selected-button': this.calendarView == 'byWeek'}"
+                    (click)="switchCalendarView('byWeek')">
+                    {{"week" | translate}}
                 </button>
             </div>
         </div>
     </div>
 
     <div class="card-header-filter">
-        <span>ALL (35) | DEV 1 (17) | DEV 2 (4) | DEV 3 (14)</span>
-        <div>
+        <span>
+            <button mat-button color="{{wasIClicked('all')}}" (click)="onDeviceFilterClick('all')">{{"all" | translate}} ({{numberOfCases}})</button>
+            <ng-container *ngFor="let device of devices">
+                | <button mat-button color="{{wasIClicked(device.id)}}" (click)="onDeviceFilterClick(device.id)">{{device.alias}} ({{device.numberOfAttachedCases}})</button>
+            </ng-container>
+        </span>
+
+        <!-- <span>ALL (35) | DEV 1 (17) | DEV 2 (4) | DEV 3 (14)</span> -->
+        <!-- <div>
             <span>Order by:</span>
-        </div>
+        </div> -->
     </div>
 
     <div class="card-content-list">
-        <case-calendar-daily *ngIf="daily" [cases]="cases" [days]="days"
-            [(selectedDay)]="selectedDay"></case-calendar-daily>
-        <case-calendar-weekly *ngIf="!daily" [cases]="cases" [days]="days"></case-calendar-weekly>
+        <case-calendar-daily *ngIf="calendarView == 'byDay'" [days]="days"></case-calendar-daily>
+        <case-calendar-weekly *ngIf="calendarView == 'byWeek'" [days]="days"></case-calendar-weekly>
     </div>
 </mat-card>

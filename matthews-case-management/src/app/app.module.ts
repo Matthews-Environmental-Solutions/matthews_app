@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -44,11 +44,22 @@ import { WelcomeComponent } from './components/welcome/welcome.component';
 
 import { AuthModule } from './auth/auth.module';
 
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { TranslateModule, TranslateLoader, TranslateCompiler } from '@ngx-translate/core';
+import { TranslateMessageFormatCompiler } from 'ngx-translate-messageformat-compiler';
+import { WfactorySnackBarComponent } from './components/wfactory-snack-bar/wfactory-snack-bar.component';
+
+export function HttpLoaderFactory(http: HttpClient) {
+  return new TranslateHttpLoader(http,
+    './assets/i18n/',
+    '.json');
+}
+
 @NgModule({
   declarations: [
     AppComponent,
     WelcomeComponent,
-    
+    WfactorySnackBarComponent,
   ],
   imports: [
     BrowserModule,
@@ -56,6 +67,19 @@ import { AuthModule } from './auth/auth.module';
     AppRoutingModule,
     BrowserAnimationsModule,
     HttpClientModule,
+
+    TranslateModule.forRoot({
+      defaultLanguage: 'en',
+      loader: {
+        provide: TranslateLoader,
+        useFactory: HttpLoaderFactory,
+        deps: [HttpClient],
+      },
+      compiler: {
+        provide: TranslateCompiler,
+        useClass: TranslateMessageFormatCompiler
+      },
+    }),
 
     MatAutocompleteModule,
     MatBadgeModule,
@@ -92,8 +116,9 @@ import { AuthModule } from './auth/auth.module';
     MatToolbarModule,
     MatTooltipModule,
     MatTreeModule,
-
+    
   ],
+  exports: [TranslateModule, WfactorySnackBarComponent],
   providers: [],
   bootstrap: [AppComponent]
 })

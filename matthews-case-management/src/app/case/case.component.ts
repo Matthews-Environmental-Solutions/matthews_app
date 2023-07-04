@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { Facility } from '../models/facility.model';
 import { Case } from '../models/case.model';
 import { AuthService } from '../auth/auth.service';
@@ -7,38 +7,73 @@ import { MatDialog } from '@angular/material/dialog';
 import { ProfileSettingDialogComponent } from './dialogs/profile-setting/profile-setting.dialog.component';
 import { UserSettingData } from '../models/user-setting.model';
 import { UserSettingService } from '../services/user-setting.service';
+import { CaseService } from '../services/cases.service';
+import { TranslateService } from '@ngx-translate/core';
+import { DateAdapter, MAT_DATE_LOCALE } from '@angular/material/core';
+import { I4connectedService } from '../services/i4connected.service';
+import { StateService } from '../services/states.service';
+import { MatSelectChange } from '@angular/material/select';
+import { Subscription, skip } from 'rxjs';
+import { WfactorySnackBarService } from '../components/wfactory-snack-bar/wfactory-snack-bar.service';
 
 @Component({
   selector: 'app-case',
   templateUrl: './case.component.html',
   styleUrls: ['./case.component.scss'],
 })
-export class CaseComponent {
-  facilities: Facility[] = [
-    { value: '1', viewValue: 'Facility 1' },
-    { value: '2', viewValue: 'Facility 2' },
-    { value: '3', viewValue: 'Facility 3' },
-  ];
+export class CaseComponent implements OnInit {
 
-  unscheduledCases: Case[] = [
-    new Case("834FGF2", "John", "Doe", 79, "Cardboard", "Male", "Dev 2"),
-    new Case("824KRB3", "Ekaterina", "Kocsorwa", 16, "Hardwood", "Child", "Dev 2"),
-    new Case("824KRB4", "Jane", "Tratinelli", 56, "Hardwood", "Fimale", "Dev 2"),
-    new Case("834FGF2", "John", "Doe", 79, "Cardboard", "Male", "Dev 2"),
-    new Case("824KRB3", "Ekaterina", "Kocsorwa", 16, "Hardwood", "Child", "Dev 2"),
-    new Case("824KRB4", "Jane", "Tratinelli", 56, "Hardwood", "Fimale", "Dev 2"),
-    new Case("834FGF2", "John", "Doe", 79, "Cardboard", "Male", "Dev 2"),
-    new Case("824KRB3", "Ekaterina", "Kocsorwa", 16, "Hardwood", "Child", "Dev 2"),
-    new Case("824KRB4", "Jane", "Tratinelli", 56, "Hardwood", "Fimale", "Dev 2")
-  ];
-
+  facilities: Facility[] = [];
+  selectedFacilityId: string = '';
+  unscheduledCases: Case[] = [];
+  filteredUnscheduledCases: Case[] = [];
   loggedInUser: UserInfoAuth | undefined;
   userSetting: UserSettingData | undefined;
-  
-  constructor(private authService: AuthService, private userSettingService: UserSettingService, public dialog: MatDialog) {
+  clickedFacilityFilterButton: string = 'all';
+
+  private subs = new Subscription();
+
+  constructor
+    (private authService: AuthService,
+      private userSettingService: UserSettingService,
+      private caseService: CaseService,
+      private i4connectedService: I4connectedService,
+      private stateService: StateService,
+      public dialog: MatDialog,
+      private translate: TranslateService,
+      private _adapter: DateAdapter<any>,
+      private _shackBar: WfactorySnackBarService,
+      @Inject(MAT_DATE_LOCALE) private _locale: string
+    ) {
     this.loggedInUser = authService.loggedInUser;
     this.userSetting = userSettingService.getUserSettingLastValue();
-    // this.getLoggedInUser();
+    this.caseService.getUnscheduledCases().subscribe(cases => this.unscheduledCases = cases);
+    _adapter.setLocale(this.translate.store.currentLang);
+  }
+  ngOnInit(): void {
+    this.subs.add(this.i4connectedService.getSites().subscribe(data => {
+      this.facilities = data;
+      this.userSetting = this.userSettingService.getUserSettingLastValue();
+      this.selectedFacilityId = this.userSetting.lastUsedFacilityId;
+      this.stateService.setSelectedFacility( this.selectedFacilityId);
+    }));
+
+    this.subs.add(this.stateService.selectedFacilityId$.pipe(skip(1)).subscribe(fId => {
+      this.selectedFacilityId = fId;
+      this.caseService.getUnscheduledCases().subscribe(cases => this.filterCases(cases));
+    }));
+
+    this.subs.add(this.stateService.caseSaved$.pipe(skip(1)).subscribe(c => {
+      this.caseService.getUnscheduledCases().subscribe(cases => this.filterCases(cases));
+    }));
+
+    this.subs.add(this.stateService.filterUnscheduledCasesByFacilityId$.subscribe(c => {
+      this.caseService.getUnscheduledCases().subscribe(cases => this.filterCases(cases));
+    }));
+  }
+
+  ngOnDestroy(): void {
+    this.subs.unsubscribe();
   }
 
   logout(): void {
@@ -50,38 +85,46 @@ export class CaseComponent {
       data: this.userSetting,
     });
 
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        console.log('The dialog was closed', result);
-        localStorage.setItem(result.username, JSON.stringify(result));
-        this.userSettingService.setUserSetting(result as UserSettingData);
-      }
-    });
+    dialogRef.afterClosed().subscribe(
+      {
+        next: result => {
+          if (result) {
+            console.log('The dialog was closed', result);
+            this._shackBar.showNotification(this.translate.instant('profilSuccessfullySaved'), 'success');
+            localStorage.setItem(result.username, JSON.stringify(result));
+            this.userSettingService.setUserSetting(result as UserSettingData);
+            let languageCode = (result as UserSettingData).language;
+            this.translate.use(languageCode);
+            this._locale = languageCode;
+            this._adapter.setLocale(this._locale);
+          }
+        },
+        error: err => {
+          this._shackBar.showNotification(this.translate.instant('profilNotSaved') + ' ' + err, 'error');
+        }
+      });
   }
 
-  // getLoggedInUser(): void {
-  //   this.authService.loadUserProfile().then(() => {
+  facilityChanged(facilityId: MatSelectChange): void {
+    this.stateService.setSelectedFacility(facilityId.value);
 
-  //     let userinfoString = localStorage.getItem('id_token_claims_obj');
-  //     let jsonLoggedInUser = JSON.parse(userinfoString ? userinfoString : '');
+    this.userSetting = this.userSettingService.getUserSettingLastValue();
+    this.userSetting.lastUsedFacilityId = facilityId.value;
+    localStorage.setItem(this.userSetting.username, JSON.stringify(this.userSetting));
+    this.userSettingService.setUserSetting(this.userSetting);
+  }
 
-  //     this.loggedInUser = new UserInfoAuth();
-  //     this.loggedInUser.copyInto(jsonLoggedInUser);
+  onFacilityFilterClick(facilityIdFilter: 'all' | 'bySelectedFacility') {
+    this.clickedFacilityFilterButton = facilityIdFilter;
+    this.stateService.setFilterUnscheduledCasesByFacilityId(facilityIdFilter);
+  }
 
-  //     this.getUserSetting();
-  //   });
-  // }
+  wasIClicked(buttonId : string) : 'primary' | 'accent' {
+    return this.clickedFacilityFilterButton == buttonId ? 'accent' : 'primary';
+  }
 
-  // getUserSetting(): void {
-  //   let username = this.loggedInUser && this.loggedInUser.name ? this.loggedInUser.name : undefined;
-  //   if (username) {
-  //     let setting = localStorage.getItem(username);
-
-  //     let jsonSetting = setting ? JSON.parse(setting) : JSON.parse('{"username": "' + username + '", "startDayOfWeek": "0", "language": "en", "timezone": "Europe/London", "timeformat": "24"}');
-  //     this.userSetting = new UserSettingData();
-  //     this.userSetting.copyInto(jsonSetting);
-  //     this.userSettingService.setUserSetting(this.userSetting);
-  //   }
-  // }
-
+  filterCases(cases: Case[]){
+    this.unscheduledCases = cases;
+    this.filteredUnscheduledCases = this.clickedFacilityFilterButton == 'all' ? this.unscheduledCases : this.unscheduledCases.filter(c => c.scheduledFacility == this.selectedFacilityId);
+  }
 }

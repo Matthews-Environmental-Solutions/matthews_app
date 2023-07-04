@@ -23,7 +23,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
 import { MatMenuModule } from '@angular/material/menu';
-import { MatNativeDateModule, MatRippleModule } from '@angular/material/core';
+import { DateAdapter, MAT_DATE_FORMATS, MatNativeDateModule, MatRippleModule } from '@angular/material/core';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -52,6 +52,13 @@ import { MtxDatetimepickerModule } from '@ng-matero/extensions/datetimepicker';
 import { MtxNativeDatetimeModule } from '@ng-matero/extensions/core';
 import { ProfileSettingDialogComponent } from './dialogs/profile-setting/profile-setting.dialog.component';
 import { DatetimePipe } from '../pipes/datetime.pipe';
+import { TranslateModule } from '@ngx-translate/core';
+
+import { MAT_DATE_LOCALE } from '@angular/material/core';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+import { FacilityComponent } from './components/facility/facility.component';
+import { FacilityStatusDialogComponent } from './dialogs/facility-status/facility-status.dialog.component';
+import { DeleteFacilityStatusDialogComponent } from './dialogs/delete-facility-status/delete-facility-status.dialog.component';
 
 @NgModule({
   declarations: [
@@ -62,7 +69,10 @@ import { DatetimePipe } from '../pipes/datetime.pipe';
     UnscheduledCasesComponent,
     CaseAddEditComponent,
     ProfileSettingDialogComponent,
-    DatetimePipe
+    DatetimePipe,
+    FacilityComponent,
+    FacilityStatusDialogComponent,
+    DeleteFacilityStatusDialogComponent
   ],
   imports: [
     CommonModule,
@@ -109,7 +119,16 @@ import { DatetimePipe } from '../pipes/datetime.pipe';
     MtxSelectModule,
     MtxDatetimepickerModule,
     MtxNativeDatetimeModule,
-    FormsModule
+    FormsModule,
+
+    TranslateModule,
+    NgxSkeletonLoaderModule.forRoot({
+      animation: 'pulse', loadingText: 'This item is actually loading...'
+    }) 
+    
+  ],
+  providers: [
+    { provide: MAT_DATE_LOCALE, useValue: 'en' },
   ]
 })
-export class CaseModule { }
+export class CaseModule {}

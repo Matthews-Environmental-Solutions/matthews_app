@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { UserSettingData } from "../models/user-setting.model";
-import { BehaviorSubject, Observable, Subject } from "rxjs";
+import { BehaviorSubject, Observable } from "rxjs";
 
 @Injectable({
     providedIn: 'root'
@@ -22,9 +22,9 @@ export class UserSettingService {
     }
 
     setDefaultUserSetting(): UserSettingData {
-        let jsonSetting = JSON.parse('{"username": "", "startDayOfWeek": "0", "language": "en", "timezone": "Europe/London", "timeformat": "24"}');
+        let jsonSetting = '{"username": "", "startDayOfWeek": "0", "language": "en", "timezone": "Europe/London", "timeformat": "24", "lastUsedFacilityId": "00000000-0000-0000-0000-000000000000", "lastUsedCalendarView":"byDay"}';
         let userSetting = new UserSettingData();
-        userSetting.copyInto(jsonSetting);
+        userSetting.copyInto(JSON.parse(jsonSetting));
         return userSetting;
     }
 

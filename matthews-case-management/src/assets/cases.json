@@ -10,7 +10,7 @@
         "gender": "Male",
         "age": 88,
         "scheduledFacility": "Facility 1",
-        "scheduledCremator": "Dev 2",
+        "scheduledDevice": "Dev 2",
         "scheduledStartTimeDate": "2023-05-09T10:21:32.925Z",
         "scheduledEndTimeDate": ""
     },
@@ -25,7 +25,7 @@
         "gender": "Child",
         "age": 88,
         "scheduledFacility": "Facility 1",
-        "scheduledCremator": "Dev 2",
+        "scheduledDevice": "Dev 2",
         "scheduledStartTimeDate": "2022-05-11 16:02:00",
         "scheduledEndTimeDate": ""
     },
@@ -40,7 +40,7 @@
         "gender": "Fimale",
         "age": 90,
         "scheduledFacility": "Facility 1",
-        "scheduledCremator": "Dev 2",
+        "scheduledDevice": "Dev 2",
         "scheduledStartTimeDate": "2022-04-12 10:03:00",
         "scheduledEndTimeDate": ""
     },
@@ -55,7 +55,7 @@
         "gender": "Male",
         "age": 90,
         "scheduledFacility": "Facility 1",
-        "scheduledCremator": "Dev 2",
+        "scheduledDevice": "Dev 2",
         "scheduledStartTimeDate": "2022-04-13 12:04:00",
         "scheduledEndTimeDate": ""
     },
@@ -70,7 +70,7 @@
         "gender": "Male",
         "age": 94,
         "scheduledFacility": "Facility 1",
-        "scheduledCremator": "Dev 2",
+        "scheduledDevice": "Dev 2",
         "scheduledStartTimeDate": "2022-04-14 00:06:00",
         "scheduledEndTimeDate": ""
     },
@@ -85,7 +85,7 @@
         "gender": "Fimale",
         "age": 84,
         "scheduledFacility": "Facility 1",
-        "scheduledCremator": "Dev 2",
+        "scheduledDevice": "Dev 2",
         "scheduledStartTimeDate": "2022-04-15 21:07:00",
         "scheduledEndTimeDate": ""
     },
@@ -100,7 +100,7 @@
         "gender": "Child",
         "age": 3,
         "scheduledFacility": "Facility 1",
-        "scheduledCremator": "Dev 2",
+        "scheduledDevice": "Dev 2",
         "scheduledStartTimeDate": "2022-04-16 08:08:00",
         "scheduledEndTimeDate": ""
     },
@@ -115,7 +115,7 @@
         "gender": "Fimale",
         "age": 3,
         "scheduledFacility": "Facility 1",
-        "scheduledCremator": "Dev 2",
+        "scheduledDevice": "Dev 2",
         "scheduledStartTimeDate": "2022-04-16 09:01:00",
         "scheduledEndTimeDate": ""
     },
@@ -130,7 +130,7 @@
         "gender": "Fimale",
         "age": 3,
         "scheduledFacility": "Facility 1",
-        "scheduledCremator": "Dev 2",
+        "scheduledDevice": "Dev 2",
         "scheduledStartTimeDate": "2022-04-16 09:11:00",
         "scheduledEndTimeDate": ""
     }

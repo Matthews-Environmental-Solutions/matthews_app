@@ -1,16 +1,16 @@
 <mat-card class="add-edit-card">
     <form [formGroup]="caseForm" (ngSubmit)="save()">
         <mat-toolbar class="add-edit-toolbar">
-            <span>{{title}} case</span>
+            <span>{{title | translate}}</span>
             <span class="spacer"></span>
-            <button mat-raised-button class="add-edit-header-buttons btn-cancel" routerLink="/">
+            <button mat-raised-button class="add-edit-header-buttons" routerLink="/">
                 <mat-icon class="material-symbols-outlined">cancel</mat-icon>
-                Cancel
+                {{"cancel" | translate}}
             </button>
-            <button mat-raised-button [disabled]="!caseForm.valid" class="add-edit-header-buttons btn-save"
+            <button mat-raised-button [disabled]="!caseForm.valid" class="add-edit-header-buttons"
                 type="submit">
                 <mat-icon class="material-symbols-outlined">check_circle</mat-icon>
-                Save
+                {{"save" | translate}}
             </button>
         </mat-toolbar>
 
@@ -18,43 +18,124 @@
         <div class="card-content">
 
             <div class="left-column">
+                <mat-error
+                    *ngIf="caseForm.get('clientCaseId')?.invalid && (caseForm.get('clientCaseId')?.dirty || caseForm.get('clientCaseId')?.touched)">
+                    <span *ngIf="caseForm.get('clientCaseId')?.errors?.['required']">
+                        Case id is required.
+                    </span>
+                </mat-error>
                 <mat-form-field class="example-full-width">
-                    <mat-label>Case ID</mat-label>
+                    <mat-label>{{"caseId" | translate}}</mat-label>
                     <input formControlName="clientCaseId" matInput placeholder="Enter case id" value="">
                 </mat-form-field>
 
+
+                <mat-error
+                    *ngIf="caseForm.get('firstName')?.invalid && (caseForm.get('firstName')?.dirty || caseForm.get('firstName')?.touched)">
+                    <span *ngIf="caseForm.get('firstName')?.errors?.['required']">
+                        First name is required.
+                    </span>
+                    <span *ngIf="caseForm.get('firstName')?.errors?.['minlength']">
+                        Name must be at least 4 characters long.
+                    </span>
+                    <span *ngIf="caseForm.get('firstName')?.errors?.['forbiddenName']">
+                        Name cannot be Bob.
+                    </span>
+                </mat-error>
                 <mat-form-field class="example-full-width">
-                    <mat-label>First Name</mat-label>
-                    <input formControlName="firstName" matInput placeholder="Enter first name" value="">
+                    <mat-label>{{"firstName" | translate}}</mat-label>
+                    <input formControlName="firstName" matInput placeholder="Enter first name" value="" id="firstName">
                 </mat-form-field>
 
+
+                <mat-error
+                    *ngIf="caseForm.get('lastName')?.invalid && (caseForm.get('lastName')?.dirty || caseForm.get('lastName')?.touched)">
+                    <span *ngIf="caseForm.get('lastName')?.errors?.['required']">
+                        Last name is required.
+                    </span>
+                </mat-error>
                 <mat-form-field class="example-full-width">
-                    <mat-label>Last Name</mat-label>
+                    <mat-label>{{"lastName" | translate}}</mat-label>
                     <input formControlName="lastName" matInput placeholder="Enter last name" value="">
                 </mat-form-field>
 
+
+                <mat-error
+                    *ngIf="caseForm.get('weight')?.invalid && (caseForm.get('weight')?.dirty || caseForm.get('weight')?.touched)">
+                    <span *ngIf="caseForm.get('weight')?.errors?.['required']">
+                        Weight is required.
+                    </span>
+                </mat-error>
                 <mat-form-field class="example-full-width">
-                    <mat-label>Weight</mat-label>
-                    <input formControlName="weight" matInput placeholder="Enter case weight" value="">
+                    <mat-label>{{"weight" | translate}}</mat-label>
+                    <input formControlName="weight" matInput placeholder="Enter case weight" value="" type="number">
                 </mat-form-field>
 
+
+                <mat-error
+                    *ngIf="caseForm.get('gender')?.invalid && (caseForm.get('gender')?.dirty || caseForm.get('gender')?.touched)">
+                    <span *ngIf="caseForm.get('gender')?.errors?.['required']">
+                        Gender is required.
+                    </span>
+                </mat-error>
                 <section class="toggle-button-container">
-                    <p class="toggle-button-label">Gender</p>
+                    <!-- <p class="toggle-button-label">{{"gender" | translate}}</p> -->
+                    <mat-label class="toggle-button-label">{{"gender" | translate}}</mat-label>
                     <mat-button-toggle-group formControlName="gender" aria-label="Font Style">
-                        <mat-button-toggle value="male">Male</mat-button-toggle>
-                        <mat-button-toggle value="female">Female</mat-button-toggle>
-                        <mat-button-toggle value="other">Other</mat-button-toggle>
+                        <mat-button-toggle value=1>{{"male" | translate}}</mat-button-toggle>
+                        <mat-button-toggle value=2>{{"female" | translate}}</mat-button-toggle>
+                        <mat-button-toggle value=0>{{"other" | translate}}</mat-button-toggle>
                     </mat-button-toggle-group>
                 </section>
 
+
+                <mat-error
+                    *ngIf="caseForm.get('age')?.invalid && (caseForm.get('age')?.dirty || caseForm.get('age')?.touched)">
+                    <span *ngIf="caseForm.get('age')?.errors?.['required']">
+                        Age is required.
+                    </span>
+                </mat-error>
                 <mat-form-field class="example-full-width">
-                    <mat-label>Age</mat-label>
-                    <input formControlName="age" matInput placeholder="Enter case age" value="">
+                    <mat-label>{{"age" | translate}}</mat-label>
+                    <input formControlName="age" matInput placeholder="Enter case age" value="" type="number">
                 </mat-form-field>
             </div>
-            <div class="right-column">
+
+
+
+            <div class="middle-column">
+                <mat-error
+                    *ngIf="caseForm.get('facility')?.invalid && (caseForm.get('facility')?.dirty || caseForm.get('facility')?.touched)">
+                    <span *ngIf="caseForm.get('facility')?.errors?.['required']">
+                        Facility is required.
+                    </span>
+                </mat-error>
                 <mat-form-field appearance="fill">
-                    <mat-label>Container type</mat-label>
+                    <mat-label>{{"facility" | translate}}</mat-label>
+                    <mat-select formControlName="facility" (selectionChange)="facilityChanged($event)">
+                        <mat-option *ngFor="let facility of facilities" [value]="facility.id">
+                            {{facility.name}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+
+                <mat-form-field appearance="fill">
+                    <mat-label>{{"cremator" | translate}}</mat-label>
+                    <mat-select formControlName="scheduledDevice">
+                        <mat-option *ngFor="let cremator of cremators" [value]="cremator.id">
+                            {{cremator.alias}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+
+                <mat-error
+                    *ngIf="caseForm.get('containerType')?.invalid && (caseForm.get('containerType')?.dirty || caseForm.get('containerType')?.touched)">
+                    <span *ngIf="caseForm.get('containerType')?.errors?.['required']">
+                        Container type is required.
+                    </span>
+                </mat-error>
+                <mat-form-field appearance="fill">
+                    <mat-label>{{"containerType" | translate}}</mat-label>
                     <mat-select formControlName="containerType">
                         <mat-option *ngFor="let container of containerTypes" [value]="container.id">
                             {{container.name}}
@@ -62,17 +143,49 @@
                     </mat-select>
                 </mat-form-field>
 
+                <mat-error
+                    *ngIf="caseForm.get('containerSize')?.invalid && (caseForm.get('containerSize')?.dirty || caseForm.get('containerSize')?.touched)">
+                    <span *ngIf="caseForm.get('containerSize')?.errors?.['required']">
+                        Container size is required.
+                    </span>
+                </mat-error>
                 <mat-form-field appearance="fill">
-                    <mat-label>Load size</mat-label>
-                    <mat-select formControlName="loadSize">
-                        <mat-option *ngFor="let loadSize of loadSizes" [value]="loadSize.id">
+                    <mat-label>{{"loadSize" | translate}}</mat-label>
+                    <mat-select formControlName="containerSize">
+                        <mat-option *ngFor="let loadSize of containerSizes" [value]="loadSize.id">
                             {{loadSize.name}}
                         </mat-option>
                     </mat-select>
                 </mat-form-field>
 
+                <section class="toggle-button-container">
+                    <mat-label class="toggle-button-label">{{"burnMode" | translate}}</mat-label>
+                    <mat-button-toggle-group formControlName="burnMode" aria-label="Font Style">
+                        <mat-button-toggle value="simple">{{"simple" | translate}}</mat-button-toggle>
+                        <mat-button-toggle value="eco">{{"eco" | translate}}</mat-button-toggle>
+                        <mat-button-toggle value="production">{{"production" | translate}}</mat-button-toggle>
+                    </mat-button-toggle-group>
+                </section>
+
+                <section class="schedule-start-time-container">
+                    <mat-label class="toggle-button-label">{{"scheduledStartTime" | translate}}</mat-label>
+                    <div class="schedule-start-time-right-column">
+                        <mat-form-field>
+                            <mat-label>{{type | translate}}</mat-label>
+                            <mtx-datetimepicker #datetimePicker [type]="type" [mode]="mode"
+                                [multiYearSelector]="multiYearSelector" [startView]="startView"
+                                [twelvehour]="twelvehour" [timeInterval]="timeInterval" [touchUi]="touchUi"
+                                [timeInput]="timeInput"></mtx-datetimepicker>
+                            <input [mtxDatetimepicker]="datetimePicker" formControlName="scheduledStartDateTime" matInput>
+                            <mtx-datetimepicker-toggle [for]="datetimePicker" matSuffix></mtx-datetimepicker-toggle>
+                        </mat-form-field>
+                    </div>
+                </section>
+            </div>
+
+            <div class="right-column">
                 <mat-form-field appearance="fill">
-                    <mat-label>Case status</mat-label>
+                    <mat-label>{{"caseStatus" | translate}}</mat-label>
                     <mat-select formControlName="status">
                         <mat-option *ngFor="let caseStatus of caseStatuses" [value]="caseStatus.id">
                             {{caseStatus.name}}
@@ -80,39 +193,16 @@
                     </mat-select>
                 </mat-form-field>
 
-                <mat-form-field appearance="fill">
-                    <mat-label>Cremator</mat-label>
-                    <mat-select formControlName="scheduledCremator">
-                        <mat-option *ngFor="let cremator of cremators" [value]="cremator.id">
-                            {{cremator.name}}
-                        </mat-option>
-                    </mat-select>
-                </mat-form-field>
+                <mat-selection-list #statuses formControlName="selectedFacilityStatuses">
+                    <mat-list-option *ngFor="let status of allFacilityStatuses" [selected]="isStatusSelected(status)" [value]="status">
+                        <mat-list-item class="option-list">
+                            <mat-icon class="icon-in-option">{{status.statusIcon}}</mat-icon> {{status.statusName}} <span class="start-process" *ngIf="status.startProcess">({{'startProcess' | translate}})</span>
+                            <!-- <div matListItemTitle>{{status.statusName}}</div> -->
+                        </mat-list-item>
+                        
+                    </mat-list-option>
+                </mat-selection-list>
 
-                <section class="toggle-button-container">
-                    <p class="toggle-button-label">Burn mode</p>
-                    <mat-button-toggle-group formControlName="burnMode" aria-label="Font Style">
-                        <mat-button-toggle value="simple">Simple</mat-button-toggle>
-                        <mat-button-toggle value="eco">Eco</mat-button-toggle>
-                        <mat-button-toggle value="production">Production</mat-button-toggle>
-                    </mat-button-toggle-group>
-                </section>
-
-                <section class="schedule-start-time-container">
-                    <p class="toggle-button-label">Scheduled start time</p>
-                    <div class="schedule-start-time-right-column">
-                        <mat-form-field>
-                            <mat-label>{{type}}</mat-label>
-                            <mtx-datetimepicker #datetimePicker [type]="type" [mode]="mode"
-                                [multiYearSelector]="multiYearSelector" [startView]="startView"
-                                [twelvehour]="twelvehour" [timeInterval]="timeInterval" [touchUi]="touchUi"
-                                [timeInput]="timeInput"></mtx-datetimepicker>
-                            <input [mtxDatetimepicker]="datetimePicker" formControlName="scheduledStartDateTime"
-                                matInput required>
-                            <mtx-datetimepicker-toggle [for]="datetimePicker" matSuffix></mtx-datetimepicker-toggle>
-                        </mat-form-field>
-                    </div>
-                </section>
             </div>
 
         </div>

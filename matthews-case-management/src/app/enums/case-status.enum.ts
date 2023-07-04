@@ -1,0 +1,7 @@
+export enum CaseStatus {
+    UNSCHEDULED = 0,
+    CREMATION_COMPLETE,
+    IN_PROGRESS,
+    READY_TO_CREMATE,
+    WAITING_FOR_PERMIT
+}

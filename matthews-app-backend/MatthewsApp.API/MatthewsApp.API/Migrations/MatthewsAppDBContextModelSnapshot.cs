@@ -6,6 +6,8 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
+#nullable disable
+
 namespace MatthewsApp.API.Migrations
 {
     [DbContext(typeof(MatthewsAppDBContext))]
@@ -15,58 +17,98 @@ namespace MatthewsApp.API.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("ProductVersion", "5.0.12")
-                .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                .HasAnnotation("ProductVersion", "7.0.7")
+                .HasAnnotation("Relational:MaxIdentifierLength", 128);
+
+            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
             modelBuilder.Entity("MatthewsApp.API.Models.Case", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Age")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<Guid?>("ActualDevice")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("CaseId")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<string>("ActualDeviceAlias")
+                        .HasColumnType("nvarchar(564)");
 
-                    b.Property<string>("CaseName")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<DateTime?>("ActualEndTime")
+                        .HasColumnType("datetime2(7)");
 
-                    b.Property<string>("ContainerSize")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<Guid?>("ActualFacility")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("ContainerType")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<DateTime?>("ActualStartTime")
+                        .HasColumnType("datetime2(7)");
 
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Age")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ClientCaseId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("ClientId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<int>("ContainerSize")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ContainerType")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2(7)");
 
-                    b.Property<string>("FacilityId")
+                    b.Property<string>("Electricity")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Gender")
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(16)");
+
+                    b.Property<string>("Fuel")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Gender")
+                        .HasColumnType("int");
 
                     b.Property<bool>("IsObsolete")
                         .HasColumnType("bit");
 
-                    b.Property<DateTime>("ScheduledTime")
-                        .HasColumnType("datetime2");
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(16)");
 
-                    b.Property<string>("SelectedDevice")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<Guid?>("ModifiedBy")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("SelectedDeviceAlias")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<DateTime?>("ModifiedTime")
+                        .HasColumnType("datetime2(7)");
 
-                    b.Property<string>("Status")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<Guid?>("PerformedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("ScheduledDevice")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ScheduledDeviceAlias")
+                        .HasColumnType("nvarchar(564)");
+
+                    b.Property<Guid?>("ScheduledFacility")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("ScheduledStartTime")
+                        .HasColumnType("datetime2(7)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
 
                     b.Property<double>("Weight")
                         .HasColumnType("float");
@@ -74,6 +116,104 @@ namespace MatthewsApp.API.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Cases");
+                });
+
+            modelBuilder.Entity("MatthewsApp.API.Models.CaseToFacilityStatus", b =>
+                {
+                    b.Property<Guid>("CaseId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("FacilityStatusId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedTime")
+                        .HasColumnType("datetime2(7)");
+
+                    b.Property<bool>("IsDone")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid?>("ModifiedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("ModifiedTime")
+                        .HasColumnType("datetime2(7)");
+
+                    b.HasKey("CaseId", "FacilityStatusId");
+
+                    b.HasIndex("FacilityStatusId");
+
+                    b.ToTable("CaseToFacilityStatus");
+                });
+
+            modelBuilder.Entity("MatthewsApp.API.Models.FacilityStatus", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedTime")
+                        .HasColumnType("datetime2(7)");
+
+                    b.Property<Guid>("FacilityId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("ModifiedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("ModifiedTime")
+                        .HasColumnType("datetime2(7)");
+
+                    b.Property<bool>("StartProcess")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("StatusCode")
+                        .HasColumnType("int");
+
+                    b.Property<string>("StatusIcon")
+                        .HasColumnType("nvarchar(16)");
+
+                    b.Property<string>("StatusName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(256)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("FacilityStatuses");
+                });
+
+            modelBuilder.Entity("MatthewsApp.API.Models.CaseToFacilityStatus", b =>
+                {
+                    b.HasOne("MatthewsApp.API.Models.Case", "Case")
+                        .WithMany("CaseToFacilityStatuses")
+                        .HasForeignKey("CaseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MatthewsApp.API.Models.FacilityStatus", "FacilityStatus")
+                        .WithMany("CaseToFacilityStatuses")
+                        .HasForeignKey("FacilityStatusId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Case");
+
+                    b.Navigation("FacilityStatus");
+                });
+
+            modelBuilder.Entity("MatthewsApp.API.Models.Case", b =>
+                {
+                    b.Navigation("CaseToFacilityStatuses");
+                });
+
+            modelBuilder.Entity("MatthewsApp.API.Models.FacilityStatus", b =>
+                {
+                    b.Navigation("CaseToFacilityStatuses");
                 });
 #pragma warning restore 612, 618
         }

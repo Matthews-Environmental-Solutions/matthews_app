@@ -28,13 +28,6 @@
     border: solid 1px #5d6771;
 }
 
-.btn-cancel {
-    background-color: transparent;
-
-}
-
-.btn-save {}
-
 .card-content {
     overflow-y: auto;
     overflow-x: hidden;
@@ -43,7 +36,7 @@
 
     display: grid;
 
-    grid-template-columns: [ac-first] 1fr [ac-line2] 1fr [ac-end];
+    grid-template-columns: [ac-first] 1fr [ac-line2] 1fr [ac-line3] 1fr [ac-end];
     grid-template-rows: [ar-first] 1fr [ar-last];
 }
 
@@ -59,10 +52,22 @@
     flex-direction: column;
 }
 
-.right-column {
+.middle-column {
     grid-row-start: ar-first;
     grid-row-end: ar-last;
     grid-column-start: ac-line2;
+    grid-column-end: ac-line3;
+
+    padding: 10px;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.right-column {
+    grid-row-start: ar-first;
+    grid-row-end: ar-last;
+    grid-column-start: ac-line3;
     grid-column-end: ac-end;
 
     padding: 10px;
@@ -123,4 +128,22 @@
 
 .inline-calendar-card {
     width: 250px;
+}
+
+.option-list {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    align-content: center;
+}
+
+.start-process {
+    color: #849227;
+    text-transform: uppercase;
+    text-indent: 0cap;
+    font-style: italic;
+}
+
+.icon-in-option{
+    // padding-top: 30px;
 }
