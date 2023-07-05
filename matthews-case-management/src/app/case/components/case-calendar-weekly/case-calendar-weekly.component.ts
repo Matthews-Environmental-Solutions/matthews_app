@@ -92,29 +92,45 @@ export class CaseCalendarWeeklyComponent implements OnInit {
   }
 
   parseCasesByDays(): void {
-    this.filteredCases.forEach(c => {
-      if (this.formatStringDate(c.scheduledStartTime) == this.formatDate(this.days[0])) {
+    for (var i = 0; i < this.filteredCases.length; i++) {
+      let c = this.filteredCases[i];
+      // The "c.scheduledStartTime" is in local time
+      if (this.setTimeToZeros(c.scheduledStartTime) == this.formatDate(this.days[0])) {
+        console.log(`case ${c.firstName}`, `${c.scheduledStartTime} == ${this.formatDate(this.days[0])}`);
         this.casesForDay1.push(c);
+        continue;
       }
-      if (this.formatStringDate(c.scheduledStartTime) == this.formatDate(this.days[1])) {
+      if (this.setTimeToZeros(c.scheduledStartTime) == this.formatDate(this.days[1])) {
+        console.log(`case ${c.firstName}`, `${c.scheduledStartTime} == ${this.formatDate(this.days[1])}`);
         this.casesForDay2.push(c);
+        continue;
       }
-      if (this.formatStringDate(c.scheduledStartTime) == this.formatDate(this.days[2])) {
+      if (this.setTimeToZeros(c.scheduledStartTime) == this.formatDate(this.days[2])) {
+        console.log(`case ${c.firstName}`, `${c.scheduledStartTime} == ${this.formatDate(this.days[2])}`);
         this.casesForDay3.push(c);
+        continue;
       }
-      if (this.formatStringDate(c.scheduledStartTime) == this.formatDate(this.days[3])) {
+      if (this.setTimeToZeros(c.scheduledStartTime) == this.formatDate(this.days[3])) {
+        console.log(`case ${c.firstName}`, `${c.scheduledStartTime} == ${this.formatDate(this.days[3])}`);
         this.casesForDay4.push(c);
+        continue;
       }
-      if (this.formatStringDate(c.scheduledStartTime) == this.formatDate(this.days[4])) {
+      if (this.setTimeToZeros(c.scheduledStartTime) == this.formatDate(this.days[4])) {
+        console.log(`case ${c.firstName}`, `${c.scheduledStartTime} == ${this.formatDate(this.days[4])}`);
         this.casesForDay5.push(c);
+        continue;
       }
-      if (this.formatStringDate(c.scheduledStartTime) == this.formatDate(this.days[5])) {
+      if (this.setTimeToZeros(c.scheduledStartTime) == this.formatDate(this.days[5])) {
+        console.log(`case ${c.firstName}`, `${c.scheduledStartTime} == ${this.formatDate(this.days[5])}`);
         this.casesForDay6.push(c);
+        continue;
       }
-      if (this.formatStringDate(c.scheduledStartTime) == this.formatDate(this.days[6])) {
+      if (this.setTimeToZeros(c.scheduledStartTime) == this.formatDate(this.days[6])) {
+        console.log(`case ${c.firstName}`, `${c.scheduledStartTime} == ${this.formatDate(this.days[6])}`);
         this.casesForDay7.push(c);
+        continue;
       }
-    })
+    }
   }
 
   getDayForButton(indexNumber: number): string {
@@ -122,13 +138,21 @@ export class CaseCalendarWeeklyComponent implements OnInit {
     return `${this.days[indexNumber].getDate().toString()} ${this.days[indexNumber].toLocaleString(currentLang, { month: 'short' })}`;
   }
 
-  formatStringDate(dateString: string | undefined): string {
-    if (!dateString) {
+  setTimeToZeros(dateString: string | undefined): string {
+    if (dateString == null) {
       return '';
     }
-    let date = new Date(dateString);
-    return date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " 00:00:00";
+    let splittedDate = dateString.split('T');
+    return `${splittedDate[0]} 00:00:00`;
   }
+
+  // formatStringDate(dateString: string | undefined): string {
+  //   if (!dateString) {
+  //     return '';
+  //   }
+  //   let date = new Date(dateString); // this line will convert UTC datetime to local
+  //   return date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
+  // }
 
   getIconName(status: number): string {
     switch (status) {
@@ -146,7 +170,16 @@ export class CaseCalendarWeeklyComponent implements OnInit {
   }
 
   formatDate(date: Date): string {
-    return date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " 00:00:00";
+    let month = '' + (date.getMonth() + 1);
+    let day = '' + date.getDate();
+    let year = date.getFullYear();
+
+    if (month.length < 2)
+      month = '0' + month;
+    if (day.length < 2)
+      day = '0' + day;
+
+    return `${year}-${month}-${day} 00:00:00`;
   }
 
   isEmptyString = (data: string): boolean => typeof data === "string" && data.trim().length == 0;
