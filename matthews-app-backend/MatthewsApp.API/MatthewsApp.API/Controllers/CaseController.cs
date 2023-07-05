@@ -137,6 +137,20 @@ public class CaseController : Controller
     }
 
     [HttpGet]
+    [Route("GetScheduledCasesByTimePeriod/{facilityId}/{dateStart}/{dateEnd}")]
+    public async Task<ActionResult<IEnumerable<CaseDto>>> GetScheduledCasesByTimePeriod(Guid facilityId, DateTime dateStart, DateTime dateEnd)
+    {
+        try
+        {
+            return Ok((await service.GetScheduledCasesByTimePeriod(facilityId, dateStart, dateEnd)).ToDTOs());
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+    [HttpGet]
     [Route("GetUnscheduledCases")]
     public async Task<ActionResult<IEnumerable<CaseDto>>> GetUnscheduledCases()
     {

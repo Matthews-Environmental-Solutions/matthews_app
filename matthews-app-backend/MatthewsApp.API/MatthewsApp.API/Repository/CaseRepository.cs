@@ -70,14 +70,14 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
 
     public async Task<IEnumerable<Case>> GetScheduledCasesByDay(Guid facilityId, DateTime date)
     {
+        DateTime dateEnd = date.AddDays(1);
         IEnumerable<Case> cases = await _dataContext.Cases.ToArrayAsync();
         return cases.Where(c => 
             c.IsObsolete == false
             && c.ScheduledFacility.Equals(facilityId)
             && !c.ScheduledDevice.Equals(Guid.Empty)
-            && c.ScheduledStartTime.Value.Day.Equals(date.Day)
-            && c.ScheduledStartTime.Value.Month.Equals(date.Month)
-            && c.ScheduledStartTime.Value.Year.Equals(date.Year)
+            && c.ScheduledStartTime.Value >= date
+            && c.ScheduledStartTime.Value < dateEnd
             ).ToList();
     }
 
@@ -88,8 +88,21 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
         return cases.Where(c =>
             c.IsObsolete == false
             && c.ScheduledFacility.Equals(facilityId)
-            && c.ScheduledStartTime.Value.Date >= dateStartDateOfWeek.Date
-            && c.ScheduledStartTime.Value.Date < dateEnd.Date
+            && !c.ScheduledDevice.Equals(Guid.Empty)
+            && c.ScheduledStartTime.Value >= dateStartDateOfWeek
+            && c.ScheduledStartTime.Value < dateEnd
+            ).ToList();
+    }
+
+    public async Task<IEnumerable<Case>> GetScheduledCasesByTimePeriod(Guid facilityId, DateTime dateStart, DateTime dateEnd)
+    {
+        IEnumerable<Case> cases = await _dataContext.Cases.ToArrayAsync();
+        return cases.Where(c =>
+            c.IsObsolete == false
+            && c.ScheduledFacility.Equals(facilityId)
+            && !c.ScheduledDevice.Equals(Guid.Empty)
+            && c.ScheduledStartTime.Value >= dateStart
+            && c.ScheduledStartTime.Value < dateEnd
             ).ToList();
     }
 
@@ -146,4 +159,5 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             && c.ScheduledFacility.Equals(facilityId)
             ).ToList();
     }
+
 }

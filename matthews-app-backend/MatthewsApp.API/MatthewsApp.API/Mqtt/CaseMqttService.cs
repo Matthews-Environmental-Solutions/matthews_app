@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using MatthewsApp.API.Services;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using MQTTnet;
@@ -13,20 +14,29 @@ namespace MatthewsApp.API.Mqtt;
 
 public class CaseMqttService : IHostedService
 {
-    private readonly ILogger<CaseMqttService> _logger;
-    private IConfiguration _configuration;
-    private MqttFactory _mqttFactory;
     private IMqttClient _mqttClient;
+    private MqttFactory _mqttFactory;
+    private IConfiguration _configuration;
+    private readonly ILogger<CaseMqttService> _logger;
+    private CaseI4cHttpClientService _caseI4CHttpClientService;
 
-    public CaseMqttService(ILogger<CaseMqttService> logger, IConfiguration configuration)
+    public CaseMqttService(ILogger<CaseMqttService> logger, IConfiguration configuration, CaseI4cHttpClientService caseI4CHttpClientService)
     {
         _logger = logger;
         _configuration = configuration;
         _mqttFactory = new MqttFactory();
+        _caseI4CHttpClientService = caseI4CHttpClientService;
     }
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
+
+        // 1. GET LIST OF ALL MATTHEWS DEVICES FROM ALL FACILITIES - It does not depends of user permissions.
+        // HOW TO DO THIS?
+        //string facilities = await _caseI4CHttpClientService.GetAllFacilities();
+        string devices = await _caseI4CHttpClientService.GetAllDevicesAsync();
+
+        // 2. MQTT
         var mqttFactory = new MqttFactory();
         _mqttClient = mqttFactory.CreateMqttClient();
 
@@ -65,6 +75,7 @@ public class CaseMqttService : IHostedService
                             await _mqttClient.ConnectAsync(options, CancellationToken.None);
                             // Subscribe to topics when session is clean etc.
 
+                            //iterate by all devices
 
                             var mqttSubscribeOptions = _mqttFactory.CreateSubscribeOptionsBuilder()
                                 .WithTopicFilter(f =>

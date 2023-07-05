@@ -57,7 +57,8 @@ public class Startup
         //services.AddScoped<IMatthewsAppDBContext, MatthewsAppDBContext>();
         services.AddDbContext<IMatthewsAppDBContext, MatthewsAppDBContext>(options => options.UseSqlServer(connectionString));
 
-        services.AddHostedService<CaseMqttService>();
+        services.AddSingleton<CaseI4cHttpClientService>();
+        //services.AddHostedService<CaseMqttService>();
         services.AddScoped<ICasesService, CasesService>();
         services.AddScoped<ICaseRepository, CaseRepository>();
         services.AddScoped<IFacilityStatusService, FacilityStatusService>();
@@ -111,5 +112,10 @@ public class Startup
         {
             endpoints.MapControllers().RequireAuthorization();
         });
+    }
+
+    private void GetDevices()
+    {
+
     }
 }
