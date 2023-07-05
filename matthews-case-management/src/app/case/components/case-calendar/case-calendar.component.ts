@@ -46,7 +46,6 @@ export class CaseCalendarComponent implements OnInit, OnDestroy {
 
     this.subs.add(this.stateService.devicesToShowAsFilter$.pipe(skip(1)).subscribe(devices => {
       this.devices = devices;
-      console.log('devices of site:', devices);
     }));
 
     this.subs.add(this.stateService.numberOfCasesToShowAsFilter$.pipe(skip(1)).subscribe(numberOfCases => this.numberOfCases = numberOfCases));

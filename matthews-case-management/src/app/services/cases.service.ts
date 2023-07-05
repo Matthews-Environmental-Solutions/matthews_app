@@ -42,7 +42,8 @@ export class CaseService {
 
     getScheduledCasesByDay(facilityId: string, date: Date): Observable<Case[]> {
         let formatedDate: string = this.formatDate(date);
-        return this.httpClient.get<Case[]>(`${this.apiURL}/Case/GetScheduledCasesByDay/${facilityId}/${formatedDate}`)
+        let utcStartDate = new Date(formatedDate).toISOString();
+        return this.httpClient.get<Case[]>(`${this.apiURL}/Case/GetScheduledCasesByDay/${facilityId}/${utcStartDate}`)
             .pipe(retry(1), catchError(this.handleError))
             .pipe(map((cases: Case[]) => {
                 cases = cases.map(item => this.remapCase(item));
@@ -52,7 +53,8 @@ export class CaseService {
 
     getScheduledCasesByWeek(facilityId: string, dateStartDateOfWeek: Date): Observable<Case[]> {
         let formatedStartDateOfWeek: string = this.formatDate(dateStartDateOfWeek);
-        return this.httpClient.get<Case[]>(`${this.apiURL}/Case/GetScheduledCasesByWeek/${facilityId}/${formatedStartDateOfWeek}`)
+        let utcStartDateOfWeek = new Date(formatedStartDateOfWeek).toISOString();
+        return this.httpClient.get<Case[]>(`${this.apiURL}/Case/GetScheduledCasesByWeek/${facilityId}/${utcStartDateOfWeek}`)
             .pipe(retry(1), catchError(this.handleError))
             .pipe(map((cases: Case[]) => {
                 cases = cases.map(item => this.remapCase(item));
