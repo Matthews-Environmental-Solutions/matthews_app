@@ -37,27 +37,40 @@ export class CremationProcessPage implements OnInit {
   deviceId: string;
   selectedBurnMode: number;
   chamberStatus = ChamberStatus;
+  startHour: number;
+  startMinute: number;
+  startTime: string;
 
   burnMode = BurnMode;
-  burnModeKeys = Object.keys(BurnMode).filter(x => (parseInt(x, 10) >= 0));
+  burnModeKeys = Object.keys(BurnMode).filter((x) => parseInt(x, 10) >= 0);
 
-  constructor(private appStore: AppStoreService,
-              private popoverController: PopoverController,
-              private translateService: TranslateService,
-              private matStepperIntl: MatStepperIntl,
-              private route: ActivatedRoute,
-              private cremationProcessService: CremationProcessService,
-              public alertController: AlertController) {}
+  constructor(
+    private appStore: AppStoreService,
+    private popoverController: PopoverController,
+    private translateService: TranslateService,
+    private matStepperIntl: MatStepperIntl,
+    private route: ActivatedRoute,
+    private cremationProcessService: CremationProcessService,
+    public alertController: AlertController
+  ) {}
 
   ngOnInit() {
-    this.matStepperIntl.optionalLabel ='';
+    this.matStepperIntl.optionalLabel = '';
     this.matStepperIntl.changes.next();
     this.deviceId = this.route.snapshot.paramMap.get('id');
   }
 
+  setStartTime() {
+    const currentDate = new Date();
+    this.startHour = currentDate.getHours();
+    this.startMinute = currentDate.getMinutes();
+  }
+
   startPreheat(selectedDevice: Device) {
     this.isPreheatStarted = true;
-    const signal = selectedDevice.signals.find(signal => signal.name === 'PREHEAT');
+    const signal = selectedDevice.signals.find(
+      (signal) => signal.name === 'PREHEAT'
+    );
     console.log('SignalId' + signal.id);
     this.cremationProcessService.writeSignalValue(signal?.id, 1);
   }
@@ -69,18 +82,20 @@ export class CremationProcessPage implements OnInit {
       buttons: [
         {
           text: this.translateService.instant('Cancel'),
-          role: 'cancel'
+          role: 'cancel',
         },
         {
           text: this.translateService.instant('Confirm'),
           role: 'confirm',
           handler: () => {
             this.isPreheatStarted = false;
-            const signal = selectedDevice.signals.find(signal => signal.name === 'PREHEAT');
+            const signal = selectedDevice.signals.find(
+              (signal) => signal.name === 'PREHEAT'
+            );
             this.cremationProcessService.writeSignalValue(signal?.id, 0);
-          }
-        }
-      ]
+          },
+        },
+      ],
     };
 
     this.presentAlert(alertOptions);
@@ -97,8 +112,11 @@ export class CremationProcessPage implements OnInit {
   startCycle(selectedDevice: Device) {
     this.isCycleStarted = true;
 
-    const signal = selectedDevice.signals.find(signal => signal.name === 'START_CREMATION');
+    const signal = selectedDevice.signals.find(
+      (signal) => signal.name === 'START_CREMATION'
+    );
     this.cremationProcessService.writeSignalValue(signal?.id, 1);
+    this.setStartTime();
   }
 
   pauseCycle(selectedDevice: Device) {
@@ -108,18 +126,20 @@ export class CremationProcessPage implements OnInit {
       buttons: [
         {
           text: this.translateService.instant('No'),
-          role: 'no'
+          role: 'no',
         },
         {
           text: this.translateService.instant('Yes'),
           role: 'yes',
           handler: () => {
             this.isCyclePaused = true;
-            const signal = selectedDevice.signals.find(signal => signal.name === 'PAUSE_CREMATION');
+            const signal = selectedDevice.signals.find(
+              (signal) => signal.name === 'PAUSE_CREMATION'
+            );
             this.cremationProcessService.writeSignalValue(signal?.id, 1);
-          }
-        }
-      ]
+          },
+        },
+      ],
     };
 
     this.presentAlert(alertOptions);
@@ -132,18 +152,20 @@ export class CremationProcessPage implements OnInit {
       buttons: [
         {
           text: this.translateService.instant('No'),
-          role: 'no'
+          role: 'no',
         },
         {
           text: this.translateService.instant('Yes'),
           role: 'yes',
           handler: () => {
             this.isCyclePaused = false;
-            const signal = selectedDevice.signals.find(signal => signal.name === 'PAUSE_CREMATION');
+            const signal = selectedDevice.signals.find(
+              (signal) => signal.name === 'PAUSE_CREMATION'
+            );
             this.cremationProcessService.writeSignalValue(signal?.id, 0);
-          }
-        }
-      ]
+          },
+        },
+      ],
     };
 
     this.presentAlert(alertOptions);
@@ -152,10 +174,10 @@ export class CremationProcessPage implements OnInit {
   async presentPopover(ev: any, selectedDevice: Device) {
     const popover = await this.popoverController.create({
       component: ExtendCyclePage,
-      componentProps:{ selectedDevice },
+      componentProps: { selectedDevice },
       cssClass: 'my-custom-class',
       event: ev,
-      translucent: true
+      translucent: true,
     });
     await popover.present();
 
@@ -170,18 +192,20 @@ export class CremationProcessPage implements OnInit {
       buttons: [
         {
           text: this.translateService.instant('Cancel'),
-          role: 'cancel'
+          role: 'cancel',
         },
         {
           text: this.translateService.instant('Confirm'),
           role: 'confirm',
           handler: () => {
-            const signal = selectedDevice.signals.find(signal => signal.name === 'STOP_CREMATION');
+            const signal = selectedDevice.signals.find(
+              (signal) => signal.name === 'STOP_CREMATION'
+            );
             this.cremationProcessService.writeSignalValue(signal?.id, 1);
             this.goToNextStep(stepper);
-          }
-        }
-      ]
+          },
+        },
+      ],
     };
 
     this.presentAlert(alertOptions);
@@ -189,14 +213,18 @@ export class CremationProcessPage implements OnInit {
 
   coolDown(selectedDevice: Device) {
     this.isCoolDownStarted = true;
-    const signal = selectedDevice.signals.find(signal => signal.name === 'COOLDOWN');
+    const signal = selectedDevice.signals.find(
+      (signal) => signal.name === 'COOLDOWN'
+    );
     console.log('Signal ID: ' + signal?.id);
     this.cremationProcessService.writeSignalValue(signal?.id, 1);
   }
 
   rakeOut(selectedDevice: Device) {
     this.isRakeOutStarted = true;
-    const signal = selectedDevice.signals.find(signal => signal.name === 'RAKE_OUT');
+    const signal = selectedDevice.signals.find(
+      (signal) => signal.name === 'RAKE_OUT'
+    );
     this.cremationProcessService.writeSignalValue(signal?.id, 1);
   }
 
@@ -207,18 +235,20 @@ export class CremationProcessPage implements OnInit {
       buttons: [
         {
           text: this.translateService.instant('Cancel'),
-          role: 'cancel'
+          role: 'cancel',
         },
         {
           text: this.translateService.instant('Confirm'),
           role: 'confirm',
           handler: () => {
             this.resetStepper(stepper);
-            const signal = selectedDevice.signals.find(signal => signal.name === 'RAKE_COMPLETE');
+            const signal = selectedDevice.signals.find(
+              (signal) => signal.name === 'RAKE_COMPLETE'
+            );
             this.cremationProcessService.writeSignalValue(signal?.id, 1);
-          }
-        }
-      ]
+          },
+        },
+      ],
     };
 
     this.presentAlert(alertOptions);
@@ -257,23 +287,23 @@ export class CremationProcessPage implements OnInit {
     this.isCycleStarted = false;
     this.isCoolDownStarted = false;
     this.isRakeOutStarted = false;
-    this.appStore.updateSelectedCase( {} as Case);
-    this.matStepperIntl.optionalLabel ='';
+    this.appStore.updateSelectedCase({} as Case);
+    this.matStepperIntl.optionalLabel = '';
   }
 
   presentCasesModal(facilityId: string) {
     this.appStore.openCasesModal(facilityId);
     this.isCaseSelected = true;
 
-    this.selectedCase$.subscribe(res => {
-      if(res !== undefined) {
-        this.matStepperIntl.optionalLabel = res.firstName + ' ' + res.lastName + ' - ' + res.clientCaseId;
+    this.selectedCase$.subscribe((res) => {
+      if (res !== undefined) {
+        this.matStepperIntl.optionalLabel =
+          res.firstName + ' ' + res.lastName + ' - ' + res.clientCaseId;
         this.matStepperIntl.changes.next();
       }
     });
     // Required for the optional label text to be updated
     // Notifies the MatStepperIntl service that a change has been made
-
   }
 
   goToNextStep(stepper: MatStepper) {
