@@ -9,6 +9,7 @@ using System;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Timers;
 
 namespace MatthewsApp.API.Mqtt;
 
@@ -16,16 +17,24 @@ public class CaseMqttService : IHostedService
 {
     private IMqttClient _mqttClient;
     private MqttFactory _mqttFactory;
+    private readonly CaseHub _caseHub;
     private IConfiguration _configuration;
     private readonly ILogger<CaseMqttService> _logger;
     private CaseI4cHttpClientService _caseI4CHttpClientService;
 
-    public CaseMqttService(ILogger<CaseMqttService> logger, IConfiguration configuration, CaseI4cHttpClientService caseI4CHttpClientService)
+    public CaseMqttService(ILogger<CaseMqttService> logger, IConfiguration configuration, CaseI4cHttpClientService caseI4CHttpClientService, CaseHub caseHub)
     {
         _logger = logger;
+        _caseHub = caseHub;
         _configuration = configuration;
         _mqttFactory = new MqttFactory();
         _caseI4CHttpClientService = caseI4CHttpClientService;
+    }
+
+    public void DisplayTimeEvent(object source, ElapsedEventArgs e)
+    {
+        Debug.WriteLine(" \r{0} ", DateTime.Now);
+        _caseHub.SendMessageToRefreshList("poruka");
     }
 
     public async Task StartAsync(CancellationToken cancellationToken)
@@ -34,7 +43,12 @@ public class CaseMqttService : IHostedService
         // 1. GET LIST OF ALL MATTHEWS DEVICES FROM ALL FACILITIES - It does not depends of user permissions.
         // HOW TO DO THIS?
         //string facilities = await _caseI4CHttpClientService.GetAllFacilities();
-        string devices = await _caseI4CHttpClientService.GetAllDevicesAsync();
+        //string devices = await _caseI4CHttpClientService.GetAllDevicesAsync();
+
+        //var timer = new System.Timers.Timer(5000);
+        //timer.Elapsed += new ElapsedEventHandler(DisplayTimeEvent);
+        //timer.Enabled = true;
+
 
         // 2. MQTT
         var mqttFactory = new MqttFactory();

@@ -62,7 +62,7 @@ public class Startup
         services.AddSignalR();
         services.AddSingleton<CaseHub>();
 
-        //services.AddHostedService<CaseMqttService>();
+        services.AddHostedService<CaseMqttService>();
         services.AddScoped<ICasesService, CasesService>();
         services.AddScoped<ICaseRepository, CaseRepository>();
         services.AddScoped<IFacilityStatusService, FacilityStatusService>();
