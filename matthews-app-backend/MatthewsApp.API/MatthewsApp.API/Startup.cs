@@ -58,6 +58,10 @@ public class Startup
         services.AddDbContext<IMatthewsAppDBContext, MatthewsAppDBContext>(options => options.UseSqlServer(connectionString));
 
         services.AddSingleton<CaseI4cHttpClientService>();
+
+        services.AddSignalR();
+        services.AddSingleton<CaseHub>();
+
         //services.AddHostedService<CaseMqttService>();
         services.AddScoped<ICasesService, CasesService>();
         services.AddScoped<ICaseRepository, CaseRepository>();
@@ -98,10 +102,12 @@ public class Startup
                 c.OAuthUsePkce();
             });
         }
+
         app.UseCors(x => x
-        .AllowAnyOrigin()
+        .WithOrigins("http://localhost:4200", "https://develop.comdata.rs/MatthewsApp.API")
         .AllowAnyMethod()
-        .AllowAnyHeader());
+        .AllowAnyHeader()
+        .AllowCredentials());
 
         app.UseHttpsRedirection();
         app.UseRouting();
@@ -111,6 +117,7 @@ public class Startup
         app.UseEndpoints(endpoints =>
         {
             endpoints.MapControllers().RequireAuthorization();
+            endpoints.MapHub<CaseHub>("/casehub");
         });
     }
 
