@@ -1,72 +1,75 @@
+/* eslint-disable @typescript-eslint/quotes */
+import { GenderType } from "../core/enums";
+
 /* eslint-disable @typescript-eslint/no-inferrable-types */
-export interface ICase {
+// export interface Case {
+//   id: string;
+
+//   clientId: string;
+
+//   clientCaseId: string;
+
+//   firstName: string;
+
+//   lastName: string;
+
+//   weight: number;
+
+//   gender: number;
+
+//   genderText: string;
+
+//   containerType: number;
+
+//   containerTypeText: string;
+
+//   containerSize: number;
+
+//   containerSizeText: string;
+
+//   isObsolete: boolean;
+
+//   age: number;
+
+//   status: number;
+
+//   scheduledFacility?: string;
+
+//   scheduledDevice?: string;
+
+//   scheduledDeviceAlias: string;
+
+//   scheduledStartTime?: string;
+
+//   actualFacility?: string;
+
+//   actualDevice?: string;
+
+//   actualDeviceAlias: string;
+
+//   actualStartTime?: string;
+
+//   actualEndTime?: string;
+
+//   createdBy: string;
+
+//   createdTime: string;
+
+//   modifiedBy?: string;
+
+//   modifiedTime?: string;
+
+//   performedBy?: string;
+
+//   fuel: string;
+
+//   electricity: string;
+
+//   //caseToFacilityStatuses: CaseToFacilityStatus[];
+// }
+
+export class Case {
   id: string;
-
-  clientId: string;
-
-  clientCaseId: string;
-
-  firstName: string;
-
-  lastName: string;
-
-  weight: number;
-
-  gender: number;
-
-  genderText: string;
-
-  containerType: number;
-
-  containerTypeText: string;
-
-  containerSize: number;
-
-  containerSizeText: string;
-
-  isObsolete: boolean;
-
-  age: number;
-
-  status: number;
-
-  scheduledFacility?: string;
-
-  scheduledDevice?: string;
-
-  scheduledDeviceAlias: string;
-
-  scheduledStartTime?: string;
-
-  actualFacility?: string;
-
-  actualDevice?: string;
-
-  actualDeviceAlias: string;
-
-  actualStartTime?: string;
-
-  actualEndTime?: string;
-
-  createdBy: string;
-
-  createdTime: string;
-
-  modifiedBy?: string;
-
-  modifiedTime?: string;
-
-  performedBy?: string;
-
-  fuel: string;
-
-  electricity: string;
-
-  //caseToFacilityStatuses: CaseToFacilityStatus[];
-}
-
-export class Case implements ICase {
-  id: string = '00000000-0000-0000-0000-000000000000';
 
   clientId: string = '1'; // get ID from some API
 

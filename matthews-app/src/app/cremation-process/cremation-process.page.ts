@@ -40,6 +40,8 @@ export class CremationProcessPage implements OnInit {
   startHour: number;
   startMinute: number;
   startTime: string;
+  timeLeft: number;
+  interval;
 
   burnMode = BurnMode;
   burnModeKeys = Object.keys(BurnMode).filter((x) => parseInt(x, 10) >= 0);
@@ -64,6 +66,25 @@ export class CremationProcessPage implements OnInit {
     const currentDate = new Date();
     this.startHour = currentDate.getHours();
     this.startMinute = currentDate.getMinutes();
+    if (this.startMinute > 9) {
+      this.startTime = this.startHour.toString() + ':' + this.startMinute.toString();
+    } else {
+      this.startTime = this.startHour.toString() + ':' + '0' + this.startMinute.toString();
+    }
+    this.startTimer();
+  }
+
+  startTimer() {
+    this.timeLeft = 10;
+    this.interval = setInterval(() => {
+      if (this.timeLeft > 0) {
+        this.timeLeft--;
+      }
+    }, 60000);
+  }
+
+  pauseTimer() {
+    clearInterval(this.interval);
   }
 
   startPreheat(selectedDevice: Device) {
@@ -120,6 +141,7 @@ export class CremationProcessPage implements OnInit {
   }
 
   pauseCycle(selectedDevice: Device) {
+    this.pauseTimer();
     const alertOptions: AlertOptions = {
       header: this.translateService.instant('ConfirmPauseCycle'),
       message: this.translateService.instant('ConfirmPauseCycleMessage'),

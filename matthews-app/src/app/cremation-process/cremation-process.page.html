@@ -112,12 +112,12 @@
         </ion-item> -->
             <ion-card-content>
               <ion-label>
-                <p>{{'StartTime' | translate}}: {{startHour}}:{{startMinute}} </p>
+                <p>{{'StartTime' | translate}}: {{startTime}} </p>
                 <p>{{'ProcessMode' | translate}}: {{burnMode[selectedBurnMode] ?? "-" | translate}}</p>
               </ion-label>
             </ion-card-content>
             <ion-card-content>
-              {{'Remaining' | translate}} 10 min
+              {{'Remaining' | translate}} : {{timeLeft}}min
             </ion-card-content>
           </ion-card>
 

@@ -22,7 +22,7 @@ export class CaseService {
   }
 
   updateCase(id: string, caseToUpdate: Case) {
-    const updateCaseUrl = `${environment.casesApiUrl}/${id}`;
+    const updateCaseUrl = `${environment.casesApiUrl}/Update`;
     return this.httpService.request<Case>('PUT', updateCaseUrl, caseToUpdate);
   }
 

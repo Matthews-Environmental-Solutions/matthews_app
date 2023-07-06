@@ -15,74 +15,70 @@
   <form (ngSubmit)="onSubmit()" >
     <ion-item lines="full">
       <ion-label position="floating">{{'CaseID' | translate}}</ion-label>
-      <ion-input [(ngModel)]="selectedCase.clientCaseId" name="caseId" type="text" required></ion-input>
+      <ion-input [(ngModel)]="newCase.clientCaseId" name="caseId" type="text" required></ion-input>
     </ion-item>
     <ion-item lines="full">
       <ion-label position="floating">{{'First Name' | translate}}</ion-label>
-      <ion-input type="text" [(ngModel)]="selectedCase.firstName" name="firstname" required></ion-input>
+      <ion-input type="text" [(ngModel)]="newCase.firstName" name="firstname" required></ion-input>
     </ion-item>
     <ion-item lines="full">
       <ion-label position="floating">{{'Last Name' | translate}}</ion-label>
-      <ion-input type="text" [(ngModel)]="selectedCase.lastName" name="lastname" required></ion-input>
+      <ion-input type="text" [(ngModel)]="newCase.lastName" name="lastname" required></ion-input>
     </ion-item>
     <ion-row>
       <ion-col>
         <ion-item lines="full">
           <ion-label position="floating">{{'Weight' | translate}}</ion-label>
-          <ion-input type="number" [(ngModel)]="selectedCase.weight" name="weight" required></ion-input>
+          <ion-input type="number" [(ngModel)]="newCase.weight" name="weight" required></ion-input>
         </ion-item>
       </ion-col>
       <ion-col>
         <ion-item lines="full">
           <ion-label position="floating">{{'Age' | translate}}</ion-label>
-          <ion-input background-color="#C6D92D" type="text" [(ngModel)]="selectedCase.age" name="age" required></ion-input>
+          <ion-input background-color="#C6D92D" type="text" [(ngModel)]="newCase.age" name="age" required></ion-input>
         </ion-item>
       </ion-col>
     </ion-row>
 
     <ion-item lines="full">
       <ion-label position="floating">{{'Gender' | translate}}</ion-label>
-      <ion-select [interfaceOptions]="{cssClass:'custom-popover'}" interface="popover" placeholder="Select One" name="gender" [(ngModel)]="selectedCase.gender">
-        <ion-select-option *ngFor="let gender of genderTypeKeys;" value="{{ gender }}">{{genders[gender]}}</ion-select-option>
+      <ion-select [interfaceOptions]="{cssClass:'custom-popover'}" interface="popover" placeholder="Select One" name="gender" [(ngModel)]="newCase.gender">
+        <ion-select-option *ngFor="let g of genderTypeKeys;" value="{{ g }}">{{genders[g]}}</ion-select-option>
       </ion-select>
-    </ion-item>
+    </ion-item> 
    <ion-item lines="full">
       <ion-label position="floating">{{'ContainerType' | translate}}</ion-label>
-      <ion-select [interfaceOptions]="{cssClass:'custom-popover'}" interface="popover" placeholder="Select One" name="containerType" [(ngModel)]="selectedCase.containerType">
+      <ion-select [interfaceOptions]="{cssClass:'custom-popover'}" interface="popover" placeholder="Select One" name="containerType" [(ngModel)]="newCase.containerType">
         <ion-select-option *ngFor="let t of containerTypeKeys;" value="{{ t }}">{{ containerTypes[t] }}</ion-select-option>
       </ion-select>
-    </ion-item>
+    </ion-item> 
      <ion-item lines="full">
       <ion-label position="floating">{{'ContainerSize' | translate}}</ion-label>
-      <ion-select [interfaceOptions]="{cssClass:'custom-popover'}" interface="popover" name="containerSize" [(ngModel)]="selectedCase.containerSize"  placeholder="Select One">
+      <ion-select [interfaceOptions]="{cssClass:'custom-popover'}" interface="popover" name="containerSize" [(ngModel)]="newCase.containerSize"  placeholder="Select One">
         <ion-select-option *ngFor="let s of containerSizeKeys;" value="{{ s }}">{{ containerSizes[s] }}</ion-select-option>
       </ion-select>
     </ion-item>
     <ion-item lines="full">
       <ion-label position="floating">{{'Status' | translate}}</ion-label>
-      <ion-select [interfaceOptions]="{cssClass:'custom-popover'}" interface="popover" name="status" [(ngModel)]="selectedCase.status"  placeholder="Select One">
+      <ion-select [interfaceOptions]="{cssClass:'custom-popover'}" interface="popover" name="status" [(ngModel)]="newCase.status"  placeholder="Select One">
         <ion-select-option *ngFor="let s of caseStatusesKeys;" value="{{ s }}">{{ caseStatuses[s] | translate }}</ion-select-option>
       </ion-select>
     </ion-item>
-    <!-- <ion-row class="text-center">
-    <ion-item lines="full">
-      <ion-label>{{'Schedule' | translate}}:</ion-label>
-    </ion-item>
-  </ion-row> -->
+    
   <ng-container *ngIf="deviceList$ | async as deviceList">
     <ion-item lines="full">
       <ion-label position="floating">{{'Device' | translate}}</ion-label>
-      <ion-select name="selectDevice"  placeholder="Select Device" [(ngModel)]="selectedCase.scheduledDevice" >
+      <ion-select name="selectDevice"  placeholder="Select Device" [(ngModel)]="newCase.scheduledDevice" >
               <ion-select-option *ngFor="let device of deviceList;" value={{device.id}}>{{ device.alias }}</ion-select-option>
       </ion-select>
     </ion-item>
   </ng-container>
   <ion-item lines="full">
     <ion-label position="floating">{{'scheduleDate' | translate}}</ion-label>
-    <ion-datetime placeholder="Select Date" name="scheduledTime" [(ngModel)]="selectedCase.scheduledStartTime"></ion-datetime>
+    <ion-datetime placeholder="Select Date" name="scheduledTime" [(ngModel)]="newCase.scheduledStartTime"></ion-datetime>
   </ion-item>
 
-    <!-- <ng-container *ngIf="userInfo$ | async as userInfo"> -->
+   <!-- <ng-container *ngIf="userInfo$ | async as userInfo">  -->
       <!-- <ion-item lines="full">
         <ion-grid>
         <ion-row><ion-label><small>{{'Created by' | translate}}: {{userInfo.firstName}} {{userInfo.lastName}}</small></ion-label></ion-row>
