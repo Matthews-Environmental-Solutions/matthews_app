@@ -15,6 +15,7 @@ import { StateService } from '../services/states.service';
 import { MatSelectChange } from '@angular/material/select';
 import { Subscription, skip } from 'rxjs';
 import { WfactorySnackBarService } from '../components/wfactory-snack-bar/wfactory-snack-bar.service';
+import { SignalrService } from '../services/signalr.service';
 
 @Component({
   selector: 'app-case',
@@ -43,6 +44,7 @@ export class CaseComponent implements OnInit {
       private translate: TranslateService,
       private _adapter: DateAdapter<any>,
       private _shackBar: WfactorySnackBarService,
+      public signalRService: SignalrService,
       @Inject(MAT_DATE_LOCALE) private _locale: string
     ) {
     this.loggedInUser = authService.loggedInUser;
@@ -70,6 +72,14 @@ export class CaseComponent implements OnInit {
     this.subs.add(this.stateService.filterUnscheduledCasesByFacilityId$.subscribe(c => {
       this.caseService.getUnscheduledCases().subscribe(cases => this.filterCases(cases));
     }));
+
+    // Refresh unscheduled cases list when SignalR sends message
+    this.subs.add(this.stateService.refreshCasesList$.pipe(skip(1)).subscribe(data => {
+      this.caseService.getUnscheduledCases().subscribe(cases => this.filterCases(cases));
+    }));
+
+    this.signalRService.startConnection();
+    this.signalRService.addCaseDataListener();
   }
 
   ngOnDestroy(): void {

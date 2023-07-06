@@ -76,6 +76,13 @@ export class CaseCalendarDailyComponent implements OnInit {
         this.getCasesByDate();
       }
     }));
+
+    // Refresh unscheduled cases list when SignalR sends message
+    this.subs.add(this.stateService.refreshCasesList$.pipe(skip(1)).subscribe(data => {
+      if (!this.isEmptyString(this.selectedFacilityId) && this.selectedDay) {
+        this.getCasesByDate();
+      }
+    }));
   }
 
   ngOnChanges(changes: SimpleChanges) {
