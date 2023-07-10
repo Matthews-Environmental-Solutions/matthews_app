@@ -41,7 +41,9 @@ export class CremationProcessPage implements OnInit {
   startMinute: number;
   startTime: string;
   timeLeft: number;
+  preheatTime: number;
   interval;
+  interval2;
 
   burnMode = BurnMode;
   burnModeKeys = Object.keys(BurnMode).filter((x) => parseInt(x, 10) >= 0);
@@ -83,6 +85,15 @@ export class CremationProcessPage implements OnInit {
     }, 60000);
   }
 
+  preheatTimer() {
+    this.preheatTime = 10;
+    this.interval2 = setInterval(() => {
+      if (this.preheatTime > 0) {
+        this.preheatTime--;
+      }
+    }, 60000);
+  }
+
   pauseTimer() {
     clearInterval(this.interval);
   }
@@ -94,6 +105,7 @@ export class CremationProcessPage implements OnInit {
     );
     console.log('SignalId' + signal.id);
     this.cremationProcessService.writeSignalValue(signal?.id, 1);
+    this.preheatTimer();
   }
 
   stopPreheat(selectedDevice: Device) {
@@ -114,6 +126,7 @@ export class CremationProcessPage implements OnInit {
               (signal) => signal.name === 'PREHEAT'
             );
             this.cremationProcessService.writeSignalValue(signal?.id, 0);
+            this.preheatTime = 0;
           },
         },
       ],
