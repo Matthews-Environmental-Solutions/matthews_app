@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /* eslint-disable eqeqeq */
 /* eslint-disable no-bitwise */
 /* eslint-disable prefer-arrow/prefer-arrow-functions */
@@ -47,6 +48,9 @@ export class CasePage implements OnInit {
   deviceList$ = this.caseStore.deviceList$;
   selectedDevice: Device;
 
+  private guidEmpty = '00000000-0000-0000-0000-000000000000';
+  private dateTimeMin = '0001-01-01T00:00:00';
+
   constructor(
     private caseStore: AppStoreService,
     private modalCtrl: ModalController,
@@ -90,9 +94,17 @@ export class CasePage implements OnInit {
       this.newCase.genderText = this.genders[this.newCase.gender];
       this.newCase.containerSizeText = this.containerSizes[this.newCase.containerSize];
       this.newCase.containerTypeText = this.containerTypes[this.newCase.containerType];
-      this.newCase.status = +this.newCase.status;
       this.newCase.scheduledFacility = this.selectedCase.scheduledFacility;
-      this.newCase.createdTime = this.formatDateAndTime(new Date().toString());
+      this.newCase.createdTime = this.formatDateAndTime(new Date().toString());  
+
+      if (this.newCase.scheduledDevice === this.guidEmpty || this.newCase.scheduledStartTime === this.dateTimeMin || this.newCase.scheduledFacility === this.guidEmpty) {
+        this.newCase.status = 0; //unscheduled
+      }
+
+      if (this.newCase.scheduledDevice != this.guidEmpty && this.newCase.scheduledStartTime != this.dateTimeMin && this.newCase.scheduledFacility != this.guidEmpty) {
+        this.newCase.status = 4; // waiting for permit
+      }
+
       this.caseStore.createCase(this.newCase);
       
       console.log(this.newCase);
@@ -107,7 +119,16 @@ export class CasePage implements OnInit {
       this.newCase.status = +this.newCase.status;
       this.newCase.scheduledFacility = this.selectedCase.scheduledFacility;
       this.newCase.createdTime = this.formatDateAndTime(new Date().toString());
+
+      if (this.newCase.scheduledDevice === this.guidEmpty || this.newCase.scheduledStartTime === this.dateTimeMin || this.newCase.scheduledFacility === this.guidEmpty) {
+        this.newCase.status = 0; //unscheduled
+      }
+
+      if (this.newCase.scheduledDevice != this.guidEmpty && this.newCase.scheduledStartTime != this.dateTimeMin && this.newCase.scheduledFacility != this.guidEmpty) {
+        this.newCase.status = 4; // waiting for permit
+      }
       this.caseStore.updateCase(this.newCase);
+
       console.log(this.newCase);
     }
     this.close();

@@ -40,10 +40,10 @@ export class CremationProcessPage implements OnInit {
   startHour: number;
   startMinute: number;
   startTime: string;
-  timeLeft: number;
+  cremationTime: number;
   preheatTime: number;
   interval;
-  interval2;
+  preheatInterval;
 
   burnMode = BurnMode;
   burnModeKeys = Object.keys(BurnMode).filter((x) => parseInt(x, 10) >= 0);
@@ -73,21 +73,21 @@ export class CremationProcessPage implements OnInit {
     } else {
       this.startTime = this.startHour.toString() + ':' + '0' + this.startMinute.toString();
     }
-    this.startTimer();
+    this.startCremationTimer();
   }
 
-  startTimer() {
-    this.timeLeft = 10;
+  startCremationTimer() {
+    this.cremationTime = 10;
     this.interval = setInterval(() => {
-      if (this.timeLeft > 0) {
-        this.timeLeft--;
+      if (this.cremationTime > 0) {
+        this.cremationTime--;
       }
     }, 60000);
   }
 
-  preheatTimer() {
+  startPreheatTimer() {
     this.preheatTime = 10;
-    this.interval2 = setInterval(() => {
+    this.preheatInterval = setInterval(() => {
       if (this.preheatTime > 0) {
         this.preheatTime--;
       }
@@ -105,7 +105,7 @@ export class CremationProcessPage implements OnInit {
     );
     console.log('SignalId' + signal.id);
     this.cremationProcessService.writeSignalValue(signal?.id, 1);
-    this.preheatTimer();
+    this.startPreheatTimer();
   }
 
   stopPreheat(selectedDevice: Device) {
@@ -216,8 +216,10 @@ export class CremationProcessPage implements OnInit {
     });
     await popover.present();
 
-    const { role } = await popover.onDidDismiss();
-    console.log('onDidDismiss resolved with role', role);
+    popover.onDidDismiss().then((data) => {
+      console.log(data);
+      this.cremationTime += +data.data;
+  });
   }
 
   endCycle(stepper: MatStepper, selectedDevice: Device) {
@@ -237,6 +239,7 @@ export class CremationProcessPage implements OnInit {
               (signal) => signal.name === 'STOP_CREMATION'
             );
             this.cremationProcessService.writeSignalValue(signal?.id, 1);
+            this.cremationTime = 0;
             this.goToNextStep(stepper);
           },
         },

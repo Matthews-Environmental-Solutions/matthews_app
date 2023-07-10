@@ -1,3 +1,7 @@
+/* eslint-disable eqeqeq */
+/* eslint-disable @typescript-eslint/no-shadow */
+/* eslint-disable @angular-eslint/component-selector */
+/* eslint-disable max-len */
 import { Component, Input, OnInit } from '@angular/core';
 import { PopoverController } from '@ionic/angular';
 import { AppStoreService } from '../app.store.service';
@@ -43,12 +47,12 @@ export class ExtendCyclePage implements OnInit {
   }
 
   onConfirm() {
-    const signal = this.selectedDevice.signals.find(signal => signal.name == "Ewon_Time_to_Add_(Mins)");
+    const signal = this.selectedDevice.signals.find(signal => signal.name == 'ADD_TIME');
     this.cremationProcessService.writeSignalValue(signal?.id, this.extraTimeInterval);
-    this.popoverController.dismiss();
+    this.popoverController.dismiss(this.extraTimeInterval);
   }
 
   onCancel() {
-    this.popoverController.dismiss();
+    this.popoverController.dismiss(0);
   }
 }

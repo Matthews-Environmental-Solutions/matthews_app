@@ -58,12 +58,6 @@
         <ion-select-option *ngFor="let s of containerSizeKeys;" value="{{ s }}">{{ containerSizes[s] }}</ion-select-option>
       </ion-select>
     </ion-item>
-    <ion-item lines="full">
-      <ion-label position="floating">{{'Status' | translate}}</ion-label>
-      <ion-select [interfaceOptions]="{cssClass:'custom-popover'}" interface="popover" name="status" [(ngModel)]="newCase.status"  placeholder="Select One">
-        <ion-select-option *ngFor="let s of caseStatusesKeys;" value="{{ s }}">{{ caseStatuses[s] | translate }}</ion-select-option>
-      </ion-select>
-    </ion-item>
     
   <ng-container *ngIf="deviceList$ | async as deviceList">
     <ion-item lines="full">
