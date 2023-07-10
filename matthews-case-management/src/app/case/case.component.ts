@@ -49,7 +49,7 @@ export class CaseComponent implements OnInit {
     ) {
     this.loggedInUser = authService.loggedInUser;
     this.userSetting = userSettingService.getUserSettingLastValue();
-    this.caseService.getUnscheduledCases().subscribe(cases => this.unscheduledCases = cases);
+    this.caseService.getUnscheduledCases().subscribe(cases => this.filterCases(cases));
     _adapter.setLocale(this.translate.store.currentLang);
   }
   ngOnInit(): void {
@@ -135,6 +135,9 @@ export class CaseComponent implements OnInit {
 
   filterCases(cases: Case[]){
     this.unscheduledCases = cases;
-    this.filteredUnscheduledCases = this.clickedFacilityFilterButton == 'all' ? this.unscheduledCases : this.unscheduledCases.filter(c => c.scheduledFacility == this.selectedFacilityId);
+    this.filteredUnscheduledCases = this.clickedFacilityFilterButton == 'all' ? 
+      this.unscheduledCases.filter(c => this.facilities.some(f=> f.id == c.scheduledFacility))
+      : 
+      this.unscheduledCases.filter(c => c.scheduledFacility == this.selectedFacilityId);
   }
 }
