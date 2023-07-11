@@ -2,6 +2,7 @@ import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormGroup, FormControl, FormBuilder, Validators } from '@angular/forms';
+import { isValid } from 'date-fns'
 
 import { CaseStatus } from 'src/app/models/case-status.model';
 import { Case } from 'src/app/models/case.model';
@@ -91,7 +92,7 @@ export class CaseAddEditComponent implements OnInit {
       status: new FormControl('', { nonNullable: true }),
       scheduledDevice: new FormControl('', { nonNullable: false }),
       burnMode: new FormControl('', { nonNullable: true }),
-      scheduledStartDateTime: new FormControl('', { nonNullable: false }),
+      scheduledStartDateTime: new FormControl(null),
       selectedFacilityStatuses: new FormControl([], { nonNullable: false })
     });
 
@@ -145,10 +146,14 @@ export class CaseAddEditComponent implements OnInit {
         this.caseForm.get('scheduledDevice')?.setValue(response.scheduledDevice);
         this.caseForm.get('containerType')?.setValue(response.containerType);
         this.caseForm.get('containerSize')?.setValue(response.containerSize);
-
-
+        
         if (response.scheduledStartTime && response.scheduledStartTime !== this.DATETIME_MIN) {
-          this.caseForm.get('scheduledStartDateTime')?.setValue(new Date(response.scheduledStartTime));
+          let startTime = new Date(response.scheduledStartTime);  
+          if (isValid(startTime)) {
+            this.caseForm.get('scheduledStartDateTime')?.setValue(startTime);
+          } else {
+            this.caseForm.get('scheduledStartDateTime')?.setValue(null);
+          }
         }
 
         if (response.scheduledFacility != undefined && response.scheduledFacility != this.GUID_EMPTY) {
