@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Text;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
@@ -204,14 +205,10 @@ public class CaseMqttService : IHostedService
         mqttClient.ApplicationMessageReceivedAsync += e =>
         {
             Debug.WriteLine("Received application message: " + e.ClientId + " " + e.ResponseReasonString);
+            Debug.WriteLine(Encoding.UTF8.GetString(e.ApplicationMessage.Payload));
+            _caseHub.SendMessageToRefreshList($"ClientId: {e.ClientId}");
             return Task.CompletedTask;
         };
-
-        //_mqttClient.ApplicationMessageReceivedAsync += delegate (MqttApplicationMessageReceivedEventArgs args)
-        //{
-        //    Debug.WriteLine("Received application message: " + args.ClientId);
-        //    return Task.CompletedTask;
-        //};
 
         mqttClient.ConnectedAsync += e =>
         {
