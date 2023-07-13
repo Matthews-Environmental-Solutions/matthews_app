@@ -122,7 +122,7 @@
           </ion-card>
 
           <p>
-            <ion-button *ngIf="signal.value < '80'" expand="block" (click)="pauseCycle(selectedDevice)">
+            <ion-button *ngIf="signal.value == '90'" expand="block" (click)="pauseCycle(selectedDevice)">
               <ion-icon slot="end" name="arrow-forward"></ion-icon>
               {{'PauseCycle' | translate}}
             </ion-button>

@@ -66,6 +66,7 @@ export class CremationProcessPage implements OnInit {
     this.matStepperIntl.optionalLabel = '';
     this.matStepperIntl.changes.next();
     this.deviceId = this.route.snapshot.paramMap.get('id');
+    this.cremationTime = 100;
   }
 
   setStartTime() {
@@ -81,12 +82,11 @@ export class CremationProcessPage implements OnInit {
   }
 
   startCremationTimer() {
-    this.cremationTime = 10;
     this.interval = setInterval(() => {
       if (this.cremationTime > 0) {
         this.cremationTime--;
       }
-    }, 60000);
+    }, 1000);
   }
 
   startCooldownTimer() {
@@ -176,7 +176,6 @@ export class CremationProcessPage implements OnInit {
   }
 
   pauseCycle(selectedDevice: Device) {
-    this.pauseTimer();
     const alertOptions: AlertOptions = {
       header: this.translateService.instant('ConfirmPauseCycle'),
       message: this.translateService.instant('ConfirmPauseCycleMessage'),
@@ -194,6 +193,7 @@ export class CremationProcessPage implements OnInit {
               (signal) => signal.name === 'PAUSE_CREMATION'
             );
             this.cremationProcessService.writeSignalValue(signal?.id, 1);
+            this.pauseTimer();
           },
         },
       ],
@@ -220,11 +220,11 @@ export class CremationProcessPage implements OnInit {
               (signal) => signal.name === 'PAUSE_CREMATION'
             );
             this.cremationProcessService.writeSignalValue(signal?.id, 0);
+            this.startCremationTimer();
           },
         },
       ],
     };
-
     this.presentAlert(alertOptions);
   }
 
