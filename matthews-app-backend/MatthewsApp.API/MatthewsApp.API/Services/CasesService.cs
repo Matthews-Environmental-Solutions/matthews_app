@@ -16,7 +16,6 @@ public interface ICasesService
     void Create(Case caseEntity);
     void Delete(Case caseEntity);
     void Update(Case caseEntity);
-    void UpdateWithStatuses(CaseWithStatusesDto caseDto);
     Task<IEnumerable<Case>> GetAll();
     Task<Case> GetById(Guid id);
     bool IsCaseExists(Guid id);
@@ -30,13 +29,10 @@ public interface ICasesService
 public class CasesService : ICasesService
 {
     private readonly ICaseRepository _caseRepository;
-    private readonly ICaseToFacilityStatusRepository _caseToFacilityStatusRepository;
 
-
-    public CasesService(ICaseRepository repository, ICaseToFacilityStatusRepository caseToFacilityStatusRepository)
+    public CasesService(ICaseRepository repository)
     {
         _caseRepository = repository;
-        _caseToFacilityStatusRepository = caseToFacilityStatusRepository;
     }
 
     public void Create(Case entity)
@@ -52,11 +48,6 @@ public class CasesService : ICasesService
     public void Update(Case entity)
     {
         _caseRepository.Update(entity);
-    }
-
-    public void UpdateWithStatuses(CaseWithStatusesDto dto)
-    {
-        _caseRepository.UpdateWithStatuses(dto);
     }
 
     public async Task<IEnumerable<Case>> GetAll()

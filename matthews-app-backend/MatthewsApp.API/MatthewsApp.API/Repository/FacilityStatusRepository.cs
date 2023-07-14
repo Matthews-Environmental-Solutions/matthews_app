@@ -20,4 +20,9 @@ public class FacilityStatusRepository : BaseRepository<FacilityStatus, Guid>, IF
         return (await _dataContext.FacilityStatuses.ToArrayAsync())
             .Where(f => f.FacilityId == id);
     }
+
+    public async override Task<FacilityStatus> GetOne(Guid id)
+    {
+        return await _dataContext.Context.Set<FacilityStatus>().FirstOrDefaultAsync(f => f.Id == id);
+    }
 }

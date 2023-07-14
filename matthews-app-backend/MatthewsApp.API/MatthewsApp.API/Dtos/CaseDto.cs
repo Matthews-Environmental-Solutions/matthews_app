@@ -31,7 +31,8 @@ public record CaseDto(
     Guid? ScheduledFacility, // Guid
     DateTime? ScheduledStartTime, // DateTime
     CaseStatus Status,
-    double Weight // double
+    double Weight, // double
+    Guid? FacilityStatusId // Guid
     )
 {
 }

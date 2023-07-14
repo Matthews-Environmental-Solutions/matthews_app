@@ -39,7 +39,6 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
     public override async Task<Case> GetOne(Guid id)
     {
         return await _dataContext.Cases
-            .Include(c => c.CaseToFacilityStatuses)
             //.AsNoTracking()
             .FirstAsync(c => c.Id == id);
     }
@@ -106,50 +105,6 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ).ToList();
     }
 
-    public async Task UpdateWithStatuses(CaseWithStatusesDto dto)
-    {
-        DbContext? context = _dataContext.Context;
-        var transaction = context.Database.BeginTransaction();
-        try
-        {
-
-            var entity = _dataContext.Cases.Include(c => c.CaseToFacilityStatuses).First(c => c.Id == dto.Id);
-
-            entity = entity.UpdateFieldsFromDto(dto);
-            entity.ModifiedTime = DateTime.Now;
-
-            // Remove unchecked statuses
-            for (int i = entity.CaseToFacilityStatuses.Count - 1; i >= 0; i--)
-            {
-                var statusFromEntity = entity.CaseToFacilityStatuses[i];
-                var statusFromDto = dto.CaseToFacilityStatuses.FirstOrDefault(fs => fs.CaseId == statusFromEntity.CaseId && fs.FacilityStatusId == statusFromEntity.FacilityStatusId);
-                if (statusFromDto.IsDone == false)
-                {
-                    entity.CaseToFacilityStatuses.RemoveAt(i);
-                }
-            }
-
-            // Add checked (new) statuses
-            foreach(var status in dto.CaseToFacilityStatuses)
-            {
-                bool founded = entity.CaseToFacilityStatuses.Any(fs => fs.CaseId == status.CaseId && fs.FacilityStatusId == status.FacilityStatusId);
-                if (status.IsDone && !founded)
-                {
-                    entity.CaseToFacilityStatuses.Add(status.ToEntity());
-                }
-            }
-
-            context.Set<Case>().Attach(entity);
-            context.Entry(entity).State = EntityState.Modified;
-            context.SaveChanges();
-            transaction.Commit();
-        }
-        catch (Exception ex)
-        {
-            transaction.Rollback();
-            throw;
-        }
-    }
 
     public async Task<IEnumerable<Case>> GetCasesByFacility(Guid facilityId)
     {

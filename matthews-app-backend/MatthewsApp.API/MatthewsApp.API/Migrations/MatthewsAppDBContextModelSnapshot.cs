@@ -69,6 +69,9 @@ namespace MatthewsApp.API.Migrations
                     b.Property<string>("Electricity")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid?>("FacilityStatusId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasColumnType("nvarchar(16)");
@@ -115,37 +118,9 @@ namespace MatthewsApp.API.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Cases");
-                });
-
-            modelBuilder.Entity("MatthewsApp.API.Models.CaseToFacilityStatus", b =>
-                {
-                    b.Property<Guid>("CaseId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("FacilityStatusId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("CreatedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2(7)");
-
-                    b.Property<bool>("IsDone")
-                        .HasColumnType("bit");
-
-                    b.Property<Guid?>("ModifiedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2(7)");
-
-                    b.HasKey("CaseId", "FacilityStatusId");
-
                     b.HasIndex("FacilityStatusId");
 
-                    b.ToTable("CaseToFacilityStatus");
+                    b.ToTable("Cases");
                 });
 
             modelBuilder.Entity("MatthewsApp.API.Models.FacilityStatus", b =>
@@ -187,33 +162,13 @@ namespace MatthewsApp.API.Migrations
                     b.ToTable("FacilityStatuses");
                 });
 
-            modelBuilder.Entity("MatthewsApp.API.Models.CaseToFacilityStatus", b =>
-                {
-                    b.HasOne("MatthewsApp.API.Models.Case", "Case")
-                        .WithMany("CaseToFacilityStatuses")
-                        .HasForeignKey("CaseId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MatthewsApp.API.Models.FacilityStatus", "FacilityStatus")
-                        .WithMany("CaseToFacilityStatuses")
-                        .HasForeignKey("FacilityStatusId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Case");
-
-                    b.Navigation("FacilityStatus");
-                });
-
             modelBuilder.Entity("MatthewsApp.API.Models.Case", b =>
                 {
-                    b.Navigation("CaseToFacilityStatuses");
-                });
+                    b.HasOne("MatthewsApp.API.Models.FacilityStatus", "FacilityStatus")
+                        .WithMany()
+                        .HasForeignKey("FacilityStatusId");
 
-            modelBuilder.Entity("MatthewsApp.API.Models.FacilityStatus", b =>
-                {
-                    b.Navigation("CaseToFacilityStatuses");
+                    b.Navigation("FacilityStatus");
                 });
 #pragma warning restore 612, 618
         }

@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using System;
 using MatthewsApp.API.Repository.Interfaces;
 using System.Linq;
+using Microsoft.Data.SqlClient;
 
 namespace MatthewsApp.API.Services;
 
@@ -33,7 +34,14 @@ public class FacilityStatusService : IFacilityStatusService
 
     public void Delete(FacilityStatus entity)
     {
-        _repository.Delete(entity.Id);
+        try
+        {
+            _repository.Delete(entity.Id);
+        }
+        catch (Exception)
+        {
+            throw;
+        }
     }
 
     public async Task<IEnumerable<FacilityStatus>> GetAll()

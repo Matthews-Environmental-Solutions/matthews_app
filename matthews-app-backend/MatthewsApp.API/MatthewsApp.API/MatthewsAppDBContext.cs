@@ -64,6 +64,10 @@ public class MatthewsAppDBContext : DbContext, IMatthewsAppDBContext
             .Property(c => c.PerformedBy)
             .IsRequired(false);
 
+        modelBuilder.Entity<Case>()
+            .Property(c => c.FacilityStatusId)
+            .IsRequired(false);
+
         // FacilityStatus 
 
         modelBuilder.Entity<FacilityStatus>()
@@ -81,12 +85,12 @@ public class MatthewsAppDBContext : DbContext, IMatthewsAppDBContext
 
         // many-to-many Case - FacilityStatus 
 
-        modelBuilder.Entity<CaseToFacilityStatus>().HasKey(cf => new { cf.CaseId, cf.FacilityStatusId });
+        //modelBuilder.Entity<CaseToFacilityStatus>().HasKey(cf => new { cf.CaseId, cf.FacilityStatusId });
 
-        modelBuilder.Entity<Case>()
-        .HasMany(e => e.FacilityStatuses)
-        .WithMany(e => e.Cases)
-        .UsingEntity<CaseToFacilityStatus>();
+        //modelBuilder.Entity<Case>()
+        //.HasMany(e => e.FacilityStatuses)
+        //.WithMany(e => e.Cases)
+        //.UsingEntity<CaseToFacilityStatus>();
 
         base.OnModelCreating(modelBuilder);
     }

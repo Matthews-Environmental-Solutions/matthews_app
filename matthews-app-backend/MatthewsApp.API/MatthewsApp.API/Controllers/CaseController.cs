@@ -75,25 +75,6 @@ public class CaseController : Controller
         return Ok(caseDto.Id);
     }
 
-    [HttpPut]
-    [Route("UpdateWithStatuses")]
-    public ActionResult UpdateWithStatuses([FromBody] CaseWithStatusesDto caseDto)
-    {
-        try
-        {
-            service.UpdateWithStatuses(caseDto);
-        }
-        catch (DbUpdateConcurrencyException)
-        {
-            if (!service.IsCaseExists(caseDto.Id))
-            {
-                return NotFound();
-            }
-            return BadRequest();
-        }
-        return Ok(caseDto.Id);
-    }
-
     [HttpGet]
     [Route("GetAllCasesByFacility/{facilityId}")]
     public async Task<ActionResult<IEnumerable<CaseDto>>> GetAllCasesByFacility(Guid facilityId)
@@ -166,7 +147,7 @@ public class CaseController : Controller
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<CaseWithStatusesDto>> GetCase(Guid id)
+    public async Task<ActionResult<CaseDto>> GetCase(Guid id)
     {
         Case Case = await service.GetById(id);
 
@@ -174,6 +155,6 @@ public class CaseController : Controller
         {
             return NotFound();
         }
-        return Ok(Case.ToDTOWithStatuses());
+        return Ok(Case.ToDTO());
     }
 }

@@ -91,6 +91,6 @@ public class Case : BaseEntity
     public string Electricity { get; set; }
 
 
-    public IList<CaseToFacilityStatus> CaseToFacilityStatuses { get; set; }
-    public IList<FacilityStatus> FacilityStatuses { get; set; }
+    public Guid? FacilityStatusId { get; set; }
+    public FacilityStatus FacilityStatus { get; set; }
 }

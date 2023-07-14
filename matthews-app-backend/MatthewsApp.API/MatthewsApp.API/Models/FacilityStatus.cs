@@ -25,7 +25,4 @@ public class FacilityStatus : BaseEntity
 
     public bool StartProcess { get; set; }
 
-    public IEnumerable<CaseToFacilityStatus> CaseToFacilityStatuses { get; set; }
-    public IEnumerable<Case> Cases { get; set; }
-
 }

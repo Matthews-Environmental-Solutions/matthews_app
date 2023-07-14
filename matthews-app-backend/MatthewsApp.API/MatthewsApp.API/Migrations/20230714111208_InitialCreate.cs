@@ -12,6 +12,26 @@ namespace MatthewsApp.API.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "FacilityStatuses",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    FacilityId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    StatusCode = table.Column<int>(type: "int", nullable: false),
+                    StatusName = table.Column<string>(type: "nvarchar(256)", nullable: false),
+                    StatusIcon = table.Column<string>(type: "nvarchar(16)", nullable: true),
+                    StartProcess = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedTime = table.Column<DateTime>(type: "datetime2(7)", nullable: false),
+                    ModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "datetime2(7)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FacilityStatuses", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Cases",
                 columns: table => new
                 {
@@ -39,6 +59,7 @@ namespace MatthewsApp.API.Migrations
                     PerformedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     Fuel = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Electricity = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    FacilityStatusId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedTime = table.Column<DateTime>(type: "datetime2(7)", nullable: false),
                     ModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
@@ -47,69 +68,22 @@ namespace MatthewsApp.API.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Cases", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "FacilityStatuses",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    FacilityId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    StatusCode = table.Column<int>(type: "int", nullable: false),
-                    StatusName = table.Column<string>(type: "nvarchar(256)", nullable: false),
-                    StatusIcon = table.Column<string>(type: "nvarchar(16)", nullable: true),
-                    StartProcess = table.Column<bool>(type: "bit", nullable: false),
-                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2(7)", nullable: false),
-                    ModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2(7)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_FacilityStatuses", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "CaseToFacilityStatus",
-                columns: table => new
-                {
-                    CaseId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    FacilityStatusId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    IsDone = table.Column<bool>(type: "bit", nullable: false),
-                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2(7)", nullable: false),
-                    ModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2(7)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_CaseToFacilityStatus", x => new { x.CaseId, x.FacilityStatusId });
                     table.ForeignKey(
-                        name: "FK_CaseToFacilityStatus_Cases_CaseId",
-                        column: x => x.CaseId,
-                        principalTable: "Cases",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_CaseToFacilityStatus_FacilityStatuses_FacilityStatusId",
+                        name: "FK_Cases_FacilityStatuses_FacilityStatusId",
                         column: x => x.FacilityStatusId,
                         principalTable: "FacilityStatuses",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_CaseToFacilityStatus_FacilityStatusId",
-                table: "CaseToFacilityStatus",
+                name: "IX_Cases_FacilityStatusId",
+                table: "Cases",
                 column: "FacilityStatusId");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "CaseToFacilityStatus");
-
             migrationBuilder.DropTable(
                 name: "Cases");
 
