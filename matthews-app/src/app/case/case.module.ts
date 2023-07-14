@@ -8,6 +8,7 @@ import { CasePageRoutingModule } from './case-routing.module';
 
 import { CasePage } from './case.page';
 import { TranslateModule } from '@ngx-translate/core';
+import { PipesModule } from '../pipes/pipes.module';
 
 
 @NgModule({
@@ -17,7 +18,8 @@ import { TranslateModule } from '@ngx-translate/core';
     ReactiveFormsModule,
     IonicModule,
     CasePageRoutingModule,
-    TranslateModule
+    TranslateModule,
+    PipesModule.forRoot()
   ],
   declarations: [CasePage]
 })

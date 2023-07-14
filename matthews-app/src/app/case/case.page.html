@@ -43,19 +43,19 @@
     <ion-item lines="full">
       <ion-label position="floating">{{'Gender' | translate}}</ion-label>
       <ion-select [interfaceOptions]="{cssClass:'custom-popover'}" interface="popover" placeholder="Select One" name="gender" [(ngModel)]="newCase.gender">
-        <ion-select-option *ngFor="let g of genderTypeKeys;" value="{{ g }}">{{genders[g]}}</ion-select-option>
+        <ion-select-option *ngFor="let g of genderTypeKeys;" value="{{ g }}">{{genders[g] | enumFormat | titlecase}}</ion-select-option>
       </ion-select>
     </ion-item> 
    <ion-item lines="full">
       <ion-label position="floating">{{'ContainerType' | translate}}</ion-label>
       <ion-select [interfaceOptions]="{cssClass:'custom-popover'}" interface="popover" placeholder="Select One" name="containerType" [(ngModel)]="newCase.containerType">
-        <ion-select-option *ngFor="let t of containerTypeKeys;" value="{{ t }}">{{ containerTypes[t] }}</ion-select-option>
+        <ion-select-option *ngFor="let t of containerTypeKeys;" value="{{ t }}">{{ containerTypes[t] | enumFormat | titlecase}}</ion-select-option>
       </ion-select>
     </ion-item> 
      <ion-item lines="full">
       <ion-label position="floating">{{'ContainerSize' | translate}}</ion-label>
       <ion-select [interfaceOptions]="{cssClass:'custom-popover'}" interface="popover" name="containerSize" [(ngModel)]="newCase.containerSize"  placeholder="Select One">
-        <ion-select-option *ngFor="let s of containerSizeKeys;" value="{{ s }}">{{ containerSizes[s] }}</ion-select-option>
+        <ion-select-option *ngFor="let s of containerSizeKeys;" value="{{ s }}">{{ containerSizes[s] | enumFormat | titlecase}}</ion-select-option>
       </ion-select>
     </ion-item>
     

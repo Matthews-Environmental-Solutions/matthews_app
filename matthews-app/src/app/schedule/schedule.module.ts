@@ -11,7 +11,8 @@ import { Ng2SearchPipeModule } from 'ng2-search-filter';
 
 import { LongPressModule } from 'ionic-long-press';
 import { TranslateModule } from '@ngx-translate/core';
-import { EnumFormatPipe } from '../core/enum-format.pipe';
+import { EnumFormatPipe } from '../pipes/enum-format.pipe';
+import { PipesModule } from '../pipes/pipes.module';
 
 
 @NgModule({
@@ -22,8 +23,9 @@ import { EnumFormatPipe } from '../core/enum-format.pipe';
     SchedulePageRoutingModule,
     Ng2SearchPipeModule,
     LongPressModule,
-    TranslateModule
+    TranslateModule,
+    PipesModule.forRoot()
   ],
-  declarations: [SchedulePage, EnumFormatPipe]
+  declarations: [SchedulePage]
 })
 export class SchedulePageModule {}

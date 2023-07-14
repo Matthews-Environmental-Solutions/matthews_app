@@ -14,6 +14,7 @@ import {TranslateModule, TranslateLoader} from '@ngx-translate/core';
 import {TranslateHttpLoader} from '@ngx-translate/http-loader';
 import { FormsModule } from '@angular/forms';
 import { DatePipe } from '@angular/common';
+import { PipesModule } from './pipes/pipes.module';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(httpClient: HttpClient) {
@@ -30,6 +31,7 @@ export function HttpLoaderFactory(httpClient: HttpClient) {
     BrowserAnimationsModule,
     CoreModule,
     FormsModule,
+    PipesModule.forRoot(),
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,
