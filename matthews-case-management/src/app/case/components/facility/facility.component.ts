@@ -102,7 +102,12 @@ export class FacilityComponent implements OnInit {
                 this.getDataOnOpen(this.selectedFacility.id);
               },
               error: err => {
-                this._shackBar.showNotification(this.translate.instant('facilityStatusNotDeleted'), 'error');
+                if(err.includes("409")){
+                  this._shackBar.showNotification(this.translate.instant('facilityStatusIsInUsageNotDeleted'), 'warning');
+                }else{
+                  this._shackBar.showNotification(this.translate.instant('facilityStatusNotDeleted'), 'error');
+                }
+                
               }
             });
           }

@@ -1,6 +1,3 @@
-import { CaseToFacilityStatus } from "./case-to-facility-status.model";
-import { FacilityStatus } from "./facility-status.model";
-
 export interface ICase {
     id: string;
     clientId: string;
@@ -39,7 +36,8 @@ export interface ICase {
     fuel: string;
     electricity: string;
 
-    caseToFacilityStatuses: CaseToFacilityStatus[];
+    facilityStatusId?: string
+
 }
 
 export class Case implements ICase{
@@ -80,5 +78,5 @@ export class Case implements ICase{
     fuel: string = '';
     electricity: string = '';
 
-    caseToFacilityStatuses: CaseToFacilityStatus[] = [];
+    facilityStatusId?: string = '00000000-0000-0000-0000-000000000000';
 }

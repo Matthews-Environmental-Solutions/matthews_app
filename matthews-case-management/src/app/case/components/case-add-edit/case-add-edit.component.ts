@@ -20,7 +20,6 @@ import { WfactorySnackBarService } from 'src/app/components/wfactory-snack-bar/w
 import { FacilityStatus } from 'src/app/models/facility-status.model';
 import { FacilityStatusService } from 'src/app/services/facility-status.service';
 import { MatSelectionList } from '@angular/material/list';
-import { CaseToFacilityStatus } from 'src/app/models/case-to-facility-status.model';
 import { Facility } from 'src/app/models/facility.model';
 import { I4connectedService } from 'src/app/services/i4connected.service';
 import { MatSelectChange } from '@angular/material/select';
@@ -46,12 +45,10 @@ export class CaseAddEditComponent implements OnInit {
 
   containerTypes: ContainerType[] = [{ id: 0, name: 'None' }, { id: 1, name: 'Cardboard' }, { id: 2, name: 'Hardwood' }, { id: 3, name: 'MDF Particle board' }, { id: 4, name: 'Bag/Shroud' }, { id: 4, name: 'Other' }];
   containerSizes: ContainerSize[] = [{ id: 0, name: 'None' }, { id: 1, name: 'Infant' }, { id: 2, name: 'Standard' }, { id: 3, name: 'Bariatric' }];
-  caseStatuses: CaseStatus[] = [];
   cremators: Device[] = [];
   facilities: Facility[] = [];
   selectedFacilityId: string = this.GUID_EMPTY;
-  allFacilityStatuses: FacilityStatus[] = [];
-  selectedFacilityStatuses: FacilityStatus[] = [];
+  facilityStatuses: FacilityStatus[] = [];
 
   caseForm: FormGroup;
 
@@ -86,30 +83,19 @@ export class CaseAddEditComponent implements OnInit {
       weight: new FormControl('', [Validators.required]),
       gender: new FormControl('', [Validators.required]),
       age: new FormControl('', [Validators.required, Validators.pattern("^[0-9]*$"), Validators.maxLength(3)]),
+
       facility: new FormControl('', [Validators.required]),
+      scheduledDevice: new FormControl('', { nonNullable: false }),
       containerType: new FormControl('', [Validators.required]),
       containerSize: new FormControl('', [Validators.required]),
-      status: new FormControl('', { nonNullable: true }),
-      scheduledDevice: new FormControl('', { nonNullable: false }),
-      burnMode: new FormControl('', { nonNullable: true }),
       scheduledStartDateTime: new FormControl(null),
-      selectedFacilityStatuses: new FormControl([], { nonNullable: false })
-    });
 
-    // this.subs.add(this.stateService.devicesFromSite$.subscribe(devices => this.cremators = devices));
+      facilityStatus: new FormControl('', { nonNullable: false }),
+    });
 
     this.subs.add(this.i4connectedService.getSites().subscribe(data => {
       this.facilities = data;
     }));
-
-    // this.subs.add(this.stateService.selectedFacilityId$
-    //   // .pipe(skip(1))
-    //   .subscribe(f => {
-    //   this.selectedFacilityId = f;
-    //   // this.router.navigate([``]);
-    //   this.subs.add(this.facilityStatusService.getAllStatusesByFacility(this.selectedFacilityId)
-    //         .subscribe(fStatuses => this.allFacilityStatuses = fStatuses));
-    // }));
 
     this.twelvehour = this.userSettingService.getUserSettingLastValue().timeformat == '12' ?? false;
   }
@@ -146,9 +132,11 @@ export class CaseAddEditComponent implements OnInit {
         this.caseForm.get('scheduledDevice')?.setValue(response.scheduledDevice);
         this.caseForm.get('containerType')?.setValue(response.containerType);
         this.caseForm.get('containerSize')?.setValue(response.containerSize);
-        
+
+        this.caseForm.get('facilityStatus')?.setValue(response.facilityStatusId);
+
         if (response.scheduledStartTime && response.scheduledStartTime !== this.DATETIME_MIN) {
-          let startTime = new Date(response.scheduledStartTime);  
+          let startTime = new Date(response.scheduledStartTime);
           if (isValid(startTime)) {
             this.caseForm.get('scheduledStartDateTime')?.setValue(startTime);
           } else {
@@ -159,9 +147,9 @@ export class CaseAddEditComponent implements OnInit {
         if (response.scheduledFacility != undefined && response.scheduledFacility != this.GUID_EMPTY) {
           // this.stateService.setSelectedFacility(response.scheduledFacility);
           this.subs.add(this.facilityStatusService.getAllStatusesByFacility(response.scheduledFacility)
-            .subscribe(fStatuses => this.allFacilityStatuses = fStatuses));
+            .subscribe(fStatuses => this.facilityStatuses = fStatuses));
 
-          this.subs.add(this.i4connectedService.getDevicesByFacility(response.scheduledFacility)
+          this.subs.add(this.i4connectedService.getDevicesByFacility2(response.scheduledFacility)
             .subscribe(devices => this.cremators = devices));
 
         } else {
@@ -170,18 +158,13 @@ export class CaseAddEditComponent implements OnInit {
       });
   }
 
-  isStatusSelected(facilityStatus: FacilityStatus): boolean {
-    let status = this.case?.caseToFacilityStatuses.find(f => f.facilityStatusId == facilityStatus.id);
-    return (status != null) ? true : false;
-  }
-
   facilityChanged(facilityId: MatSelectChange): void {
     this.selectedFacilityId = facilityId.value;
 
     this.subs.add(this.facilityStatusService.getAllStatusesByFacility(this.selectedFacilityId)
-      .subscribe(fStatuses => this.allFacilityStatuses = fStatuses));
+      .subscribe(fStatuses => this.facilityStatuses = fStatuses));
 
-    this.subs.add(this.i4connectedService.getDevicesByFacility(this.selectedFacilityId)
+    this.subs.add(this.i4connectedService.getDevicesByFacility2(this.selectedFacilityId)
       .subscribe(devices => this.cremators = devices));
   }
 
@@ -208,31 +191,15 @@ export class CaseAddEditComponent implements OnInit {
     this.case.containerType = this.caseForm.get('containerType')?.value;
     this.case.containerSize = this.caseForm.get('containerSize')?.value;
 
-    this.case.scheduledDevice = (this.caseForm.get('scheduledDevice')?.value == '') ? this.GUID_EMPTY : this.caseForm.get('scheduledDevice')?.value;
+    if (this.caseForm.get('scheduledDevice')?.value != '') {
+      this.case.scheduledDevice = this.cremators.map(c => c.id).includes(this.caseForm.get('scheduledDevice')?.value) ? this.caseForm.get('scheduledDevice')?.value : this.GUID_EMPTY;
+    } else {
+      this.case.scheduledDevice = this.GUID_EMPTY;
+    }
     this.case.scheduledStartTime = this.caseForm.get('scheduledStartDateTime')?.value;
     this.case.scheduledFacility = this.selectedFacilityId.length == 0 ? this.GUID_EMPTY : this.selectedFacilityId;
-    this.selectedFacilityStatuses = this.caseForm.get('selectedFacilityStatuses')?.value;
+    this.case.facilityStatusId = (this.caseForm.get('facilityStatus')?.value == '') ? this.GUID_EMPTY : this.caseForm.get('facilityStatus')?.value;
 
-    this.case.caseToFacilityStatuses.map(s => s.isDone = false);
-    this.selectedFacilityStatuses.forEach(selected => {
-      if (!this.case) return;
-
-      let founded = this.case.caseToFacilityStatuses.find(f => f.facilityStatusId == selected.id);
-      if (founded) {
-        founded.isDone = true;
-        founded.ModifiedBy = this.authService.loggedInUser.sub;
-        founded.ModifiedTime = this.formatDate(new Date());
-      } else {
-        let fStatus = new CaseToFacilityStatus();
-        fStatus.caseId = this.case?.id;
-        fStatus.facilityStatusId = selected.id
-        fStatus.isDone = true;
-        fStatus.createdBy = this.authService.loggedInUser.sub;
-        fStatus.createdTime = this.formatDate(new Date());
-        this.case?.caseToFacilityStatuses.push(fStatus);
-      }
-
-    });
 
     // set STATUS to UNSCHEDULED
     if (this.case.scheduledDevice == this.GUID_EMPTY || this.case.scheduledStartTime == this.DATETIME_MIN || this.case.scheduledFacility == this.GUID_EMPTY) {

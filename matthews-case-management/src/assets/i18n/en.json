@@ -69,6 +69,7 @@
     "no": "No",
     "facilityStatusSuccessfullyDeleted": "Facility status is successfully deleted",
     "facilityStatusNotDeleted": "Facility status is not deleted",
+    "facilityStatusIsInUsageNotDeleted": "Facility status is in use. Cannot be deleted.",
     "deleteStatusConfirmation": "Are you sure to delete status?",
     "facility": "Facility",
     "allCases": "All cases",

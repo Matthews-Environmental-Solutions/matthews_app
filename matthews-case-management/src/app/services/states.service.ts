@@ -59,7 +59,7 @@ export class StateService {
     // selectedFacilityIdBehaviorSubject
     setSelectedFacility(facility: string): void {
         this.selectedFacilityIdBehaviorSubject.next(facility);
-        this.i4connectedService.getDevicesByFacility(facility).subscribe(devices => {
+        this.i4connectedService.getDevicesByFacility2(facility).subscribe(devices => {
             this.devicesFromSiteBehaviorSubject.next(devices);
         });
     }

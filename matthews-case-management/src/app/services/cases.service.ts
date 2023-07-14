@@ -68,7 +68,7 @@ export class CaseService {
     }
 
     update(caseForSave: Case): Observable<void> {
-        return this.httpClient.put<void>(`${this.apiURL}/Case/UpdateWithStatuses`, caseForSave)
+        return this.httpClient.put<void>(`${this.apiURL}/Case/Update`, caseForSave)
             .pipe(catchError(this.handleError));
     }
 
@@ -142,7 +142,7 @@ export class CaseService {
             // Get server-side error
             errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
         }
-        window.alert(errorMessage);
+        // window.alert(errorMessage);
         return throwError(() => {
             return errorMessage;
         });

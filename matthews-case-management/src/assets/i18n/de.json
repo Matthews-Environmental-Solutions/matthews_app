@@ -69,6 +69,7 @@
     "no": "Nein",
     "facilityStatusSuccessfullyDeleted": "Der Einrichtungsstatus wurde erfolgreich gelöscht",
     "facilityStatusNotDeleted": "Der Einrichtungsstatus wird nicht gelöscht",
+    "facilityStatusIsInUsageNotDeleted": "Der Einrichtungsstatus ist „Genutzt“. Kann nicht gelöscht werden.",
     "deleteStatusConfirmation": "Möchten Sie den Status wirklich löschen?",
     "facility": "Einrichtung",
     "allCases": "Alle Fälle",
