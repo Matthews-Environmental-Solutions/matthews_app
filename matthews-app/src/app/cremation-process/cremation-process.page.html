@@ -122,7 +122,7 @@
           </ion-card>
 
           <p>
-            <ion-button *ngIf="signal.value < '80'" expand="block" (click)="pauseCycle(selectedDevice)">
+            <ion-button *ngIf="signal.value == '90'" expand="block" (click)="pauseCycle(selectedDevice)">
               <ion-icon slot="end" name="arrow-forward"></ion-icon>
               {{'PauseCycle' | translate}}
             </ion-button>
@@ -164,12 +164,12 @@
           </ion-item>
           <ion-card-content>
             <ion-label *ngFor="let signal of selectedDevice.signals">
-              <p *ngIf="signal.name === 'CR_1_TT100_PV'"> {{'PrimChamber' | translate}}: {{signal.value}}°C </p>
-              <p *ngIf="signal.name === 'CR_1_TT101_PV'"> {{'SecChamber' | translate}}: {{signal.value}}°C </p>
+              <p *ngIf="signal.name === 'TT100_PV'"> {{'PrimChamber' | translate}}: {{signal.value}}°C </p>
+              <p *ngIf="signal.name === 'TT101_PV'"> {{'SecChamber' | translate}}: {{signal.value}}°C </p>
             </ion-label>
           </ion-card-content>
           <ion-card-content>
-            {{'Remaining' | translate}} 10 min
+            {{'Remaining' | translate}} {{cooldownTime}} min
           </ion-card-content>
         </ion-card>
         <p>
@@ -186,7 +186,7 @@
             <ion-label>{{'CooledDown' | translate}}</ion-label>
           </ion-item>
           <ion-card-content>
-            {{'ElaspedTime' | translate}}: 10 min
+            {{'ElaspedTime' | translate}}: {{rakeOutTime}} min
           </ion-card-content>
         </ion-card>
 

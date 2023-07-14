@@ -42,8 +42,12 @@ export class CremationProcessPage implements OnInit {
   startTime: string;
   cremationTime: number;
   preheatTime: number;
+  cooldownTime: number;
+  rakeOutTime: number;
   interval;
   preheatInterval;
+  cooldownInterval;
+  rakeOutInterval;
 
   burnMode = BurnMode;
   burnModeKeys = Object.keys(BurnMode).filter((x) => parseInt(x, 10) >= 0);
@@ -62,6 +66,7 @@ export class CremationProcessPage implements OnInit {
     this.matStepperIntl.optionalLabel = '';
     this.matStepperIntl.changes.next();
     this.deviceId = this.route.snapshot.paramMap.get('id');
+    this.cremationTime = 100;
   }
 
   setStartTime() {
@@ -77,10 +82,27 @@ export class CremationProcessPage implements OnInit {
   }
 
   startCremationTimer() {
-    this.cremationTime = 10;
     this.interval = setInterval(() => {
       if (this.cremationTime > 0) {
         this.cremationTime--;
+      }
+    }, 1000);
+  }
+
+  startCooldownTimer() {
+    this.cooldownTime = 10;
+    this.cooldownInterval = setInterval(() => {
+      if (this.cooldownTime > 0) {
+        this.cooldownTime--;
+      }
+    }, 60000);
+  }
+
+  startRakeOutTimer(){
+    this.rakeOutTime = 0;
+    this.rakeOutInterval = setInterval(() => {
+      if (this.rakeOutTime >= 0) {
+        this.rakeOutTime++;
       }
     }, 60000);
   }
@@ -154,7 +176,6 @@ export class CremationProcessPage implements OnInit {
   }
 
   pauseCycle(selectedDevice: Device) {
-    this.pauseTimer();
     const alertOptions: AlertOptions = {
       header: this.translateService.instant('ConfirmPauseCycle'),
       message: this.translateService.instant('ConfirmPauseCycleMessage'),
@@ -172,6 +193,7 @@ export class CremationProcessPage implements OnInit {
               (signal) => signal.name === 'PAUSE_CREMATION'
             );
             this.cremationProcessService.writeSignalValue(signal?.id, 1);
+            this.pauseTimer();
           },
         },
       ],
@@ -198,11 +220,11 @@ export class CremationProcessPage implements OnInit {
               (signal) => signal.name === 'PAUSE_CREMATION'
             );
             this.cremationProcessService.writeSignalValue(signal?.id, 0);
+            this.startCremationTimer();
           },
         },
       ],
     };
-
     this.presentAlert(alertOptions);
   }
 
@@ -256,6 +278,7 @@ export class CremationProcessPage implements OnInit {
     );
     console.log('Signal ID: ' + signal?.id);
     this.cremationProcessService.writeSignalValue(signal?.id, 1);
+    this.startCooldownTimer();
   }
 
   rakeOut(selectedDevice: Device) {
@@ -264,6 +287,8 @@ export class CremationProcessPage implements OnInit {
       (signal) => signal.name === 'RAKE_OUT'
     );
     this.cremationProcessService.writeSignalValue(signal?.id, 1);
+    this.cooldownTime = 0;
+    this.startRakeOutTimer();
   }
 
   rakeOutConfirmation(stepper: MatStepper, selectedDevice: Device) {

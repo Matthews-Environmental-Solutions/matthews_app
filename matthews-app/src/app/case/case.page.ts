@@ -30,9 +30,10 @@ export class CasePage implements OnInit {
   containerSizes = ContainerSize;
   caseStatuses = CaseStatuses;
 
-  genderTypeKeys = Object.keys(GenderType).filter(
-    (x) => parseInt(x, 10) >= 0
-  );
+  genderTypeKeys = Object.keys(GenderType).filter((v) => !isNaN(Number(v))).map(function(item) {
+    return parseInt(item, 10);
+});
+  
   containerTypeKeys = Object.keys(ContainerType).filter(
     (x) => parseInt(x, 10) >= 0
   );
@@ -78,7 +79,8 @@ export class CasePage implements OnInit {
     this.newCase.status = this.selectedCase.status;
     this.newCase.scheduledDevice = this.selectedCase.scheduledDevice;
     this.newCase.scheduledStartTime = this.selectedCase.scheduledStartTime;
-    console.log(this.newCase.gender + ':' + this.newCase.genderText);
+    //console.log(this.newCase.gender + ':' + this.newCase.genderText);
+    console.log(this.genders[0]);
   }
 
   selectedDeviceChanged($event) {
