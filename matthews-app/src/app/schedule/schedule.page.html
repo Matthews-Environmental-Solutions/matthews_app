@@ -41,9 +41,9 @@
           <ion-label>
             <h3>{{case.caseId}}</h3>
             <p>
-              <b>{{case.firstName}} {{case.lastName}}</b>
+              <b>{{case.firstName | titlecase}} {{case.lastName | titlecase}}</b>
             </p>
-            <p>{{caseStatus[case.status] | translate}}</p>
+            <p>{{caseStatus[case.status] | translate | enumFormat | titlecase}}</p>
             <p>{{'Device' | translate}}: {{case.scheduledDeviceAlias}}</p>
             <p>{{'Schedule Date' | translate}}: {{case.scheduledStartTime | date: 'dd/MM/yyyy'}}</p>
           </ion-label>
