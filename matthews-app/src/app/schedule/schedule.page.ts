@@ -1,9 +1,10 @@
 /* eslint-disable @angular-eslint/component-selector */
 import { Component, OnInit } from '@angular/core';
 import { AppStoreService } from '../app.store.service';
-import { ModalController } from '@ionic/angular';
+import { AlertController, AlertOptions, ModalController } from '@ionic/angular';
 import { Case } from '../case/case';
 import { CaseStatuses } from '../core/enums';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-schedule',
@@ -18,7 +19,8 @@ export class SchedulePage implements OnInit {
   defaultFacilityId: any;
   caseStatus = CaseStatuses;
 
-  constructor(private caseStore: AppStoreService, public modalController: ModalController) { }
+  constructor(private caseStore: AppStoreService, public modalController: ModalController, public alertController: AlertController,
+    private translateService: TranslateService,) { }
 
   ngOnInit() {
     this.showSearchbar = false;
@@ -26,7 +28,33 @@ export class SchedulePage implements OnInit {
   }
 
   deleteCase(selectedCase: Case) {
-    this.caseStore.deleteCase(selectedCase);
+    const alertOptions: AlertOptions = {
+      header: 'Confirm',
+      message: 'Are you sure you want to delete the case?',
+      buttons: [
+        {
+          text: this.translateService.instant('Cancel'),
+          role: 'cancel',
+        },
+        {
+          text: this.translateService.instant('Confirm'),
+          role: 'confirm',
+          handler: () => {
+            this.caseStore.deleteCase(selectedCase);
+          },
+        },
+      ],
+    };
+
+    this.presentAlert(alertOptions);
+  }
+
+  async presentAlert(options: AlertOptions) {
+    const alert = await this.alertController.create(options);
+    await alert.present();
+
+    const { role } = await alert.onDidDismiss();
+    console.log('onDidDismiss resolved with role', role);
   }
 
   selectedFacilityChanged($event){

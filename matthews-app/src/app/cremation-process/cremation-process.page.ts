@@ -90,12 +90,12 @@ export class CremationProcessPage implements OnInit {
   }
 
   startCooldownTimer() {
-    this.cooldownTime = 10;
+    this.cooldownTime = 100;
     this.cooldownInterval = setInterval(() => {
       if (this.cooldownTime > 0) {
         this.cooldownTime--;
       }
-    }, 60000);
+    }, 1000);
   }
 
   startRakeOutTimer(){
@@ -104,16 +104,16 @@ export class CremationProcessPage implements OnInit {
       if (this.rakeOutTime >= 0) {
         this.rakeOutTime++;
       }
-    }, 60000);
+    }, 1000);
   }
 
   startPreheatTimer() {
-    this.preheatTime = 10;
+    this.preheatTime = 100;
     this.preheatInterval = setInterval(() => {
       if (this.preheatTime > 0) {
         this.preheatTime--;
       }
-    }, 60000);
+    }, 1000);
   }
 
   pauseTimer() {
