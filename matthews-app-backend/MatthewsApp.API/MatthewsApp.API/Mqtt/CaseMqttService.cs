@@ -8,6 +8,7 @@ using MQTTnet.Client;
 using MQTTnet.Server;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -15,7 +16,6 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace MatthewsApp.API.Mqtt;
 
@@ -173,6 +173,9 @@ public class CaseMqttService : IHostedService
 
                                 await _mqttClient.SubscribeAsync(mqttSubscribeOptions, CancellationToken.None);
                                 Debug.WriteLine("MQTT client subscribed to topic.");
+
+                                // Send initial information to all devices connected with this broker (connection)
+                                SendInitialInformationToConnectionDevices(setting.Host, _mqttClient);
                             }
 
                         }
@@ -242,7 +245,7 @@ public class CaseMqttService : IHostedService
                     finally
                     {
                         await Task.Delay(TimeSpan.FromMinutes(Int32.Parse(_configuration["deviceListRefrechIntervalInMinutes"])));
-                    } 
+                    }
                 }
             });
     }
@@ -255,5 +258,49 @@ public class CaseMqttService : IHostedService
     private List<string> GetTopicsForMqttClient(string HostUrl)
     {
         return _mqttConnectionSettings.Where(s => s.Host == HostUrl).Select(s => s.Topic).ToList();
+    }
+
+    private async Task SendInitialInformationToConnectionDevices(string host, IMqttClient client)
+    {
+        // get all devices which belongs to connection (host)
+        List<MqttConnectionSettingDto> devicesFromConnection = _mqttConnectionSettings.Where(cs => cs.Host == host).ToList();
+
+        // 4. Send initial information to devices
+        foreach (MqttConnectionSettingDto connectionSetting in devicesFromConnection)
+        {
+            SendInitialInformationToDevice(connectionSetting);
+        }
+    }
+
+    private async Task SendInitialInformationToDevice(MqttConnectionSettingDto setting)
+    {
+        DeviceDto device = _devices.First(d => d.id == setting.DeviceId);
+
+        if (setting != null)
+        {
+            // 1. get mqtt client
+            IMqttClient client = _mqttClientsList.GetValueOrDefault(setting.Host);
+
+            if (client != null)
+            {
+                // 2. payload
+                InitialInformationMessageDto jsonPayload = new InitialInformationMessageDto
+                {
+                    FACILITY_ID = device.siteId,
+                    CREMATOR_ID = device.id
+                };
+
+                var objToString = JsonSerializer.Serialize(jsonPayload);
+                var payload = Encoding.ASCII.GetBytes(objToString);
+
+                var message = new MqttApplicationMessageBuilder()
+                           .WithTopic($"{setting.Topic}/Cases")
+                           .WithPayload(payload)
+                           .WithRetainFlag(false)
+                           .Build();
+
+                MqttClientPublishResult _result = await client.PublishAsync(message, CancellationToken.None);
+            }
+        }
     }
 }
