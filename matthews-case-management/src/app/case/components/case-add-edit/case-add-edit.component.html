@@ -179,7 +179,7 @@
                     <mat-label>{{"caseStatus" | translate}}</mat-label>
                     <mat-select formControlName="facilityStatus">
                         <mat-option *ngFor="let facilityStatus of facilityStatuses" [value]="facilityStatus.id">
-                            {{facilityStatus.statusName}}
+                            {{facilityStatus.statusName}} <span class="start-process">{{getStartProcessTranslate(facilityStatus.startProcess)}}</span>
                         </mat-option>
                     </mat-select>
                 </mat-form-field>

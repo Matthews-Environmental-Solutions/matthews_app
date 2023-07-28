@@ -37,6 +37,7 @@ export class CaseAddEditComponent implements OnInit {
   @ViewChild('statuses') statuses?: MatSelectionList;
 
   private UNSCHEDULED: number = 0;
+  private READY_TO_CREMATE: number = 3;
   private WAITING_FOR_PERMIT: number = 4;
   private GUID_EMPTY: string = '00000000-0000-0000-0000-000000000000';
   private DATETIME_MIN: string = '0001-01-01T00:00:00';
@@ -211,6 +212,11 @@ export class CaseAddEditComponent implements OnInit {
       this.case.status = this.WAITING_FOR_PERMIT; // 4
     }
 
+    var selectedFacilityStatus = this.facilityStatuses.find(fs => fs.id == this.case?.facilityStatusId);
+    if(selectedFacilityStatus?.startProcess){
+      this.case.status = this.READY_TO_CREMATE; // 3
+    }
+
     if (!this.case.id || this.case.id == this.GUID_EMPTY) {
       this.caseService.save(this.case).subscribe({
 
@@ -259,4 +265,7 @@ export class CaseAddEditComponent implements OnInit {
     return year + "-" + month + "-" + day + "T00:00:00";
   }
 
+  getStartProcessTranslate(startProcess: boolean): string {
+    return startProcess ? this.translate.instant('startProcess') : '';
+  }
 }
