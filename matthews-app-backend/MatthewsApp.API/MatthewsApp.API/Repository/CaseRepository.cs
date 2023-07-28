@@ -23,6 +23,13 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
     {
     }
 
+    public Case GetById (Guid id)
+    {
+        return _dataContext.Cases
+            //.AsNoTracking()
+            .First(c => c.Id == id);
+    }
+
     public override void Delete(Guid id)
     {
         var entity = _dataContext.Context.Set<Case>().Find((id));

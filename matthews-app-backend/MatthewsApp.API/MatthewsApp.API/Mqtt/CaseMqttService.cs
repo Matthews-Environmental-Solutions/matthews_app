@@ -1,4 +1,5 @@
 ﻿using MatthewsApp.API.Dtos;
+using MatthewsApp.API.Dtos.CustomJsonConverters;
 using MatthewsApp.API.Mappers;
 using MatthewsApp.API.Models;
 using MatthewsApp.API.PrismEvents;
@@ -46,8 +47,8 @@ public class CaseMqttService : IHostedService
         ILogger<CaseMqttService> logger,
         IConfiguration configuration,
         CaseI4cHttpClientService caseI4CHttpClientService,
-        CaseHub caseHub, 
-        IServiceScopeFactory serviceScopeFactory, 
+        CaseHub caseHub,
+        IServiceScopeFactory serviceScopeFactory,
         IEventAggregator ea)
     {
         _logger = logger;
@@ -73,6 +74,7 @@ public class CaseMqttService : IHostedService
         //timer.Elapsed += new ElapsedEventHandler(DisplayTimeEvent);
         //timer.Enabled = true;
 
+        // SUBSCRIBE TO EVENT
         _ea.GetEvent<EventCaseAnyChange>().Subscribe(SendCasesToDevice);
 
         try
@@ -231,11 +233,37 @@ public class CaseMqttService : IHostedService
         var mqttFactory = new MqttFactory();
         IMqttClient mqttClient = mqttFactory.CreateMqttClient();
 
-        // DEFINE CALLBACKs to mqttClient events
+        // DEFINE CALLBACKs to mqttClient event
         mqttClient.ApplicationMessageReceivedAsync += e =>
         {
             Debug.WriteLine("Received application message: " + e.ClientId + " " + e.ResponseReasonString);
-            Debug.WriteLine(Encoding.UTF8.GetString(e.ApplicationMessage.Payload));
+            string receivedMessage = Encoding.UTF8.GetString(e.ApplicationMessage.Payload);
+            receivedMessage = receivedMessage.Replace("\r", "").Replace("\t", "").Replace("\n", "");
+
+            Debug.WriteLine(receivedMessage);
+
+            if (receivedMessage.Contains("CaseStart"))
+            {
+                StartCasePayloadDto payload = JsonSerializer.Deserialize<StartCasePayloadDto>(receivedMessage);
+                StartCaseDto startCase = JsonSerializer.Deserialize<StartCaseDto>(payload.CaseStart);
+                using (var scope = _serviceScopeFactory.CreateScope())
+                {
+                    ICasesService _casesService = scope.ServiceProvider.GetService<ICasesService>();
+                    _casesService.UpdateCaseWhenCaseStart(startCase);
+                }
+            }
+
+            if (receivedMessage.Contains("CaseEnd"))
+            {
+                EndCasePayloadDto payload = JsonSerializer.Deserialize<EndCasePayloadDto>(receivedMessage);
+                EndCaseDto endCase = JsonSerializer.Deserialize<EndCaseDto>(payload.CaseEnd);
+                using (var scope = _serviceScopeFactory.CreateScope())
+                {
+                    ICasesService _casesService = scope.ServiceProvider.GetService<ICasesService>();
+                    _casesService.UpdateCaseWhenCaseEnd(endCase);
+                }
+            }
+
             _caseHub.SendMessageToRefreshList($"ClientId: {e.ClientId}");
             return Task.CompletedTask;
         };

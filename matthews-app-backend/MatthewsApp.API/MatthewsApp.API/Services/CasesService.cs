@@ -1,5 +1,6 @@
 ﻿using IdentityModel;
 using MatthewsApp.API.Dtos;
+using MatthewsApp.API.Enums;
 using MatthewsApp.API.Mappers;
 using MatthewsApp.API.Models;
 using MatthewsApp.API.Mqtt;
@@ -28,6 +29,8 @@ public interface ICasesService
     Task<IEnumerable<Case>> GetScheduledCasesByWeek(Guid facilityId, DateTime dateStartDateOfWeek);
     Task<IEnumerable<Case>> GetAllCasesByFacility(Guid facilityId);
     Task<IEnumerable<Case>> GetScheduledCasesByTimePeriod(Guid facilityId, DateTime dateStart, DateTime dateEnd);
+    void UpdateCaseWhenCaseStart(StartCaseDto dto);
+    void UpdateCaseWhenCaseEnd(EndCaseDto dto);
 }
 
 public class CasesService : ICasesService
@@ -63,6 +66,22 @@ public class CasesService : ICasesService
 
         // Send event
         SendEventToHostedService(entity);
+    }
+
+    public async void UpdateCaseWhenCaseStart(StartCaseDto dto)
+    {
+        Case entity = _caseRepository.GetById(dto.LOADED_ID);
+        entity.ActualStartTime = dto.StartTime;
+        entity.Status = CaseStatus.IN_PROGRESS;
+        Update(entity);
+    }
+
+    public async void UpdateCaseWhenCaseEnd(EndCaseDto dto)
+    {
+        Case entity = _caseRepository.GetById(dto.COMPLETED_ID);
+        entity.ActualEndTime = dto.EndTime;
+        entity.Status = CaseStatus.CREMATION_COMPLETE;
+        Update(entity);
     }
 
     public async Task<IEnumerable<Case>> GetAll()
