@@ -44,7 +44,7 @@ export class CaseAddEditComponent implements OnInit {
   title: string = 'addNewCase';
 
   containerTypes: ContainerType[] = [{ id: 0, name: 'None' }, { id: 1, name: 'Cardboard' }, { id: 2, name: 'Hardwood' }, { id: 3, name: 'MDF Particle board' }, { id: 4, name: 'Bag/Shroud' }, { id: 4, name: 'Other' }];
-  containerSizes: ContainerSize[] = [{ id: 0, name: 'None' }, { id: 1, name: 'Infant' }, { id: 2, name: 'Standard' }, { id: 3, name: 'Bariatric' }];
+  containerSizes: ContainerSize[] = [{ id: 0, name: 'None' }, { id: 1, name: 'Standard' }, { id: 2, name: 'Infant' }, { id: 3, name: 'Bariatric' }];
   cremators: Device[] = [];
   facilities: Facility[] = [];
   selectedFacilityId: string = this.GUID_EMPTY;

@@ -79,14 +79,15 @@ export class CaseService {
     // map case
     remapCase(item: Case): Case {
         switch (item.gender) {
+
             case 0:
-                item.genderText = this.translate.instant('other');
-                break;
-            case 1:
                 item.genderText = this.translate.instant('male');
                 break;
-            case 2:
+            case 1:
                 item.genderText = this.translate.instant('female');
+                break;
+            case 2:
+                item.genderText = this.translate.instant('other');
                 break;
         }
 
@@ -116,10 +117,10 @@ export class CaseService {
                 item.containerSizeText = this.translate.instant('none');
                 break;
             case 1:
-                item.containerSizeText = this.translate.instant('Infant');
+                item.containerSizeText = this.translate.instant('Standard');
                 break;
             case 2:
-                item.containerSizeText = this.translate.instant('Standard');
+                item.containerSizeText = this.translate.instant('Infant');
                 break;
             case 3:
                 item.containerSizeText = this.translate.instant('Bariatric');
