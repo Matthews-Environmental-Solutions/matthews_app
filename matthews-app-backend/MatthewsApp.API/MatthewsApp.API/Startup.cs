@@ -14,6 +14,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using Prism.Events;
 using System;
 using System.Collections.Generic;
 
@@ -62,6 +63,7 @@ public class Startup
         services.AddSignalR();
         services.AddSingleton<CaseHub>();
 
+        services.AddSingleton<IEventAggregator>(new EventAggregator());
         services.AddHostedService<CaseMqttService>();
         services.AddScoped<ICasesService, CasesService>();
         services.AddScoped<ICaseRepository, CaseRepository>();

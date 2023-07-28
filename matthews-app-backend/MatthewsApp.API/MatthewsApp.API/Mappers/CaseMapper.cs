@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using MatthewsApp.API.Models;
 using System;
+using Microsoft.AspNetCore.Http;
 
 namespace MatthewsApp.API.Mappers;
 
@@ -90,6 +91,28 @@ public static class CaseMapper
         };
     }
 
+    public static Case20Dto ToCase20Dto(this Case entity)
+    {
+        if (entity == default)
+        {
+            return default!;
+        }
+
+        return new Case20Dto
+        (
+            entity.Id,
+            entity.ClientId,
+            entity.FirstName,
+            entity.LastName,
+            ((int) entity.ContainerSize).ToString(),
+            entity.Weight.ToString(),
+            ((int) entity.ContainerType).ToString(),
+            ((int) entity.Gender).ToString(),
+            entity.Age.ToString(),
+            "1"
+        );
+    }
+
     public static IEnumerable<CaseDto> ToDTOs(this IEnumerable<Case> entities)
     {
         return entities.Select(e => e.ToDTO());
@@ -100,4 +123,8 @@ public static class CaseMapper
         return dtos.Select(e => e.ToEntity());
     }
 
+    public static IEnumerable<Case20Dto> ToCase20DTOs(this IEnumerable<Case> entities)
+    {
+        return entities.Select(e => e.ToCase20Dto());
+    }
 }

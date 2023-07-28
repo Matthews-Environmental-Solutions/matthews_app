@@ -93,6 +93,18 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ).ToList();
     }
 
+    public async Task<IEnumerable<Case>> GetFirst20ScheduledCases(Guid scheduledDeviceId)
+    {
+        IEnumerable<Case> cases = await _dataContext.Cases.ToArrayAsync();
+        return cases.Where(c =>
+            c.IsObsolete == false
+            && c.ScheduledStartTime > DateTime.MinValue.AddDays(100)
+            && !c.ScheduledFacility.Equals(Guid.Empty)
+            && c.ScheduledDevice.Equals(scheduledDeviceId)
+            && c.Status == CaseStatus.READY_TO_CREMATE
+            ).ToList().OrderBy(c => c.ScheduledStartTime).Take(20);
+    }
+
     public async Task<IEnumerable<Case>> GetScheduledCasesByTimePeriod(Guid facilityId, DateTime dateStart, DateTime dateEnd)
     {
         IEnumerable<Case> cases = await _dataContext.Cases.ToArrayAsync();

@@ -1,8 +1,12 @@
-﻿using MatthewsApp.API.Dtos;
+﻿using IdentityModel;
+using MatthewsApp.API.Dtos;
 using MatthewsApp.API.Mappers;
 using MatthewsApp.API.Models;
+using MatthewsApp.API.Mqtt;
+using MatthewsApp.API.PrismEvents;
 using MatthewsApp.API.Repository.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Prism.Events;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -29,25 +33,36 @@ public interface ICasesService
 public class CasesService : ICasesService
 {
     private readonly ICaseRepository _caseRepository;
+    private IEventAggregator _ea;
 
-    public CasesService(ICaseRepository repository)
+    public CasesService(ICaseRepository repository, IEventAggregator ea)
     {
         _caseRepository = repository;
+        _ea = ea;
     }
 
     public void Create(Case entity)
     {
         _caseRepository.Create(entity);
+
+        // Send event
+        SendEventToHostedService(entity);
     }
 
     public void Delete(Case entity)
     {
         _caseRepository.Delete(entity.Id);
+
+        // Send event
+        SendEventToHostedService(entity);
     }
 
     public void Update(Case entity)
     {
         _caseRepository.Update(entity);
+
+        // Send event
+        SendEventToHostedService(entity);
     }
 
     public async Task<IEnumerable<Case>> GetAll()
@@ -158,5 +173,14 @@ public class CasesService : ICasesService
         return _caseRepository.GetAll().Result.Any(e => e.Id == id);
     }
 
+    private void SendEventToHostedService(Case entity)
+    {
+        // Send event
+        if (entity.ScheduledDevice is not null && entity.ScheduledDevice != Guid.Empty)
+        {
+            Guid deviceIdGuid = entity.ScheduledDevice ?? Guid.Empty;
+            _ea.GetEvent<EventCaseAnyChange>().Publish(deviceIdGuid);
+        }
+    }
     
 }
