@@ -47,25 +47,37 @@ public class CasesService : ICasesService
     public void Create(Case entity)
     {
         _caseRepository.Create(entity);
+        List<Guid> ids = new List<Guid>();
+        ids.Add(entity.Id);
 
         // Send event
-        SendEventToHostedService(entity);
+        SendEventToHostedService(entity, ids);
     }
 
     public void Delete(Case entity)
     {
         _caseRepository.Delete(entity.Id);
+        List<Guid> ids = new List<Guid>();
+        ids.Add(entity.Id);
 
         // Send event
-        SendEventToHostedService(entity);
+        SendEventToHostedService(entity, ids);
     }
 
     public void Update(Case entity)
     {
+        Case previousCase = _caseRepository.GetById(entity.Id);
         _caseRepository.Update(entity);
+        List<Guid> ids = new List<Guid>();
+
+        ids.Add(entity.ScheduledDevice ?? Guid.Empty);
+        if(entity.ScheduledDevice != previousCase.ScheduledDevice)
+        {
+            ids.Add(previousCase.ScheduledDevice ?? Guid.Empty);
+        }
 
         // Send event
-        SendEventToHostedService(entity);
+        SendEventToHostedService(entity, ids);
     }
 
     public async void UpdateCaseWhenCaseStart(StartCaseDto dto)
@@ -192,13 +204,12 @@ public class CasesService : ICasesService
         return _caseRepository.GetAll().Result.Any(e => e.Id == id);
     }
 
-    private void SendEventToHostedService(Case entity)
+    private void SendEventToHostedService(Case entity, List<Guid> deviceIds)
     {
         // Send event
         if (entity.ScheduledDevice is not null && entity.ScheduledDevice != Guid.Empty)
         {
-            Guid deviceIdGuid = entity.ScheduledDevice ?? Guid.Empty;
-            _ea.GetEvent<EventCaseAnyChange>().Publish(deviceIdGuid);
+            _ea.GetEvent<EventCaseAnyChange>().Publish(deviceIds);
         }
     }
     

@@ -26,7 +26,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
     public Case GetById (Guid id)
     {
         return _dataContext.Cases
-            //.AsNoTracking()
+            .AsNoTracking()
             .First(c => c.Id == id);
     }
 

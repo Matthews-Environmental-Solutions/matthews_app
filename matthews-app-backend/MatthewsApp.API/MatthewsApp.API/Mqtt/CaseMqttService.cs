@@ -75,7 +75,7 @@ public class CaseMqttService : IHostedService
         //timer.Enabled = true;
 
         // SUBSCRIBE TO EVENT
-        _ea.GetEvent<EventCaseAnyChange>().Subscribe(SendCasesToDevice);
+        _ea.GetEvent<EventCaseAnyChange>().Subscribe(SendCasesToSeveralDevices);
 
         try
         {
@@ -127,7 +127,7 @@ public class CaseMqttService : IHostedService
 
     public async Task StopAsync(CancellationToken cancellationToken)
     {
-        _ea.GetEvent<EventCaseAnyChange>().Unsubscribe(SendCasesToDevice);
+        _ea.GetEvent<EventCaseAnyChange>().Unsubscribe(SendCasesToSeveralDevices);
 
         var mqttClientDisconnectOptions = _mqttFactory.CreateClientDisconnectOptionsBuilder().Build();
 
@@ -359,17 +359,12 @@ public class CaseMqttService : IHostedService
         }
     }
 
-    private async Task SendCasesToAllDevice()
+    private void SendCasesToSeveralDevices(List<Guid> deviceIds)
     {
-        foreach(MqttConnectionSettingDto setting in _mqttConnectionSettings)
+        foreach(Guid deviceId in deviceIds)
         {
-            SendCasesToDeviceAsync(setting.DeviceId);
+            _ = SendCasesToDeviceAsync(deviceId);
         }
-    }
-
-    private void SendCasesToDevice(Guid deviceId)
-    {
-        _ = SendCasesToDeviceAsync(deviceId);
     }
 
     public async Task SendCasesToDeviceAsync(Guid deviceId)
