@@ -84,6 +84,10 @@ public class CasesService : ICasesService
     {
         Case entity = _caseRepository.GetById(dto.LOADED_ID);
         entity.ActualStartTime = dto.StartTime;
+        entity.ActualFacility = dto.FACILITY_ID;
+        entity.ActualDevice = dto.CREMATOR_ID;
+        entity.ContainerType = (ContainerType) dto.LOADED_COFFIN_TYPE;
+        //entity.PerformedBy = dto.User; // type is different
         entity.Status = CaseStatus.IN_PROGRESS;
         Update(entity);
     }
@@ -92,6 +96,8 @@ public class CasesService : ICasesService
     {
         Case entity = _caseRepository.GetById(dto.COMPLETED_ID);
         entity.ActualEndTime = dto.EndTime;
+        entity.Fuel = dto.FuelUsed.ToString();
+        entity.Electricity = dto.ElectricityUsed.ToString();
         entity.Status = CaseStatus.CREMATION_COMPLETE;
         Update(entity);
     }

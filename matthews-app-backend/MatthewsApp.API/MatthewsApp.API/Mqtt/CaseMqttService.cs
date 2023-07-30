@@ -1,5 +1,4 @@
 ﻿using MatthewsApp.API.Dtos;
-using MatthewsApp.API.Dtos.CustomJsonConverters;
 using MatthewsApp.API.Mappers;
 using MatthewsApp.API.Models;
 using MatthewsApp.API.PrismEvents;
@@ -21,8 +20,6 @@ using System.Text;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Timers;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace MatthewsApp.API.Mqtt;
 
@@ -40,13 +37,11 @@ public class CaseMqttService : IHostedService
     private IConfiguration _configuration;
     private ICollection<DeviceDto> _devices;
     private readonly ILogger<CaseMqttService> _logger;
-    private CaseI4cHttpClientService _caseI4CHttpClientService;
     private readonly IServiceScopeFactory _serviceScopeFactory;
 
     public CaseMqttService(
         ILogger<CaseMqttService> logger,
         IConfiguration configuration,
-        CaseI4cHttpClientService caseI4CHttpClientService,
         CaseHub caseHub,
         IServiceScopeFactory serviceScopeFactory,
         IEventAggregator ea)
@@ -55,74 +50,21 @@ public class CaseMqttService : IHostedService
         _caseHub = caseHub;
         _configuration = configuration;
         _mqttFactory = new MqttFactory();
-        _caseI4CHttpClientService = caseI4CHttpClientService;
         _serviceScopeFactory = serviceScopeFactory;
         _ea = ea;
     }
 
-    // THIS METHOD IS TO TEST SENDING MESSAGES VIA SIGNALR
-    public void DisplayTimeEvent(object source, ElapsedEventArgs e)
-    {
-        Debug.WriteLine(" \r{0} ", DateTime.Now);
-        _caseHub.SendMessageToRefreshList("poruka");
-    }
-
     public async Task StartAsync(CancellationToken cancellationToken)
     {
-        // THIS CODE IS TO TEST SENDING MESSAGES VIA SIGNALR
-        //var timer = new System.Timers.Timer(5000);
-        //timer.Elapsed += new ElapsedEventHandler(DisplayTimeEvent);
-        //timer.Enabled = true;
 
-        // SUBSCRIBE TO EVENT
+        // 1. SUBSCRIBE TO EVENT(S)
         _ea.GetEvent<EventCaseAnyChange>().Subscribe(SendCasesToSeveralDevices);
-
-        try
-        {
-            // 1. GET ALL MATTHEWS DEVICES FROM ALL FACILITIES
-            _devices = await _caseI4CHttpClientService.GetAllDevicesAsync();
-
-            // 2. then iterate devices, 
-            foreach (DeviceDto device in _devices)
-            {
-                if (device.adapterId is null) continue;
-
-                // 3. use adapterId and get credentials (host, port, username and password). They are in "adapterConfiguration"
-                AdapterDto adapter = await _caseI4CHttpClientService.GetAdapterByDeviceIdAsync((Guid)device.adapterId);
-                string cfg = adapter.configuration;
-                AdapterConfigurationDto adapterConfiguration = JsonSerializer.Deserialize<AdapterConfigurationDto>(cfg);
-
-                // 4. use device ID and get the device details
-                DeviceDetailsDto deviceDetails = await _caseI4CHttpClientService.GetDeviceDetailsAsync(device.id);
-                if (deviceDetails.configuration is null) continue;
-                DeviceDetailsConfigurationDto deviceDetailsCfg = JsonSerializer.Deserialize<DeviceDetailsConfigurationDto>(deviceDetails.configuration);
-
-                MqttConnectionSettingDto connection = new MqttConnectionSettingDto(
-                    device.id,
-                    adapterConfiguration.host,
-                    Int32.Parse(adapterConfiguration.port),
-                    adapterConfiguration.username,
-                    adapterConfiguration.password,
-                    deviceDetailsCfg.topic
-                    );
-
-                _mqttConnectionSettings.Add(connection);
-
-                Debug.WriteLine($"{deviceDetailsCfg.topic}");
-            }
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError($"Error on StartAsync: {ex.Message}");
-            throw;
-        }
 
         // 2. Continue to refresh list of devices each 15 minutes
         GetDevicesAsync(); // must NOT BE await!!
 
         // 3. MQTT
         ConnectToMqttBrokers();
-
     }
 
     public async Task StopAsync(CancellationToken cancellationToken)
@@ -135,8 +77,73 @@ public class CaseMqttService : IHostedService
         {
             await client.Value.DisconnectAsync(mqttClientDisconnectOptions, CancellationToken.None);
         }
+    }
 
-        //return Task.CompletedTask;
+    /// <summary>
+    /// It is a Task which will refresh the list of devices each N minutes.
+    /// The N minutes is taken from configuration. When you call it, do not use "await".
+    /// </summary>
+    /// <returns>void</returns>
+    private async Task GetDevicesAsync()
+    {
+        _ = Task.Run(
+            async () =>
+            {
+                while (true)
+                {
+                    try
+                    {
+                        using (var scope = _serviceScopeFactory.CreateScope())
+                        {
+                            ICaseI4cHttpClientService _caseI4CHttpClientService = scope.ServiceProvider.GetService<ICaseI4cHttpClientService>();
+
+                            // 1. get devices
+                            _devices = await _caseI4CHttpClientService.GetAllDevicesAsync();
+
+                            // 2. then iterate devices, 
+                            foreach (DeviceDto device in _devices)
+                            {
+                                // device must has adapter
+                                if (device.adapterId is null) continue;
+
+                                // if connection already exist then skip
+                                if (_mqttConnectionSettings.Any(c => c.DeviceId == device.id)) continue;
+
+                                // 3. use adapterId and get credentials (host, port, username and password). They are in "adapterConfiguration"
+                                AdapterDto adapter = await _caseI4CHttpClientService.GetAdapterByDeviceIdAsync((Guid)device.adapterId);
+                                string cfg = adapter.configuration;
+                                AdapterConfigurationDto adapterConfiguration = JsonSerializer.Deserialize<AdapterConfigurationDto>(cfg);
+
+                                // 4. use device ID and get the device details
+                                DeviceDetailsDto deviceDetails = await _caseI4CHttpClientService.GetDeviceDetailsAsync(device.id);
+                                if (deviceDetails.configuration is null) continue;
+                                DeviceDetailsConfigurationDto deviceDetailsCfg = JsonSerializer.Deserialize<DeviceDetailsConfigurationDto>(deviceDetails.configuration);
+
+                                MqttConnectionSettingDto connection = new MqttConnectionSettingDto(
+                                    device.id,
+                                    adapterConfiguration.host,
+                                    Int32.Parse(adapterConfiguration.port),
+                                    adapterConfiguration.username,
+                                    adapterConfiguration.password,
+                                    deviceDetailsCfg.topic
+                                    );
+
+                                _mqttConnectionSettings.Add(connection);
+
+                                Debug.WriteLine($"{deviceDetailsCfg.topic}");
+                            }
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        throw;
+                    }
+                    finally
+                    {
+                        await Task.Delay(TimeSpan.FromMinutes(Int32.Parse(_configuration["deviceListRefrechIntervalInMinutes"])));
+                    }
+                }
+            });
     }
 
     /// <summary>
@@ -203,8 +210,9 @@ public class CaseMqttService : IHostedService
                                     // Send initial information to all devices connected with this broker (connection)
                                     await SendInitialInformationToDevicesOfConnection(setting.Host, _mqttClient);
 
-                                    // Send initial list of cases
-                                    SendCasesToDeviceAsync(setting.DeviceId);
+                                    // Send initial list of cases to all devices on client connection
+                                    List<Guid> ids = _mqttConnectionSettings.Where(s => s.Host == setting.Host).Select(s => s.DeviceId).ToList();
+                                    SendCasesToSeveralDevices(ids);
                                 }
                             }
                         }
@@ -275,34 +283,6 @@ public class CaseMqttService : IHostedService
         };
 
         return mqttClient;
-    }
-
-    /// <summary>
-    /// It is a Task which will refresh the list of devices each N minutes.
-    /// The N minutes is taken from configuration. When you call it, do not use "await".
-    /// </summary>
-    /// <returns>void</returns>
-    private async Task GetDevicesAsync()
-    {
-        _ = Task.Run(
-            async () =>
-            {
-                while (true)
-                {
-                    try
-                    {
-                        _devices = await _caseI4CHttpClientService.GetAllDevicesAsync();
-                    }
-                    catch (Exception)
-                    {
-                        throw;
-                    }
-                    finally
-                    {
-                        await Task.Delay(TimeSpan.FromMinutes(Int32.Parse(_configuration["deviceListRefrechIntervalInMinutes"])));
-                    }
-                }
-            });
     }
 
     /// <summary>
