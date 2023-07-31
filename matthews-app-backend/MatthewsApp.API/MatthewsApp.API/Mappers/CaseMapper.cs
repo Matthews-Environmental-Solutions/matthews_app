@@ -101,7 +101,7 @@ public static class CaseMapper
         return new Case20Dto
         (
             entity.Id,
-            entity.ClientId,
+            entity.ClientCaseId,
             entity.FirstName,
             entity.LastName,
             ((int) entity.ContainerSize).ToString(),

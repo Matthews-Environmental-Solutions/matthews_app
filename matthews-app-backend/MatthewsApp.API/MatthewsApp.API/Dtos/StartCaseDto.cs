@@ -5,11 +5,16 @@ using System.Text.Json.Serialization;
 
 namespace MatthewsApp.API.Dtos;
 
-public class StartCaseDto { 
+public class StartCaseDto {
+
+    [JsonConverter(typeof(CustomGuidConverter))]
     public Guid? LOADED_ID { get; set; }
     public Guid FACILITY_ID { get; set; }
 	public Guid CREMATOR_ID { get; set; }
-	public int LOADED_COFFIN_TYPE { get; set; }
+
+    
+    [JsonConverter(typeof(StringToIntConverter))]
+    public int LOADED_COFFIN_TYPE { get; set; }
 
 	[JsonConverter(typeof(CustomDateTimeConverter))]
 	public DateTime StartTime { get; set; }
@@ -17,8 +22,17 @@ public class StartCaseDto {
 	public string User { get; set; }
 	public string LOADED_FIRST_NAME { get; set; }
 	public string LOADED_SURNAME { get; set; }
-	public ContainerSize LOADED_SIZE { get; set; }
-	public int LOADED_WEIGHT { get; set; }
-	public GenderType LOADED_GENDER { get; set; }
+    public string LOADED_CLIENT_ID { get; set; }
+
+    [JsonConverter(typeof(ContainerSizeConverter))]
+    public ContainerSize LOADED_SIZE { get; set; }
+
+    [JsonConverter(typeof(StringToIntConverter))]
+    public int LOADED_WEIGHT { get; set; }
+
+    [JsonConverter(typeof(GenderConverter))]
+    public GenderType LOADED_GENDER { get; set; }
+
+    [JsonConverter(typeof(StringToIntConverter))]
     public int LOADED_AGE { get; set; }
 }

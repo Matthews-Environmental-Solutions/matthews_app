@@ -108,7 +108,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             && c.ScheduledStartTime > DateTime.MinValue.AddDays(100)
             && !c.ScheduledFacility.Equals(Guid.Empty)
             && c.ScheduledDevice.Equals(scheduledDeviceId)
-            && c.Status == CaseStatus.READY_TO_CREMATE
+            && (c.Status == CaseStatus.READY_TO_CREMATE || c.Status == CaseStatus.IN_PROGRESS)
             ).ToList().OrderBy(c => c.ScheduledStartTime).Take(20);
     }
 

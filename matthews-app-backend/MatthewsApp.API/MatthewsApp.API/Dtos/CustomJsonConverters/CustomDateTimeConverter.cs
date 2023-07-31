@@ -10,11 +10,11 @@ namespace MatthewsApp.API.Dtos.CustomJsonConverters
 {
     public class CustomDateTimeConverter : JsonConverter<DateTime>
     {
-        private readonly string Format = "yyyy-MM-dd hh:mm:ss";
+        private readonly string Format = "yyyy-MM-dd HH:mm:ss";
 
         public override DateTime Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            
+
             return DateTime.ParseExact(reader.GetString(), Format, null);
 
             //if (Utf8Parser.TryParse(reader.ValueSpan, out DateTime value, out _, 'R'))

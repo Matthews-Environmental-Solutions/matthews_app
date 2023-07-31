@@ -132,7 +132,7 @@ public class CasesService : ICasesService
         entity.Gender = dto.LOADED_GENDER;
         entity.ScheduledStartTime = dto.StartTime;
         entity.ClientId = "1"; //ClientID is missing in CaseStart object from Flexy
-        entity.ClientCaseId = "1"; ////ClientCaseId is missing in CaseStart object from Flexy
+        entity.ClientCaseId = dto.LOADED_CLIENT_ID;
 
         return entity;
     }

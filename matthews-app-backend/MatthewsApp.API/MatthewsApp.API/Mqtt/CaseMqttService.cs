@@ -361,8 +361,14 @@ public class CaseMqttService : IHostedService
 
         // make payload and serialize
         Case20Payload cases20 = new Case20Payload(casesToSend.ToList());
-        string objToString = JsonSerializer.Serialize(cases20);
-        byte[] payload = Encoding.ASCII.GetBytes(objToString);
+
+        dynamic obj = MakeFlatCase20Payload(casesToSend);
+        string objToStringNew = JsonSerializer.Serialize(obj);
+        byte[] payload = Encoding.ASCII.GetBytes(objToStringNew);
+
+        // THIS IS BY THE DOCUMENTATION
+        //string objToString = JsonSerializer.Serialize(cases20);
+        //byte[] payload = Encoding.ASCII.GetBytes(objToString);
 
         // setting
         MqttConnectionSettingDto setting = _mqttConnectionSettings.First(cs => cs.DeviceId == deviceId);
@@ -377,5 +383,28 @@ public class CaseMqttService : IHostedService
                            .Build();
 
         MqttClientPublishResult _result = await client.PublishAsync(message, CancellationToken.None);
+    }
+
+    private dynamic MakeFlatCase20Payload(IEnumerable<Case20Dto> casesToSend)
+    {
+        string RequestMessage = "{}";
+        Dictionary<string, string> jsonDict = JsonSerializer.Deserialize<Dictionary<string, string>>(RequestMessage);
+
+        for(int i = 0; i < casesToSend.ToList().Count; i++)
+        {
+            Case20Dto c = casesToSend.ToList()[i];
+            jsonDict.Add($"CASE_{i + 1}_ID", c.ID.ToString());
+            jsonDict.Add($"CASE_{i + 1}_CLIENT_ID", c.Client_ID);
+            jsonDict.Add($"CASE_{i + 1}_FIRST_NAME", c.FIRST_NAME);
+            jsonDict.Add($"CASE_{i + 1}_SURNAME", c.SURNAME);
+            jsonDict.Add($"CASE_{i + 1}_SIZE", c.SIZE);
+            jsonDict.Add($"CASE_{i + 1}_WEIGHT", c.WEIGHT);
+            jsonDict.Add($"CASE_{i + 1}_COFFIN_TYPE", c.COFFIN_TYPE);
+            jsonDict.Add($"CASE_{i + 1}_GENDER", c.GENDER);
+            jsonDict.Add($"CASE_{i + 1}_AGE", c.AGE);
+            jsonDict.Add($"CASE_{i + 1}_READY", c.READY);
+        }
+
+        return jsonDict;
     }
 }
