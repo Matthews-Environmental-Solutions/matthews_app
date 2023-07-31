@@ -27,7 +27,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
     {
         return _dataContext.Cases
             .AsNoTracking()
-            .First(c => c.Id == id);
+            .FirstOrDefault(c => c.Id == id);
     }
 
     public override void Delete(Guid id)

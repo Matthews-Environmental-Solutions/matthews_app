@@ -6,7 +6,7 @@ using System.Text.Json.Serialization;
 namespace MatthewsApp.API.Dtos;
 
 public class StartCaseDto { 
-    public Guid LOADED_ID { get; set; }
+    public Guid? LOADED_ID { get; set; }
     public Guid FACILITY_ID { get; set; }
 	public Guid CREMATOR_ID { get; set; }
 	public int LOADED_COFFIN_TYPE { get; set; }

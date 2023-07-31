@@ -7,6 +7,7 @@ using MatthewsApp.API.Mqtt;
 using MatthewsApp.API.PrismEvents;
 using MatthewsApp.API.Repository.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Prism.Events;
 using System;
 using System.Collections;
@@ -82,19 +83,64 @@ public class CasesService : ICasesService
 
     public async void UpdateCaseWhenCaseStart(StartCaseDto dto)
     {
-        Case entity = _caseRepository.GetById(dto.LOADED_ID);
+        Case entity;
+        bool entityDoesNotExistInDb = false;
+        if (dto.LOADED_ID == null || dto.LOADED_ID == Guid.Empty)
+        {
+            entity = MakeNewCaseFromDto(dto);
+            entityDoesNotExistInDb = true;
+        } else
+        {
+            entity = _caseRepository.GetById(dto.LOADED_ID??Guid.Empty);
+            if (entity is null)
+            {
+                entity = MakeNewCaseFromDto(dto);
+                entityDoesNotExistInDb = true;
+            }
+        }
+
         entity.ActualStartTime = dto.StartTime;
         entity.ActualFacility = dto.FACILITY_ID;
         entity.ActualDevice = dto.CREMATOR_ID;
-        entity.ContainerType = (ContainerType) dto.LOADED_COFFIN_TYPE;
         //entity.PerformedBy = dto.User; // type is different
         entity.Status = CaseStatus.IN_PROGRESS;
-        Update(entity);
+
+        if (entityDoesNotExistInDb)
+        {
+            Create(entity);
+        }
+        else
+        {
+            Update(entity);
+        }
+        
+    }
+
+    private Case MakeNewCaseFromDto(StartCaseDto dto)
+    {
+        Case entity = new Case();
+        entity.Id = dto.LOADED_ID ?? Guid.NewGuid();
+        entity.FirstName = dto.LOADED_FIRST_NAME;
+        entity.LastName = dto.LOADED_SURNAME;
+        entity.Age = dto.LOADED_AGE;
+        entity.Gender = dto.LOADED_GENDER;
+        entity.ScheduledFacility = dto.FACILITY_ID;
+        entity.ScheduledDevice = dto.CREMATOR_ID;
+        entity.ContainerType = (ContainerType)dto.LOADED_COFFIN_TYPE;
+        entity.ContainerSize = (ContainerSize)dto.LOADED_SIZE;
+        entity.Weight = dto.LOADED_WEIGHT;
+        entity.Gender = dto.LOADED_GENDER;
+        entity.ScheduledStartTime = dto.StartTime;
+        entity.ClientId = "1"; //ClientID is missing in CaseStart object from Flexy
+        entity.ClientCaseId = "1"; ////ClientCaseId is missing in CaseStart object from Flexy
+
+        return entity;
     }
 
     public async void UpdateCaseWhenCaseEnd(EndCaseDto dto)
     {
         Case entity = _caseRepository.GetById(dto.COMPLETED_ID);
+        if (entity == null) return;
         entity.ActualEndTime = dto.EndTime;
         entity.Fuel = dto.FuelUsed.ToString();
         entity.Electricity = dto.ElectricityUsed.ToString();
