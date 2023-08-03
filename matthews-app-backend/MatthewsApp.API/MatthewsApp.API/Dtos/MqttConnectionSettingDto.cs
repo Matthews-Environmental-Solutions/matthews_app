@@ -10,6 +10,7 @@ public class MqttConnectionSettingDto {
     public string Password { get; }
     public string Topic { get; }
     public bool Connected { get; set; }
+    public string ClientId { get; set; }
 
     public MqttConnectionSettingDto(Guid deviceId, string host, int port, string username, string password, string topic)
     {

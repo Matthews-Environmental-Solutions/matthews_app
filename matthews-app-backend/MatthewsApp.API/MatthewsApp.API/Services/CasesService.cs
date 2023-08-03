@@ -30,7 +30,7 @@ public interface ICasesService
     Task<IEnumerable<Case>> GetScheduledCasesByWeek(Guid facilityId, DateTime dateStartDateOfWeek);
     Task<IEnumerable<Case>> GetAllCasesByFacility(Guid facilityId);
     Task<IEnumerable<Case>> GetScheduledCasesByTimePeriod(Guid facilityId, DateTime dateStart, DateTime dateEnd);
-    void UpdateCaseWhenCaseStart(StartCaseDto dto);
+    Tuple<Case, bool> UpdateCaseWhenCaseStart(StartCaseDto dto);
     void UpdateCaseWhenCaseEnd(EndCaseDto dto);
 }
 
@@ -81,7 +81,7 @@ public class CasesService : ICasesService
         SendEventToHostedService(entity, ids);
     }
 
-    public async void UpdateCaseWhenCaseStart(StartCaseDto dto)
+    public Tuple<Case, bool> UpdateCaseWhenCaseStart(StartCaseDto dto)
     {
         Case entity;
         bool entityDoesNotExistInDb = false;
@@ -113,7 +113,8 @@ public class CasesService : ICasesService
         {
             Update(entity);
         }
-        
+
+        return new Tuple<Case, bool>(entity, entityDoesNotExistInDb);
     }
 
     private Case MakeNewCaseFromDto(StartCaseDto dto)

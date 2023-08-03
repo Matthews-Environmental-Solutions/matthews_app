@@ -20,6 +20,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace MatthewsApp.API.Mqtt;
 
@@ -190,6 +191,8 @@ public class CaseMqttService : IHostedService
 
                                 if (setting.Connected)
                                 {
+                                    // Once connection is established, get the clientId
+                                    setting.ClientId = _mqttClient.Options.ClientId;
                                     // collect all topics to subscribe for particular mqtt broker (host)
                                     List<string> topics = GetTopicsForMqttClient(setting.Host);
 
@@ -257,7 +260,16 @@ public class CaseMqttService : IHostedService
                 using (var scope = _serviceScopeFactory.CreateScope())
                 {
                     ICasesService _casesService = scope.ServiceProvider.GetService<ICasesService>();
-                    _casesService.UpdateCaseWhenCaseStart(startCase);
+                    Tuple<Case, bool> response = _casesService.UpdateCaseWhenCaseStart(startCase);
+
+                    // if LOADED_ID was empty, we will create it and will send back to Flexy
+                    if (response.Item2)
+                    {
+                        IMqttClient client = FindClientByClientId(e.ClientId);
+                        string topic = e.ApplicationMessage.Topic;
+                        var topicSegmentsList = topic.Split("/");
+                        SendCaseIdToFlexy(client, response.Item1, $"{topicSegmentsList[0]}/{topicSegmentsList[1]}");
+                    }
                 }
             }
 
@@ -283,6 +295,26 @@ public class CaseMqttService : IHostedService
         };
 
         return mqttClient;
+    }
+
+    private async void SendCaseIdToFlexy(IMqttClient client, Case startCase, string Topic)
+    {
+        CaseIdBackToFlexyDto jsonPayload = new CaseIdBackToFlexyDto
+        {
+            LOADED_ID = startCase.Id.ToString()
+        };
+
+        var objToString = JsonSerializer.Serialize(jsonPayload);
+        var payload = Encoding.ASCII.GetBytes(objToString);
+
+        // message
+        var message = new MqttApplicationMessageBuilder()
+                           .WithTopic($"{Topic}/Cases")
+                           .WithPayload(payload)
+                           .WithRetainFlag(false)
+                           .Build();
+
+        MqttClientPublishResult _result = await client.PublishAsync(message, CancellationToken.None);
     }
 
     /// <summary>
@@ -406,5 +438,12 @@ public class CaseMqttService : IHostedService
         }
 
         return jsonDict;
+    }
+
+    private IMqttClient FindClientByClientId (string clientId)
+    {
+
+        IMqttClient cli = _mqttClientsList.FirstOrDefault(c => c.Value.Options.ClientId == clientId).Value;
+        return cli;
     }
 }
