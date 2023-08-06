@@ -38,6 +38,7 @@ export class CaseCalendarComponent implements OnInit, OnDestroy {
       .subscribe(setting => {
         this.startDayOfWeek = setting.startDayOfWeek;
         this.calendarView = setting.lastUsedCalendarView;
+        this.selectedDay = setting.lastUsedSelectedDay;
       }));
 
     this.subs.add(this.userSettingService.userSettings$.subscribe(s => {
@@ -52,6 +53,8 @@ export class CaseCalendarComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.hiddenDayForNavigation = new Date(this.userSettingService.getUserSettingLastValue().lastUsedSelectedDay);
+    this.selectedDay = this.hiddenDayForNavigation;
     this.getDays(this.selectedDay);
     this.selectedDay.setHours(0, 0, 0, 0);
     this.calendarView = this.userSettingService.getUserSettingLastValue().lastUsedCalendarView;
@@ -98,6 +101,10 @@ export class CaseCalendarComponent implements OnInit, OnDestroy {
     if (date instanceof Date) {
       this.selectedDay = date;
       this.stateService.setSelectedDate(date);
+      let userSetting = this.userSettingService.getUserSettingLastValue();
+      userSetting.lastUsedSelectedDay = date;
+      localStorage.setItem(userSetting.username, JSON.stringify(userSetting));
+      this.userSettingService.setUserSetting(userSetting);
 
       this.getDays(this.selectedDay);
       this.clickHoverMenuTrigger?.closeMenu();

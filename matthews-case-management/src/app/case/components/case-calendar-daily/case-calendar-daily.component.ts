@@ -38,6 +38,8 @@ export class CaseCalendarDailyComponent implements OnInit {
 
   ngOnInit(): void {
 
+    this.stateService.setSelectedDate(new Date(this.userSettingService.getUserSettingLastValue().lastUsedSelectedDay));
+
     this.subs.add(this.userSettingService.userSettings$.subscribe(s => {
       if (!this.isEmptyString(this.selectedFacilityId) && this.selectedDay) {
         this.getCasesByDate();
@@ -119,6 +121,11 @@ export class CaseCalendarDailyComponent implements OnInit {
     this.stateService.setSelectedDate(this.days[dayClick]);
     this.changeSelectedDay(this.days[dayClick]);
     this.buttonUsed = dayClick;
+    
+    let userSetting = this.userSettingService.getUserSettingLastValue();
+    userSetting.lastUsedSelectedDay = this.days[dayClick];
+    localStorage.setItem(userSetting.username, JSON.stringify(userSetting));
+    this.userSettingService.setUserSetting(userSetting);
   }
 
   changeSelectedDay(value: Date) {

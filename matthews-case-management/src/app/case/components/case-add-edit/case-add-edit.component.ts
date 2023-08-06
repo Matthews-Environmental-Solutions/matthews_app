@@ -91,7 +91,7 @@ export class CaseAddEditComponent implements OnInit {
       containerSize: new FormControl('', [Validators.required]),
       scheduledStartDateTime: new FormControl(null),
 
-      facilityStatus: new FormControl('', { nonNullable: false }),
+      facilityStatus: new FormControl('', { nonNullable: true }),
     });
 
     this.subs.add(this.i4connectedService.getSites().subscribe(data => {
@@ -228,7 +228,7 @@ export class CaseAddEditComponent implements OnInit {
 
         error: (err) => {
           this._shackBar.showNotification(this.translate.instant(err), 'error');
-          this.router.navigate([``]);
+          //this.router.navigate([``]);
         }
       });
     } else {
@@ -241,7 +241,7 @@ export class CaseAddEditComponent implements OnInit {
 
         error: (err) => {
           this._shackBar.showNotification(this.translate.instant(err), 'error');
-          this.router.navigate([``]);
+          //this.router.navigate([``]);
         }
       });
     }
