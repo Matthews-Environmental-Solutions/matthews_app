@@ -92,5 +92,5 @@ public class Case : BaseEntity
 
 
     public Guid? FacilityStatusId { get; set; }
-    public FacilityStatus FacilityStatus { get; set; }
+    public FacilityStatus? FacilityStatus { get; set; }
 }

@@ -47,6 +47,10 @@ public class CasesService : ICasesService
 
     public void Create(Case entity)
     {
+        if(entity.FacilityStatusId == Guid.Empty)
+        {
+            entity.FacilityStatusId = null;
+        }
         _caseRepository.Create(entity);
         List<Guid> ids = new List<Guid>();
         ids.Add(entity.Id);
