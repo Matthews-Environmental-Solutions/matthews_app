@@ -23,7 +23,7 @@
       <ion-label>
         <h3>{{case.caseId}}</h3>
         <p>
-          {{case.firstName}} &mdash; {{'Status' | translate}}: {{caseStatuses[case.status] | translate}}
+          {{case.firstName}} {{case.lastName}}&mdash; {{'Status' | translate}}: {{caseStatuses[case.status] | enumFormat | titlecase | translate}}
         </p>
       </ion-label>
     </ion-item>

@@ -14,6 +14,7 @@ import { ModalController } from '@ionic/angular';
 import { DatePipe } from '@angular/common';
 import { CaseStatuses, ContainerSize, ContainerType, GenderType } from '../core/enums';
 import { Device } from '../device-list/device';
+import { ContainerSizeSelection, ContainerTypeSelection, GenderSelection } from './selection-option';
 
 @Component({
   selector: 'app-case',
@@ -25,24 +26,10 @@ export class CasePage implements OnInit {
 
   newCase = new Case();
 
-  genders = GenderType;
-  containerTypes = ContainerType;
-  containerSizes = ContainerSize;
+  genders: GenderSelection[] = [{id: 0, name:'Male'}, {id: 1, name:'Female'}, {id: 2, name:'Other'}];
+  containerTypes: ContainerTypeSelection[] = [{ id: 0, name: 'None' }, { id: 1, name: 'Cardboard' }, { id: 2, name: 'Hardwood' }, { id: 3, name: 'MDF Particle board' }, { id: 4, name: 'Bag/Shroud' }, { id: 4, name: 'Other' }];
+  containerSizes: ContainerSizeSelection[] = [{ id: 0, name: 'None' }, { id: 1, name: 'Standard' }, { id: 2, name: 'Infant' }, { id: 3, name: 'Bariatric' }];
   caseStatuses = CaseStatuses;
-
-  genderTypeKeys = Object.keys(GenderType).filter((v) => !isNaN(Number(v))).map(function(item) {
-    return parseInt(item, 10);
-});
-  
-  containerTypeKeys = Object.keys(ContainerType).filter(
-    (x) => parseInt(x, 10) >= 0
-  );
-  containerSizeKeys = Object.keys(ContainerSize).filter(
-    (x) => parseInt(x, 10) >= 0
-  );
-  caseStatusesKeys = Object.keys(CaseStatuses).filter(
-    (x) => parseInt(x, 10) >= 0
-  );
 
   userInfo$ = this.caseStore.userInfo$;
   currentDateTime: any;
@@ -60,7 +47,7 @@ export class CasePage implements OnInit {
 
   ngOnInit() {
     this.caseStore.getDeviceList(this.selectedCase.scheduledFacility);
-    if (this.selectedCase.id !== '') this.mapCase();
+    if (this.selectedCase.id !== '' && this.selectedCase.id !== undefined) this.mapCase();
   }
 
   mapCase() {
@@ -71,16 +58,15 @@ export class CasePage implements OnInit {
     this.newCase.weight = this.selectedCase.weight;
     this.newCase.age = this.selectedCase.age;
     this.newCase.gender = this.selectedCase.gender;
-    this.newCase.genderText = this.genders[this.newCase.gender];
+    this.newCase.genderText = this.genders[this.selectedCase.gender].name;
     this.newCase.containerType = this.selectedCase.containerType;
-    this.newCase.containerTypeText = this.selectedCase.containerTypeText;
+    this.newCase.containerTypeText = this.containerTypes[this.selectedCase.containerType].name;
     this.newCase.containerSize = this.selectedCase.containerSize;
-    this.newCase.containerSizeText = this.selectedCase.containerSizeText;
+    this.newCase.containerSizeText = this.containerSizes[this.selectedCase.containerSize].name;
     this.newCase.status = this.selectedCase.status;
     this.newCase.scheduledDevice = this.selectedCase.scheduledDevice;
     this.newCase.scheduledStartTime = this.selectedCase.scheduledStartTime;
     //console.log(this.newCase.gender + ':' + this.newCase.genderText);
-    console.log(this.genders[0]);
   }
 
   selectedDeviceChanged($event) {
@@ -93,9 +79,9 @@ export class CasePage implements OnInit {
       this.newCase.gender = +this.newCase.gender;
       this.newCase.containerSize = +this.newCase.containerSize;
       this.newCase.containerType = +this.newCase.containerType;
-      this.newCase.genderText = this.genders[this.newCase.gender];
-      this.newCase.containerSizeText = this.containerSizes[this.newCase.containerSize];
-      this.newCase.containerTypeText = this.containerTypes[this.newCase.containerType];
+      this.newCase.genderText = this.genders[this.newCase.gender].name;
+      this.newCase.containerSizeText = this.containerSizes[this.newCase.containerSize].name;
+      this.newCase.containerTypeText = this.containerTypes[this.newCase.containerType].name;
       this.newCase.scheduledFacility = this.selectedCase.scheduledFacility;
       this.newCase.createdTime = this.formatDateAndTime(new Date().toString());  
 
@@ -115,9 +101,9 @@ export class CasePage implements OnInit {
       this.newCase.gender = +this.newCase.gender;
       this.newCase.containerSize = +this.newCase.containerSize;
       this.newCase.containerType = +this.newCase.containerType;
-      this.newCase.genderText = this.genders[this.newCase.gender];
-      this.newCase.containerSizeText = this.containerSizes[this.newCase.containerSize];
-      this.newCase.containerTypeText = this.containerTypes[this.newCase.containerType];
+      this.newCase.genderText = this.genders[this.newCase.gender].name;
+      this.newCase.containerSizeText = this.containerSizes[this.newCase.containerSize].name;
+      this.newCase.containerTypeText = this.containerTypes[this.newCase.containerType].name;
       this.newCase.status = +this.newCase.status;
       this.newCase.scheduledFacility = this.selectedCase.scheduledFacility;
       this.newCase.createdTime = this.formatDateAndTime(new Date().toString());

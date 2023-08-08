@@ -10,6 +10,7 @@ import { CaseListPage } from './case-list.page';
 import { Ng2SearchPipeModule } from 'ng2-search-filter';
 import { LongPressModule } from 'ionic-long-press';
 import { TranslateModule } from '@ngx-translate/core';
+import { PipesModule } from '../pipes/pipes.module';
 
 @NgModule({
   imports: [
@@ -19,7 +20,8 @@ import { TranslateModule } from '@ngx-translate/core';
     CaseListPageRoutingModule,
     Ng2SearchPipeModule,
     LongPressModule,
-    TranslateModule
+    TranslateModule,
+    PipesModule
   ],
   declarations: [CaseListPage]
 })

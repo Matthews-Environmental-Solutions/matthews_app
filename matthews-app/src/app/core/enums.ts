@@ -41,6 +41,7 @@ export enum MachineStatus {
 }
 
 export enum ChamberStatus {
+  shutDownMode = 0,
   openValveCheck = 10,
   closeValveCheck = 20,
   preheatActive = 30,

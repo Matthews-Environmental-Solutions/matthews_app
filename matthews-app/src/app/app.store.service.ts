@@ -46,7 +46,7 @@ export class AppStoreService extends ComponentStore<AppState> {
                 private signalRService: SignalRService) {
 
             super({ cases: [],
-                    selectedCase : {} as Case,
+                    selectedCase: {} as Case,
                     facilities: [],
                     loading: false,
                     deviceList: [],

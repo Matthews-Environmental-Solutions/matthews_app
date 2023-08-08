@@ -1,5 +1,5 @@
 /* eslint-disable @angular-eslint/component-selector */
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NavController } from '@ionic/angular';
 import { AppStoreService } from '../app.store.service';
@@ -11,7 +11,7 @@ import { SignalRService } from '../core/signal-r.service';
   templateUrl: './device-list.page.html',
   styleUrls: ['./device-list.page.scss'],
 })
-export class DeviceListPage implements OnInit {
+export class DeviceListPage implements OnInit, OnDestroy {
   machineStatus = MachineStatus;
   showSearchbar: boolean;
   searchTerm: string;
@@ -35,8 +35,10 @@ export class DeviceListPage implements OnInit {
         console.log(error);
       });
     });
+  }
 
-
+  ngOnDestroy() {
+    this.signalRService.stopConnection();
   }
 
   cancelSearch(): void {

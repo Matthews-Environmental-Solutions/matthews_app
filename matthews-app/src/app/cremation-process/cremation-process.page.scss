@@ -9,7 +9,6 @@
 ion-segment {
   --background: #cbe5c0;
   font-size: 1rem;
-  margin-top: 5px;
 }
 
 // ion-segment-button {
@@ -19,25 +18,88 @@ ion-segment {
 // }
 
 ion-segment-button {
-  --indicator-color: #c5d93a;
+  --indicator-color: #013220;
   font-size: small;
 }
 
 /* Material Design styles */
 ion-segment-button.md {
   --color: #000;
-  --color-checked: #c5d93a;
+  --color-checked: #013220;
   --indicator-height: 4px;
 }
 
 /* iOS styles */
 ion-segment-button.ios {
-  --color: #c5d93a;
+  --color: #013220;
   --color-checked: #fff;
   --border-radius: 20px;
 }
 
 
 .btnsuccess {
-  --background:#c5d93a;
+  --background:#013220;
+  margin-inline: 0;
 }
+
+.btnsuccesstwo {
+  --background:#013220;
+}
+
+.btndanger {
+  --background: #eb445a;
+  margin-inline: 0;
+}
+
+.container {
+  background-color: #e4eff1;
+}
+
+ion-footer{
+  background-color: #e4eff1;
+}
+
+.action-buttons {
+  margin: 0px; 
+  --border-radius: 0px;
+  --background:#013220;
+}
+
+.footer-text {
+  color: black;
+}
+
+.footer-content{
+  margin: 6px;
+  border: 2px gray;
+  border-style: solid;
+  height: 250px;
+  position: relative;
+  text-align: center;
+}
+
+.actions {
+  width:325px;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  left:50%;
+  Transform: translate(-50%, 0%);
+}
+
+.inline {
+  display: inline-block;
+  width: 158px;
+  --background: #cbe5c0;
+  color: black;
+}
+
+.btnchangecase {
+  --background: #cbe5c0;
+  color: black;
+}
+
+// :host ::ng-deep .mat-vertical-content-container {
+//   pointer-events:none;
+// }
+

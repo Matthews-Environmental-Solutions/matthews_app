@@ -1,17 +1,18 @@
 /* eslint-disable @angular-eslint/component-selector */
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { AppStoreService } from '../app.store.service';
 import { AlertController, AlertOptions, ModalController } from '@ionic/angular';
 import { Case } from '../case/case';
 import { CaseStatuses } from '../core/enums';
 import { TranslateService } from '@ngx-translate/core';
+import { SignalRCaseApiService } from '../core/signal-r.case-api.service';
 
 @Component({
   selector: 'app-schedule',
   templateUrl: './schedule.page.html',
   styleUrls: ['./schedule.page.scss']
 })
-export class SchedulePage implements OnInit {
+export class SchedulePage implements OnInit, OnDestroy {
   showSearchbar: boolean;
   searchTerm: string;
   selectedFacilityId: string;
@@ -20,11 +21,21 @@ export class SchedulePage implements OnInit {
   caseStatus = CaseStatuses;
 
   constructor(private caseStore: AppStoreService, public modalController: ModalController, public alertController: AlertController,
-    private translateService: TranslateService,) { }
+    private translateService: TranslateService, private signalRCaseApiService: SignalRCaseApiService, private appStore: AppStoreService) { }
 
   ngOnInit() {
     this.showSearchbar = false;
     this.setDefaultValues();
+    this.establishSignalRConnection(this.defaultFacilityId);
+  }
+
+  ngOnDestroy(): void {
+      this.signalRCaseApiService.stopConnection();
+  }
+
+  establishSignalRConnection(facilityId: string) {
+    this.signalRCaseApiService.initializeSignalRCaseApiConnection();
+    this.signalRCaseApiService.addCaseDataListener(facilityId);
   }
 
   deleteCase(selectedCase: Case) {
@@ -60,6 +71,8 @@ export class SchedulePage implements OnInit {
   selectedFacilityChanged($event){
     this.selectedFacilityId = $event.target.value;
     this.caseStore.getCases(this.selectedFacilityId);
+    this.signalRCaseApiService.stopConnection();
+    this.establishSignalRConnection(this.selectedFacilityId);
   }
 
   cancelSearch(): void {

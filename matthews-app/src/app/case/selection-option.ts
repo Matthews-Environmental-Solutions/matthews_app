@@ -1,19 +1,19 @@
-export class ContainerSize {
+export class ContainerSizeSelection {
     id!: number;
     name!: string;
 }
 
-export class ContainerType {
+export class ContainerTypeSelection {
     id!: number;
     name!: string;
 }
 
-export class GenderType {
+export class GenderSelection {
     id!: number;
     name!: string;
 }
 
-export class CaseStatus {
+export class CaseStatusSelection {
     id!: number;
     name!: string;
 }

@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/quotes */
 import { GenderType } from "../core/enums";
+import { GenderSelection } from "./selection-option";
 
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 // export interface Case {
@@ -79,23 +80,23 @@ export class Case {
 
   lastName: string = '';
 
-  weight: number = 100;
+  weight: number;
 
-  gender: number = 0;
+  gender: number;
 
   genderText: string = '';
 
-  containerType: number = 0; // enum to be used instead
+  containerType: number; // enum to be used instead
 
   containerTypeText: string = '';
 
-  containerSize: number = 0; // enum to be used instead
+  containerSize: number; // enum to be used instead
 
   containerSizeText: string = '';
 
   isObsolete: boolean = false;
 
-  age: number = 100;
+  age: number;
 
   status: number = 0;
 

@@ -10,27 +10,29 @@ import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { STEPPER_GLOBAL_OPTIONS } from '@angular/cdk/stepper';
 import { TranslateModule } from '@ngx-translate/core';
+import { PipesModule } from '../pipes/pipes.module';
 
 
 @NgModule({
-  providers: [
-    {
-      provide: STEPPER_GLOBAL_OPTIONS,
-      useValue: { displayDefaultIndicatorType: false }
-    }
-  ],
-  imports: [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    IonicModule,
-    CremationProcessPageRoutingModule,
-    MatStepperModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatIconModule,
-    TranslateModule
-  ],
-  declarations: [CremationProcessPage]
+    providers: [
+        {
+            provide: STEPPER_GLOBAL_OPTIONS,
+            useValue: { displayDefaultIndicatorType: false }
+        }
+    ],
+    declarations: [CremationProcessPage],
+    imports: [
+        CommonModule,
+        FormsModule,
+        ReactiveFormsModule,
+        IonicModule,
+        CremationProcessPageRoutingModule,
+        MatStepperModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatIconModule,
+        TranslateModule,
+        PipesModule
+    ]
 })
 export class CremationProcessPageModule {}

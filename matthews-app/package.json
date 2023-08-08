@@ -36,6 +36,7 @@
     "@capacitor/status-bar": "1.0.6",
     "@ionic/angular": "^6.7.4",
     "@ionic/cli": "^6.20.9",
+    "@microsoft/signalr": "^7.0.9",
     "@ngrx/component-store": "^13.0.1",
     "@ngx-translate/core": "^14.0.0",
     "@ngx-translate/http-loader": "^7.0.0",

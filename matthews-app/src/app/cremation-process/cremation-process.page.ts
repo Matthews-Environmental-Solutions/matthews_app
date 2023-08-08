@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-shadow */
 /* eslint-disable max-len */
 /* eslint-disable @angular-eslint/component-selector */
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { AlertController, AlertOptions, PopoverController } from '@ionic/angular';
 import { MatStepper, MatStepperIntl } from '@angular/material/stepper';
 import { AppStoreService } from '../app.store.service';
@@ -13,6 +13,7 @@ import { Device } from '../device-list/device';
 import { CremationProcessService } from './cremation-process.service';
 import { Observable } from 'rxjs';
 import { BurnMode, ChamberStatus } from '../core/enums';
+import { ContainerTypeSelection, GenderSelection } from '../case/selection-option';
 
 @Component({
   selector: 'app-device-details',
@@ -20,6 +21,8 @@ import { BurnMode, ChamberStatus } from '../core/enums';
   styleUrls: ['./cremation-process.page.scss'],
 })
 export class CremationProcessPage implements OnInit {
+  @ViewChild('stepper') stepper!: MatStepper;
+
   selectedCase$ = this.appStore.selectedCase$;
   selectedDevice$ = this.appStore.selectedDevice$;
   selectedFacility$ = this.appStore.selectedFacility$;
@@ -47,8 +50,12 @@ export class CremationProcessPage implements OnInit {
   interval;
   preheatInterval;
   cooldownInterval;
-  rakeOutInterval;
+  stepNumber: number;
+  case: Case;
+  clientCaseId: any;
 
+  containerTypes: ContainerTypeSelection[] = [{ id: 0, name: 'None' }, { id: 1, name: 'Cardboard' }, { id: 2, name: 'Hardwood' }, { id: 3, name: 'MDF Particle board' }, { id: 4, name: 'Bag/Shroud' }, { id: 4, name: 'Other' }];
+  genders: GenderSelection[] = [{id: 0, name:'Male'}, {id: 1, name:'Female'}, {id: 2, name:'Other'}];
   burnMode = BurnMode;
   burnModeKeys = Object.keys(BurnMode).filter((x) => parseInt(x, 10) >= 0);
 
@@ -66,7 +73,9 @@ export class CremationProcessPage implements OnInit {
     this.matStepperIntl.optionalLabel = '';
     this.matStepperIntl.changes.next();
     this.deviceId = this.route.snapshot.paramMap.get('id');
-    this.cremationTime = 100;
+    this.cremationTime = 0;
+    this.stepNumber = 0;
+    this.case = new Case();
   }
 
   setStartTime() {
@@ -83,10 +92,10 @@ export class CremationProcessPage implements OnInit {
 
   startCremationTimer() {
     this.interval = setInterval(() => {
-      if (this.cremationTime > 0) {
-        this.cremationTime--;
+      if (this.cremationTime >= 0) {
+        this.cremationTime++;
       }
-    }, 1000);
+    }, 60000);
   }
 
   startCooldownTimer() {
@@ -94,15 +103,6 @@ export class CremationProcessPage implements OnInit {
     this.cooldownInterval = setInterval(() => {
       if (this.cooldownTime > 0) {
         this.cooldownTime--;
-      }
-    }, 1000);
-  }
-
-  startRakeOutTimer(){
-    this.rakeOutTime = 0;
-    this.rakeOutInterval = setInterval(() => {
-      if (this.rakeOutTime >= 0) {
-        this.rakeOutTime++;
       }
     }, 1000);
   }
@@ -118,6 +118,12 @@ export class CremationProcessPage implements OnInit {
 
   pauseTimer() {
     clearInterval(this.interval);
+  }
+
+  resetIntervals(){
+    clearInterval(this.interval);
+    clearInterval(this.preheatInterval);
+    clearInterval(this.cooldownInterval);
   }
 
   startPreheat(selectedDevice: Device) {
@@ -149,6 +155,7 @@ export class CremationProcessPage implements OnInit {
             );
             this.cremationProcessService.writeSignalValue(signal?.id, 0);
             this.preheatTime = 0;
+            this.move(1);
           },
         },
       ],
@@ -263,6 +270,7 @@ export class CremationProcessPage implements OnInit {
             this.cremationProcessService.writeSignalValue(signal?.id, 1);
             this.cremationTime = 0;
             this.goToNextStep(stepper);
+            this.move(3);
           },
         },
       ],
@@ -273,6 +281,7 @@ export class CremationProcessPage implements OnInit {
 
   coolDown(selectedDevice: Device) {
     this.isCoolDownStarted = true;
+    this.isRakeOutStarted = false;
     const signal = selectedDevice.signals.find(
       (signal) => signal.name === 'COOLDOWN'
     );
@@ -283,12 +292,37 @@ export class CremationProcessPage implements OnInit {
 
   rakeOut(selectedDevice: Device) {
     this.isRakeOutStarted = true;
+    this.isCoolDownStarted = false;
     const signal = selectedDevice.signals.find(
       (signal) => signal.name === 'RAKE_OUT'
     );
     this.cremationProcessService.writeSignalValue(signal?.id, 1);
     this.cooldownTime = 0;
-    this.startRakeOutTimer();
+  }
+
+  caseRequest(selectedDevice: Device) {
+    const signal = selectedDevice.signals.find(
+      (signal) => signal.name === 'CASE_REQUEST'
+    );
+    this.cremationProcessService.writeSignalValue(signal?.id, 1);
+    this.caseRequired(selectedDevice);
+  }
+
+  caseRequired(selectedDevice: Device) {
+    const signal = selectedDevice.signals.find(
+      (signal) => signal.name === 'CASE_REQUIRED'
+    );
+
+    // let signalValue;
+    // this.selectedCase$.subscribe((res) => {
+    //   if (res !== undefined && res.id !== undefined) {
+    //     signalValue = res.clientCaseId;
+    //   }
+    // });
+    // eslint-disable-next-line prefer-const
+    let signalValue = this.clientCaseId;
+    console.log(signalValue);
+    this.cremationProcessService.writeSignalValue(signal?.id, signalValue);
   }
 
   rakeOutConfirmation(stepper: MatStepper, selectedDevice: Device) {
@@ -309,6 +343,9 @@ export class CremationProcessPage implements OnInit {
               (signal) => signal.name === 'RAKE_COMPLETE'
             );
             this.cremationProcessService.writeSignalValue(signal?.id, 1);
+            this.stepNumber = 0;
+            this.resetIntervals();
+            this.isCaseSelected = false;
           },
         },
       ],
@@ -356,21 +393,49 @@ export class CremationProcessPage implements OnInit {
 
   presentCasesModal(facilityId: string) {
     this.appStore.openCasesModal(facilityId);
-    this.isCaseSelected = true;
 
     this.selectedCase$.subscribe((res) => {
       if (res !== undefined) {
         this.matStepperIntl.optionalLabel =
           res.firstName + ' ' + res.lastName + ' - ' + res.clientCaseId;
         this.matStepperIntl.changes.next();
+        this.mapCase();
       }
     });
     // Required for the optional label text to be updated
     // Notifies the MatStepperIntl service that a change has been made
   }
 
+  mapCase() {
+    this.selectedCase$.subscribe((res) => {
+      if (res !== undefined && res.id !== undefined) {
+        this.case.firstName = res.firstName;
+        this.case.lastName = res.lastName;
+        this.case.genderText = this.genders[res.gender].name;
+        this.case.weight = res.weight;
+        this.case.containerTypeText = this.containerTypes[res.containerType].name;
+        this.case.scheduledStartTime = res.scheduledStartTime;
+        this.clientCaseId = res.clientCaseId;
+      }
+    });
+
+    if (this.case.firstName !== undefined) {
+      this.isCaseSelected = true;
+    }
+  }
+
   goToNextStep(stepper: MatStepper) {
     stepper.next();
     console.log('Stepper');
+  }
+
+  move(index: number) {
+    this.stepper.selectedIndex = index;
+    this.stepNumber = index;
+    console.log(this.stepNumber);
+  }
+
+  logStepNumber(){
+    console.log(this.stepNumber);
   }
 }
