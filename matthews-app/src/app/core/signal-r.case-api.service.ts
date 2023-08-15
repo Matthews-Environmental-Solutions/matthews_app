@@ -28,7 +28,7 @@ export class SignalRCaseApiService {
       .build();
     this.hubConnection
       .start()
-      .then(() => console.log('SignalR connection started'))
+      .then(() => console.log('SignalR Case Api connection started'))
       .catch((err) =>
         console.log('Error while starting SignalR connection: ' + err)
       );

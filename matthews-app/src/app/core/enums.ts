@@ -30,14 +30,24 @@ export enum CaseStatuses {
 }
 
 export enum MachineStatus {
-  shutdown = 0,
-  preheat = 10,
-  idle = 20,
-  cremation = 30,
-  rake = 40,
-  cooldown = 50,
-  curing = 60,
-  emergencyBypass = 70,
+  shutDownMode = 0,
+  openValveCheck = 10,
+  closeValveCheck = 20,
+  preheatActive = 30,
+  idleMode = 40,
+  awaitingStartConditions = 50,
+  startConditionsMet = 60,
+  loadDoorOpen = 70,
+  loadDoorClose = 80,
+  cremationActive = 90,
+  cremationCompleted = 100,
+  awaitingDropInTemperature = 110,
+  rakeAshes = 120,
+  ashRakeInProgress = 130,
+  cooldownTimerStarted = 140,
+  resetDevices = 150,
+  curingActive = 160,
+  curingPaused = 183,
 }
 
 export enum ChamberStatus {

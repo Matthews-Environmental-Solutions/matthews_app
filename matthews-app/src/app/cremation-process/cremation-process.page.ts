@@ -1,3 +1,4 @@
+/* eslint-disable radix */
 /* eslint-disable @typescript-eslint/no-shadow */
 /* eslint-disable max-len */
 /* eslint-disable @angular-eslint/component-selector */
@@ -14,6 +15,7 @@ import { CremationProcessService } from './cremation-process.service';
 import { Observable } from 'rxjs';
 import { BurnMode, ChamberStatus } from '../core/enums';
 import { ContainerTypeSelection, GenderSelection } from '../case/selection-option';
+import { tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-device-details',
@@ -24,7 +26,16 @@ export class CremationProcessPage implements OnInit {
   @ViewChild('stepper') stepper!: MatStepper;
 
   selectedCase$ = this.appStore.selectedCase$;
-  selectedDevice$ = this.appStore.selectedDevice$;
+  selectedDevice$ = this.appStore.selectedDevice$.pipe(
+    tap(selectedDevice => {
+      if (!selectedDevice?.signals) { return; }
+      selectedDevice.signals.forEach(signal => {
+        if (signal.name === 'MACHINE_STATUS' && parseInt(signal.value) > 40 && parseInt(signal.value) < 80 && !this.isCaseSelected) { this.move(1); }
+        else if (signal.name === 'MACHINE_STATUS' && parseInt(signal.value) >= 80 && parseInt(signal.value) < 100 && !this.isCremationStopped) { this.move(2); }
+        else if (signal.name === 'MACHINE_STATUS' && parseInt(signal.value) >= 100) { this.move(3); };
+      });
+    })
+  );
   selectedFacility$ = this.appStore.selectedFacility$;
   deviceList$ = this.appStore.deviceList$;
   isPreheatStarted = false;
@@ -35,6 +46,7 @@ export class CremationProcessPage implements OnInit {
   isCoolDownStarted = false;
   isRakeOutStarted = false;
   isRakeOutCompleted = false;
+  isCremationStopped = false;
   showSearchbar: boolean;
   searchTerm: string;
   deviceId: string;
@@ -76,6 +88,10 @@ export class CremationProcessPage implements OnInit {
     this.cremationTime = 0;
     this.stepNumber = 0;
     this.case = new Case();
+  }
+
+  parseSignalValue(value: string) {
+    return parseInt(value);
   }
 
   setStartTime() {
@@ -269,7 +285,7 @@ export class CremationProcessPage implements OnInit {
             );
             this.cremationProcessService.writeSignalValue(signal?.id, 1);
             this.cremationTime = 0;
-            this.goToNextStep(stepper);
+            this.isCremationStopped = true;
             this.move(3);
           },
         },
@@ -430,12 +446,19 @@ export class CremationProcessPage implements OnInit {
   }
 
   move(index: number) {
-    this.stepper.selectedIndex = index;
-    this.stepNumber = index;
-    console.log(this.stepNumber);
+    setTimeout(() => {
+      this.stepper.selectedIndex = index;
+      this.stepNumber = index;
+    }, 0);
   }
 
   logStepNumber(){
     console.log(this.stepNumber);
+  }
+
+  presentModal(selectedCase?: Case) {
+    this.appStore.openCaseModal(selectedCase ?
+      { ...selectedCase, } :
+      { scheduledDevice : this.deviceId } as Case);
   }
 }

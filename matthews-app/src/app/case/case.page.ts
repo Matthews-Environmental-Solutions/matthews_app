@@ -15,6 +15,8 @@ import { DatePipe } from '@angular/common';
 import { CaseStatuses, ContainerSize, ContainerType, GenderType } from '../core/enums';
 import { Device } from '../device-list/device';
 import { ContainerSizeSelection, ContainerTypeSelection, GenderSelection } from './selection-option';
+import { FacilityStatusService } from './facility-status.service';
+import { FacilityStatus } from './facility-status.model';
 
 @Component({
   selector: 'app-case',
@@ -35,6 +37,7 @@ export class CasePage implements OnInit {
   currentDateTime: any;
   deviceList$ = this.caseStore.deviceList$;
   selectedDevice: Device;
+  facilityStatuses: FacilityStatus[] = [];
 
   private guidEmpty = '00000000-0000-0000-0000-000000000000';
   private dateTimeMin = '0001-01-01T00:00:00';
@@ -42,10 +45,12 @@ export class CasePage implements OnInit {
   constructor(
     private caseStore: AppStoreService,
     private modalCtrl: ModalController,
+    private facilityStatusService: FacilityStatusService,
     private datePipe: DatePipe
   ) {}
 
   ngOnInit() {
+    this.facilityStatusService.getAllStatusesByFacility(this.selectedCase.scheduledFacility).then((data) => this.facilityStatuses = data);
     this.caseStore.getDeviceList(this.selectedCase.scheduledFacility);
     if (this.selectedCase.id !== '' && this.selectedCase.id !== undefined) this.mapCase();
   }
@@ -106,6 +111,7 @@ export class CasePage implements OnInit {
       this.newCase.containerTypeText = this.containerTypes[this.newCase.containerType].name;
       this.newCase.status = +this.newCase.status;
       this.newCase.scheduledFacility = this.selectedCase.scheduledFacility;
+      this.newCase.facilityStatusId = this.selectedCase.facilityStatusId;
       this.newCase.createdTime = this.formatDateAndTime(new Date().toString());
 
       if (this.newCase.scheduledDevice === this.guidEmpty || this.newCase.scheduledStartTime === this.dateTimeMin || this.newCase.scheduledFacility === this.guidEmpty) {
@@ -114,6 +120,14 @@ export class CasePage implements OnInit {
 
       if (this.newCase.scheduledDevice != this.guidEmpty && this.newCase.scheduledStartTime != this.dateTimeMin && this.newCase.scheduledFacility != this.guidEmpty) {
         this.newCase.status = 4; // waiting for permit
+      }
+
+      const selectedFacilityStatus = this.facilityStatuses.find(
+        (fs) => fs.id == this.newCase?.facilityStatusId
+      );
+
+      if (selectedFacilityStatus?.startProcess) {
+        this.newCase.status = 3; // 3
       }
       this.caseStore.updateCase(this.newCase);
 

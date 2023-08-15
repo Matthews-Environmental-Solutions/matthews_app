@@ -64,6 +64,7 @@ export class AppStoreService extends ComponentStore<AppState> {
     readonly loading$: Observable<boolean> = this.select(state => state.loading);
     readonly userInfo$: Observable<UserInfo> = this.select(state => state.userInfo);
     readonly selectedDevice$: Observable<Device> = this.select(state => state.selectedDevice);
+    readonly selectedDeviceSignals$: Observable<Signal[]> = this.select(this.selectedDevice$, selectedDevice => selectedDevice.signals);
     readonly selectedFacility$: Observable<Facility> = this.select(state => state.selectedFacility);
     readonly deviceCases$: Observable<Case[]> = this.select(state => state.deviceCases);
 
@@ -171,6 +172,30 @@ export class AppStoreService extends ComponentStore<AppState> {
       deviceList
     }));
 
+    readonly updateSignalWithValueFromSingalR = this.updater((state: AppState, measurement: Measurement) => {
+      const stateCopy = JSON.parse(JSON.stringify(state)) as AppState;
+
+      stateCopy.deviceList.forEach(device => {
+        const signal = device.signals.find(s => s.id === measurement.signalId);
+        if(signal?.value)
+        {
+          signal.value = measurement.value;
+        }
+      });
+
+      const selectedDeviceSignal = stateCopy.selectedDevice.signals.find(s => s.id === measurement.signalId);
+      if(selectedDeviceSignal?.value)
+      {
+        selectedDeviceSignal.value = measurement.value;
+      }
+
+      return {
+        ...state,
+        selectedDevice: stateCopy.selectedDevice,
+        deviceList: stateCopy.deviceList
+      };
+    });
+
     readonly getFacilities = this.effect(trigger$ => trigger$.pipe(
       tap(() => this.loadingService.present()),
       switchMap(() =>  this.facilitiesService.getFacilities().then(
@@ -195,7 +220,7 @@ export class AppStoreService extends ComponentStore<AppState> {
       switchMap((facilityId) => this.deviceListService.getDevices(facilityId).then(
         (devices: Device[]) => {
          this.updateDeviceList(devices);
-         this.addMeasurementListener(devices);
+         this.addMeasurementListener();
           devices.forEach(device => {
               this.deviceListService.getSignalsForDevice(device.id).then(
                 (signals) => {
@@ -213,16 +238,17 @@ export class AppStoreService extends ComponentStore<AppState> {
         }))
     ));
 
-    addMeasurementListener(devices: Device[]) {
+    addMeasurementListener() {
       this.signalRService.addListener((measurement: Measurement) => {
-        devices.forEach(device => {
-            if(device.signals.find(signal => signal.id === measurement.signalId)?.value)
-            {
-              device.signals.find(signal => signal.id === measurement.signalId).value = measurement.value ;
-              const deviceSignalsMap: [string, Signal[]] = [device.id, device.signals];
-              this.updateDeviceSignals(deviceSignalsMap);
-            }
-        });
+        this.updateSignalWithValueFromSingalR(measurement);
+        // devices.forEach(device => {
+        //     if(device.signals.find(signal => signal.id === measurement.signalId)?.value)
+        //     {
+        //       device.signals.find(signal => signal.id === measurement.signalId).value = measurement.value ;
+        //       const deviceSignalsMap: [string, Signal[]] = [device.id, device.signals];
+        //       this.updateDeviceSignals(deviceSignalsMap);
+        //     }
+        // });
       });
     }
 

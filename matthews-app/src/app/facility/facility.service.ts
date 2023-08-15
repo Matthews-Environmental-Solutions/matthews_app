@@ -1,3 +1,5 @@
+/* eslint-disable object-shorthand */
+/* eslint-disable @typescript-eslint/quotes */
 import { Injectable } from '@angular/core';
 import { Facility } from './facility';
 import { AuthHttpService } from '../core/auth-http.service';
