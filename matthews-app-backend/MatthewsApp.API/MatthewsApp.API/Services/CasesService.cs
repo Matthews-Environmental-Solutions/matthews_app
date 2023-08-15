@@ -37,12 +37,14 @@ public interface ICasesService
 public class CasesService : ICasesService
 {
     private readonly ICaseRepository _caseRepository;
+    private readonly CaseHub _caseHub;
     private IEventAggregator _ea;
 
-    public CasesService(ICaseRepository repository, IEventAggregator ea)
+    public CasesService(ICaseRepository repository, IEventAggregator ea, CaseHub caseHub)
     {
         _caseRepository = repository;
         _ea = ea;
+        _caseHub = caseHub;
     }
 
     public void Create(Case entity)
@@ -57,6 +59,9 @@ public class CasesService : ICasesService
 
         // Send event
         SendEventToHostedService(entity, ids);
+
+        // SignalR
+        _caseHub.SendMessageToRefreshList($"Create done.");
     }
 
     public void Delete(Case entity)
@@ -67,6 +72,9 @@ public class CasesService : ICasesService
 
         // Send event
         SendEventToHostedService(entity, ids);
+
+        // SignalR
+        _caseHub.SendMessageToRefreshList($"Delete done.");
     }
 
     public void Update(Case entity)
@@ -83,6 +91,9 @@ public class CasesService : ICasesService
 
         // Send event
         SendEventToHostedService(entity, ids);
+
+        // SignalR
+        _caseHub.SendMessageToRefreshList($"Update done.");
     }
 
     public Tuple<Case, bool> UpdateCaseWhenCaseStart(StartCaseDto dto)

@@ -100,6 +100,7 @@ public class CaseMqttService : IHostedService
 
                             // 1. get devices
                             _devices = await _caseI4CHttpClientService.GetAllDevicesAsync();
+                            _logger.LogInformation($"Number of devices: {_devices.Count()}");
 
                             // 2. then iterate devices, 
                             foreach (DeviceDto device in _devices)
@@ -135,8 +136,9 @@ public class CaseMqttService : IHostedService
                             }
                         }
                     }
-                    catch (Exception)
+                    catch (Exception ex)
                     {
+                        _logger.LogError($"Error: {ex.Message}");
                         throw;
                     }
                     finally
@@ -223,6 +225,7 @@ public class CaseMqttService : IHostedService
                     catch (Exception ex)
                     {
                         // Handle the exception properly (logging etc.).
+                        _logger.LogError($"Error at MQTT connection establish: {ex.Message}");
                         Debug.WriteLine("Error at MQTT connection establish: " + ex.Message);
                     }
                     finally
@@ -290,6 +293,7 @@ public class CaseMqttService : IHostedService
 
         mqttClient.ConnectedAsync += e =>
         {
+            _logger.LogInformation("The MQTT client is connected.");
             Debug.WriteLine("The MQTT client is connected.");
             return Task.CompletedTask;
         };
@@ -388,6 +392,8 @@ public class CaseMqttService : IHostedService
             ICaseRepository _caseRepository = scope.ServiceProvider.GetService<ICaseRepository>();
             cases = await _caseRepository.GetFirst20ScheduledCases(deviceId);
         }
+
+        if(cases.Count() == 0) { return; }
             
         IEnumerable<Case20Dto> casesToSend = cases.ToCase20DTOs();
 

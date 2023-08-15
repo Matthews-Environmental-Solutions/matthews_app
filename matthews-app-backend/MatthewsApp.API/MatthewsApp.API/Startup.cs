@@ -60,7 +60,10 @@ public class Startup
 
         services.AddScoped<ICaseI4cHttpClientService, CaseI4cHttpClientService>();
 
-        services.AddSignalR();
+        services.AddSignalR(o =>
+        {
+            o.EnableDetailedErrors = true;
+        });
         services.AddSingleton<CaseHub>();
 
         services.AddSingleton<IEventAggregator>(new EventAggregator());
@@ -105,7 +108,7 @@ public class Startup
         }
 
         app.UseCors(x => x
-        .WithOrigins("http://localhost:4200", "https://develop.comdata.rs/MatthewsApp.API")
+        .WithOrigins("http://localhost:4200", "https://develop.comdata.rs/MatthewsApp.API", "http://localhost:8100")
         .AllowAnyMethod()
         .AllowAnyHeader()
         .AllowCredentials());
