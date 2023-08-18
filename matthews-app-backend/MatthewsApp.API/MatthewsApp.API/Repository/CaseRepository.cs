@@ -50,6 +50,19 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             .FirstAsync(c => c.Id == id);
     }
 
+    public async Task<Case> GetNextCaseForDevice(Guid deviceId)
+    {
+        IEnumerable<Case> cases = await _dataContext.Cases.ToArrayAsync();
+        return cases.Where(c => 
+                c.ScheduledDevice.Equals(deviceId)
+                && c.Status == CaseStatus.READY_TO_CREMATE
+                && c.IsObsolete == false
+            )
+            .OrderBy(c => c.ScheduledStartTime)
+            .ToList()
+            .First();
+    }
+
     //ToDo: Ovo treba ukloniti.
     public override async Task<IEnumerable<Case>> GetAll()
     {
@@ -131,7 +144,17 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
         return cases.Where(c =>
             c.IsObsolete == false
             && c.ScheduledFacility.Equals(facilityId)
+            && (c.Status == CaseStatus.WAITING_FOR_PERMIT || c.Status == CaseStatus.UNSCHEDULED || c.Status == CaseStatus.READY_TO_CREMATE)
             ).ToList();
     }
 
+    public async Task<IEnumerable<Case>> GetReadyCasesByDevice(Guid deviceId)
+    {
+        IEnumerable<Case> cases = await _dataContext.Cases.ToArrayAsync();
+        return cases.Where(c =>
+            c.IsObsolete == false
+            && c.ScheduledDevice.Equals(deviceId)
+            && c.Status == CaseStatus.READY_TO_CREMATE
+            ).ToList();
+    }
 }

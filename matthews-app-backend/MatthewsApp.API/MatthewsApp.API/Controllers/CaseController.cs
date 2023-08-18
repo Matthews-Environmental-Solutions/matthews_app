@@ -90,6 +90,20 @@ public class CaseController : Controller
     }
 
     [HttpGet]
+    [Route("GetReadyCasesByDevice/{deviceId}")]
+    public async Task<ActionResult<IEnumerable<CaseDto>>> GetReadyCasesByDevice(Guid deviceId)
+    {
+        try
+        {
+            return Ok((await service.GetReadyCasesByDevice(deviceId)).ToDTOs());
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+    [HttpGet]
     [Route("GetScheduledCasesByDay/{facilityId}/{date}")]
     public async Task<ActionResult<IEnumerable<CaseDto>>> GetScheduledCasesByDay(Guid facilityId, DateTime date)
     {
@@ -150,6 +164,18 @@ public class CaseController : Controller
     public async Task<ActionResult<CaseDto>> GetCase(Guid id)
     {
         Case Case = await service.GetById(id);
+
+        if (Case == null)
+        {
+            return NotFound();
+        }
+        return Ok(Case.ToDTO());
+    }
+
+    [HttpGet("GetNextCaseForDevice/{deviceId}")]
+    public async Task<ActionResult<CaseDto>> GetNextCaseForDevice(Guid deviceId)
+    {
+        Case Case = await service.GetNextCaseForDevice(deviceId);
 
         if (Case == null)
         {

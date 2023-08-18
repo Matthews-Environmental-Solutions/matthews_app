@@ -12,6 +12,8 @@ public interface ICaseRepository : IBaseRepository<Case, Guid>
     Case GetById(Guid id);
     Task<IEnumerable<Case>> GetCasesByFacility(Guid facilityId);
     Task<IEnumerable<Case>> GetFirst20ScheduledCases(Guid scheduledDeviceId);
+    Task<Case> GetNextCaseForDevice(Guid deviceId);
+    Task<IEnumerable<Case>> GetReadyCasesByDevice(Guid deviceId);
     Task<IEnumerable<Case>> GetScheduledCasesByDay(Guid facilityId, DateTime date);
     Task<IEnumerable<Case>> GetScheduledCasesByTimePeriod(Guid facilityId, DateTime dateStart, DateTime dateEnd);
     Task<IEnumerable<Case>> GetScheduledCasesByWeek(Guid facilityId, DateTime dateStartDateOfWeek);

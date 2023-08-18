@@ -32,6 +32,8 @@ public interface ICasesService
     Task<IEnumerable<Case>> GetScheduledCasesByTimePeriod(Guid facilityId, DateTime dateStart, DateTime dateEnd);
     Tuple<Case, bool> UpdateCaseWhenCaseStart(StartCaseDto dto);
     void UpdateCaseWhenCaseEnd(EndCaseDto dto);
+    Task<Case> GetNextCaseForDevice(Guid deviceId);
+    Task<IEnumerable<Case>> GetReadyCasesByDevice(Guid deviceId);
 }
 
 public class CasesService : ICasesService
@@ -49,7 +51,7 @@ public class CasesService : ICasesService
 
     public void Create(Case entity)
     {
-        if(entity.FacilityStatusId == Guid.Empty)
+        if (entity.FacilityStatusId == Guid.Empty)
         {
             entity.FacilityStatusId = null;
         }
@@ -84,7 +86,7 @@ public class CasesService : ICasesService
         List<Guid> ids = new List<Guid>();
 
         ids.Add(entity.ScheduledDevice ?? Guid.Empty);
-        if(entity.ScheduledDevice != previousCase.ScheduledDevice)
+        if (entity.ScheduledDevice != previousCase.ScheduledDevice)
         {
             ids.Add(previousCase.ScheduledDevice ?? Guid.Empty);
         }
@@ -104,9 +106,10 @@ public class CasesService : ICasesService
         {
             entity = MakeNewCaseFromDto(dto);
             entityDoesNotExistInDb = true;
-        } else
+        }
+        else
         {
-            entity = _caseRepository.GetById(dto.LOADED_ID??Guid.Empty);
+            entity = _caseRepository.GetById(dto.LOADED_ID ?? Guid.Empty);
             if (entity is null)
             {
                 entity = MakeNewCaseFromDto(dto);
@@ -169,21 +172,24 @@ public class CasesService : ICasesService
         try
         {
             IEnumerable<Case> cases = await _caseRepository.GetAll();
-            return cases.Select(i => {
+            return cases.Select(i =>
+            {
                 i.ScheduledStartTime = DateTime.SpecifyKind(i.ScheduledStartTime is null ? DateTime.MinValue : i.ScheduledStartTime.Value, DateTimeKind.Utc);
                 return i;
             });
-        } catch (Exception ex)
+        }
+        catch (Exception ex)
         {
             throw new Exception(ex.Message);
         }
-        
+
     }
 
     public async Task<IEnumerable<Case>> GetUnscheduledCases()
     {
         IEnumerable<Case> cases = await _caseRepository.GetAllUnscheduled();
-        return cases.Select(i => {
+        return cases.Select(i =>
+        {
             i.ScheduledStartTime = DateTime.SpecifyKind(i.ScheduledStartTime is null ? DateTime.MinValue : i.ScheduledStartTime.Value, DateTimeKind.Utc);
             return i;
         });
@@ -194,7 +200,8 @@ public class CasesService : ICasesService
         try
         {
             IEnumerable<Case> cases = await _caseRepository.GetScheduledCasesByDay(facilityId, date);
-            return cases.Select(i => {
+            return cases.Select(i =>
+            {
                 i.ScheduledStartTime = DateTime.SpecifyKind(i.ScheduledStartTime is null ? DateTime.MinValue : i.ScheduledStartTime.Value, DateTimeKind.Utc);
                 return i;
             });
@@ -210,7 +217,8 @@ public class CasesService : ICasesService
         try
         {
             IEnumerable<Case> cases = await _caseRepository.GetScheduledCasesByWeek(facilityId, dateStartDateOfWeek);
-            return cases.Select(i => {
+            return cases.Select(i =>
+            {
                 i.ScheduledStartTime = DateTime.SpecifyKind(i.ScheduledStartTime is null ? DateTime.MinValue : i.ScheduledStartTime.Value, DateTimeKind.Utc);
                 return i;
             });
@@ -226,7 +234,8 @@ public class CasesService : ICasesService
         try
         {
             IEnumerable<Case> cases = await _caseRepository.GetScheduledCasesByTimePeriod(facilityId, dateStart, dateEnd);
-            return cases.Select(i => {
+            return cases.Select(i =>
+            {
                 i.ScheduledStartTime = DateTime.SpecifyKind(i.ScheduledStartTime is null ? DateTime.MinValue : i.ScheduledStartTime.Value, DateTimeKind.Utc);
                 return i;
             });
@@ -242,7 +251,8 @@ public class CasesService : ICasesService
         try
         {
             IEnumerable<Case> cases = await _caseRepository.GetCasesByFacility(facilityId);
-            return cases.Select(i => {
+            return cases.Select(i =>
+            {
                 i.ScheduledStartTime = DateTime.SpecifyKind(i.ScheduledStartTime is null ? DateTime.MinValue : i.ScheduledStartTime.Value, DateTimeKind.Utc);
                 return i;
             });
@@ -253,11 +263,43 @@ public class CasesService : ICasesService
         }
     }
 
+    public async Task<IEnumerable<Case>> GetReadyCasesByDevice(Guid deviceId)
+    {
+        try
+        {
+            IEnumerable<Case> cases = await _caseRepository.GetReadyCasesByDevice(deviceId);
+            return cases.Select(i =>
+            {
+                i.ScheduledStartTime = DateTime.SpecifyKind(i.ScheduledStartTime is null ? DateTime.MinValue : i.ScheduledStartTime.Value, DateTimeKind.Utc);
+                return i;
+            });
+        }
+        catch (Exception ex)
+        {
+
+            throw new Exception(ex.Message);
+        }
+    }
+
     public async Task<Case> GetById(Guid id)
     {
         try
         {
             Case Case = await _caseRepository.GetOne(id);
+            Case.ScheduledStartTime = DateTime.SpecifyKind(Case.ScheduledStartTime is null ? DateTime.MinValue : Case.ScheduledStartTime.Value, DateTimeKind.Utc);
+            return Case;
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+        }
+    }
+
+    public async Task<Case> GetNextCaseForDevice(Guid deviceId)
+    {
+        try
+        {
+            Case Case = await _caseRepository.GetNextCaseForDevice(deviceId);
             Case.ScheduledStartTime = DateTime.SpecifyKind(Case.ScheduledStartTime is null ? DateTime.MinValue : Case.ScheduledStartTime.Value, DateTimeKind.Utc);
             return Case;
         }
@@ -280,5 +322,6 @@ public class CasesService : ICasesService
             _ea.GetEvent<EventCaseAnyChange>().Publish(deviceIds);
         }
     }
-    
+
+
 }
