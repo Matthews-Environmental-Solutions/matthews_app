@@ -57,13 +57,14 @@
   <div class="right-sidebar">
     <mat-card class="card-right-sidebar">
       <mat-card-header class="card-right-sidebar-title">
-        <span>{{"unscheduledCases" | translate}}</span>
-      </mat-card-header>
-      <mat-card-content class="card-right-sidebar-list">
+        <span class="right-sidebar-header-title">{{"unscheduledCases" | translate}}</span>
         <div class="card-header-filter">
           <button mat-button color="{{wasIClicked('all')}}" (click)="onFacilityFilterClick('all')" class="modified-button">{{'allCases' | translate}}</button>
           <button mat-button color="{{wasIClicked('bySelectedFacility')}}" (click)="onFacilityFilterClick('bySelectedFacility')" class="modified-button">{{'selectedFacilityOnly' | translate}}</button>
         </div>
+        <mat-progress-bar *ngIf="loader" mode="indeterminate" class="indeterminate-progress-bar"></mat-progress-bar>
+      </mat-card-header>
+      <mat-card-content class="card-right-sidebar-list">
         <ng-container *ngFor="let case of filteredUnscheduledCases">
           <unscheduled-cases [case]="case"></unscheduled-cases>
         </ng-container>

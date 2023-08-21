@@ -31,6 +31,7 @@ export class CaseComponent implements OnInit {
   loggedInUser: UserInfoAuth | undefined;
   userSetting: UserSettingData | undefined;
   clickedFacilityFilterButton: string = 'all';
+  loader: boolean = false;
 
   private subs = new Subscription();
 
@@ -62,20 +63,24 @@ export class CaseComponent implements OnInit {
 
     this.subs.add(this.stateService.selectedFacilityId$.pipe(skip(1)).subscribe(fId => {
       this.selectedFacilityId = fId;
-      this.caseService.getUnscheduledCases().subscribe(cases => this.filterCases(cases));
+      this.loader = true;
+      this.caseService.getUnscheduledCases().subscribe(cases => {this.filterCases(cases); this.loader = false;});
     }));
 
     this.subs.add(this.stateService.caseSaved$.pipe(skip(1)).subscribe(c => {
-      this.caseService.getUnscheduledCases().subscribe(cases => this.filterCases(cases));
+      this.loader = true;
+      this.caseService.getUnscheduledCases().subscribe(cases => {this.filterCases(cases); this.loader = false;});
     }));
 
     this.subs.add(this.stateService.filterUnscheduledCasesByFacilityId$.subscribe(c => {
-      this.caseService.getUnscheduledCases().subscribe(cases => this.filterCases(cases));
+      this.loader = true;
+      this.caseService.getUnscheduledCases().subscribe(cases => {this.filterCases(cases); this.loader = false;});
     }));
 
     // Refresh unscheduled cases list when SignalR sends message
     this.subs.add(this.stateService.refreshCasesList$.pipe(skip(1)).subscribe(data => {
-      this.caseService.getUnscheduledCases().subscribe(cases => this.filterCases(cases));
+      this.loader = true;
+      this.caseService.getUnscheduledCases().subscribe(cases => {this.filterCases(cases); this.loader = false;});
     }));
 
     this.signalRService.startConnection();

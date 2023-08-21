@@ -73,6 +73,15 @@ $primary: mat-palette($mat-lime, A400);
 .card-right-sidebar-title {
   font-size: x-large;
   margin-bottom: 15px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.indeterminate-progress-bar {
+  position: absolute;
+  top: 94px;
+  left: 0px;
 }
 
 .card-right-sidebar-list {
@@ -149,4 +158,9 @@ $primary: mat-palette($mat-lime, A400);
   margin-right: -16px;
   padding: 0px 5px 0px 5px;
   background-color: mat-color($primary);
+}
+
+.right-sidebar-header-title {
+  padding-top: 3px;
+  padding-bottom: 12px;
 }
