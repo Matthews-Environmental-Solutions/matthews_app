@@ -7,6 +7,7 @@ import { TokenResponse } from '@openid/appauth';
 import { LoadingService } from './loading.service';
 import * as signalR from '@microsoft/signalr';
 import { AppStoreService } from '../app.store.service';
+import { CaseService } from '../case/case.service';
 declare let $: any;
 
 @Injectable({
@@ -19,7 +20,8 @@ export class SignalRCaseApiService {
   constructor(
     private authService: AuthService,
     private loadingService: LoadingService,
-    private appStore: AppStoreService
+    private appStore: AppStoreService,
+    private caseService: CaseService
   ) {}
 
   public initializeSignalRCaseApiConnection() {
@@ -41,8 +43,10 @@ export class SignalRCaseApiService {
 
   public addCaseDataListener = (facilityId: string) => {
     this.hubConnection.on('refreshcaseslist', (data) => {
-      this.appStore.getCases(facilityId);
+      //this.appStore.getCases(facilityId);
+      this.caseService.getCases(facilityId).then(cases => this.appStore.updateCases(cases));
       console.log(data);
+      //this.changeDetectorRef.detectChanges();
     });
   };
 

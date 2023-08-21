@@ -53,7 +53,8 @@ export class AppStoreService extends ComponentStore<AppState> {
                     userInfo: {} as UserInfo,
                     selectedDevice: {} as Device,
                     selectedFacility: {} as Facility,
-                    deviceCases: []},
+                    deviceCases: []
+                  },
                     );
     }
 
@@ -141,6 +142,11 @@ export class AppStoreService extends ComponentStore<AppState> {
       deviceCases: this.filterCasesByDevice(cases, state.selectedDevice)
     }));
 
+    readonly updateAddCaseFromProcess = this.updater((state: AppState, fromProcess: boolean) => ({
+      ...state,
+      addCaseFromProcess: fromProcess
+    }));
+
     filterCasesByDevice(cases: Case[], selectedDevice: Device): Case[] {
       console.log(cases);
       //return cases.filter(x => (x.scheduledDevice === selectedDevice.id || !x.scheduledDevice) && x.status === '1');
@@ -184,7 +190,8 @@ export class AppStoreService extends ComponentStore<AppState> {
       });
 
       const selectedDeviceSignal = stateCopy.selectedDevice.signals.find(s => s.id === measurement.signalId);
-      if(selectedDeviceSignal?.value)
+      // eslint-disable-next-line eqeqeq
+      if(selectedDeviceSignal?.value || selectedDeviceSignal?.value == '0')
       {
         selectedDeviceSignal.value = measurement.value;
       }
@@ -261,13 +268,12 @@ export class AppStoreService extends ComponentStore<AppState> {
         }))
     ));
 
-    readonly getCasesFilteredByDevice = this.effect<string>(cases$ => cases$.pipe(
+    readonly getCasesForDevice = this.effect<string>(cases$ => cases$.pipe(
       tap(() => this.loadingService.present()),
-      switchMap((facilityId) => this.caseService.getCases(facilityId).then(
+      switchMap((deviceId) => this.caseService.getReadyCasesByDevice(deviceId).then(
         (response: Case[]) => {
           // eslint-disable-next-line max-len
-          const f = response.filter((caseToFilter) => caseToFilter.scheduledFacility === facilityId && caseToFilter.isObsolete === false);
-          this.updateCasesByDeviceId(f);
+          this.updateCasesByDeviceId(response);
           this.loadingService.dismiss();
         }))
     ));
@@ -275,8 +281,19 @@ export class AppStoreService extends ComponentStore<AppState> {
     readonly createCase = this.effect<Case>(case$ => case$.pipe(
       tap(() => this.loadingService.present()),
       switchMap((selectedCase) => this.caseService.createCase(selectedCase).then(
-        () => {
+        (savedCase) => {
           this.getCases(selectedCase.scheduledFacility);
+          this.loadingService.dismiss();
+        })),
+        catchError(() => this.loadingService.dismiss())
+    ));
+
+    readonly createCaseFromProcess = this.effect<Case>(case$ => case$.pipe(
+      tap(() => this.loadingService.present()),
+      switchMap((selectedCase) => this.caseService.createCase(selectedCase).then(
+        (savedCase) => {
+          this.getCases(selectedCase.scheduledFacility);
+          this.updateSelectedCase(savedCase);
           this.loadingService.dismiss();
         })),
         catchError(() => this.loadingService.dismiss())
@@ -304,11 +321,12 @@ export class AppStoreService extends ComponentStore<AppState> {
       switchMap((userId) => this.facilitiesService.getUserInfo(userId).then(
         (response: UserInfo) => {
           this.auth.token$.subscribe(async res => {
+            if(response.photoId !== null) {
             this.facilitiesService.getAttachment(res.accessToken, response.photoId).subscribe(data => {
               response.imageBlob = data;
               this.createImageFromBlob(response);
             });
-          });
+        }});
         }))
     ));
 
@@ -328,6 +346,10 @@ export class AppStoreService extends ComponentStore<AppState> {
       mergeMap((selectedCase) => this.presentModal(selectedCase))
     ));
 
+    readonly openCaseModalFromProcess = this.effect<Case>(trigger$ => trigger$.pipe(
+      mergeMap((selectedCase) => this.presentModalFromProcess(selectedCase))
+    ));
+
     async presentModal(selectedCase: Case) {
       const modal = await this.modalController.create({
         component: CasePage,
@@ -338,15 +360,26 @@ export class AppStoreService extends ComponentStore<AppState> {
       return await modal.present();
     }
 
+    async presentModalFromProcess(selectedCase: Case) {
+      const modal = await this.modalController.create({
+        component: CasePage,
+        componentProps: {
+          selectedCase,
+          fromProcess: true
+        }
+      });
+      return await modal.present();
+    }
+
     readonly openCasesModal = this.effect<string>(trigger$ => trigger$.pipe(
-      mergeMap((selectedFacilityId) => this.presentCasesModal(selectedFacilityId))
+      mergeMap((deviceId) => this.presentCasesModal(deviceId))
     ));
 
-    async presentCasesModal(selectedFacilityId: string) {
+    async presentCasesModal(selectedDeviceId: string) {
       const modal = await this.modalController.create({
         component: CaseListPage,
         componentProps: {
-          selectedFacilityId
+          selectedDeviceId
         }
       });
       return await modal.present();

@@ -16,6 +16,16 @@ export class CaseService {
     return this.httpService.request<Case[]>('GET', getScheduleUrl, facilityId);
   }
 
+  getReadyCasesByDevice(deviceId: string) {
+    const getReadyCases = `${environment.casesApiUrl}/GetReadyCasesByDevice/${deviceId}`;
+    return this.httpService.request<Case[]>('GET', getReadyCases, deviceId);
+  }
+
+  getNextCaseForDevice(deviceId: string) {
+    const getNextCaseUrl = `${environment.casesApiUrl}/GetNextCaseForDevice/${deviceId}`;
+    return this.httpService.request<Case>('GET', getNextCaseUrl, deviceId);
+  }
+
   createCase(caseToAdd: Case) {
     const postCaseUrl = `${environment.casesApiUrl}/Save`;
     return this.httpService.request<Case>('POST', postCaseUrl, caseToAdd);

@@ -58,9 +58,15 @@
         <ion-select-option *ngFor="let s of containerSizes;" [value]="s.id">{{ s.name | titlecase}}</ion-select-option>
       </ion-select>
     </ion-item>
+    <ion-item *ngIf="!fromProcess"lines="full">
+      <ion-label position="floating">Facility Status</ion-label>
+      <ion-select interface="popover" name="facilityStatus" [(ngModel)]="newCase.facilityStatusId"  placeholder="Select One">
+        <ion-select-option *ngFor="let f of facilityStatuses;" [value]="f.id">{{ f.statusName | titlecase}}</ion-select-option>
+      </ion-select>
+    </ion-item>
     
   <ng-container *ngIf="deviceList$ | async as deviceList">
-    <ion-item lines="full">
+    <ion-item *ngIf="!fromProcess" lines="full">
       <ion-label position="floating">{{'Device' | translate}}</ion-label>
       <ion-select name="selectDevice"  placeholder="Select Device" [(ngModel)]="newCase.scheduledDevice" >
               <ion-select-option *ngFor="let device of deviceList;" value={{device.id}}>{{ device.alias }}</ion-select-option>
@@ -69,7 +75,7 @@
   </ng-container>
   <ion-item lines="full">
     <ion-label position="floating">{{'scheduleDate' | translate}}</ion-label>
-    <ion-datetime placeholder="Select Date" name="scheduledTime" [(ngModel)]="newCase.scheduledStartTime"></ion-datetime>
+    <ion-datetime [disabled]="fromProcess" placeholder="Select Date" name="scheduledTime" [(ngModel)]="newCase.scheduledStartTime"></ion-datetime>
   </ion-item>
 
    <!-- <ng-container *ngIf="userInfo$ | async as userInfo">  -->

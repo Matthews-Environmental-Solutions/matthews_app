@@ -3,7 +3,11 @@
 /* eslint-disable max-len */
 /* eslint-disable @angular-eslint/component-selector */
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
-import { AlertController, AlertOptions, PopoverController } from '@ionic/angular';
+import {
+  AlertController,
+  AlertOptions,
+  PopoverController,
+} from '@ionic/angular';
 import { MatStepper, MatStepperIntl } from '@angular/material/stepper';
 import { AppStoreService } from '../app.store.service';
 import { Case } from '../case/case';
@@ -14,8 +18,12 @@ import { Device } from '../device-list/device';
 import { CremationProcessService } from './cremation-process.service';
 import { Observable } from 'rxjs';
 import { BurnMode, ChamberStatus } from '../core/enums';
-import { ContainerTypeSelection, GenderSelection } from '../case/selection-option';
-import { tap } from 'rxjs/operators';
+import {
+  ContainerTypeSelection,
+  GenderSelection,
+} from '../case/selection-option';
+import { skip, tap } from 'rxjs/operators';
+import { CaseService } from '../case/case.service';
 
 @Component({
   selector: 'app-device-details',
@@ -27,12 +35,31 @@ export class CremationProcessPage implements OnInit {
 
   selectedCase$ = this.appStore.selectedCase$;
   selectedDevice$ = this.appStore.selectedDevice$.pipe(
-    tap(selectedDevice => {
-      if (!selectedDevice?.signals) { return; }
-      selectedDevice.signals.forEach(signal => {
-        if (signal.name === 'MACHINE_STATUS' && parseInt(signal.value) > 40 && parseInt(signal.value) < 80 && !this.isCaseSelected) { this.move(1); }
-        else if (signal.name === 'MACHINE_STATUS' && parseInt(signal.value) >= 80 && parseInt(signal.value) < 100 && !this.isCremationStopped) { this.move(2); }
-        else if (signal.name === 'MACHINE_STATUS' && parseInt(signal.value) >= 100) { this.move(3); };
+    tap((selectedDevice) => {
+      if (!selectedDevice?.signals) {
+        return;
+      }
+      selectedDevice.signals.forEach((signal) => {
+        if (
+          signal.name === 'MACHINE_STATUS' &&
+          parseInt(signal.value) > 40 &&
+          parseInt(signal.value) < 80 &&
+          !this.isCaseSelected
+        ) {
+          this.move(1);
+        } else if (
+          signal.name === 'MACHINE_STATUS' &&
+          parseInt(signal.value) >= 80 &&
+          parseInt(signal.value) < 100 &&
+          !this.isCremationStopped
+        ) {
+          this.move(2);
+        } else if (
+          signal.name === 'MACHINE_STATUS' &&
+          parseInt(signal.value) >= 100
+        ) {
+          this.move(3);
+        }
       });
     })
   );
@@ -66,8 +93,19 @@ export class CremationProcessPage implements OnInit {
   case: Case;
   clientCaseId: any;
 
-  containerTypes: ContainerTypeSelection[] = [{ id: 0, name: 'None' }, { id: 1, name: 'Cardboard' }, { id: 2, name: 'Hardwood' }, { id: 3, name: 'MDF Particle board' }, { id: 4, name: 'Bag/Shroud' }, { id: 4, name: 'Other' }];
-  genders: GenderSelection[] = [{id: 0, name:'Male'}, {id: 1, name:'Female'}, {id: 2, name:'Other'}];
+  containerTypes: ContainerTypeSelection[] = [
+    { id: 0, name: 'None' },
+    { id: 1, name: 'Cardboard' },
+    { id: 2, name: 'Hardwood' },
+    { id: 3, name: 'MDF Particle board' },
+    { id: 4, name: 'Bag/Shroud' },
+    { id: 4, name: 'Other' },
+  ];
+  genders: GenderSelection[] = [
+    { id: 0, name: 'Male' },
+    { id: 1, name: 'Female' },
+    { id: 2, name: 'Other' },
+  ];
   burnMode = BurnMode;
   burnModeKeys = Object.keys(BurnMode).filter((x) => parseInt(x, 10) >= 0);
 
@@ -78,7 +116,8 @@ export class CremationProcessPage implements OnInit {
     private matStepperIntl: MatStepperIntl,
     private route: ActivatedRoute,
     private cremationProcessService: CremationProcessService,
-    public alertController: AlertController
+    public alertController: AlertController,
+    private caseService: CaseService
   ) {}
 
   ngOnInit() {
@@ -88,6 +127,14 @@ export class CremationProcessPage implements OnInit {
     this.cremationTime = 0;
     this.stepNumber = 0;
     this.case = new Case();
+    this.selectedCase$.pipe(skip(1)).subscribe((res) => {
+      if (res !== undefined) {
+        this.matStepperIntl.optionalLabel =
+          res.firstName + ' ' + res.lastName + ' - ' + res.clientCaseId;
+        this.matStepperIntl.changes.next();
+        this.mapCase(res);
+      }
+    });
   }
 
   parseSignalValue(value: string) {
@@ -99,9 +146,11 @@ export class CremationProcessPage implements OnInit {
     this.startHour = currentDate.getHours();
     this.startMinute = currentDate.getMinutes();
     if (this.startMinute > 9) {
-      this.startTime = this.startHour.toString() + ':' + this.startMinute.toString();
+      this.startTime =
+        this.startHour.toString() + ':' + this.startMinute.toString();
     } else {
-      this.startTime = this.startHour.toString() + ':' + '0' + this.startMinute.toString();
+      this.startTime =
+        this.startHour.toString() + ':' + '0' + this.startMinute.toString();
     }
     this.startCremationTimer();
   }
@@ -136,7 +185,7 @@ export class CremationProcessPage implements OnInit {
     clearInterval(this.interval);
   }
 
-  resetIntervals(){
+  resetIntervals() {
     clearInterval(this.interval);
     clearInterval(this.preheatInterval);
     clearInterval(this.cooldownInterval);
@@ -264,7 +313,7 @@ export class CremationProcessPage implements OnInit {
     popover.onDidDismiss().then((data) => {
       console.log(data);
       this.cremationTime += +data.data;
-  });
+    });
   }
 
   endCycle(stepper: MatStepper, selectedDevice: Device) {
@@ -329,12 +378,6 @@ export class CremationProcessPage implements OnInit {
       (signal) => signal.name === 'CASE_REQUIRED'
     );
 
-    // let signalValue;
-    // this.selectedCase$.subscribe((res) => {
-    //   if (res !== undefined && res.id !== undefined) {
-    //     signalValue = res.clientCaseId;
-    //   }
-    // });
     // eslint-disable-next-line prefer-const
     let signalValue = this.clientCaseId;
     console.log(signalValue);
@@ -407,33 +450,26 @@ export class CremationProcessPage implements OnInit {
     this.matStepperIntl.optionalLabel = '';
   }
 
-  presentCasesModal(facilityId: string) {
-    this.appStore.openCasesModal(facilityId);
-
-    this.selectedCase$.subscribe((res) => {
-      if (res !== undefined) {
-        this.matStepperIntl.optionalLabel =
-          res.firstName + ' ' + res.lastName + ' - ' + res.clientCaseId;
-        this.matStepperIntl.changes.next();
-        this.mapCase();
-      }
-    });
-    // Required for the optional label text to be updated
-    // Notifies the MatStepperIntl service that a change has been made
+  autoSelectNextCase(deviceId: string) {
+    this.caseService
+      .getNextCaseForDevice(deviceId)
+      .then((nextCase) => this.appStore.updateSelectedCase(nextCase));
   }
 
-  mapCase() {
-    this.selectedCase$.subscribe((res) => {
-      if (res !== undefined && res.id !== undefined) {
-        this.case.firstName = res.firstName;
-        this.case.lastName = res.lastName;
-        this.case.genderText = this.genders[res.gender].name;
-        this.case.weight = res.weight;
-        this.case.containerTypeText = this.containerTypes[res.containerType].name;
-        this.case.scheduledStartTime = res.scheduledStartTime;
-        this.clientCaseId = res.clientCaseId;
-      }
-    });
+  presentCasesModal(deviceId: string) {
+    this.appStore.openCasesModal(deviceId);
+  }
+
+  mapCase(res) {
+    if (res !== undefined && res.id !== undefined) {
+      this.case.firstName = res.firstName;
+      this.case.lastName = res.lastName;
+      this.case.genderText = this.genders[res.gender].name;
+      this.case.weight = res.weight;
+      this.case.containerTypeText = this.containerTypes[res.containerType].name;
+      this.case.scheduledStartTime = res.scheduledStartTime;
+      this.clientCaseId = res.clientCaseId;
+    }
 
     if (this.case.firstName !== undefined) {
       this.isCaseSelected = true;
@@ -452,13 +488,21 @@ export class CremationProcessPage implements OnInit {
     }, 0);
   }
 
-  logStepNumber(){
+  logStepNumber() {
     console.log(this.stepNumber);
   }
 
   presentModal(selectedCase?: Case) {
-    this.appStore.openCaseModal(selectedCase ?
-      { ...selectedCase, } :
-      { scheduledDevice : this.deviceId } as Case);
+    this.appStore.openCaseModal(
+      selectedCase
+        ? { ...selectedCase }
+        : ({ scheduledDevice: this.deviceId } as Case)
+    );
+  }
+
+  presentModalFromProcess(deviceId: string) {
+    this.appStore.openCaseModalFromProcess(
+    { scheduledDevice: deviceId } as Case
+    );
   }
 }

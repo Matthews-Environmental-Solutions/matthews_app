@@ -12,9 +12,18 @@ import { Case } from './case';
 import { AppStoreService } from '../app.store.service';
 import { ModalController } from '@ionic/angular';
 import { DatePipe } from '@angular/common';
-import { CaseStatuses, ContainerSize, ContainerType, GenderType } from '../core/enums';
+import {
+  CaseStatuses,
+  ContainerSize,
+  ContainerType,
+  GenderType,
+} from '../core/enums';
 import { Device } from '../device-list/device';
-import { ContainerSizeSelection, ContainerTypeSelection, GenderSelection } from './selection-option';
+import {
+  ContainerSizeSelection,
+  ContainerTypeSelection,
+  GenderSelection,
+} from './selection-option';
 import { FacilityStatusService } from './facility-status.service';
 import { FacilityStatus } from './facility-status.model';
 
@@ -25,14 +34,31 @@ import { FacilityStatus } from './facility-status.model';
 })
 export class CasePage implements OnInit {
   @Input() selectedCase: Case;
+  @Input() fromProcess = false;
 
   newCase = new Case();
 
-  genders: GenderSelection[] = [{id: 0, name:'Male'}, {id: 1, name:'Female'}, {id: 2, name:'Other'}];
-  containerTypes: ContainerTypeSelection[] = [{ id: 0, name: 'None' }, { id: 1, name: 'Cardboard' }, { id: 2, name: 'Hardwood' }, { id: 3, name: 'MDF Particle board' }, { id: 4, name: 'Bag/Shroud' }, { id: 4, name: 'Other' }];
-  containerSizes: ContainerSizeSelection[] = [{ id: 0, name: 'None' }, { id: 1, name: 'Standard' }, { id: 2, name: 'Infant' }, { id: 3, name: 'Bariatric' }];
+  genders: GenderSelection[] = [
+    { id: 0, name: 'Male' },
+    { id: 1, name: 'Female' },
+    { id: 2, name: 'Other' },
+  ];
+  containerTypes: ContainerTypeSelection[] = [
+    { id: 0, name: 'None' },
+    { id: 1, name: 'Cardboard' },
+    { id: 2, name: 'Hardwood' },
+    { id: 3, name: 'MDF Particle board' },
+    { id: 4, name: 'Bag/Shroud' },
+    { id: 4, name: 'Other' },
+  ];
+  containerSizes: ContainerSizeSelection[] = [
+    { id: 0, name: 'None' },
+    { id: 1, name: 'Standard' },
+    { id: 2, name: 'Infant' },
+    { id: 3, name: 'Bariatric' },
+  ];
   caseStatuses = CaseStatuses;
-
+  selectedFacility: string;
   userInfo$ = this.caseStore.userInfo$;
   currentDateTime: any;
   deviceList$ = this.caseStore.deviceList$;
@@ -50,9 +76,23 @@ export class CasePage implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.facilityStatusService.getAllStatusesByFacility(this.selectedCase.scheduledFacility).then((data) => this.facilityStatuses = data);
+    this.caseStore.selectedFacility$.subscribe((sf) => {
+      this.selectedFacility = sf.id;
+      this.facilityStatusService
+        .getAllStatusesByFacility(this.selectedFacility)
+        .then((data) => (this.facilityStatuses = data));
+    });
+    if (this.fromProcess) {
+      this.newCase.scheduledStartTime = this.formatDateAndTime(
+        new Date().toString()
+      );
+      this.caseStore.selectedFacility$.subscribe(
+        (s) => (this.selectedFacility = s.id)
+      );
+    }
     this.caseStore.getDeviceList(this.selectedCase.scheduledFacility);
-    if (this.selectedCase.id !== '' && this.selectedCase.id !== undefined) this.mapCase();
+    if (this.selectedCase.id !== '' && this.selectedCase.id !== undefined)
+      this.mapCase();
   }
 
   mapCase() {
@@ -65,12 +105,15 @@ export class CasePage implements OnInit {
     this.newCase.gender = this.selectedCase.gender;
     this.newCase.genderText = this.genders[this.selectedCase.gender].name;
     this.newCase.containerType = this.selectedCase.containerType;
-    this.newCase.containerTypeText = this.containerTypes[this.selectedCase.containerType].name;
+    this.newCase.containerTypeText =
+      this.containerTypes[this.selectedCase.containerType].name;
     this.newCase.containerSize = this.selectedCase.containerSize;
-    this.newCase.containerSizeText = this.containerSizes[this.selectedCase.containerSize].name;
+    this.newCase.containerSizeText =
+      this.containerSizes[this.selectedCase.containerSize].name;
     this.newCase.status = this.selectedCase.status;
     this.newCase.scheduledDevice = this.selectedCase.scheduledDevice;
     this.newCase.scheduledStartTime = this.selectedCase.scheduledStartTime;
+    this.newCase.facilityStatusId = this.selectedCase.facilityStatusId;
     //console.log(this.newCase.gender + ':' + this.newCase.genderText);
   }
 
@@ -80,26 +123,66 @@ export class CasePage implements OnInit {
 
   onSubmit() {
     if (!this.newCase.id || this.newCase.id.length < 1) {
-      this.updateDeviceAlias(this.newCase);
+      //this.updateDeviceAlias(this.newCase);
       this.newCase.gender = +this.newCase.gender;
       this.newCase.containerSize = +this.newCase.containerSize;
       this.newCase.containerType = +this.newCase.containerType;
       this.newCase.genderText = this.genders[this.newCase.gender].name;
-      this.newCase.containerSizeText = this.containerSizes[this.newCase.containerSize].name;
-      this.newCase.containerTypeText = this.containerTypes[this.newCase.containerType].name;
-      this.newCase.scheduledFacility = this.selectedCase.scheduledFacility;
-      this.newCase.createdTime = this.formatDateAndTime(new Date().toString());  
+      this.newCase.containerSizeText =
+        this.containerSizes[this.newCase.containerSize].name;
+      this.newCase.containerTypeText =
+        this.containerTypes[this.newCase.containerType].name;
+      if (!this.fromProcess) {
+        this.newCase.scheduledFacility = this.selectedCase.scheduledFacility;
+      }
+      this.newCase.createdTime = this.formatDateAndTime(new Date().toString());
 
-      if (this.newCase.scheduledDevice === this.guidEmpty || this.newCase.scheduledStartTime === this.dateTimeMin || this.newCase.scheduledFacility === this.guidEmpty) {
+      if (this.fromProcess) {
+        this.newCase.scheduledDevice = this.selectedCase.scheduledDevice;
+        this.newCase.scheduledFacility = this.selectedFacility;
+      }
+
+      this.updateDeviceAlias(this.newCase);
+
+      if (
+        this.newCase.scheduledDevice === this.guidEmpty ||
+        this.newCase.scheduledStartTime === this.dateTimeMin ||
+        this.newCase.scheduledFacility === this.guidEmpty
+      ) {
         this.newCase.status = 0; //unscheduled
       }
 
-      if (this.newCase.scheduledDevice != this.guidEmpty && this.newCase.scheduledStartTime != this.dateTimeMin && this.newCase.scheduledFacility != this.guidEmpty) {
+      if (
+        this.newCase.scheduledDevice != this.guidEmpty &&
+        this.newCase.scheduledStartTime != this.dateTimeMin &&
+        this.newCase.scheduledFacility != this.guidEmpty
+      ) {
         this.newCase.status = 4; // waiting for permit
       }
 
-      this.caseStore.createCase(this.newCase);
-      
+      const selectedFacilityStatus = this.facilityStatuses.find(
+        (fs) => fs.id == this.newCase.facilityStatusId
+      );
+
+      if (selectedFacilityStatus?.startProcess) {
+        this.newCase.status = 3; // Ready to cremate
+      }
+
+      if (this.fromProcess) {
+        this.newCase.status = 3;
+        let fstatus = this.facilityStatuses.find(
+          (fs) => fs.startProcess == true
+        );
+
+        this.newCase.facilityStatusId = fstatus.id;
+      }
+
+      if (this.fromProcess) {
+        this.caseStore.createCaseFromProcess(this.newCase);
+      } else {
+        this.caseStore.createCase(this.newCase);
+      }
+
       console.log(this.newCase);
     } else {
       this.updateDeviceAlias(this.newCase);
@@ -107,27 +190,36 @@ export class CasePage implements OnInit {
       this.newCase.containerSize = +this.newCase.containerSize;
       this.newCase.containerType = +this.newCase.containerType;
       this.newCase.genderText = this.genders[this.newCase.gender].name;
-      this.newCase.containerSizeText = this.containerSizes[this.newCase.containerSize].name;
-      this.newCase.containerTypeText = this.containerTypes[this.newCase.containerType].name;
+      this.newCase.containerSizeText =
+        this.containerSizes[this.newCase.containerSize].name;
+      this.newCase.containerTypeText =
+        this.containerTypes[this.newCase.containerType].name;
       this.newCase.status = +this.newCase.status;
       this.newCase.scheduledFacility = this.selectedCase.scheduledFacility;
-      this.newCase.facilityStatusId = this.selectedCase.facilityStatusId;
       this.newCase.createdTime = this.formatDateAndTime(new Date().toString());
 
-      if (this.newCase.scheduledDevice === this.guidEmpty || this.newCase.scheduledStartTime === this.dateTimeMin || this.newCase.scheduledFacility === this.guidEmpty) {
+      if (
+        this.newCase.scheduledDevice === this.guidEmpty ||
+        this.newCase.scheduledStartTime === this.dateTimeMin ||
+        this.newCase.scheduledFacility === this.guidEmpty
+      ) {
         this.newCase.status = 0; //unscheduled
       }
 
-      if (this.newCase.scheduledDevice != this.guidEmpty && this.newCase.scheduledStartTime != this.dateTimeMin && this.newCase.scheduledFacility != this.guidEmpty) {
+      if (
+        this.newCase.scheduledDevice != this.guidEmpty &&
+        this.newCase.scheduledStartTime != this.dateTimeMin &&
+        this.newCase.scheduledFacility != this.guidEmpty
+      ) {
         this.newCase.status = 4; // waiting for permit
       }
 
       const selectedFacilityStatus = this.facilityStatuses.find(
-        (fs) => fs.id == this.newCase?.facilityStatusId
+        (fs) => fs.id == this.newCase.facilityStatusId
       );
 
       if (selectedFacilityStatus?.startProcess) {
-        this.newCase.status = 3; // 3
+        this.newCase.status = 3; // Ready to cremate
       }
       this.caseStore.updateCase(this.newCase);
 
@@ -142,9 +234,10 @@ export class CasePage implements OnInit {
 
   updateDeviceAlias(newCase: Case) {
     this.deviceList$.subscribe((devices) => {
-      this.newCase.scheduledDeviceAlias = devices.find(
+      let foundDevice = devices.find(
         (device) => device.id === newCase.scheduledDevice
-      ).alias;
+      );
+      this.newCase.scheduledDeviceAlias = foundDevice?.alias;
     });
   }
 

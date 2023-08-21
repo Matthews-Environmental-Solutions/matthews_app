@@ -11,7 +11,7 @@ import { CaseStatuses } from '../core/enums';
   styleUrls: ['./case-list.page.scss'],
 })
 export class CaseListPage implements OnInit {
-  @Input() selectedFacilityId: string;
+  @Input() selectedDeviceId: string;
   showSearchbar: boolean;
   searchTerm: string;
   caseStatuses = CaseStatuses;
@@ -21,7 +21,7 @@ export class CaseListPage implements OnInit {
 
   ngOnInit() {
     this.showSearchbar = false;
-    this.appStore.getCasesFilteredByDevice(this.selectedFacilityId,);
+    this.appStore.getCasesForDevice(this.selectedDeviceId,);
   }
 
   cancelSearch(): void {

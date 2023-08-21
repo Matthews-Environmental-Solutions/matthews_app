@@ -72,7 +72,7 @@
       <ng-container *ngFor="let signal of selectedDevice.signals">
         <ng-container *ngIf="signal.name === 'MACHINE_STATUS'">
           <!-- segment -->
-          <ng-container *ngIf="parseSignalValue(signal.value) < 20  ? true : false">
+          <ng-container *ngIf="parseSignalValue(signal.value) == 0  ? true : false">
             <div class="wrapper">
               <span class="footer-text"><b>Prepare System</b><br></span>
               <span class="footer-text">Choose Operating Mode<br></span>
@@ -129,13 +129,13 @@
           Choose from schedule
         </ion-button>
       </div> --><div class="actions">
-            <ion-button class="inline" (click)="presentModal()">
+            <ion-button class="inline" (click)="presentModalFromProcess(deviceId)">
               Enter Case Info
             </ion-button>
-            <ion-button class="inline" (click)="presentCasesModal(selectedFacility.id)" >
+            <ion-button class="inline" (click)="presentCasesModal(deviceId)" >
               SELECT CASE
             </ion-button>
-            <ion-button expand="block" class="btnsuccesstwo">
+            <ion-button expand="block" class="btnsuccesstwo" (click)="autoSelectNextCase(deviceId)">
               AUTO SELECT NEXT IN SCHEDULE
             </ion-button>
             </div>

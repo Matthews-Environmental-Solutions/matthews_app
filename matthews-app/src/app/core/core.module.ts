@@ -4,7 +4,6 @@ import { APP_INITIALIZER, NgModule, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Browser, AuthService } from 'ionic-appauth';
 import { CapacitorBrowser, CapacitorSecureStorage } from 'ionic-appauth/lib/capacitor';
-
 import { NgHttpService } from './ng-http.service';
 import { authFactory } from './factories';
 
