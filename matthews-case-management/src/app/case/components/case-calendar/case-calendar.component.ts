@@ -100,6 +100,7 @@ export class CaseCalendarComponent implements OnInit, OnDestroy {
   daySelectedEvent(date: Date) {
     if (date instanceof Date) {
       this.selectedDay = date;
+      this.hiddenDayForNavigation = date;
       this.stateService.setSelectedDate(date);
       let userSetting = this.userSettingService.getUserSettingLastValue();
       userSetting.lastUsedSelectedDay = date;

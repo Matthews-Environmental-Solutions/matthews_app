@@ -1,6 +1,6 @@
 {
     "authorize": "Autorisieren",
-    "selectedFacility": "Ausgewählte Einrichtung",
+    "selectedFacility": "Einrichtung auswählen",
     "profileSetting": "Profileinstellung",
     "logout": "Ausloggen",
     "addCase": "Fall hinzufügen",
@@ -75,6 +75,7 @@
     "allCases": "Alle Fälle",
     "selectedFacilityOnly": "Nach ausgewählter Einrichtung",
     "pickIcon": "Wählen Sie das Symbol aus",
+    "showingCasesFor": "Fälle anzeigen für",
 
 
     "title": "Service-Feedback für {{company}}",

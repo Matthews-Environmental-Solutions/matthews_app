@@ -10,16 +10,20 @@ export class DatetimePipe implements PipeTransform {
 
   constructor(private userSettingService: UserSettingService) { }
 
-  transform(date: Date | string | undefined): string | null {
+  transform(date: Date | string | undefined, justDate: boolean): string | null {
     if (!date) {
       return null;
     }
     date = new Date(date);  // if orginal type was a string
     let dateShift = date;
     let setting: UserSettingData = this.userSettingService.getUserSettingLastValue();
-    let format: string = 'dd-MM-yy | hh:mm a';
+    
+    let format: string = justDate ? 'dd-MM-yyyy' : 'dd-MM-yy | hh:mm a';
     if (setting) {
-      format = setting.timeformat == '12' ? 'dd-MM-yy | hh:mm a' : 'dd-MM-yy | HH:mm';
+      format = setting.timeformat == '12' ? 
+      (justDate ? 'dd-MM-yyyy' : 'dd-MM-yy | hh:mm a') 
+      : 
+      (justDate ? 'dd-MM-yyyy' : 'dd-MM-yy | HH:mm');
       dateShift = this.changeTimezone(date, setting.timezone);
     }
     return new DatePipe('en-US').transform(dateShift, format);

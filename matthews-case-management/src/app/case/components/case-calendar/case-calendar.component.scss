@@ -50,10 +50,15 @@ $buttons: mat-palette($mat-blue-gray, 700);
     overflow-x: hidden;
 }
 
+.selected-day-showing {
+    font-size: 16px;
+    margin-top: 3px;
+    font-weight: 300;
+}
 
-
-
-
+.date-bold {
+    font-weight: 500;
+}
 
 .card-header-text {
     font-size: x-large;

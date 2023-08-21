@@ -1,6 +1,6 @@
 {
     "authorize": "Authorize",
-    "selectedFacility": "Selected facility",
+    "selectedFacility": "Select facility",
     "profileSetting": "Profile setting",
     "logout": "Log out",
     "addCase": "Add case",
@@ -75,6 +75,7 @@
     "allCases": "All cases",
     "selectedFacilityOnly": "By selected facility",
     "pickIcon": "Pick the icon",
+    "showingCasesFor": "Showing cases for",
 
 
     "title": "Service feedback for {{company}}",

@@ -97,18 +97,39 @@ $primary: mat-palette($mat-lime, A400);
 
 .facility-selector {
 
-  mat-label {
+  ::ng-deep div.mat-mdc-select-value{
+    color: #c6ff00;
+  }
+
+  ::ng-deep div.mat-mdc-text-field-wrapper {
+    border-color: #c6ff00 !important;
+  }
+
+  ::ng-deep div.mdc-text-field{
+    border-color: #c6ff00 !important;
+  }
+
+  ::ng-deep div.mat-mdc-form-field-infix{
+    top: 15px;
+    padding-top: 10px !important;
+    padding-bottom: 10px !important;
+  }
+
+  ::ng-deep svg{
+    color: #c6ff00;
+  }
+
+  ::ng-deep mat-label {
+    padding-top: 30px !important;
     color: white;
+    font-style: italic;
   }
 
-  mat-select {
-    border: white;
+  ::ng-deep mdc-floating-label, mat-mdc-floating-label{
+    top: 35px !important;
   }
 
-  .mat-form-field-outline {
-    border: #999;
-  }
-
+  
 }
 
 .bg-color-green {
