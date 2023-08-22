@@ -16,7 +16,7 @@
 <ion-content style="--background: #e4eff1;">
   <mat-stepper orientation="vertical" #stepper linear selectedIndex="">
     <ng-container *ngFor="let signal of selectedDevice.signals">
-      <mat-step *ngIf="signal.name === 'MACHINE_STATUS'" [completed]="parseSignalValue(signal.value) > 40">
+      <mat-step *ngIf="signal.name === 'MACHINE_STATUS'" [completed]="parseSignalValue(signal.value) >= 40">
         <ng-template matStepLabel>{{'Prepare System'}}<br>
           <span class="font-size" *ngIf="parseSignalValue(signal.value) == 0 ? true : false">{{"Ready to Preheat"}}
           </span>

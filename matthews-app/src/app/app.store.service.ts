@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/member-ordering */
 import { Injectable } from '@angular/core';
 import { ModalController } from '@ionic/angular';
-import { ComponentStore} from '@ngrx/component-store';
+import { ComponentStore } from '@ngrx/component-store';
 import { Observable } from 'rxjs';
 import { catchError, mergeMap, switchMap, tap } from 'rxjs/operators';
 import { CaseListPage } from './case-list/case-list.page';
@@ -21,372 +21,492 @@ import { Measurement, SignalRService } from './core/signal-r.service';
 import { Signal } from './device-list/signal';
 
 export interface AppState {
-    cases: Case[];
-    selectedCase: Case;
-    facilities: Facility[];
-    loading: boolean;
-    deviceList: Device[];
-    userInfo: UserInfo;
-    selectedDevice: Device;
-    selectedFacility: Facility;
-    deviceCases: Case[];
+  cases: Case[];
+  selectedCase: Case;
+  facilities: Facility[];
+  loading: boolean;
+  deviceList: Device[];
+  userInfo: UserInfo;
+  selectedDevice: Device;
+  selectedFacility: Facility;
+  deviceCases: Case[];
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AppStoreService extends ComponentStore<AppState> {
+  constructor(
+    private auth: AuthService,
+    private caseService: CaseService,
+    private facilitiesService: FacilityService,
+    private deviceListService: DeviceListService,
+    public modalController: ModalController,
+    private loadingService: LoadingService,
+    private signalRService: SignalRService
+  ) {
+    super({
+      cases: [],
+      selectedCase: {} as Case,
+      facilities: [],
+      loading: false,
+      deviceList: [],
+      userInfo: {} as UserInfo,
+      selectedDevice: {} as Device,
+      selectedFacility: {} as Facility,
+      deviceCases: [],
+    });
+  }
 
-    constructor(private auth: AuthService,
-    		        private caseService: CaseService,
-                private facilitiesService: FacilityService,
-                private deviceListService: DeviceListService,
-                public modalController: ModalController,
-                private loadingService: LoadingService,
-                private signalRService: SignalRService) {
+  readonly cases$: Observable<Case[]> = this.select((state) => state.cases);
+  readonly selectedCase$: Observable<Case> = this.select(
+    (state) => state.selectedCase
+  );
+  readonly facilities$: Observable<Facility[]> = this.select(
+    (state) => state.facilities
+  );
+  readonly deviceList$: Observable<Device[]> = this.select(
+    (state) => state.deviceList
+  );
+  readonly loading$: Observable<boolean> = this.select(
+    (state) => state.loading
+  );
+  readonly userInfo$: Observable<UserInfo> = this.select(
+    (state) => state.userInfo
+  );
+  readonly selectedDevice$: Observable<Device> = this.select(
+    (state) => state.selectedDevice
+  );
+  readonly selectedDeviceSignals$: Observable<Signal[]> = this.select(
+    this.selectedDevice$,
+    (selectedDevice) => selectedDevice.signals
+  );
+  readonly selectedFacility$: Observable<Facility> = this.select(
+    (state) => state.selectedFacility
+  );
+  readonly deviceCases$: Observable<Case[]> = this.select(
+    (state) => state.deviceCases
+  );
 
-            super({ cases: [],
-                    selectedCase: {} as Case,
-                    facilities: [],
-                    loading: false,
-                    deviceList: [],
-                    userInfo: {} as UserInfo,
-                    selectedDevice: {} as Device,
-                    selectedFacility: {} as Facility,
-                    deviceCases: []
-                  },
-                    );
-    }
+  readonly scheduleVm$ = this.select(
+    this.cases$,
+    this.selectedCase$,
+    this.facilities$,
+    this.selectedFacility$,
+    this.loading$,
+    (cases, selectedCase, facilities, selectedFacility, loading) => ({
+      cases,
+      selectedCase,
+      facilities,
+      selectedFacility,
+      loading,
+    })
+  );
 
-    readonly cases$: Observable<Case[]> = this.select(state => state.cases);
-    readonly selectedCase$: Observable<Case> = this.select(state => state.selectedCase);
-    readonly facilities$: Observable<Facility[]> = this.select(state => state.facilities);
-    readonly deviceList$: Observable<Device[]> = this.select(state => state.deviceList);
-    readonly loading$: Observable<boolean> = this.select(state => state.loading);
-    readonly userInfo$: Observable<UserInfo> = this.select(state => state.userInfo);
-    readonly selectedDevice$: Observable<Device> = this.select(state => state.selectedDevice);
-    readonly selectedDeviceSignals$: Observable<Signal[]> = this.select(this.selectedDevice$, selectedDevice => selectedDevice.signals);
-    readonly selectedFacility$: Observable<Facility> = this.select(state => state.selectedFacility);
-    readonly deviceCases$: Observable<Case[]> = this.select(state => state.deviceCases);
+  readonly deviceListVm$ = this.select(
+    this.deviceList$,
+    this.selectedDevice$,
+    this.loading$,
+    (deviceList, selectedDevice, loading) => ({
+      deviceList,
+      selectedDevice,
+      loading,
+    })
+  );
 
+  readonly vm$ = this.select(
+    this.cases$,
+    this.facilities$,
+    this.loading$,
+    (cases, facilities, loading) => ({
+      cases,
+      facilities,
+      loading,
+    })
+  );
 
-    readonly scheduleVm$ = this.select(
-      this.cases$,
-      this.selectedCase$,
-      this.facilities$,
-      this.selectedFacility$,
-      this.loading$,
-      (cases, selectedCase, facilities, selectedFacility, loading) => ({
-        cases,
-        selectedCase,
-        facilities,
-        selectedFacility,
-        loading
-      })
-    );
-
-    readonly deviceListVm$ = this.select(
-      this.deviceList$,
-      this.selectedDevice$,
-      this.loading$,
-      (deviceList, selectedDevice, loading) =>({
-        deviceList,
-        selectedDevice,
-        loading
-      })
-    );
-
-    readonly vm$ = this.select(
-      this.cases$,
-      this.facilities$,
-      this.loading$,
-      (cases, facilities, loading) => ({
-        cases,
-        facilities,
-        loading
-      })
-    );
-
-    readonly updateSelectedDevice = this.updater((state: AppState, selectedDeviceId: string) => ({
+  readonly updateSelectedDevice = this.updater(
+    (state: AppState, selectedDeviceId: string) => ({
       ...state,
-      selectedDevice: state.deviceList.find(device => device.id === selectedDeviceId)
-    }));
+      selectedDevice: state.deviceList.find(
+        (device) => device.id === selectedDeviceId
+      ),
+    })
+  );
 
-    readonly updateSelectedFacility = this.updater((state: AppState, selectedFacility: Facility) => ({
+  readonly updateSelectedFacility = this.updater(
+    (state: AppState, selectedFacility: Facility) => ({
       ...state,
-      selectedFacility
-    }));
+      selectedFacility,
+    })
+  );
 
-    readonly updateFacilities = this.updater((state: AppState, facilities: Facility[]) => ({
+  readonly updateFacilities = this.updater(
+    (state: AppState, facilities: Facility[]) => ({
       ...state,
-      facilities: [...facilities]
-    }));
+      facilities: [...facilities],
+    })
+  );
 
-    readonly updateDeviceList = this.updater((state: AppState, deviceList: Device[]) => ({
+  readonly updateDeviceList = this.updater(
+    (state: AppState, deviceList: Device[]) => ({
       ...state,
-      deviceList
-    }));
+      deviceList,
+    })
+  );
 
-    readonly updateDeviceSignals = this.updater((state: AppState, deviceSignalsMap:  [string, Signal[]]) => ({
+  readonly updateDeviceSignals = this.updater(
+    (state: AppState, deviceSignalsMap: [string, Signal[]]) => ({
       ...state,
-      deviceList: this.getUpdatedSignalsForDevice(state.deviceList, deviceSignalsMap)
-    }));
+      deviceList: this.getUpdatedSignalsForDevice(
+        state.deviceList,
+        deviceSignalsMap
+      ),
+    })
+  );
 
-    readonly updateCases = this.updater((state: AppState, cases: Case[]) => ({
-            ...state,
-            cases: [...cases]
-      }));
+  readonly updateCases = this.updater((state: AppState, cases: Case[]) => ({
+    ...state,
+    cases: [...cases],
+  }));
 
-    readonly updateCasesByDeviceId = this.updater((state: AppState, cases: Case[]) => ({
+  readonly updateCasesByDeviceId = this.updater(
+    (state: AppState, cases: Case[]) => ({
       ...state,
-      deviceCases: this.filterCasesByDevice(cases, state.selectedDevice)
-    }));
+      deviceCases: this.filterCasesByDevice(cases, state.selectedDevice),
+    })
+  );
 
-    readonly updateAddCaseFromProcess = this.updater((state: AppState, fromProcess: boolean) => ({
+  readonly updateAddCaseFromProcess = this.updater(
+    (state: AppState, fromProcess: boolean) => ({
       ...state,
-      addCaseFromProcess: fromProcess
-    }));
+      addCaseFromProcess: fromProcess,
+    })
+  );
 
-    filterCasesByDevice(cases: Case[], selectedDevice: Device): Case[] {
-      console.log(cases);
-      //return cases.filter(x => (x.scheduledDevice === selectedDevice.id || !x.scheduledDevice) && x.status === '1');
-      return cases;
-    }
+  filterCasesByDevice(cases: Case[], selectedDevice: Device): Case[] {
+    console.log(cases);
+    //return cases.filter(x => (x.scheduledDevice === selectedDevice.id || !x.scheduledDevice) && x.status === '1');
+    return cases;
+  }
 
-    readonly updateSelectedCase = this.updater((state: AppState, selectedCase: Case) => ({
+  readonly updateSelectedCase = this.updater(
+    (state: AppState, selectedCase: Case) => ({
       ...state,
-      selectedCase
-    }));
+      selectedCase,
+    })
+  );
 
-    readonly updateUserInfo = this.updater((state: AppState, userInfo: UserInfo) => ({
+  readonly updateUserInfo = this.updater(
+    (state: AppState, userInfo: UserInfo) => ({
       ...state,
-      userInfo
-    }));
+      userInfo,
+    })
+  );
 
-    readonly updateLoading = this.updater((state: AppState, loading: boolean) => ({
-          ...state,
-          loading
-    }));
-
-    readonly updateInitSignalsMeasurements = this.updater((state: AppState, signalsMeasurement: Measurement[]) => ({
+  readonly updateLoading = this.updater(
+    (state: AppState, loading: boolean) => ({
       ...state,
-      signalsMeasurement
-    }));
+      loading,
+    })
+  );
 
-    readonly updateDevicesStatusSignals = this.updater((state: AppState, deviceList: Device[]) => ({
+  readonly updateInitSignalsMeasurements = this.updater(
+    (state: AppState, signalsMeasurement: Measurement[]) => ({
       ...state,
-      deviceList
-    }));
+      signalsMeasurement,
+    })
+  );
 
-    readonly updateSignalWithValueFromSingalR = this.updater((state: AppState, measurement: Measurement) => {
+  readonly updateDevicesStatusSignals = this.updater(
+    (state: AppState, deviceList: Device[]) => ({
+      ...state,
+      deviceList,
+    })
+  );
+
+  readonly updateSignalWithValueFromSingalR = this.updater(
+    (state: AppState, measurement: Measurement) => {
       const stateCopy = JSON.parse(JSON.stringify(state)) as AppState;
 
-      stateCopy.deviceList.forEach(device => {
-        const signal = device.signals.find(s => s.id === measurement.signalId);
-        if(signal?.value)
-        {
+      stateCopy.deviceList.forEach((device) => {
+        const signal = device.signals.find(
+          (s) => s.id === measurement.signalId
+        );
+        if (signal?.value) {
           signal.value = measurement.value;
         }
       });
 
-      const selectedDeviceSignal = stateCopy.selectedDevice.signals.find(s => s.id === measurement.signalId);
-      // eslint-disable-next-line eqeqeq
-      if(selectedDeviceSignal?.value || selectedDeviceSignal?.value == '0')
-      {
-        selectedDeviceSignal.value = measurement.value;
+      if (stateCopy.selectedDevice && stateCopy.selectedDevice.id) {
+        const selectedDeviceSignal = stateCopy.selectedDevice.signals.find(
+          (s) => s.id === measurement.signalId
+        );
+        // eslint-disable-next-line eqeqeq
+        if (selectedDeviceSignal?.value || selectedDeviceSignal?.value == '0') {
+          selectedDeviceSignal.value = measurement.value;
+        }
       }
 
       return {
         ...state,
         selectedDevice: stateCopy.selectedDevice,
-        deviceList: stateCopy.deviceList
+        deviceList: stateCopy.deviceList,
       };
-    });
+    }
+  );
 
-    readonly getFacilities = this.effect(trigger$ => trigger$.pipe(
+  readonly getFacilities = this.effect((trigger$) =>
+    trigger$.pipe(
       tap(() => this.loadingService.present()),
-      switchMap(() =>  this.facilitiesService.getFacilities().then(
-        (response: Facility[]) => {
+      switchMap(() =>
+        this.facilitiesService.getFacilities().then((response: Facility[]) => {
           this.updateFacilities(response);
           this.loadingService.dismiss();
-        }))
-      ));
+        })
+      )
+    )
+  );
 
-     readonly getDeviceList = this.effect<string>(devices$ => devices$.pipe(
-       tap(() => this.loadingService.present()),
-       switchMap((facilityId) => this.deviceListService.getDevices(facilityId).then(
-         (devices: Device[]) => {
-           this.updateDeviceList(devices);
-           this.loadingService.dismiss();
-         }
-       ))
-     ));
+  readonly getDeviceList = this.effect<string>((devices$) =>
+    devices$.pipe(
+      tap(() => this.loadingService.present()),
+      switchMap((facilityId) =>
+        this.deviceListService
+          .getDevices(facilityId)
+          .then((devices: Device[]) => {
+            this.updateDeviceList(devices);
+            this.loadingService.dismiss();
+          })
+      )
+    )
+  );
 
-    readonly getDeviceListWithSignalR = this.effect<string>(trigger$ => trigger$.pipe(
+  readonly getDeviceListWithSignalR = this.effect<string>((trigger$) =>
+    trigger$.pipe(
       //tap(() => this.loadingService.present()),
-      switchMap((facilityId) => this.deviceListService.getDevices(facilityId).then(
-        (devices: Device[]) => {
-         this.updateDeviceList(devices);
-         this.addMeasurementListener();
-          devices.forEach(device => {
-              this.deviceListService.getSignalsForDevice(device.id).then(
-                (signals) => {
-                  this.signalRService.proxy.invoke('SubscribeAll', signals.map(x => x.id))
+      switchMap((facilityId) =>
+        this.deviceListService
+          .getDevices(facilityId)
+          .then((devices: Device[]) => {
+            this.updateDeviceList(devices);
+            this.addMeasurementListener();
+            devices.forEach((device) => {
+              this.deviceListService
+                .getSignalsForDevice(device.id)
+                .then((signals) => {
+                  this.signalRService.proxy
+                    .invoke(
+                      'SubscribeAll',
+                      signals.map((x) => x.id)
+                    )
                     .done((measurements) => {
-                      measurements.forEach(measurement => {
-                        signals.find(signal => signal.id === measurement.signalId).value = measurement.value;
+                      measurements.forEach((measurement) => {
+                        signals.find(
+                          (signal) => signal.id === measurement.signalId
+                        ).value = measurement.value;
                       });
-                      const deviceSignalsMap: [string, Signal[]] = [device.id, signals];
+                      const deviceSignalsMap: [string, Signal[]] = [
+                        device.id,
+                        signals,
+                      ];
                       this.updateDeviceSignals(deviceSignalsMap);
                     });
-                  });});
+                });
+            });
 
-          this.loadingService.dismiss();
-        }))
-    ));
+            this.loadingService.dismiss();
+          })
+      )
+    )
+  );
 
-    addMeasurementListener() {
-      this.signalRService.addListener((measurement: Measurement) => {
-        this.updateSignalWithValueFromSingalR(measurement);
-        // devices.forEach(device => {
-        //     if(device.signals.find(signal => signal.id === measurement.signalId)?.value)
-        //     {
-        //       device.signals.find(signal => signal.id === measurement.signalId).value = measurement.value ;
-        //       const deviceSignalsMap: [string, Signal[]] = [device.id, device.signals];
-        //       this.updateDeviceSignals(deviceSignalsMap);
-        //     }
-        // });
-      });
-    }
+  addMeasurementListener() {
+    this.signalRService.addListener((measurement: Measurement) => {
+      this.updateSignalWithValueFromSingalR(measurement);
+      // devices.forEach(device => {
+      //     if(device.signals.find(signal => signal.id === measurement.signalId)?.value)
+      //     {
+      //       device.signals.find(signal => signal.id === measurement.signalId).value = measurement.value ;
+      //       const deviceSignalsMap: [string, Signal[]] = [device.id, device.signals];
+      //       this.updateDeviceSignals(deviceSignalsMap);
+      //     }
+      // });
+    });
+  }
 
-    readonly getCases = this.effect<string>(cases$ => cases$.pipe(
+  readonly getCases = this.effect<string>((cases$) =>
+    cases$.pipe(
       tap(() => this.loadingService.present()),
-      switchMap((facilityId) => this.caseService.getCases(facilityId).then(
-        (response: Case[]) => {
-          this.updateCases(response.filter((caseToFilter) => caseToFilter.scheduledFacility === facilityId && caseToFilter.isObsolete === false));
+      switchMap((facilityId) =>
+        this.caseService.getCases(facilityId).then((response: Case[]) => {
+          this.updateCases(
+            response.filter(
+              (caseToFilter) =>
+                caseToFilter.scheduledFacility === facilityId &&
+                caseToFilter.isObsolete === false
+            )
+          );
           this.loadingService.dismiss();
-        }))
-    ));
+        })
+      )
+    )
+  );
 
-    readonly getCasesForDevice = this.effect<string>(cases$ => cases$.pipe(
+  readonly getCasesForDevice = this.effect<string>((cases$) =>
+    cases$.pipe(
       tap(() => this.loadingService.present()),
-      switchMap((deviceId) => this.caseService.getReadyCasesByDevice(deviceId).then(
-        (response: Case[]) => {
-          // eslint-disable-next-line max-len
-          this.updateCasesByDeviceId(response);
-          this.loadingService.dismiss();
-        }))
-    ));
+      switchMap((deviceId) =>
+        this.caseService
+          .getReadyCasesByDevice(deviceId)
+          .then((response: Case[]) => {
+            // eslint-disable-next-line max-len
+            this.updateCasesByDeviceId(response);
+            this.loadingService.dismiss();
+          })
+      )
+    )
+  );
 
-    readonly createCase = this.effect<Case>(case$ => case$.pipe(
+  readonly createCase = this.effect<Case>((case$) =>
+    case$.pipe(
       tap(() => this.loadingService.present()),
-      switchMap((selectedCase) => this.caseService.createCase(selectedCase).then(
-        (savedCase) => {
+      switchMap((selectedCase) =>
+        this.caseService.createCase(selectedCase).then((savedCase) => {
           this.getCases(selectedCase.scheduledFacility);
           this.loadingService.dismiss();
-        })),
-        catchError(() => this.loadingService.dismiss())
-    ));
+        })
+      ),
+      catchError(() => this.loadingService.dismiss())
+    )
+  );
 
-    readonly createCaseFromProcess = this.effect<Case>(case$ => case$.pipe(
+  readonly createCaseFromProcess = this.effect<Case>((case$) =>
+    case$.pipe(
       tap(() => this.loadingService.present()),
-      switchMap((selectedCase) => this.caseService.createCase(selectedCase).then(
-        (savedCase) => {
+      switchMap((selectedCase) =>
+        this.caseService.createCase(selectedCase).then((savedCase) => {
           this.getCases(selectedCase.scheduledFacility);
           this.updateSelectedCase(savedCase);
           this.loadingService.dismiss();
-        })),
-        catchError(() => this.loadingService.dismiss())
-    ));
+        })
+      ),
+      catchError(() => this.loadingService.dismiss())
+    )
+  );
 
-    readonly updateCase = this.effect<Case>(case$ => case$.pipe(
+  readonly updateCase = this.effect<Case>((case$) =>
+    case$.pipe(
       tap(() => this.loadingService.present()),
-      switchMap((selectedCase) => this.caseService.updateCase(selectedCase.id, selectedCase).then(
-        () => {
+      switchMap((selectedCase) =>
+        this.caseService.updateCase(selectedCase.id, selectedCase).then(() => {
           this.getCases(selectedCase.scheduledFacility);
           this.loadingService.dismiss();
-        }))
-    ));
+        })
+      )
+    )
+  );
 
-    readonly deleteCase = this.effect<Case>(case$ => case$.pipe(
+  readonly deleteCase = this.effect<Case>((case$) =>
+    case$.pipe(
       tap(() => this.loadingService.present()),
-      switchMap((selectedCase) => this.caseService.deleteCase(selectedCase.id.toString()).then(
-        () => {
+      switchMap((selectedCase) =>
+        this.caseService.deleteCase(selectedCase.id.toString()).then(() => {
           this.getCases(selectedCase.scheduledFacility);
           this.loadingService.dismiss();
-        }))
-    ));
+        })
+      )
+    )
+  );
 
-    readonly getUserInfo = this.effect<string>(trigger$ => trigger$.pipe(
-      switchMap((userId) => this.facilitiesService.getUserInfo(userId).then(
-        (response: UserInfo) => {
-          this.auth.token$.subscribe(async res => {
-            if(response.photoId !== null) {
-            this.facilitiesService.getAttachment(res.accessToken, response.photoId).subscribe(data => {
-              response.imageBlob = data;
-              this.createImageFromBlob(response);
+  readonly getUserInfo = this.effect<string>((trigger$) =>
+    trigger$.pipe(
+      switchMap((userId) =>
+        this.facilitiesService
+          .getUserInfo(userId)
+          .then((response: UserInfo) => {
+            this.auth.token$.subscribe(async (res) => {
+              if (response.photoId !== null) {
+                this.facilitiesService
+                  .getAttachment(res.accessToken, response.photoId)
+                  .subscribe((data) => {
+                    response.imageBlob = data;
+                    this.createImageFromBlob(response);
+                  });
+              }
             });
-        }});
-        }))
-    ));
+          })
+      )
+    )
+  );
 
-    createImageFromBlob(userInfo: UserInfo) {
-      const reader = new FileReader();
-      reader.addEventListener('load', () => {
+  createImageFromBlob(userInfo: UserInfo) {
+    const reader = new FileReader();
+    reader.addEventListener(
+      'load',
+      () => {
         userInfo.photoBase64 = reader.result.toString();
         this.updateUserInfo(userInfo);
-      }, false);
+      },
+      false
+    );
 
-      if (userInfo.imageBlob) {
-         reader.readAsDataURL(userInfo.imageBlob);
-      }
-   }
+    if (userInfo.imageBlob) {
+      reader.readAsDataURL(userInfo.imageBlob);
+    }
+  }
 
-    readonly openCaseModal = this.effect<Case>(trigger$ => trigger$.pipe(
-      mergeMap((selectedCase) => this.presentModal(selectedCase))
-    ));
+  readonly openCaseModal = this.effect<Case>((trigger$) =>
+    trigger$.pipe(mergeMap((selectedCase) => this.presentModal(selectedCase)))
+  );
 
-    readonly openCaseModalFromProcess = this.effect<Case>(trigger$ => trigger$.pipe(
+  readonly openCaseModalFromProcess = this.effect<Case>((trigger$) =>
+    trigger$.pipe(
       mergeMap((selectedCase) => this.presentModalFromProcess(selectedCase))
-    ));
+    )
+  );
 
-    async presentModal(selectedCase: Case) {
-      const modal = await this.modalController.create({
-        component: CasePage,
-        componentProps: {
-          selectedCase
-        }
-      });
-      return await modal.present();
-    }
+  async presentModal(selectedCase: Case) {
+    const modal = await this.modalController.create({
+      component: CasePage,
+      componentProps: {
+        selectedCase,
+      },
+    });
+    return await modal.present();
+  }
 
-    async presentModalFromProcess(selectedCase: Case) {
-      const modal = await this.modalController.create({
-        component: CasePage,
-        componentProps: {
-          selectedCase,
-          fromProcess: true
-        }
-      });
-      return await modal.present();
-    }
+  async presentModalFromProcess(selectedCase: Case) {
+    const modal = await this.modalController.create({
+      component: CasePage,
+      componentProps: {
+        selectedCase,
+        fromProcess: true,
+      },
+    });
+    return await modal.present();
+  }
 
-    readonly openCasesModal = this.effect<string>(trigger$ => trigger$.pipe(
-      mergeMap((deviceId) => this.presentCasesModal(deviceId))
-    ));
+  readonly openCasesModal = this.effect<string>((trigger$) =>
+    trigger$.pipe(mergeMap((deviceId) => this.presentCasesModal(deviceId)))
+  );
 
-    async presentCasesModal(selectedDeviceId: string) {
-      const modal = await this.modalController.create({
-        component: CaseListPage,
-        componentProps: {
-          selectedDeviceId
-        }
-      });
-      return await modal.present();
-    }
+  async presentCasesModal(selectedDeviceId: string) {
+    const modal = await this.modalController.create({
+      component: CaseListPage,
+      componentProps: {
+        selectedDeviceId,
+      },
+    });
+    return await modal.present();
+  }
 
-    getUpdatedSignalsForDevice(deviceList: Device[], deviceSignalsMap: [string, Signal[]]){
-      deviceList.find(x => x.id === deviceSignalsMap[0]).signals = deviceSignalsMap[1];
-      return deviceList;
-    }
+  getUpdatedSignalsForDevice(
+    deviceList: Device[],
+    deviceSignalsMap: [string, Signal[]]
+  ) {
+    deviceList.find((x) => x.id === deviceSignalsMap[0]).signals =
+      deviceSignalsMap[1];
+    return deviceList;
+  }
 }

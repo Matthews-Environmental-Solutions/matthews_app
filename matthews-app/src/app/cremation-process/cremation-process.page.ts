@@ -42,7 +42,7 @@ export class CremationProcessPage implements OnInit {
       selectedDevice.signals.forEach((signal) => {
         if (
           signal.name === 'MACHINE_STATUS' &&
-          parseInt(signal.value) > 40 &&
+          parseInt(signal.value) >= 40 &&
           parseInt(signal.value) < 80 &&
           !this.isCaseSelected
         ) {
