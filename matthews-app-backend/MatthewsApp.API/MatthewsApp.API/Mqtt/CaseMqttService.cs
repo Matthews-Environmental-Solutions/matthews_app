@@ -15,6 +15,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
+using System.Diagnostics.Metrics;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
@@ -428,19 +429,40 @@ public class CaseMqttService : IHostedService
         string RequestMessage = "{}";
         Dictionary<string, string> jsonDict = JsonSerializer.Deserialize<Dictionary<string, string>>(RequestMessage);
 
-        for(int i = 0; i < casesToSend.ToList().Count; i++)
+        var casesList = casesToSend.ToList();
+        int counter = 0;
+
+        foreach (var caseFor20 in casesList)
         {
-            Case20Dto c = casesToSend.ToList()[i];
-            jsonDict.Add($"CASE_{i + 1}_ID", c.ID.ToString());
-            jsonDict.Add($"CASE_{i + 1}_CLIENT_ID", c.Client_ID);
-            jsonDict.Add($"CASE_{i + 1}_FIRST_NAME", c.FIRST_NAME);
-            jsonDict.Add($"CASE_{i + 1}_SURNAME", c.SURNAME);
-            jsonDict.Add($"CASE_{i + 1}_SIZE", c.SIZE);
-            jsonDict.Add($"CASE_{i + 1}_WEIGHT", c.WEIGHT);
-            jsonDict.Add($"CASE_{i + 1}_COFFIN_TYPE", c.COFFIN_TYPE);
-            jsonDict.Add($"CASE_{i + 1}_GENDER", c.GENDER);
-            jsonDict.Add($"CASE_{i + 1}_AGE", c.AGE);
-            jsonDict.Add($"CASE_{i + 1}_READY", c.READY);
+            counter++;
+            jsonDict.Add($"CASE_{counter}_ID", caseFor20.ID.ToString());
+            jsonDict.Add($"CASE_{counter}_CLIENT_ID", caseFor20.Client_ID);
+            jsonDict.Add($"CASE_{counter}_FIRST_NAME", caseFor20.FIRST_NAME);
+            jsonDict.Add($"CASE_{counter}_SURNAME", caseFor20.SURNAME);
+            jsonDict.Add($"CASE_{counter}_SIZE", caseFor20.SIZE);
+            jsonDict.Add($"CASE_{counter}_WEIGHT", caseFor20.WEIGHT);
+            jsonDict.Add($"CASE_{counter}_COFFIN_TYPE", caseFor20.COFFIN_TYPE);
+            jsonDict.Add($"CASE_{counter}_GENDER", caseFor20.GENDER);
+            jsonDict.Add($"CASE_{counter}_AGE", caseFor20.AGE);
+            jsonDict.Add($"CASE_{counter}_READY", caseFor20.READY);
+        }
+
+        if (counter < 20)
+        {
+            int rest = 20 - counter;
+            for (int i = ++counter ; i < counter + rest; i++)
+            {
+                jsonDict.Add($"CASE_{i}_ID", string.Empty);
+                jsonDict.Add($"CASE_{i}_CLIENT_ID", string.Empty);
+                jsonDict.Add($"CASE_{i}_FIRST_NAME", string.Empty);
+                jsonDict.Add($"CASE_{i}_SURNAME", string.Empty);
+                jsonDict.Add($"CASE_{i}_SIZE", string.Empty);
+                jsonDict.Add($"CASE_{i}_WEIGHT", string.Empty);
+                jsonDict.Add($"CASE_{i}_COFFIN_TYPE", string.Empty);
+                jsonDict.Add($"CASE_{i}_GENDER", string.Empty);
+                jsonDict.Add($"CASE_{i}_AGE", string.Empty);
+                jsonDict.Add($"CASE_{i}_READY", string.Empty);
+            }
         }
 
         return jsonDict;
