@@ -6,8 +6,8 @@ export const authConfig: AuthConfig = {
     issuer: 'https://matthewscremation.i4connected.cloud/identity',
 
     redirectUri: window.location.origin + environment.baseUrl, // it is:   http://localhost:4200,  'https://develop.comdata.rs/MatthewsApp.API'
-    silentRefreshRedirectUri: window.location.origin + environment.baseUrl + '/silent-refresh.html',
-    useSilentRefresh: true, // Needed for Code Flow to suggest using iframe-based refreshes
+    // silentRefreshRedirectUri: window.location.origin + environment.baseUrl + '/silent-refresh.html',
+    // useSilentRefresh: true, // Needed for Code Flow to suggest using iframe-based refreshes
 
     clientId: environment.identityServerClientId, //'i4connected.cremator.development'
     responseType: 'code',

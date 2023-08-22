@@ -20,6 +20,9 @@
       return false;
     }
 
+    console.log("Location ", location);
+    console.log("Location hash", location.hash);
+
     let message = isResponse(location.hash) ? location.hash : '#' + location.search;
 
     console.log("Silent refresh iframe is posting to the parent application, message:", message);
