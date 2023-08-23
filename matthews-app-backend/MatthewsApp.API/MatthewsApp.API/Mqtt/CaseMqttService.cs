@@ -394,7 +394,7 @@ public class CaseMqttService : IHostedService
             cases = await _caseRepository.GetFirst20ScheduledCases(deviceId);
         }
 
-        if(cases.Count() == 0) { return; }
+        //if(cases.Count() == 0) { return; }
             
         IEnumerable<Case20Dto> casesToSend = cases.ToCase20DTOs();
 

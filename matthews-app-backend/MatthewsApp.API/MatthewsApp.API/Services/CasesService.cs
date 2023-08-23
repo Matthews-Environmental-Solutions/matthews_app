@@ -13,6 +13,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Principal;
 using System.Threading.Tasks;
 
 namespace MatthewsApp.API.Services;
@@ -55,12 +56,15 @@ public class CasesService : ICasesService
         {
             entity.FacilityStatusId = null;
         }
-        _caseRepository.Create(entity);
+        var createdEntity = _caseRepository.Create(entity);
         List<Guid> ids = new List<Guid>();
-        ids.Add(entity.Id);
 
-        // Send event
-        SendEventToHostedService(entity, ids);
+        if(createdEntity.ScheduledDevice != null && !createdEntity.ScheduledDevice.Equals(Guid.Empty))
+        {
+            ids.Add((Guid)createdEntity.ScheduledDevice);
+            // Send event
+            SendEventToHostedService(createdEntity, ids);
+        }
 
         // SignalR
         _caseHub.SendMessageToRefreshList($"Create done.");
