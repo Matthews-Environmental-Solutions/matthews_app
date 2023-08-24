@@ -26,6 +26,7 @@ import {
 } from './selection-option';
 import { FacilityStatusService } from './facility-status.service';
 import { FacilityStatus } from './facility-status.model';
+import { skip } from 'rxjs/operators';
 
 @Component({
   selector: 'app-case',

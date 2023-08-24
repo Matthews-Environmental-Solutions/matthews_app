@@ -1,6 +1,8 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 export const environment = {
   production: true,
   casesApiUrl:'https://develop.comdata.rs/MatthewsApp.API/Case',
+  facilityStatusUrl: 'https://develop.comdata.rs/MatthewsApp.API/FacilityStatus',
   i4connectedApiUrl: 'https://matthewscremation.i4connected.cloud/api/api/',
   auth_config: {
     client_id: 'matthews.web',
