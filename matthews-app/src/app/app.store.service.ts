@@ -233,7 +233,8 @@ export class AppStoreService extends ComponentStore<AppState> {
         const signal = device.signals.find(
           (s) => s.id === measurement.signalId
         );
-        if (signal?.value) {
+        // eslint-disable-next-line eqeqeq
+        if (signal?.value || signal?.value == '0') {
           signal.value = measurement.value;
         }
       });
