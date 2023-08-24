@@ -8,6 +8,7 @@ using MatthewsApp.API.PrismEvents;
 using MatthewsApp.API.Repository.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Microsoft.Extensions.DependencyInjection;
 using Prism.Events;
 using System;
 using System.Collections;
@@ -31,7 +32,7 @@ public interface ICasesService
     Task<IEnumerable<Case>> GetScheduledCasesByWeek(Guid facilityId, DateTime dateStartDateOfWeek);
     Task<IEnumerable<Case>> GetAllCasesByFacility(Guid facilityId);
     Task<IEnumerable<Case>> GetScheduledCasesByTimePeriod(Guid facilityId, DateTime dateStart, DateTime dateEnd);
-    Tuple<Case, bool> UpdateCaseWhenCaseStart(StartCaseDto dto);
+    Task<Tuple<Case, bool>> UpdateCaseWhenCaseStart(StartCaseDto dto);
     void UpdateCaseWhenCaseEnd(EndCaseDto dto);
     Task<Case> GetNextCaseForDevice(Guid deviceId);
     Task<IEnumerable<Case>> GetReadyCasesByDevice(Guid deviceId);
@@ -39,15 +40,17 @@ public interface ICasesService
 
 public class CasesService : ICasesService
 {
+    private readonly IServiceScopeFactory _serviceScopeFactory;
     private readonly ICaseRepository _caseRepository;
     private readonly CaseHub _caseHub;
     private IEventAggregator _ea;
 
-    public CasesService(ICaseRepository repository, IEventAggregator ea, CaseHub caseHub)
+    public CasesService(ICaseRepository repository, IEventAggregator ea, CaseHub caseHub, IServiceScopeFactory serviceScopeFactory)
     {
         _caseRepository = repository;
         _ea = ea;
         _caseHub = caseHub;
+        _serviceScopeFactory = serviceScopeFactory;
     }
 
     public void Create(Case entity)
@@ -102,7 +105,7 @@ public class CasesService : ICasesService
         _caseHub.SendMessageToRefreshList($"Update done.");
     }
 
-    public Tuple<Case, bool> UpdateCaseWhenCaseStart(StartCaseDto dto)
+    public async Task<Tuple<Case, bool>> UpdateCaseWhenCaseStart(StartCaseDto dto)
     {
         Case entity;
         bool entityDoesNotExistInDb = false;
@@ -124,6 +127,16 @@ public class CasesService : ICasesService
         entity.ActualStartTime = dto.StartTime;
         entity.ActualFacility = dto.FACILITY_ID;
         entity.ActualDevice = dto.CREMATOR_ID;
+
+        DeviceDto cremator = null;
+        using (var scope = _serviceScopeFactory.CreateScope())
+        {
+            ICaseI4cHttpClientService _caseI4CHttpClientService = scope.ServiceProvider.GetService<ICaseI4cHttpClientService>();
+            List<DeviceDto> cremators = (await _caseI4CHttpClientService.GetAllDevicesAsync()).ToList();
+            cremator = cremators.FirstOrDefault(c => c.id == dto.CREMATOR_ID);
+        }
+
+        entity.ScheduledDeviceAlias = cremator is not null ? cremator.alias : string.Empty;
         //entity.PerformedBy = dto.User; // type is different
         entity.Status = CaseStatus.IN_PROGRESS;
 

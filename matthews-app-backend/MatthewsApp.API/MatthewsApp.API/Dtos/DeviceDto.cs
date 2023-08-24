@@ -6,7 +6,8 @@ public record DeviceDto(
     Guid id,
     Guid siteId,
     Guid? adapterId,
-    bool? active
+    bool? active,
+    string alias
     )
 {
 }

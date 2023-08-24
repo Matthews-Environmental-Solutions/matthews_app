@@ -264,7 +264,7 @@ public class CaseMqttService : IHostedService
                 using (var scope = _serviceScopeFactory.CreateScope())
                 {
                     ICasesService _casesService = scope.ServiceProvider.GetService<ICasesService>();
-                    Tuple<Case, bool> response = _casesService.UpdateCaseWhenCaseStart(startCase);
+                    Tuple<Case, bool> response = _casesService.UpdateCaseWhenCaseStart(startCase).Result;
 
                     // if LOADED_ID was empty, we will create it and will send back to Flexy
                     if (response.Item2)
