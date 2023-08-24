@@ -197,6 +197,8 @@ export class CaseAddEditComponent implements OnInit {
 
     if (this.caseForm.get('scheduledDevice')?.value != '') {
       this.case.scheduledDevice = this.cremators.map(c => c.id).includes(this.caseForm.get('scheduledDevice')?.value) ? this.caseForm.get('scheduledDevice')?.value : this.GUID_EMPTY;
+      var cremator = this.cremators.find(c => c.id == this.caseForm.get('scheduledDevice')?.value);
+      this.case.scheduledDeviceAlias =  cremator ? cremator.alias : '';
     } else {
       this.case.scheduledDevice = this.GUID_EMPTY;
     }
