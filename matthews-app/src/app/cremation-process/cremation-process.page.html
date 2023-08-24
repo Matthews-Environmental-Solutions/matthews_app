@@ -149,14 +149,14 @@
               <div class="wrapper">
                 <span class="footer-text"><b>Prepare System</b><br /></span>
                 <span class="footer-text">Preheat in Progress<br /></span>
-                <ng-container *ngFor="let signal of selectedDevice.signals">
-                  <span class="footer-text" *ngIf="signal.name === 'TT100_PV'">
-                    {{'PrimChamber' | translate}}: {{signal.value}}°C <br
+                <!-- <ng-container *ngFor="let signal of selectedDevice.signals"> -->
+                  <span class="footer-text">
+                    {{'PrimChamber' | translate}}: {{signalTt100}}°C <br
                   /></span>
-                  <span class="footer-text" *ngIf="signal.name === 'TT101_PV'">
-                    {{'SecChamber' | translate}}: {{signal.value}}°C <br
+                  <span class="footer-text">
+                    {{'SecChamber' | translate}}: {{signalTt101}}°C <br
                   /></span>
-                </ng-container>
+                <!-- </ng-container> -->
                 <span class="footer-text"
                   >{{"Selected Mode: "}}{{burnMode[selectedBurnMode] ?? "-" |
                   translate}}</span
@@ -170,7 +170,7 @@
                   class="btndanger"
                 >
                   {{'StopPreheat' | translate}}
-                </ion-button>
+              </ion-button>
               </div>
             </ng-container>
           </ng-container>

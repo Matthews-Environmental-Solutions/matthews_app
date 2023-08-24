@@ -1,4 +1,4 @@
-export interface Facility {
+export class Facility {
   id: string;
   name: string;
   icon: string;

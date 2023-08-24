@@ -6,6 +6,7 @@ import { Case } from '../case/case';
 import { CaseStatuses } from '../core/enums';
 import { TranslateService } from '@ngx-translate/core';
 import { SignalRCaseApiService } from '../core/signal-r.case-api.service';
+import { Facility } from '../facility/facility';
 
 @Component({
   selector: 'app-schedule',
@@ -19,6 +20,7 @@ export class SchedulePage implements OnInit, OnDestroy {
   scheduleVm$ = this.caseStore.scheduleVm$;
   defaultFacilityId: any;
   caseStatus = CaseStatuses;
+  selectedFacility = new Facility();
 
   constructor(private caseStore: AppStoreService, public modalController: ModalController, public alertController: AlertController,
     private translateService: TranslateService, private signalRCaseApiService: SignalRCaseApiService, private appStore: AppStoreService) { }
@@ -27,6 +29,7 @@ export class SchedulePage implements OnInit, OnDestroy {
     this.showSearchbar = false;
     this.setDefaultValues();
     this.establishSignalRConnection(this.defaultFacilityId);
+    this.selectFacility(this.selectedFacility, this.defaultFacilityId);
   }
 
   ngOnDestroy(): void {
@@ -37,6 +40,12 @@ export class SchedulePage implements OnInit, OnDestroy {
     this.signalRCaseApiService.initializeSignalRCaseApiConnection();
     this.signalRCaseApiService.addCaseDataListener(facilityId);
   }
+
+  selectFacility(facility: Facility, id: string) {
+    this.selectedFacility.name = facility.name;
+    this.selectedFacility.id = id;
+    this.appStore.updateSelectedFacility(this.selectedFacility);
+   }
 
   deleteCase(selectedCase: Case) {
     const alertOptions: AlertOptions = {
@@ -72,6 +81,7 @@ export class SchedulePage implements OnInit, OnDestroy {
     this.selectedFacilityId = $event.target.value;
     this.caseStore.getCases(this.selectedFacilityId);
     this.signalRCaseApiService.stopConnection();
+    this.selectFacility($event.target, $event.target.value);
     this.establishSignalRConnection(this.selectedFacilityId);
   }
 

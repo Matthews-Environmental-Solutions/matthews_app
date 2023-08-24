@@ -24,6 +24,7 @@ import {
 } from '../case/selection-option';
 import { skip, tap } from 'rxjs/operators';
 import { CaseService } from '../case/case.service';
+import { Signal } from '../device-list/signal';
 
 @Component({
   selector: 'app-device-details',
@@ -40,6 +41,12 @@ export class CremationProcessPage implements OnInit {
         return;
       }
       selectedDevice.signals.forEach((signal) => {
+        if(signal.name === 'TT100_PV') {
+          this.signalTt100 = signal.value;
+        }
+        if (signal.name === 'TT101_PV') {
+          this.signalTt101 = signal.value;
+        }
         if (
           signal.name === 'MACHINE_STATUS' &&
           parseInt(signal.value) >= 40 &&
@@ -92,6 +99,8 @@ export class CremationProcessPage implements OnInit {
   stepNumber: number;
   case: Case;
   clientCaseId: any;
+  signalTt100: string;
+  signalTt101: string;
 
   containerTypes: ContainerTypeSelection[] = [
     { id: 0, name: 'None' },
