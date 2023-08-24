@@ -14,9 +14,10 @@
             </button>
         </mat-toolbar>
 
+        <mat-progress-bar *ngIf="loader" mode="indeterminate" class="indeterminate-progress-bar"></mat-progress-bar>
 
-        <div class="card-content">
-
+        <div class="card-content" *ngIf="!loader">
+            
             <div class="left-column">
                 <mat-error
                     *ngIf="caseForm.get('clientCaseId')?.invalid && (caseForm.get('clientCaseId')?.dirty || caseForm.get('clientCaseId')?.touched)">

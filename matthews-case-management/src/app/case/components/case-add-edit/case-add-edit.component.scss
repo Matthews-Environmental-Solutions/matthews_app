@@ -3,6 +3,8 @@
 
     margin: 15px;
     height: calc(100% - 30px);
+
+    position: relative;
 }
 
 .card-header {
@@ -144,6 +146,12 @@
     font-style: italic;
 }
 
-.icon-in-option{
+.icon-in-option {
     // padding-top: 30px;
+}
+
+.indeterminate-progress-bar {
+    position: absolute;
+    top: 64px;
+    left: 0px;
 }

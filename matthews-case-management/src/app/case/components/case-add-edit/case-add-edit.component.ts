@@ -50,6 +50,7 @@ export class CaseAddEditComponent implements OnInit {
   facilities: Facility[] = [];
   selectedFacilityId: string = this.GUID_EMPTY;
   facilityStatuses: FacilityStatus[] = [];
+  loader: boolean = true;
 
   caseForm: FormGroup;
 
@@ -107,6 +108,8 @@ export class CaseAddEditComponent implements OnInit {
       this.title = id == null ? 'addNewCase' : 'editCase';
       if (id) {
         this.getCaseFromApi(id);
+      } else {
+        this.loader = false;
       }
     });
 
@@ -151,7 +154,7 @@ export class CaseAddEditComponent implements OnInit {
             .subscribe(fStatuses => this.facilityStatuses = fStatuses));
 
           this.subs.add(this.i4connectedService.getDevicesByFacility2(response.scheduledFacility)
-            .subscribe(devices => this.cremators = devices));
+            .subscribe(devices => {this.cremators = devices; this.loader = false;}));
 
         } else {
           this.router.navigate([``]);
