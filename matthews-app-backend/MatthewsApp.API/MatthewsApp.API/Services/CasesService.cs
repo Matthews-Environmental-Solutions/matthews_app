@@ -40,17 +40,17 @@ public interface ICasesService
 
 public class CasesService : ICasesService
 {
-    private readonly IServiceScopeFactory _serviceScopeFactory;
+    private readonly ICaseI4cHttpClientService _caseI4CHttpClientService;
     private readonly ICaseRepository _caseRepository;
     private readonly CaseHub _caseHub;
     private IEventAggregator _ea;
 
-    public CasesService(ICaseRepository repository, IEventAggregator ea, CaseHub caseHub, IServiceScopeFactory serviceScopeFactory)
+    public CasesService(ICaseRepository repository, IEventAggregator ea, CaseHub caseHub, ICaseI4cHttpClientService caseI4CHttpClientService)
     {
         _caseRepository = repository;
         _ea = ea;
         _caseHub = caseHub;
-        _serviceScopeFactory = serviceScopeFactory;
+        _caseI4CHttpClientService = caseI4CHttpClientService;
     }
 
     public void Create(Case entity)
@@ -129,15 +129,12 @@ public class CasesService : ICasesService
         entity.ActualDevice = dto.CREMATOR_ID;
 
         DeviceDto cremator = null;
-        using (var scope = _serviceScopeFactory.CreateScope())
-        {
-            ICaseI4cHttpClientService _caseI4CHttpClientService = scope.ServiceProvider.GetService<ICaseI4cHttpClientService>();
-            List<DeviceDto> cremators = (await _caseI4CHttpClientService.GetAllDevicesAsync()).ToList();
-            cremator = cremators.FirstOrDefault(c => c.id == dto.CREMATOR_ID);
-        }
+
+        List<DeviceDto> cremators = (await _caseI4CHttpClientService.GetAllDevicesAsync()).ToList();
+        cremator = cremators.FirstOrDefault(c => c.id == dto.CREMATOR_ID);
 
         entity.ScheduledDeviceAlias = cremator is not null ? cremator.alias : string.Empty;
-        //entity.PerformedBy = dto.User; // type is different
+        entity.PerformedBy = dto.User;
         entity.Status = CaseStatus.IN_PROGRESS;
 
         if (entityDoesNotExistInDb)

@@ -58,7 +58,7 @@ public class Startup
         //services.AddScoped<IMatthewsAppDBContext, MatthewsAppDBContext>();
         services.AddDbContext<IMatthewsAppDBContext, MatthewsAppDBContext>(options => options.UseSqlServer(connectionString));
 
-        services.AddScoped<ICaseI4cHttpClientService, CaseI4cHttpClientService>();
+        services.AddSingleton<ICaseI4cHttpClientService, CaseI4cHttpClientService>();
 
         services.AddSignalR(o =>
         {

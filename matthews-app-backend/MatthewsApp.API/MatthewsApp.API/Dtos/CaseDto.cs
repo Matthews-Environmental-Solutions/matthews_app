@@ -25,7 +25,7 @@ public record CaseDto(
     string LastName,
     Guid? ModifiedBy, // Guid
     DateTime? ModifiedTime, // DateTime
-    Guid? PerformedBy, // Guid
+    string PerformedBy,
     Guid? ScheduledDevice, // Guid
     string ScheduledDeviceAlias,
     Guid? ScheduledFacility, // Guid

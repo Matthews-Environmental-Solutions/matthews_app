@@ -78,11 +78,8 @@ public class Case : BaseEntity
     public DateTime? ActualEndTime { get; set; }
 
 
-
-
-    [Column(TypeName = "uniqueidentifier")]
-    public Guid? PerformedBy { get; set; }
-
+    [Column(TypeName = "nvarchar(64)")]
+    public string PerformedBy { get; set; }
 
 
 

@@ -249,7 +249,7 @@ public class CaseMqttService : IHostedService
         IMqttClient mqttClient = mqttFactory.CreateMqttClient();
 
         // DEFINE CALLBACKs to mqttClient event
-        mqttClient.ApplicationMessageReceivedAsync += e =>
+        mqttClient.ApplicationMessageReceivedAsync += async e =>
         {
             Debug.WriteLine("Received application message: " + e.ClientId + " " + e.ResponseReasonString);
             string receivedMessage = Encoding.UTF8.GetString(e.ApplicationMessage.Payload);
@@ -264,7 +264,7 @@ public class CaseMqttService : IHostedService
                 using (var scope = _serviceScopeFactory.CreateScope())
                 {
                     ICasesService _casesService = scope.ServiceProvider.GetService<ICasesService>();
-                    Tuple<Case, bool> response = _casesService.UpdateCaseWhenCaseStart(startCase).Result;
+                    Tuple<Case, bool> response = await _casesService.UpdateCaseWhenCaseStart(startCase);
 
                     // if LOADED_ID was empty, we will create it and will send back to Flexy
                     if (response.Item2)
@@ -289,7 +289,7 @@ public class CaseMqttService : IHostedService
             }
 
             _caseHub.SendMessageToRefreshList($"ClientId: {e.ClientId}");
-            return Task.CompletedTask;
+            //return Task.CompletedTask;
         };
 
         mqttClient.ConnectedAsync += e =>
