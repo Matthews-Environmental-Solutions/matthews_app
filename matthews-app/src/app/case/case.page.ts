@@ -83,10 +83,10 @@ export class CasePage implements OnInit {
         .getAllStatusesByFacility(this.selectedFacility)
         .then((data) => (this.facilityStatuses = data));
     });
+    this.newCase.scheduledStartTime = this.formatDateAndTime(
+      new Date().toString()
+    );
     if (this.fromProcess) {
-      this.newCase.scheduledStartTime = this.formatDateAndTime(
-        new Date().toString()
-      );
       this.caseStore.selectedFacility$.subscribe(
         (s) => (this.selectedFacility = s.id)
       );
