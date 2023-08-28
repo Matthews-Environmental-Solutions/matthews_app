@@ -22,6 +22,7 @@ export const environment = {
 // export const environment = {
 //   production: false,
 //     casesApiUrl: 'https://develop.comdata.rs/MatthewsApp.API/Case',
+//     facilityStatusUrl: 'https://develop.comdata.rs/MatthewsApp.API/FacilityStatus',
 //     i4connectedApiUrl: 'https://matthewscremation.i4connected.cloud/api/api/',
 //   auth_config: {
 //     client_id: 'matthews.app',

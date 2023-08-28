@@ -40,7 +40,7 @@
             </span>
             <span
               class="font-size"
-              *ngIf="parseSignalValue(signal.value)> 40 ? true : false"
+              *ngIf="parseSignalValue(signal.value)>= 40 ? true : false"
               >{{"Preheat Complete"}}
             </span>
           </ng-template>
@@ -113,7 +113,7 @@
   <ion-footer class="ion-no-border">
     <ng-container *ngIf="stepNumber == 0">
       <div class="footer-content">
-        <ng-container *ngFor="let signal of selectedDevice.signals">
+        <ng-container *ngFor="let signal of selectedDevice.signals; trackBy:trackItems">
           <ng-container *ngIf="signal.name === 'MACHINE_STATUS'">
             <!-- segment -->
             <ng-container
@@ -180,7 +180,7 @@
 
     <ng-container *ngIf="stepNumber == 1">
       <div class="footer-content">
-        <ng-container *ngFor="let signal of selectedDevice.signals">
+        <ng-container *ngFor="let signal of selectedDevice.signals; trackBy:trackItems">
           <ng-container *ngIf="signal.name === 'MACHINE_STATUS'">
             <ng-container
               *ngIf="selectedFacility$ | async as selectedFacility"
@@ -263,7 +263,7 @@
 
     <ng-container *ngIf="stepNumber == 2">
       <div class="footer-content">
-        <ng-container *ngFor="let signal of selectedDevice.signals">
+        <ng-container *ngFor="let signal of selectedDevice.signals; trackBy:trackItems">
           <ng-container *ngIf="signal.name === 'MACHINE_STATUS'">
             <ng-container
               *ngIf="parseSignalValue(signal.value) < 80 && stepNumber == 2"
@@ -305,7 +305,7 @@
                 <span class="footer-text"
                   >Elapsed time: {{cremationTime}}min<br
                 /></span>
-                <ng-container *ngFor="let signal of selectedDevice.signals">
+                <ng-container *ngFor="let signal of selectedDevice.signals; trackBy:trackItems">
                   <span class="footer-text" *ngIf="signal.name === 'TT100_PV'">
                     {{'PrimChamber' | translate}}: {{signal.value}}°C <br
                   /></span>
@@ -357,14 +357,14 @@
 
     <ng-container *ngIf="stepNumber == 3">
       <div class="footer-content">
-        <ng-container *ngFor="let signal of selectedDevice.signals">
+        <ng-container *ngFor="let signal of selectedDevice.signals; trackBy:trackItems">
           <ng-container *ngIf="signal.name === 'MACHINE_STATUS'">
             <ng-container
               *ngIf="!isCoolDownStarted && !isRakeOutStarted && stepNumber == 3"
             >
               <div class="wrapper">
                 <span class="footer-text"><b>Complete Process</b><br /></span>
-                <ng-container *ngFor="let signal of selectedDevice.signals">
+                <ng-container *ngFor="let signal of selectedDevice.signals; trackBy:trackItems">
                   <span class="footer-text" *ngIf="signal.name === 'TT100_PV'">
                     {{'PrimChamber' | translate}}: {{signal.value}}°C <br
                   /></span>
@@ -399,7 +399,7 @@
                 <span class="footer-text"
                   >{{'Remaining' | translate}} {{cooldownTime}} min<br
                 /></span>
-                <ng-container *ngFor="let signal of selectedDevice.signals">
+                <ng-container *ngFor="let signal of selectedDevice.signals; trackBy:trackItems">
                   <span class="footer-text" *ngIf="signal.name === 'TT100_PV'">
                     {{'PrimChamber' | translate}}: {{signal.value}}°C <br
                   /></span>

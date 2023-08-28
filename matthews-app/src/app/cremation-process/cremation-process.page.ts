@@ -67,6 +67,12 @@ export class CremationProcessPage implements OnInit {
         ) {
           this.move(3);
           this.isCaseSelected = false;
+        } else if (
+          signal.name === 'MACHINE_STATUS' &&
+          parseInt(signal.value) < 40
+        ) {
+          this.move(0);
+          this.isCaseSelected = false;
         }
       });
     })
@@ -237,6 +243,10 @@ export class CremationProcessPage implements OnInit {
     };
 
     this.presentAlert(alertOptions);
+  }
+
+  trackItems(index: number, itemObject: any) {
+    return itemObject.id;
   }
 
   selectCase() {
