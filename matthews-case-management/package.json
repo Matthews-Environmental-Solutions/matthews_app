@@ -29,6 +29,7 @@
     "angular-oauth2-oidc": "^15.0.1",
     "angular-oauth2-oidc-jwks": "^15.0.1",
     "date-fns": "^2.29.3",
+    "date-fns-tz": "^2.0.0",
     "messageformat": "^2.3.0",
     "ngx-skeleton-loader": "^7.0.0",
     "ngx-translate-messageformat-compiler": "^6.3.0",

@@ -39,6 +39,6 @@ export class UserSettingService {
         if (day.length < 2)
           day = '0' + day;
     
-        return `${year}-${month}-${day} 00:00:00`;
+        return `${year}-${month}-${day} 12:00:00`;
       }
 }

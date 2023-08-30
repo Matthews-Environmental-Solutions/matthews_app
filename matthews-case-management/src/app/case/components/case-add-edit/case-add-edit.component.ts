@@ -23,6 +23,7 @@ import { MatSelectionList } from '@angular/material/list';
 import { Facility } from 'src/app/models/facility.model';
 import { I4connectedService } from 'src/app/services/i4connected.service';
 import { MatSelectChange } from '@angular/material/select';
+import { CalendarService } from 'src/app/services/calendar.service';
 
 @Component({
   selector: 'case-add-edit',
@@ -76,6 +77,7 @@ export class CaseAddEditComponent implements OnInit {
     private translate: TranslateService,
     private facilityStatusService: FacilityStatusService,
     private i4connectedService: I4connectedService,
+    private calendarService: CalendarService,
     private _shackBar: WfactorySnackBarService
   ) {
     this.caseForm = new FormGroup({
@@ -140,7 +142,8 @@ export class CaseAddEditComponent implements OnInit {
         this.caseForm.get('facilityStatus')?.setValue(response.facilityStatusId);
 
         if (response.scheduledStartTime && response.scheduledStartTime !== this.DATETIME_MIN) {
-          let startTime = new Date(response.scheduledStartTime);
+          let startTime = this.calendarService.getDateInUserProfilesTimezone(response.scheduledStartTime);
+          // let startTime = new Date(response.scheduledStartTime);
           if (isValid(startTime)) {
             this.caseForm.get('scheduledStartDateTime')?.setValue(startTime);
           } else {
@@ -202,7 +205,7 @@ export class CaseAddEditComponent implements OnInit {
     } else {
       this.case.scheduledDevice = this.GUID_EMPTY;
     }
-    this.case.scheduledStartTime = this.caseForm.get('scheduledStartDateTime')?.value;
+    this.case.scheduledStartTime = this.calendarService.getUtcDateFromUserProfileTimezone(this.caseForm.get('scheduledStartDateTime')?.value);
     this.case.scheduledFacility = this.selectedFacilityId.length == 0 ? this.GUID_EMPTY : this.selectedFacilityId;
     this.case.facilityStatusId = (this.caseForm.get('facilityStatus')?.value == '') ? this.GUID_EMPTY : this.caseForm.get('facilityStatus')?.value;
 

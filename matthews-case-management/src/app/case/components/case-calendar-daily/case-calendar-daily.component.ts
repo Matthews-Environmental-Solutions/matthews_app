@@ -51,7 +51,7 @@ export class CaseCalendarDailyComponent implements OnInit {
     }));
 
     this.subs.add(this.stateService.selectedDate$.subscribe(d => {
-      d.setHours(0, 0, 0, 0);
+      // d.setHours(0, 0, 0, 0);
       this.selectedDay = d;
       this.checkHeaderDayButtons();
 
@@ -108,7 +108,9 @@ export class CaseCalendarDailyComponent implements OnInit {
   }
 
   checkHeaderDayButtons() {
-    let index = this.days.map(Number).indexOf(+this.selectedDay);
+    let dayToCompare = new Date(this.selectedDay);
+    dayToCompare.setHours(0, 0, 0, 0);
+    let index = this.days.map(Number).indexOf(+dayToCompare);
     this.buttonUsed = index;
   }
 
@@ -117,13 +119,16 @@ export class CaseCalendarDailyComponent implements OnInit {
     return `${this.days[indexNumber].getDate().toString()} ${this.days[indexNumber].toLocaleString(currentLang, { month: 'short' })}`;
   }
 
-  dayClick(dayClick: number) {
-    this.stateService.setSelectedDate(this.days[dayClick]);
-    this.changeSelectedDay(this.days[dayClick]);
-    this.buttonUsed = dayClick;
+  dayClick(dayIndex: number) {
+    var dayClicked = new Date(this.days[dayIndex]);
+    dayClicked.setHours(12, 0, 0, 0);
+
+    this.stateService.setSelectedDate(dayClicked);
+    this.changeSelectedDay(dayClicked);
+    this.buttonUsed = dayIndex;
     
     let userSetting = this.userSettingService.getUserSettingLastValue();
-    userSetting.lastUsedSelectedDay = this.days[dayClick];
+    userSetting.lastUsedSelectedDay = dayClicked;
     localStorage.setItem(userSetting.username, JSON.stringify(userSetting));
     this.userSettingService.setUserSetting(userSetting);
   }

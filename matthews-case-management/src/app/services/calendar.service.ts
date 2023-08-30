@@ -1,14 +1,17 @@
 import { Injectable } from "@angular/core";
 import { TranslateService } from "@ngx-translate/core";
 import { getWeek, startOfWeek, addDays, getDate, getMonth } from 'date-fns'
+import { zonedTimeToUtc, utcToZonedTime } from 'date-fns-tz'
 import { listTimeZones } from 'timezone-support';
+import { UserSettingService } from "./user-setting.service";
 
 @Injectable({
     providedIn: 'root'
 })
 export class CalendarService {
 
-    constructor(private translate: TranslateService) {
+
+    constructor(private translate: TranslateService, private userSettingService: UserSettingService) {
     }
 
     getWeekNumberByDate(date: Date): number {
@@ -60,4 +63,82 @@ export class CalendarService {
         return listTimeZones();
     }
 
+    getDateInUserProfilesTimezone(d: Date | string): Date {
+        var setting = this.userSettingService.getUserSettingLastValue();
+
+        // if (typeof d === 'string') {
+        //     return new Date(
+        //         new Date(d).toLocaleString('en-US', {
+        //             timeZone: setting.timezone,
+        //             year: 'numeric',
+        //             month: '2-digit',
+        //             day: '2-digit',
+        //             hour: '2-digit',
+        //             minute: '2-digit',
+        //             second: '2-digit',
+        //         }),
+        //     );
+        // }
+
+        //   return new Date(
+        //     d.toLocaleString('en-US', {
+        //         timeZone: setting.timezone,
+        //         year: 'numeric',
+        //         month: '2-digit',
+        //         day: '2-digit',
+        //         hour: '2-digit',
+        //         minute: '2-digit',
+        //         second: '2-digit',
+        //     }),
+        //   );
+        let t = d.toLocaleString('en-US', {
+                    timeZone: setting.timezone,
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                });
+        console.log('time string: ', t);
+
+        var zonedTime = utcToZonedTime(d, setting.timezone)
+        return zonedTime;
+    }
+
+    getUtcDateFromUserProfileTimezoneByDate(d: Date): Date {
+        var setting = this.userSettingService.getUserSettingLastValue();
+        var time = zonedTimeToUtc(d, setting.timezone);
+        return time;
+    }
+
+    getUtcDateFromUserProfileTimezone(d: string): string {
+        var setting = this.userSettingService.getUserSettingLastValue();
+        var time = zonedTimeToUtc(d, setting.timezone);
+        return time.toISOString();
+    }
+
+    formatDateAndTime(date: Date | string): string {
+        var d: Date = new Date(date);
+        
+        var month = '' + (d.getMonth() + 1),
+            day = '' + d.getDate(),
+            year = d.getFullYear(),
+            hour = '' + d.getHours(),
+            minute = '' + d.getMinutes(),
+            second = '' + d.getSeconds();
+
+        if (month.length < 2)
+            month = '0' + month;
+        if (day.length < 2)
+            day = '0' + day;
+        if (hour.length < 2)
+            hour = '0' + hour;
+        if (minute.length < 2)
+            minute = '0' + minute;
+        if (second.length < 2)
+            second = '0' + second;
+
+        return year + '-' + month + '-' + day + 'T' + hour + ':' + minute + ':' + second;
+    }
 }
