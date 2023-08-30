@@ -9,6 +9,7 @@ using MatthewsApp.API.Repository.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Prism.Events;
 using System;
 using System.Collections;
@@ -42,15 +43,17 @@ public class CasesService : ICasesService
 {
     private readonly ICaseI4cHttpClientService _caseI4CHttpClientService;
     private readonly ICaseRepository _caseRepository;
+    private readonly ILogger<CasesService> _logger;
     private readonly CaseHub _caseHub;
     private IEventAggregator _ea;
 
-    public CasesService(ICaseRepository repository, IEventAggregator ea, CaseHub caseHub, ICaseI4cHttpClientService caseI4CHttpClientService)
+    public CasesService(ICaseRepository repository, IEventAggregator ea, CaseHub caseHub, ICaseI4cHttpClientService caseI4CHttpClientService, ILogger<CasesService> logger)
     {
-        _caseRepository = repository;
-        _ea = ea;
-        _caseHub = caseHub;
         _caseI4CHttpClientService = caseI4CHttpClientService;
+        _caseRepository = repository;
+        _caseHub = caseHub;
+        _logger = logger;
+        _ea = ea;
     }
 
     public void Create(Case entity)
@@ -88,6 +91,7 @@ public class CasesService : ICasesService
 
     public void Update(Case entity)
     {
+        _logger.LogDebug("Update of case id");
         Case previousCase = _caseRepository.GetById(entity.Id);
         _caseRepository.Update(entity);
         List<Guid> ids = new List<Guid>();

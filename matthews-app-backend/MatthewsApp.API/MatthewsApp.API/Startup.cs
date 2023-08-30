@@ -13,8 +13,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Prism.Events;
+using Serilog;
 using System;
 using System.Collections.Generic;
 
@@ -32,6 +34,9 @@ public class Startup
     // This method gets called by the runtime. Use this method to add services to the container.
     public void ConfigureServices(IServiceCollection services)
     {
+        services.AddLogging(loggingBuilder =>
+          loggingBuilder.AddSerilog(dispose: true));
+
         services.AddControllers();
         services.AddSwaggerGen(c =>
         {
@@ -55,7 +60,7 @@ public class Startup
         });
 
         var connectionString = Configuration["connectionStrings:MatthewsAppDBConnectionString"];
-        //services.AddScoped<IMatthewsAppDBContext, MatthewsAppDBContext>();
+
         services.AddDbContext<IMatthewsAppDBContext, MatthewsAppDBContext>(options => options.UseSqlServer(connectionString));
 
         services.AddSingleton<ICaseI4cHttpClientService, CaseI4cHttpClientService>();
@@ -92,6 +97,11 @@ public class Startup
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
+        Log.Logger = new LoggerConfiguration()
+            .ReadFrom.Configuration(Configuration)
+            //.WriteTo.File("C:\\mylogs\\log.txt", rollingInterval: RollingInterval.Day)
+            .CreateLogger();
+
         if (env.IsDevelopment())
         {
             app.UseDeveloperExceptionPage();
@@ -108,7 +118,7 @@ public class Startup
         }
 
         app.UseCors(x => x
-        .WithOrigins("http://localhost:4200", "https://develop.comdata.rs/MatthewsApp.API", "http://localhost:8100")
+        .WithOrigins("http://localhost:4200", "https://develop.comdata.rs/MatthewsApp.API", "http://localhost:8100", "https://com.matthews.app")
         .AllowAnyMethod()
         .AllowAnyHeader()
         .AllowCredentials());
@@ -125,8 +135,4 @@ public class Startup
         });
     }
 
-    private void GetDevices()
-    {
-
-    }
 }
