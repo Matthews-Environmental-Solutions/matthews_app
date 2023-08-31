@@ -1,21 +1,14 @@
-﻿using IdentityModel;
-using MatthewsApp.API.Dtos;
+﻿using MatthewsApp.API.Dtos;
 using MatthewsApp.API.Enums;
-using MatthewsApp.API.Mappers;
 using MatthewsApp.API.Models;
-using MatthewsApp.API.Mqtt;
 using MatthewsApp.API.PrismEvents;
 using MatthewsApp.API.Repository.Interfaces;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Prism.Events;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Principal;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace MatthewsApp.API.Services;
@@ -62,6 +55,9 @@ public class CasesService : ICasesService
         {
             entity.FacilityStatusId = null;
         }
+        //entity.FirstName = UTF8toASCII(entity.FirstName);
+        //entity.LastName = UTF8toASCII(entity.LastName);
+
         var createdEntity = _caseRepository.Create(entity);
         List<Guid> ids = new List<Guid>();
 
@@ -93,6 +89,9 @@ public class CasesService : ICasesService
     {
         _logger.LogDebug("Update of case id");
         Case previousCase = _caseRepository.GetById(entity.Id);
+
+        //entity.FirstName = UTF8toASCII(entity.FirstName);
+        //entity.LastName = UTF8toASCII(entity.LastName);
         _caseRepository.Update(entity);
         List<Guid> ids = new List<Guid>();
 
@@ -341,5 +340,14 @@ public class CasesService : ICasesService
         }
     }
 
+    //public static string UTF8toASCII(string text)
+    //{
+    //    System.Text.Encoding utf8 = System.Text.Encoding.UTF8;
+    //    Byte[] encodedBytes = utf8.GetBytes(text);
+    //    Byte[] convertedBytes =
+    //            Encoding.Convert(Encoding.UTF8, Encoding.ASCII, encodedBytes);
+    //    System.Text.Encoding ascii = System.Text.Encoding.ASCII;
 
+    //    return ascii.GetString(convertedBytes);
+    //}
 }

@@ -15,13 +15,11 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
-using System.Diagnostics.Metrics;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace MatthewsApp.API.Mqtt;
 
@@ -38,7 +36,7 @@ public class CaseMqttService : IHostedService
     private readonly CaseHub _caseHub;
     private IConfiguration _configuration;
     private ICollection<DeviceDto> _devices;
-    private readonly ILogger<CaseMqttService> _logger;
+    private ILogger<CaseMqttService> _logger;
     private readonly IServiceScopeFactory _serviceScopeFactory;
 
     public CaseMqttService(
@@ -58,6 +56,7 @@ public class CaseMqttService : IHostedService
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
+        _logger.LogInformation("---------- Case Mqtt Service is starting");
 
         // 1. SUBSCRIBE TO EVENT(S)
         _ea.GetEvent<EventCaseAnyChange>().Subscribe(SendCasesToSeveralDevices);
@@ -71,6 +70,8 @@ public class CaseMqttService : IHostedService
 
     public async Task StopAsync(CancellationToken cancellationToken)
     {
+        _logger.LogInformation("---------- Case Mqtt Service is stopping");
+
         _ea.GetEvent<EventCaseAnyChange>().Unsubscribe(SendCasesToSeveralDevices);
 
         var mqttClientDisconnectOptions = _mqttFactory.CreateClientDisconnectOptionsBuilder().Build();
@@ -95,13 +96,15 @@ public class CaseMqttService : IHostedService
                 {
                     try
                     {
+                        _logger.LogInformation("---------- Case Mqtt Service - GetDevicesAsync");
+
                         using (var scope = _serviceScopeFactory.CreateScope())
                         {
                             ICaseI4cHttpClientService _caseI4CHttpClientService = scope.ServiceProvider.GetService<ICaseI4cHttpClientService>();
 
                             // 1. get devices
                             _devices = await _caseI4CHttpClientService.GetAllDevicesAsync();
-                            _logger.LogInformation($"Number of devices: {_devices.Count()}");
+                            _logger.LogInformation($"---------- Case Mqtt Service - Number of devices: {_devices.Count}");
 
                             // 2. then iterate devices, 
                             foreach (DeviceDto device in _devices)
@@ -132,6 +135,8 @@ public class CaseMqttService : IHostedService
                                     );
 
                                 _mqttConnectionSettings.Add(connection);
+
+                                _logger.LogInformation($"---------- Case Mqtt Service - MqttConnectionSettingDto is added for device: {connection.DeviceId} with topic {connection.Topic}");
 
                                 Debug.WriteLine($"{deviceDetailsCfg.topic}");
                             }
@@ -189,11 +194,14 @@ public class CaseMqttService : IHostedService
                                         .WithCleanSession()
                                         .Build();
 
+                                _logger.LogInformation($"---------- Case Mqtt Service - ConnectAsync to {setting.Host}");
                                 MqttClientConnectResult result = await _mqttClient.ConnectAsync(options, CancellationToken.None);
                                 setting.Connected = result.ResultCode == MqttClientConnectResultCode.Success ? true : false;
 
                                 if (setting.Connected)
                                 {
+                                    _logger.LogInformation($"---------- Case Mqtt Service - Connection established to {setting.Host}");
+
                                     // Once connection is established, get the clientId
                                     setting.ClientId = _mqttClient.Options.ClientId;
                                     // collect all topics to subscribe for particular mqtt broker (host)
@@ -205,13 +213,15 @@ public class CaseMqttService : IHostedService
                                     {
                                         mqttSubscribeOptionsBuilder.WithTopicFilter(f =>
                                         {
+                                            _logger.LogInformation($"---------- Case Mqtt Service - Subscribe to topic {topic}/CaseUpdate");
                                             f.WithTopic($"{topic}/CaseUpdate");
                                         });
                                     }
                                     var mqttSubscribeOptions = mqttSubscribeOptionsBuilder.Build();
 
                                     await _mqttClient.SubscribeAsync(mqttSubscribeOptions, CancellationToken.None);
-                                    Debug.WriteLine("MQTT client subscribed to topic.");
+                                    _logger.LogInformation($"---------- Case Mqtt Service - MQTT client subscribed to topics");
+                                    Debug.WriteLine("MQTT client subscribed to topics.");
 
                                     // Send initial information to all devices connected with this broker (connection)
                                     await SendInitialInformationToDevicesOfConnection(setting.Host, _mqttClient);
@@ -226,7 +236,7 @@ public class CaseMqttService : IHostedService
                     catch (Exception ex)
                     {
                         // Handle the exception properly (logging etc.).
-                        _logger.LogError($"Error at MQTT connection establish: {ex.Message}");
+                        _logger.LogError($"---------- Case Mqtt Service - Error at MQTT connection establish: {ex.Message}");
                         Debug.WriteLine("Error at MQTT connection establish: " + ex.Message);
                     }
                     finally
@@ -251,14 +261,14 @@ public class CaseMqttService : IHostedService
         // DEFINE CALLBACKs to mqttClient event
         mqttClient.ApplicationMessageReceivedAsync += async e =>
         {
-            Debug.WriteLine("Received application message: " + e.ClientId + " " + e.ResponseReasonString);
+            _logger.LogInformation($"---------- Case Mqtt Service - Received application message: client {e.ClientId}, {e.ResponseReasonString}");
+
             string receivedMessage = Encoding.UTF8.GetString(e.ApplicationMessage.Payload);
             receivedMessage = receivedMessage.Replace("\r", "").Replace("\t", "").Replace("\n", "");
 
-            Debug.WriteLine(receivedMessage);
-
             if (receivedMessage.Contains("CaseStart"))
             {
+                _logger.LogInformation($"---------- Case Mqtt Service - Received CaseStart message");
                 StartCasePayloadDto payload = JsonSerializer.Deserialize<StartCasePayloadDto>(receivedMessage);
                 StartCaseDto startCase = JsonSerializer.Deserialize<StartCaseDto>(payload.CaseStart);
                 using (var scope = _serviceScopeFactory.CreateScope())
@@ -279,6 +289,8 @@ public class CaseMqttService : IHostedService
 
             if (receivedMessage.Contains("CaseEnd"))
             {
+                _logger.LogInformation($"---------- Case Mqtt Service - Received CaseEnd message");
+
                 EndCasePayloadDto payload = JsonSerializer.Deserialize<EndCasePayloadDto>(receivedMessage);
                 EndCaseDto endCase = JsonSerializer.Deserialize<EndCaseDto>(payload.CaseEnd);
                 using (var scope = _serviceScopeFactory.CreateScope())
@@ -294,7 +306,7 @@ public class CaseMqttService : IHostedService
 
         mqttClient.ConnectedAsync += e =>
         {
-            _logger.LogInformation("The MQTT client is connected.");
+            _logger.LogInformation($"---------- Case Mqtt Service - The MQTT client is connected.");
             Debug.WriteLine("The MQTT client is connected.");
             return Task.CompletedTask;
         };
@@ -320,6 +332,8 @@ public class CaseMqttService : IHostedService
                            .Build();
 
         MqttClientPublishResult _result = await client.PublishAsync(message, CancellationToken.None);
+
+        _logger.LogInformation($"---------- Case Mqtt Service - Send CaseId To Flexy: {jsonPayload.LOADED_ID}");
     }
 
     /// <summary>
@@ -329,11 +343,14 @@ public class CaseMqttService : IHostedService
     /// <returns>List of topics</returns>
     private List<string> GetTopicsForMqttClient(string HostUrl)
     {
+        _logger.LogInformation($"---------- Case Mqtt Service - GetTopicsForMqttClient {HostUrl}");
         return _mqttConnectionSettings.Where(s => s.Host == HostUrl).Select(s => s.Topic).ToList();
     }
 
     private async Task SendInitialInformationToDevicesOfConnection(string host, IMqttClient client)
     {
+        _logger.LogInformation($"---------- Case Mqtt Service - Send Initial Information To Devices Of Connection for host {host}");
+
         // get all devices which belong to connection (host)
         List<MqttConnectionSettingDto> devicesFromConnection = _mqttConnectionSettings.Where(cs => cs.Host == host).ToList();
 
@@ -372,13 +389,16 @@ public class CaseMqttService : IHostedService
                            .Build();
 
                 MqttClientPublishResult _result = await client.PublishAsync(message, CancellationToken.None);
+
+                _logger.LogInformation($"---------- Case Mqtt Service - Publish message to {setting.Topic}/Cases");
             }
         }
     }
 
     private void SendCasesToSeveralDevices(List<Guid> deviceIds)
     {
-        foreach(Guid deviceId in deviceIds)
+        _logger.LogInformation($"---------- Case Mqtt Service - SendCasesToSeveralDevices");
+        foreach (Guid deviceId in deviceIds)
         {
             _ = SendCasesToDeviceAsync(deviceId);
         }
@@ -422,6 +442,7 @@ public class CaseMqttService : IHostedService
                            .Build();
 
         MqttClientPublishResult _result = await client.PublishAsync(message, CancellationToken.None);
+        _logger.LogInformation($"---------- Case Mqtt Service - Publish 20 cases to device {deviceId}");
     }
 
     private dynamic MakeFlatCase20Payload(IEnumerable<Case20Dto> casesToSend)
