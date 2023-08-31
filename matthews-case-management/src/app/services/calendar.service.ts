@@ -100,7 +100,6 @@ export class CalendarService {
                     minute: '2-digit',
                     second: '2-digit',
                 });
-        console.log('time string: ', t);
 
         var zonedTime = utcToZonedTime(d, setting.timezone)
         return zonedTime;
@@ -113,6 +112,9 @@ export class CalendarService {
     }
 
     getUtcDateFromUserProfileTimezone(d: string): string {
+        if(d == '0001-01-01T00:00:00' || d == null){
+            return '0001-01-01T00:00:00';
+        }
         var setting = this.userSettingService.getUserSettingLastValue();
         var time = zonedTimeToUtc(d, setting.timezone);
         return time.toISOString();

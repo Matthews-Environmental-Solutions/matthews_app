@@ -102,10 +102,9 @@ export class CaseCalendarWeeklyComponent implements OnInit {
   parseCasesByDays(): void {
     for (var i = 0; i < this.filteredCases.length; i++) {
       let c = this.filteredCases[i];
-      let caseScheduledStartTime: Date = c.scheduledStartTime != null ? this.calendarService.getDateInUserProfilesTimezone(new Date(c.scheduledStartTime)) : new Date();
-      
+      // The "c.scheduledStartTime" is in local (browser) timezone
+      let caseScheduledStartTime: Date = c.scheduledStartTime != null ? this.calendarService.getDateInUserProfilesTimezone(new Date(c.scheduledStartTime)) : new Date('0001-01-01T00:00:00');
 
-      // The "c.scheduledStartTime" is in local time
       if (this.formatDate(caseScheduledStartTime) == this.formatDate(this.days[0])) {
         this.casesForDay1.push(c);
         continue;

@@ -157,7 +157,7 @@ export class CaseAddEditComponent implements OnInit {
             .subscribe(fStatuses => this.facilityStatuses = fStatuses));
 
           this.subs.add(this.i4connectedService.getDevicesByFacility2(response.scheduledFacility)
-            .subscribe(devices => {this.cremators = devices; this.loader = false;}));
+            .subscribe(devices => { this.cremators = devices; this.loader = false; }));
 
         } else {
           this.router.navigate([``]);
@@ -201,7 +201,7 @@ export class CaseAddEditComponent implements OnInit {
     if (this.caseForm.get('scheduledDevice')?.value != '') {
       this.case.scheduledDevice = this.cremators.map(c => c.id).includes(this.caseForm.get('scheduledDevice')?.value) ? this.caseForm.get('scheduledDevice')?.value : this.GUID_EMPTY;
       var cremator = this.cremators.find(c => c.id == this.caseForm.get('scheduledDevice')?.value);
-      this.case.scheduledDeviceAlias =  cremator ? cremator.alias : '';
+      this.case.scheduledDeviceAlias = cremator ? cremator.alias : '';
     } else {
       this.case.scheduledDevice = this.GUID_EMPTY;
     }
@@ -209,20 +209,20 @@ export class CaseAddEditComponent implements OnInit {
     this.case.scheduledFacility = this.selectedFacilityId.length == 0 ? this.GUID_EMPTY : this.selectedFacilityId;
     this.case.facilityStatusId = (this.caseForm.get('facilityStatus')?.value == '') ? this.GUID_EMPTY : this.caseForm.get('facilityStatus')?.value;
 
-
     // set STATUS to UNSCHEDULED
-    if (this.case.scheduledDevice == this.GUID_EMPTY || this.case.scheduledStartTime == this.DATETIME_MIN || this.case.scheduledFacility == this.GUID_EMPTY) {
+    if (this.case.scheduledDevice == this.GUID_EMPTY || this.case.scheduledStartTime == null || this.case.scheduledStartTime == this.DATETIME_MIN || this.case.scheduledFacility == this.GUID_EMPTY) {
       this.case.status = this.UNSCHEDULED; // 0
     }
 
     // set STATUS to WAITING_FOR_PERMIT
-    if (this.case.scheduledDevice != this.GUID_EMPTY && this.case.scheduledStartTime != this.DATETIME_MIN && this.case.scheduledFacility != this.GUID_EMPTY) {
+    if (this.case.scheduledDevice != this.GUID_EMPTY && this.case.scheduledStartTime != null && this.case.scheduledStartTime != this.DATETIME_MIN && this.case.scheduledFacility != this.GUID_EMPTY) {
       this.case.status = this.WAITING_FOR_PERMIT; // 4
-    }
 
-    var selectedFacilityStatus = this.facilityStatuses.find(fs => fs.id == this.case?.facilityStatusId);
-    if(selectedFacilityStatus?.startProcess){
-      this.case.status = this.READY_TO_CREMATE; // 3
+      // set STATUS to READY_TO_CREMATE
+      var selectedFacilityStatus = this.facilityStatuses.find(fs => fs.id == this.case?.facilityStatusId);
+      if (selectedFacilityStatus?.startProcess) {
+        this.case.status = this.READY_TO_CREMATE; // 3
+      }
     }
 
     if (!this.case.id || this.case.id == this.GUID_EMPTY) {
