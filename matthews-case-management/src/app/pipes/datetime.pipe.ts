@@ -15,6 +15,9 @@ export class DatetimePipe implements PipeTransform {
       return null;
     }
     date = new Date(date);  // if orginal type was a string
+    if(date.getFullYear() == 1){
+      return "";
+    }
     let dateShift = date;
     let setting: UserSettingData = this.userSettingService.getUserSettingLastValue();
     

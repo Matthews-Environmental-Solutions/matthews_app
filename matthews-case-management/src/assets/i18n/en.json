@@ -76,8 +76,9 @@
     "selectedFacilityOnly": "By selected facility",
     "pickIcon": "Pick the icon",
     "showingCasesFor": "Showing cases for",
-
-
+    "actualStartTime": "Actual start time",
+    "actualEndTime": "Actual end time",
+    
     "title": "Service feedback for {{company}}",
     "name": {
         "label": "Name",

@@ -76,6 +76,8 @@
     "selectedFacilityOnly": "Nach ausgewählter Einrichtung",
     "pickIcon": "Wählen Sie das Symbol aus",
     "showingCasesFor": "Fälle anzeigen für",
+    "actualStartTime": "Tatsächliche Startzeit",
+    "actualEndTime": "Tatsächliche Endzeit",
 
 
     "title": "Service-Feedback für {{company}}",

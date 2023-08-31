@@ -1,4 +1,5 @@
 import { Component, Input, OnInit, Output, EventEmitter, SimpleChanges } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, Subscription, of, skip, take } from 'rxjs';
@@ -6,6 +7,8 @@ import { Case } from 'src/app/models/case.model';
 import { CaseService } from 'src/app/services/cases.service';
 import { StateService } from 'src/app/services/states.service';
 import { UserSettingService } from 'src/app/services/user-setting.service';
+import { CaseDetailsDialogComponent } from '../../dialogs/case-details/case-details.dialog.component';
+
 
 @Component({
   selector: 'case-calendar-daily',
@@ -32,7 +35,12 @@ export class CaseCalendarDailyComponent implements OnInit {
 
   private subs = new Subscription();
 
-  constructor(private translate: TranslateService, private caseService: CaseService, private stateService: StateService, private userSettingService: UserSettingService,
+  constructor(
+    private translate: TranslateService,
+    private caseService: CaseService,
+    private stateService: StateService,
+    private userSettingService: UserSettingService,
+    public dialog: MatDialog,
     private router: Router) {
   }
 
@@ -126,7 +134,7 @@ export class CaseCalendarDailyComponent implements OnInit {
     this.stateService.setSelectedDate(dayClicked);
     this.changeSelectedDay(dayClicked);
     this.buttonUsed = dayIndex;
-    
+
     let userSetting = this.userSettingService.getUserSettingLastValue();
     userSetting.lastUsedSelectedDay = dayClicked;
     localStorage.setItem(userSetting.username, JSON.stringify(userSetting));
@@ -172,4 +180,20 @@ export class CaseCalendarDailyComponent implements OnInit {
   }
 
   isEmptyString = (data: string): boolean => typeof data === "string" && data.trim().length == 0;
+
+  openCaseDetails(c: Case): void {
+    const dialogRef = this.dialog.open(CaseDetailsDialogComponent, {
+      data: c,
+      width: '40%'
+    });
+
+    dialogRef.afterClosed().subscribe(
+      {
+        next: result => {
+          if (result) {
+            console.log('The dialog was closed', result);
+          }
+        }
+      });
+  }
 }
