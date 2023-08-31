@@ -1,3 +1,5 @@
+/* eslint-disable max-len */
+/* eslint-disable eqeqeq */
 /* eslint-disable @angular-eslint/component-selector */
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { AppStoreService } from '../app.store.service';
@@ -7,6 +9,7 @@ import { CaseStatuses } from '../core/enums';
 import { TranslateService } from '@ngx-translate/core';
 import { SignalRCaseApiService } from '../core/signal-r.case-api.service';
 import { Facility } from '../facility/facility';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-schedule',
@@ -23,7 +26,7 @@ export class SchedulePage implements OnInit, OnDestroy {
   selectedFacility = new Facility();
 
   constructor(private caseStore: AppStoreService, public modalController: ModalController, public alertController: AlertController,
-    private translateService: TranslateService, private signalRCaseApiService: SignalRCaseApiService, private appStore: AppStoreService) { }
+    private translateService: TranslateService, private signalRCaseApiService: SignalRCaseApiService, private appStore: AppStoreService, private datePipe: DatePipe) { }
 
   ngOnInit() {
     this.showSearchbar = false;
@@ -102,5 +105,18 @@ export class SchedulePage implements OnInit, OnDestroy {
     });
 
     this.caseStore.getCases(this.defaultFacilityId);
+  }
+
+  checkScheduledStartTime(date: string): boolean {
+    return !(date == '0001-01-01T00:00:00Z' || date == null);
+  }
+
+  displayScheduledStartTime(date: string) {
+    if (date == '0001-01-01T00:00:00Z' || date == null) {
+      return this.translateService.instant('scheduleDateMissing');
+    }
+    else {
+      return this.translateService.instant('scheduleDate') + ': ' + this.datePipe.transform(date, 'dd/MM/yyyy');
+    }
   }
 }

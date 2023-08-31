@@ -96,5 +96,6 @@
   "ashesReadytoRemove" : "Asche zum Entfernen bereit",
   "bypass" : "Bypass",
   "abatement" : "Minderung",
-  "scheduleDate": "Plandatum"
+  "scheduleDate": "Plandatum",
+  "scheduleDateMissing": "Terminplandatum fehlt"
 }

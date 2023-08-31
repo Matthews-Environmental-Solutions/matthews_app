@@ -106,7 +106,7 @@ export class Case {
 
   scheduledDeviceAlias: string = '';
 
-  scheduledStartTime?: string = '2023-08-01T00:00:00';
+  scheduledStartTime?: string = '0001-01-01T00:00:00';
 
   actualFacility?: string = '00000000-0000-0000-0000-000000000000';
 

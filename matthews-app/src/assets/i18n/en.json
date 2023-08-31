@@ -96,6 +96,6 @@
   "ashesReadytoRemove" : "Ashes Ready to Remove",
   "bypass" : "Bypass",
   "abatement" : "Abatement",
-  "scheduleDate": "Schedule Date"
-
+  "scheduleDate": "Schedule Date",
+  "scheduleDateMissing": "Schedule Date Missing"
 }

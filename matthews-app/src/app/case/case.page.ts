@@ -148,7 +148,8 @@ export class CasePage implements OnInit {
       if (
         this.newCase.scheduledDevice === this.guidEmpty ||
         this.newCase.scheduledStartTime === this.dateTimeMin ||
-        this.newCase.scheduledFacility === this.guidEmpty
+        this.newCase.scheduledFacility === this.guidEmpty ||
+        this.newCase.scheduledStartTime == null
       ) {
         this.newCase.status = 0; //unscheduled
       }
@@ -156,17 +157,18 @@ export class CasePage implements OnInit {
       if (
         this.newCase.scheduledDevice != this.guidEmpty &&
         this.newCase.scheduledStartTime != this.dateTimeMin &&
-        this.newCase.scheduledFacility != this.guidEmpty
+        this.newCase.scheduledFacility != this.guidEmpty &&
+        this.newCase.scheduledStartTime != null
       ) {
         this.newCase.status = 4; // waiting for permit
-      }
 
-      const selectedFacilityStatus = this.facilityStatuses.find(
-        (fs) => fs.id == this.newCase.facilityStatusId
-      );
+        const selectedFacilityStatus = this.facilityStatuses.find(
+          (fs) => fs.id == this.newCase.facilityStatusId
+        );
 
-      if (selectedFacilityStatus?.startProcess) {
-        this.newCase.status = 3; // Ready to cremate
+        if (selectedFacilityStatus?.startProcess) {
+          this.newCase.status = 3; // Ready to cremate
+        }
       }
 
       if (this.fromProcess) {
@@ -202,7 +204,8 @@ export class CasePage implements OnInit {
       if (
         this.newCase.scheduledDevice === this.guidEmpty ||
         this.newCase.scheduledStartTime === this.dateTimeMin ||
-        this.newCase.scheduledFacility === this.guidEmpty
+        this.newCase.scheduledFacility === this.guidEmpty ||
+        this.newCase.scheduledStartTime == null
       ) {
         this.newCase.status = 0; //unscheduled
       }
@@ -210,18 +213,20 @@ export class CasePage implements OnInit {
       if (
         this.newCase.scheduledDevice != this.guidEmpty &&
         this.newCase.scheduledStartTime != this.dateTimeMin &&
-        this.newCase.scheduledFacility != this.guidEmpty
+        this.newCase.scheduledFacility != this.guidEmpty &&
+        this.newCase.scheduledStartTime != null
       ) {
         this.newCase.status = 4; // waiting for permit
+
+        const selectedFacilityStatus = this.facilityStatuses.find(
+          (fs) => fs.id == this.newCase.facilityStatusId
+        );
+
+        if (selectedFacilityStatus?.startProcess) {
+          this.newCase.status = 3; // Ready to cremate
+        }
       }
 
-      const selectedFacilityStatus = this.facilityStatuses.find(
-        (fs) => fs.id == this.newCase.facilityStatusId
-      );
-
-      if (selectedFacilityStatus?.startProcess) {
-        this.newCase.status = 3; // Ready to cremate
-      }
       this.caseStore.updateCase(this.newCase);
 
       console.log(this.newCase);
@@ -261,4 +266,5 @@ export class CasePage implements OnInit {
       year + '-' + month + '-' + day + 'T' + hour + ':' + minute + ':' + second
     );
   }
+
 }

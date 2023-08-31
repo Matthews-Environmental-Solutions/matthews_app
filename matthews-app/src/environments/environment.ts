@@ -3,37 +3,37 @@
 // `ng build --prod` replaces `environment.ts` with `environment.prod.ts`.
 // The list of file replacements can be found in `angular.json`.
 
-// export const environment = {
-//   production: false,
-//   casesApiUrl: 'https://develop.comdata.rs/MatthewsApp.API/Case',
-//   facilityStatusUrl: 'https://develop.comdata.rs/MatthewsApp.API/FacilityStatus',
-//   i4connectedApiUrl: 'https://matthewscremation.i4connected.cloud/api/api/',
-//   auth_config: {
-//     client_id: 'matthews.web',
-//     client_secret: '0be0470165fa49ca9631a2babc0a73d4',
-//     server_host: 'https://matthewscremation.i4connected.cloud/identity',
-//     redirect_url: 'http://localhost:8100/authorizationcallback',
-//     end_session_redirect_url: 'http://localhost:8100/authorizationcallback',
-//     scopes: 'profile openid email offline_access matthews.api api',
-//     pkce: true
-//   }
-// };
-
 export const environment = {
   production: false,
-    casesApiUrl: 'https://develop.comdata.rs/MatthewsApp.API/Case',
-    facilityStatusUrl: 'https://develop.comdata.rs/MatthewsApp.API/FacilityStatus',
-    i4connectedApiUrl: 'https://matthewscremation.i4connected.cloud/api/api/',
+  casesApiUrl: 'https://develop.comdata.rs/MatthewsApp.API/Case',
+  facilityStatusUrl: 'https://develop.comdata.rs/MatthewsApp.API/FacilityStatus',
+  i4connectedApiUrl: 'https://matthewscremation.i4connected.cloud/api/api/',
   auth_config: {
-    client_id: 'matthews.app',
-    client_secret: 'b8f30abd541943ff92a1d36ca72ed25e',
+    client_id: 'matthews.web',
+    client_secret: '0be0470165fa49ca9631a2babc0a73d4',
     server_host: 'https://matthewscremation.i4connected.cloud/identity',
-    redirect_url: 'com.matthews.app://authorizationcallback',
-    end_session_redirect_url: 'com.matthews.app://endsessioncallback',
-    scopes: 'profile openid email api matthews.api',
+    redirect_url: 'http://localhost:8100/authorizationcallback',
+    end_session_redirect_url: 'http://localhost:8100/authorizationcallback',
+    scopes: 'profile openid email offline_access matthews.api api',
     pkce: true
   }
 };
+
+// export const environment = {
+//   production: false,
+//     casesApiUrl: 'https://develop.comdata.rs/MatthewsApp.API/Case',
+//     facilityStatusUrl: 'https://develop.comdata.rs/MatthewsApp.API/FacilityStatus',
+//     i4connectedApiUrl: 'https://matthewscremation.i4connected.cloud/api/api/',
+//   auth_config: {
+//     client_id: 'matthews.app',
+//     client_secret: 'b8f30abd541943ff92a1d36ca72ed25e',
+//     server_host: 'https://matthewscremation.i4connected.cloud/identity',
+//     redirect_url: 'com.matthews.app://authorizationcallback',
+//     end_session_redirect_url: 'com.matthews.app://endsessioncallback',
+//     scopes: 'profile openid email api matthews.api',
+//     pkce: true
+//   }
+// };
 
 
 /*
