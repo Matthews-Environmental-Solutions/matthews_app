@@ -2,5 +2,9 @@
 	"appId": "com.matthews.app",
 	"appName": "matthews-app",
 	"webDir": "www",
-	"bundledWebRuntime": false
+	"bundledWebRuntime": false,
+	"server": {
+		"hostname": "com.matthews.app",
+		"androidScheme": "https"
+	}
 }
