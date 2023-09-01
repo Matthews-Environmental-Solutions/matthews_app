@@ -52,7 +52,7 @@ export class FacilityStatusService {
     }
 
     getIconsFromJsonFile(): Observable<any> {
-        return this.httpClient.get('/assets/icons.json');
+        return this.httpClient.get(environment.baseUrl + '/assets/icons.json');
     }
 
 }
