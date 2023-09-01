@@ -117,8 +117,11 @@ public class Startup
             });
         }
 
+        var allowedOrigins = Configuration["AllowedOrigins"].Split(";");
+
         app.UseCors(x => x
-        .WithOrigins("http://localhost:4200", "https://develop.comdata.rs/MatthewsApp.API", "http://localhost:8100", "https://com.matthews.app")
+        //.WithOrigins("http://localhost:4200", "https://develop.comdata.rs/MatthewsApp.API", "http://localhost:8100", "https://com.matthews.app")
+        .WithOrigins(allowedOrigins)
         .AllowAnyMethod()
         .AllowAnyHeader()
         .AllowCredentials());

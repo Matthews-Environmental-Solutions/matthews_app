@@ -149,7 +149,7 @@ public class CaseMqttService : IHostedService
                     }
                     finally
                     {
-                        await Task.Delay(TimeSpan.FromMinutes(Int32.Parse(_configuration["deviceListRefrechIntervalInMinutes"])));
+                        await Task.Delay(TimeSpan.FromMinutes(Int32.Parse(_configuration["deviceListRefreshIntervalInMinutes"])));
                     }
                 }
             });
