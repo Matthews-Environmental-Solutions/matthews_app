@@ -78,6 +78,13 @@
     "showingCasesFor": "Showing cases for",
     "actualStartTime": "Actual start time",
     "actualEndTime": "Actual end time",
+    "language": "Language",
+    "timezone": "Time zone",
+    "timeformat": "Time format",
+    "firstDayInWeek": "First day in week",
+    "sunday": "Sunday",
+    "monday": "Monday",
+    "hours": "hours",
     
     "title": "Service feedback for {{company}}",
     "name": {

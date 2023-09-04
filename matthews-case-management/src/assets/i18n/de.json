@@ -78,7 +78,13 @@
     "showingCasesFor": "Fälle anzeigen für",
     "actualStartTime": "Tatsächliche Startzeit",
     "actualEndTime": "Tatsächliche Endzeit",
-
+    "language": "Sprache",
+    "timezone": "Zeitzone",
+    "timeformat": "Zeitformat",
+    "firstDayInWeek": "Erster Tag in der Woche",
+    "sunday": "Sonntag",
+    "monday": "Montag",
+    "hours": "Std.",
 
     "title": "Service-Feedback für {{company}}",
     "name": {
