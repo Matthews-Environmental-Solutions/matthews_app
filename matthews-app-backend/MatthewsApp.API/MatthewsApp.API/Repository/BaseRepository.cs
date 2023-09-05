@@ -2,6 +2,7 @@
 using MatthewsApp.API.Extensions;
 using MatthewsApp.API.Models;
 using MatthewsApp.API.Repository.Interfaces;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System;

@@ -7,6 +7,7 @@ using System;
 using MatthewsApp.API.Mappers;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using Microsoft.Data.SqlClient;
 
 namespace MatthewsApp.API.Controllers;
 
@@ -53,7 +54,19 @@ public class FacilityStatusController : Controller
             return NotFound();
         }
 
-        service.Delete(caseEntitry);
+        try
+        {
+            service.Delete(caseEntitry);
+        }
+        catch (Exception ex)
+        {
+            if (ex.InnerException.Message.Contains("conflicted with the REFERENCE constraint"))
+            {
+                return Conflict(); // 409
+            }
+            return Problem(ex.Message);
+            throw;
+        }
         return Ok();
     }
 
@@ -78,11 +91,11 @@ public class FacilityStatusController : Controller
 
     [HttpGet]
     [Route("GetFacilityStatusesByFacility/{facilityId}")]
-    public async Task<ActionResult<IEnumerable<FacilityStatus>>> GetScheduledCasesByDay(Guid facilityId)
+    public async Task<ActionResult<IEnumerable<FacilityStatusDto>>> GetFacilityStatusesByFacility(Guid facilityId)
     {
         try
         {
-            return Ok(await service.GetAllByFacility(facilityId));
+            return Ok((await service.GetAllByFacility(facilityId)).ToDTOs());
         }
         catch (Exception ex)
         {

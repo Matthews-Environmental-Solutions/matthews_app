@@ -35,7 +35,7 @@ export class I4connectedService {
                     return forkJoin(obs).pipe(
                         map((devices: Device[]) => {
                             let objs: Device[] = [];
-                            devices.forEach(d => objs.push(new Device (d.id, d.alias, d.adapterId, 0)));
+                            devices.forEach(d => objs.push(new Device(d.id, d.alias, d.adapterId, 0)));
 
                             return objs.filter(d => d.adapterId != null);
                             // return objs;
@@ -43,6 +43,18 @@ export class I4connectedService {
                     );
                 })
             );
+    }
+
+    getDevicesByFacility2(facilityId: string): Observable<any> {
+        return this.httpClient.post<Device[]>(`${this.apiUrl}/api/devices/list?pageSize=1000000&pageNumber=1&sortFields=0`,
+            {
+                "selectedItems": [
+                    {
+                        "id": facilityId,
+                        "type": 2
+                    }
+                ]
+            });
     }
 
     // Error handling
@@ -55,7 +67,7 @@ export class I4connectedService {
             // Get server-side error
             errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
         }
-        window.alert(errorMessage);
+        // window.alert(errorMessage);
         return throwError(() => {
             return errorMessage;
         });

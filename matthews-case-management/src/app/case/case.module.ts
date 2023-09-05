@@ -59,6 +59,7 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { FacilityComponent } from './components/facility/facility.component';
 import { FacilityStatusDialogComponent } from './dialogs/facility-status/facility-status.dialog.component';
 import { DeleteFacilityStatusDialogComponent } from './dialogs/delete-facility-status/delete-facility-status.dialog.component';
+import { CaseDetailsDialogComponent } from './dialogs/case-details/case-details.dialog.component';
 
 @NgModule({
   declarations: [
@@ -72,7 +73,8 @@ import { DeleteFacilityStatusDialogComponent } from './dialogs/delete-facility-s
     DatetimePipe,
     FacilityComponent,
     FacilityStatusDialogComponent,
-    DeleteFacilityStatusDialogComponent
+    DeleteFacilityStatusDialogComponent,
+    CaseDetailsDialogComponent
   ],
   imports: [
     CommonModule,

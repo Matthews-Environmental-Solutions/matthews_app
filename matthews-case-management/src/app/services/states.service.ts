@@ -39,6 +39,9 @@ export class StateService {
     public filterUnscheduledCasesByFacilityId$: Observable<'all' | 'bySelectedFacility'>;
     private filterUnscheduledCasesByFacilityIdBehaviorSubject = new BehaviorSubject<'all' | 'bySelectedFacility'>(this.getDefaultFilterUnscheduledCasesByFacilityId());
 
+    public refreshCasesList$: Observable<string>;
+    private refreshCasesListBS = new BehaviorSubject<string>(this.getDefaultRefreshCasesList());
+
     constructor(private calendarService: CalendarService, private userSettingService: UserSettingService, private i4connectedService: I4connectedService) {
         this.selectedFacilityId$ = this.selectedFacilityIdBehaviorSubject;
         this.selectedDate$ = this.selectedDateBehaviorSubject;
@@ -49,13 +52,14 @@ export class StateService {
         this.caseSaved$ = this.caseSavedBehaviorSubject;
         this.filterCasesByDeviceId$ = this.filterCasesByDeviceIdBehaviorSubject;
         this.filterUnscheduledCasesByFacilityId$ = this.filterUnscheduledCasesByFacilityIdBehaviorSubject;
+        this.refreshCasesList$ = this.refreshCasesListBS;
     }
 
 
     // selectedFacilityIdBehaviorSubject
     setSelectedFacility(facility: string): void {
         this.selectedFacilityIdBehaviorSubject.next(facility);
-        this.i4connectedService.getDevicesByFacility(facility).subscribe(devices => {
+        this.i4connectedService.getDevicesByFacility2(facility).subscribe(devices => {
             this.devicesFromSiteBehaviorSubject.next(devices);
         });
     }
@@ -186,4 +190,13 @@ export class StateService {
         return 'all';
     }
 
+
+    // refreshCasesListBS
+    setRefreshCasesListBS() {
+        this.refreshCasesListBS.next(uuidv4());
+    }
+
+    getDefaultRefreshCasesList(): string{
+        return uuidv4();
+    }
 }

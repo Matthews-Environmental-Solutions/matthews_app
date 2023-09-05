@@ -64,13 +64,16 @@
                                 <span>{{status}}</span>
                             </ng-container>
                         </div>
-                        <div class="case-status case-status-time">{{case.scheduledStartTime | timepipe}}</div>
+                        <div class="case-status case-status-time">{{case.scheduledStartTime | timepipe: false}}</div>
                     </div>
                 </div>
 
                 <div class="right-cells">
-                    <button mat-icon-button aria-label="edit icon" (click)="gotoCaseEdit(case.id)">
+                    <button *ngIf="case.status != 1 && case.status != 2" mat-icon-button aria-label="edit icon" (click)="gotoCaseEdit(case.id)">
                         <mat-icon class="item-button">open_in_new</mat-icon>
+                    </button>
+                    <button *ngIf="case.status == 1 || case.status == 2" mat-icon-button aria-label="edit icon" (click)="openCaseDetails(case)">
+                        <mat-icon class="item-button">info</mat-icon>
                     </button>
                 </div>
 

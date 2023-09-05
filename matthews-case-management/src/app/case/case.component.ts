@@ -15,6 +15,7 @@ import { StateService } from '../services/states.service';
 import { MatSelectChange } from '@angular/material/select';
 import { Subscription, skip } from 'rxjs';
 import { WfactorySnackBarService } from '../components/wfactory-snack-bar/wfactory-snack-bar.service';
+import { SignalrService } from '../services/signalr.service';
 
 @Component({
   selector: 'app-case',
@@ -30,6 +31,7 @@ export class CaseComponent implements OnInit {
   loggedInUser: UserInfoAuth | undefined;
   userSetting: UserSettingData | undefined;
   clickedFacilityFilterButton: string = 'all';
+  loader: boolean = false;
 
   private subs = new Subscription();
 
@@ -43,11 +45,12 @@ export class CaseComponent implements OnInit {
       private translate: TranslateService,
       private _adapter: DateAdapter<any>,
       private _shackBar: WfactorySnackBarService,
+      public signalRService: SignalrService,
       @Inject(MAT_DATE_LOCALE) private _locale: string
     ) {
     this.loggedInUser = authService.loggedInUser;
     this.userSetting = userSettingService.getUserSettingLastValue();
-    this.caseService.getUnscheduledCases().subscribe(cases => this.unscheduledCases = cases);
+    this.caseService.getUnscheduledCases().subscribe(cases => this.filterCases(cases));
     _adapter.setLocale(this.translate.store.currentLang);
   }
   ngOnInit(): void {
@@ -60,16 +63,28 @@ export class CaseComponent implements OnInit {
 
     this.subs.add(this.stateService.selectedFacilityId$.pipe(skip(1)).subscribe(fId => {
       this.selectedFacilityId = fId;
-      this.caseService.getUnscheduledCases().subscribe(cases => this.filterCases(cases));
+      this.loader = true;
+      this.caseService.getUnscheduledCases().subscribe(cases => {this.filterCases(cases); this.loader = false;});
     }));
 
     this.subs.add(this.stateService.caseSaved$.pipe(skip(1)).subscribe(c => {
-      this.caseService.getUnscheduledCases().subscribe(cases => this.filterCases(cases));
+      this.loader = true;
+      this.caseService.getUnscheduledCases().subscribe(cases => {this.filterCases(cases); this.loader = false;});
     }));
 
     this.subs.add(this.stateService.filterUnscheduledCasesByFacilityId$.subscribe(c => {
-      this.caseService.getUnscheduledCases().subscribe(cases => this.filterCases(cases));
+      this.loader = true;
+      this.caseService.getUnscheduledCases().subscribe(cases => {this.filterCases(cases); this.loader = false;});
     }));
+
+    // Refresh unscheduled cases list when SignalR sends message
+    this.subs.add(this.stateService.refreshCasesList$.pipe(skip(1)).subscribe(data => {
+      this.loader = true;
+      this.caseService.getUnscheduledCases().subscribe(cases => {this.filterCases(cases); this.loader = false;});
+    }));
+
+    this.signalRService.startConnection();
+    this.signalRService.addCaseDataListener();
   }
 
   ngOnDestroy(): void {
@@ -125,6 +140,9 @@ export class CaseComponent implements OnInit {
 
   filterCases(cases: Case[]){
     this.unscheduledCases = cases;
-    this.filteredUnscheduledCases = this.clickedFacilityFilterButton == 'all' ? this.unscheduledCases : this.unscheduledCases.filter(c => c.scheduledFacility == this.selectedFacilityId);
+    this.filteredUnscheduledCases = this.clickedFacilityFilterButton == 'all' ? 
+      this.unscheduledCases.filter(c => this.facilities.some(f=> f.id == c.scheduledFacility))
+      : 
+      this.unscheduledCases.filter(c => c.scheduledFacility == this.selectedFacilityId);
   }
 }

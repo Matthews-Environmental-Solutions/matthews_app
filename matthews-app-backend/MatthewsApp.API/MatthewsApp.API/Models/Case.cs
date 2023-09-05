@@ -78,11 +78,8 @@ public class Case : BaseEntity
     public DateTime? ActualEndTime { get; set; }
 
 
-
-
-    [Column(TypeName = "uniqueidentifier")]
-    public Guid? PerformedBy { get; set; }
-
+    [Column(TypeName = "nvarchar(64)")]
+    public string PerformedBy { get; set; }
 
 
 
@@ -91,6 +88,6 @@ public class Case : BaseEntity
     public string Electricity { get; set; }
 
 
-    public IList<CaseToFacilityStatus> CaseToFacilityStatuses { get; set; }
-    public IList<FacilityStatus> FacilityStatuses { get; set; }
+    public Guid? FacilityStatusId { get; set; }
+    public FacilityStatus? FacilityStatus { get; set; }
 }

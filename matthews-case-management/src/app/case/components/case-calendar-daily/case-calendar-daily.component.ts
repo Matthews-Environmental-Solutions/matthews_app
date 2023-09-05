@@ -1,4 +1,5 @@
 import { Component, Input, OnInit, Output, EventEmitter, SimpleChanges } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, Subscription, of, skip, take } from 'rxjs';
@@ -6,6 +7,8 @@ import { Case } from 'src/app/models/case.model';
 import { CaseService } from 'src/app/services/cases.service';
 import { StateService } from 'src/app/services/states.service';
 import { UserSettingService } from 'src/app/services/user-setting.service';
+import { CaseDetailsDialogComponent } from '../../dialogs/case-details/case-details.dialog.component';
+
 
 @Component({
   selector: 'case-calendar-daily',
@@ -32,11 +35,18 @@ export class CaseCalendarDailyComponent implements OnInit {
 
   private subs = new Subscription();
 
-  constructor(private translate: TranslateService, private caseService: CaseService, private stateService: StateService, private userSettingService: UserSettingService,
+  constructor(
+    private translate: TranslateService,
+    private caseService: CaseService,
+    private stateService: StateService,
+    private userSettingService: UserSettingService,
+    public dialog: MatDialog,
     private router: Router) {
   }
 
   ngOnInit(): void {
+
+    this.stateService.setSelectedDate(new Date(this.userSettingService.getUserSettingLastValue().lastUsedSelectedDay));
 
     this.subs.add(this.userSettingService.userSettings$.subscribe(s => {
       if (!this.isEmptyString(this.selectedFacilityId) && this.selectedDay) {
@@ -49,7 +59,7 @@ export class CaseCalendarDailyComponent implements OnInit {
     }));
 
     this.subs.add(this.stateService.selectedDate$.subscribe(d => {
-      d.setHours(0, 0, 0, 0);
+      // d.setHours(0, 0, 0, 0);
       this.selectedDay = d;
       this.checkHeaderDayButtons();
 
@@ -72,6 +82,13 @@ export class CaseCalendarDailyComponent implements OnInit {
 
     this.subs.add(this.stateService.filterCasesByDeviceId$.subscribe(criterium => {
       this.filterDeviceId = criterium;
+      if (!this.isEmptyString(this.selectedFacilityId) && this.selectedDay) {
+        this.getCasesByDate();
+      }
+    }));
+
+    // Refresh unscheduled cases list when SignalR sends message
+    this.subs.add(this.stateService.refreshCasesList$.pipe(skip(1)).subscribe(data => {
       if (!this.isEmptyString(this.selectedFacilityId) && this.selectedDay) {
         this.getCasesByDate();
       }
@@ -99,7 +116,9 @@ export class CaseCalendarDailyComponent implements OnInit {
   }
 
   checkHeaderDayButtons() {
-    let index = this.days.map(Number).indexOf(+this.selectedDay);
+    let dayToCompare = new Date(this.selectedDay);
+    dayToCompare.setHours(0, 0, 0, 0);
+    let index = this.days.map(Number).indexOf(+dayToCompare);
     this.buttonUsed = index;
   }
 
@@ -108,10 +127,18 @@ export class CaseCalendarDailyComponent implements OnInit {
     return `${this.days[indexNumber].getDate().toString()} ${this.days[indexNumber].toLocaleString(currentLang, { month: 'short' })}`;
   }
 
-  dayClick(dayClick: number) {
-    this.stateService.setSelectedDate(this.days[dayClick]);
-    this.changeSelectedDay(this.days[dayClick]);
-    this.buttonUsed = dayClick;
+  dayClick(dayIndex: number) {
+    var dayClicked = new Date(this.days[dayIndex]);
+    dayClicked.setHours(12, 0, 0, 0);
+
+    this.stateService.setSelectedDate(dayClicked);
+    this.changeSelectedDay(dayClicked);
+    this.buttonUsed = dayIndex;
+
+    let userSetting = this.userSettingService.getUserSettingLastValue();
+    userSetting.lastUsedSelectedDay = dayClicked;
+    localStorage.setItem(userSetting.username, JSON.stringify(userSetting));
+    this.userSettingService.setUserSetting(userSetting);
   }
 
   changeSelectedDay(value: Date) {
@@ -153,4 +180,20 @@ export class CaseCalendarDailyComponent implements OnInit {
   }
 
   isEmptyString = (data: string): boolean => typeof data === "string" && data.trim().length == 0;
+
+  openCaseDetails(c: Case): void {
+    const dialogRef = this.dialog.open(CaseDetailsDialogComponent, {
+      data: c,
+      width: '40%'
+    });
+
+    dialogRef.afterClosed().subscribe(
+      {
+        next: result => {
+          if (result) {
+            console.log('The dialog was closed', result);
+          }
+        }
+      });
+  }
 }

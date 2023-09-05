@@ -4,9 +4,11 @@ using MatthewsApp.API.Models;
 using MatthewsApp.API.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace MatthewsApp.API.Controllers;
 
@@ -15,15 +17,19 @@ namespace MatthewsApp.API.Controllers;
 public class CaseController : Controller
 {
     private readonly ICasesService service;
-    public CaseController(ICasesService service)
+    private readonly ILogger<CaseController> _logger;
+
+    public CaseController(ICasesService service, ILogger<CaseController> logger)
     {
         this.service = service;
+        _logger = logger;
     }
 
     [HttpPost]
     [Route("Save")]
     public ActionResult<Case> PostCase([FromBody]CaseDto caseDto)
     {
+        _logger.LogInformation("---------- Save");
         try
         {
             var caseEntity = caseDto.ToEntity();
@@ -60,28 +66,10 @@ public class CaseController : Controller
     [Route("Update")]
     public ActionResult Update([FromBody] CaseDto caseDto)
     {
+        _logger.LogInformation("---------- Update");
         try
         {
             service.Update(caseDto.ToEntity());
-        }
-        catch (DbUpdateConcurrencyException)
-        {
-            if (!service.IsCaseExists(caseDto.Id))
-            {
-                return NotFound();
-            }
-            return BadRequest();
-        }
-        return Ok(caseDto.Id);
-    }
-
-    [HttpPut]
-    [Route("UpdateWithStatuses")]
-    public ActionResult UpdateWithStatuses([FromBody] CaseWithStatusesDto caseDto)
-    {
-        try
-        {
-            service.UpdateWithStatuses(caseDto);
         }
         catch (DbUpdateConcurrencyException)
         {
@@ -98,6 +86,7 @@ public class CaseController : Controller
     [Route("GetAllCasesByFacility/{facilityId}")]
     public async Task<ActionResult<IEnumerable<CaseDto>>> GetAllCasesByFacility(Guid facilityId)
     {
+        _logger.LogInformation("---------- GetAllCasesByFacility {facilityId}", facilityId);
         try
         {
             return Ok((await service.GetAllCasesByFacility(facilityId)).ToDTOs());
@@ -109,9 +98,25 @@ public class CaseController : Controller
     }
 
     [HttpGet]
+    [Route("GetReadyCasesByDevice/{deviceId}")]
+    public async Task<ActionResult<IEnumerable<CaseDto>>> GetReadyCasesByDevice(Guid deviceId)
+    {
+        _logger.LogInformation("---------- GetReadyCasesByDevice {deviceId}", deviceId);
+        try
+        {
+            return Ok((await service.GetReadyCasesByDevice(deviceId)).ToDTOs());
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+    [HttpGet]
     [Route("GetScheduledCasesByDay/{facilityId}/{date}")]
     public async Task<ActionResult<IEnumerable<CaseDto>>> GetScheduledCasesByDay(Guid facilityId, DateTime date)
     {
+        _logger.LogInformation("---------- GetScheduledCasesByDay {facilityId} and {date}", facilityId, date);
         try
         {
             return Ok((await service.GetScheduledCasesByDay(facilityId, date)).ToDTOs());
@@ -126,6 +131,7 @@ public class CaseController : Controller
     [Route("GetScheduledCasesByWeek/{facilityId}/{dateStartDateOfWeek}")]
     public async Task<ActionResult<IEnumerable<CaseDto>>> GetScheduledCasesByWeek(Guid facilityId, DateTime dateStartDateOfWeek)
     {
+        _logger.LogInformation("---------- GetScheduledCasesByWeek {facilityId} and {dateStartDateOfWeek}", facilityId, dateStartDateOfWeek);
         try
         {
             return Ok((await service.GetScheduledCasesByWeek(facilityId, dateStartDateOfWeek)).ToDTOs());
@@ -137,9 +143,25 @@ public class CaseController : Controller
     }
 
     [HttpGet]
+    [Route("GetScheduledCasesByTimePeriod/{facilityId}/{dateStart}/{dateEnd}")]
+    public async Task<ActionResult<IEnumerable<CaseDto>>> GetScheduledCasesByTimePeriod(Guid facilityId, DateTime dateStart, DateTime dateEnd)
+    {
+        _logger.LogInformation("---------- GetScheduledCasesByTimePeriod {facilityId} and {dateStart} - {dateEnd}", facilityId, dateStart, dateEnd);
+        try
+        {
+            return Ok((await service.GetScheduledCasesByTimePeriod(facilityId, dateStart, dateEnd)).ToDTOs());
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+    [HttpGet]
     [Route("GetUnscheduledCases")]
     public async Task<ActionResult<IEnumerable<CaseDto>>> GetUnscheduledCases()
     {
+        _logger.LogInformation("---------- GetUnscheduledCases");
         try
         {
             return Ok((await service.GetUnscheduledCases()).ToDTOs());
@@ -152,14 +174,30 @@ public class CaseController : Controller
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<CaseWithStatusesDto>> GetCase(Guid id)
+    public async Task<ActionResult<CaseDto>> GetCase(Guid id)
     {
+        _logger.LogInformation("---------- GetCase {id}", id);
+
         Case Case = await service.GetById(id);
 
         if (Case == null)
         {
             return NotFound();
         }
-        return Ok(Case.ToDTOWithStatuses());
+        return Ok(Case.ToDTO());
+    }
+
+    [HttpGet("GetNextCaseForDevice/{deviceId}")]
+    public async Task<ActionResult<CaseDto>> GetNextCaseForDevice(Guid deviceId)
+    {
+        _logger.LogInformation("---------- GetNextCaseForDevice {deviceId}", deviceId);
+
+        Case Case = await service.GetNextCaseForDevice(deviceId);
+
+        if (Case == null)
+        {
+            return NotFound();
+        }
+        return Ok(Case.ToDTO());
     }
 }

@@ -2,6 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription, skip } from 'rxjs';
 import { Case } from 'src/app/models/case.model';
+import { CalendarService } from 'src/app/services/calendar.service';
 import { CaseService } from 'src/app/services/cases.service';
 import { StateService } from 'src/app/services/states.service';
 
@@ -32,7 +33,7 @@ export class CaseCalendarWeeklyComponent implements OnInit {
 
   private subs = new Subscription();
 
-  constructor(private translate: TranslateService, private caseService: CaseService, private stateService: StateService) {
+  constructor(private translate: TranslateService, private caseService: CaseService, private stateService: StateService, private calendarService: CalendarService) {
   }
 
   ngOnInit(): void {
@@ -61,6 +62,13 @@ export class CaseCalendarWeeklyComponent implements OnInit {
 
     this.subs.add(this.stateService.filterCasesByDeviceId$.subscribe(criterium => {
       this.filterDeviceId = criterium;
+      if (!this.isEmptyString(this.selectedFacilityId) && this.firstDateInWeek) {
+        this.getCasesByWeek();
+      }
+    }));
+
+    // Refresh unscheduled cases list when SignalR sends message
+    this.subs.add(this.stateService.refreshCasesList$.pipe(skip(1)).subscribe(data => {
       if (!this.isEmptyString(this.selectedFacilityId) && this.firstDateInWeek) {
         this.getCasesByWeek();
       }
@@ -94,39 +102,34 @@ export class CaseCalendarWeeklyComponent implements OnInit {
   parseCasesByDays(): void {
     for (var i = 0; i < this.filteredCases.length; i++) {
       let c = this.filteredCases[i];
-      // The "c.scheduledStartTime" is in local time
-      if (this.setTimeToZeros(c.scheduledStartTime) == this.formatDate(this.days[0])) {
-        console.log(`case ${c.firstName}`, `${c.scheduledStartTime} == ${this.formatDate(this.days[0])}`);
+      // The "c.scheduledStartTime" is in local (browser) timezone
+      let caseScheduledStartTime: Date = c.scheduledStartTime != null ? this.calendarService.getDateInUserProfilesTimezone(new Date(c.scheduledStartTime)) : new Date('0001-01-01T00:00:00');
+
+      if (this.formatDate(caseScheduledStartTime) == this.formatDate(this.days[0])) {
         this.casesForDay1.push(c);
         continue;
       }
-      if (this.setTimeToZeros(c.scheduledStartTime) == this.formatDate(this.days[1])) {
-        console.log(`case ${c.firstName}`, `${c.scheduledStartTime} == ${this.formatDate(this.days[1])}`);
+      if (this.formatDate(caseScheduledStartTime) == this.formatDate(this.days[1])) {
         this.casesForDay2.push(c);
         continue;
       }
-      if (this.setTimeToZeros(c.scheduledStartTime) == this.formatDate(this.days[2])) {
-        console.log(`case ${c.firstName}`, `${c.scheduledStartTime} == ${this.formatDate(this.days[2])}`);
+      if (this.formatDate(caseScheduledStartTime) == this.formatDate(this.days[2])) {
         this.casesForDay3.push(c);
         continue;
       }
-      if (this.setTimeToZeros(c.scheduledStartTime) == this.formatDate(this.days[3])) {
-        console.log(`case ${c.firstName}`, `${c.scheduledStartTime} == ${this.formatDate(this.days[3])}`);
+      if (this.formatDate(caseScheduledStartTime) == this.formatDate(this.days[3])) {
         this.casesForDay4.push(c);
         continue;
       }
-      if (this.setTimeToZeros(c.scheduledStartTime) == this.formatDate(this.days[4])) {
-        console.log(`case ${c.firstName}`, `${c.scheduledStartTime} == ${this.formatDate(this.days[4])}`);
+      if (this.formatDate(caseScheduledStartTime) == this.formatDate(this.days[4])) {
         this.casesForDay5.push(c);
         continue;
       }
-      if (this.setTimeToZeros(c.scheduledStartTime) == this.formatDate(this.days[5])) {
-        console.log(`case ${c.firstName}`, `${c.scheduledStartTime} == ${this.formatDate(this.days[5])}`);
+      if (this.formatDate(caseScheduledStartTime) == this.formatDate(this.days[5])) {
         this.casesForDay6.push(c);
         continue;
       }
-      if (this.setTimeToZeros(c.scheduledStartTime) == this.formatDate(this.days[6])) {
-        console.log(`case ${c.firstName}`, `${c.scheduledStartTime} == ${this.formatDate(this.days[6])}`);
+      if (this.formatDate(caseScheduledStartTime) == this.formatDate(this.days[6])) {
         this.casesForDay7.push(c);
         continue;
       }

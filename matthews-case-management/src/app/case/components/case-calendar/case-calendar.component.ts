@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { Subscription, skip, tap } from 'rxjs';
 import { Device } from 'src/app/models/device.model';
+import { UserSettingData } from 'src/app/models/user-setting.model';
 import { CalendarService } from 'src/app/services/calendar.service';
 import { StateService } from 'src/app/services/states.service';
 import { UserSettingService } from 'src/app/services/user-setting.service';
@@ -32,16 +33,19 @@ export class CaseCalendarComponent implements OnInit, OnDestroy {
     private calendarService: CalendarService,
     private userSettingService: UserSettingService) {
 
+      // this.selectedDay = calendarService.setDayInTimeZone();
+
     this.subs.add(this.userSettingService.userSettings$
       .pipe(tap(setting => this.startDayOfWeek = setting.startDayOfWeek))
       .pipe(skip(1))
       .subscribe(setting => {
         this.startDayOfWeek = setting.startDayOfWeek;
         this.calendarView = setting.lastUsedCalendarView;
+        this.selectedDay = setting.lastUsedSelectedDay;
       }));
 
     this.subs.add(this.userSettingService.userSettings$.subscribe(s => {
-        this.getDays(this.hiddenDayForNavigation);
+      this.getDays(this.hiddenDayForNavigation);
     }));
 
     this.subs.add(this.stateService.devicesToShowAsFilter$.pipe(skip(1)).subscribe(devices => {
@@ -52,8 +56,10 @@ export class CaseCalendarComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.hiddenDayForNavigation = new Date(this.userSettingService.getUserSettingLastValue().lastUsedSelectedDay);
+    this.selectedDay = this.hiddenDayForNavigation;
     this.getDays(this.selectedDay);
-    this.selectedDay.setHours(0, 0, 0, 0);
+    // this.selectedDay.setHours(12, 0, 0, 0);
     this.calendarView = this.userSettingService.getUserSettingLastValue().lastUsedCalendarView;
   }
 
@@ -65,8 +71,8 @@ export class CaseCalendarComponent implements OnInit, OnDestroy {
     this.calendarView = viewDaily;
     let userSetting = this.userSettingService.getUserSettingLastValue();
     userSetting.lastUsedCalendarView = viewDaily;
-    localStorage.setItem(userSetting.username, JSON.stringify(userSetting));
-    this.userSettingService.setUserSetting(userSetting);
+
+    this.setUserSettingToLocalStore(userSetting.username, userSetting);
   }
 
   previousWeek() {
@@ -96,8 +102,18 @@ export class CaseCalendarComponent implements OnInit, OnDestroy {
 
   daySelectedEvent(date: Date) {
     if (date instanceof Date) {
+
+      let time = this.calendarService.getDateInUserProfilesTimezone(date);
+      console.log("time: ", time);
+
+      date.setHours(12, 0, 0, 0);
       this.selectedDay = date;
+      this.hiddenDayForNavigation = date;
       this.stateService.setSelectedDate(date);
+      let userSetting = this.userSettingService.getUserSettingLastValue();
+      userSetting.lastUsedSelectedDay = date;
+
+      this.setUserSettingToLocalStore(userSetting.username, userSetting);
 
       this.getDays(this.selectedDay);
       this.clickHoverMenuTrigger?.closeMenu();
@@ -111,7 +127,12 @@ export class CaseCalendarComponent implements OnInit, OnDestroy {
     this.stateService.setFilterCasesByDeviceId(deviceIdFilter);
   }
 
-  wasIClicked(buttonId : string) : 'primary' | 'accent' {
+  wasIClicked(buttonId: string): 'primary' | 'accent' {
     return this.clickedDeviceFilterButton == buttonId ? 'accent' : 'primary';
+  }
+
+  setUserSettingToLocalStore(username: string, userSetting: UserSettingData) {
+    localStorage.setItem(username, JSON.stringify(userSetting));
+    this.userSettingService.setUserSetting(userSetting);
   }
 }

@@ -45,14 +45,14 @@ export class FacilityStatusService {
             // Get server-side error
             errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
         }
-        window.alert(errorMessage);
+        // window.alert(errorMessage);
         return throwError(() => {
             return errorMessage;
         });
     }
 
     getIconsFromJsonFile(): Observable<any> {
-        return this.httpClient.get('/assets/icons.json');
+        return this.httpClient.get(environment.baseUrl + '/assets/icons.json');
     }
 
 }

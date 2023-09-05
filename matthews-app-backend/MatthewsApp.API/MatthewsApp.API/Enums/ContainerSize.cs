@@ -3,7 +3,7 @@
 public enum ContainerSize
 {
     NONE,
-    INFANT,
     STANDARD,
+    INFANT,
     BARIATRIC
 }

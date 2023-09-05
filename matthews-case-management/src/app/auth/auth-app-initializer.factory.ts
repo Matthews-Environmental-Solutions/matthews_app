@@ -11,6 +11,17 @@ export const languageList = [
 
 export function authAppInitializerFactory(authService: AuthService, userSettingService: UserSettingService, translate: TranslateService): () => Promise<void> {
     return async () => {
+
+        var replacer = function(this: any, key: any, value: any) {
+
+            if (this[key] instanceof Date) {
+               return this[key].toUTCString();
+            }
+            
+            return value;
+         }
+
+
         await authService.runInitialLoginSequence();
 
         if (!authService.hasValidToken()) {
@@ -33,7 +44,7 @@ export function authAppInitializerFactory(authService: AuthService, userSettingS
             let defaultSetting = userSettingService.getUserSettingLastValue();
             defaultSetting.username = authService.loggedInUser.name;
 
-            let defaultSettingJson = JSON.stringify(defaultSetting);
+            let defaultSettingJson = JSON.stringify(defaultSetting, replacer);
             localStorage.setItem(authService.loggedInUser.name, defaultSettingJson);
             userSetting = defaultSettingJson;
         }
@@ -54,4 +65,5 @@ export function authAppInitializerFactory(authService: AuthService, userSettingS
         const currentLanguage = translate.currentLang;
 
     }
+
 }

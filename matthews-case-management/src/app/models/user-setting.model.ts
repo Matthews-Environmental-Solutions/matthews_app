@@ -6,6 +6,7 @@ export class UserSettingData {
     timeformat!: string;
     lastUsedFacilityId: string = '00000000-0000-0000-0000-000000000000';
     lastUsedCalendarView: 'byDay' | 'byWeek' = 'byDay';
+    lastUsedSelectedDay!: Date;
 
     copyInto(jsonData: any) {
         this.username = jsonData.username;
@@ -15,5 +16,6 @@ export class UserSettingData {
         this.timeformat = jsonData.timeformat;
         this.lastUsedFacilityId = jsonData.lastUsedFacilityId;
         this.lastUsedCalendarView = jsonData.lastUsedCalendarView;
+        this.lastUsedSelectedDay = new Date(jsonData.lastUsedSelectedDay);
     }
 }

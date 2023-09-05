@@ -22,10 +22,23 @@ export class UserSettingService {
     }
 
     setDefaultUserSetting(): UserSettingData {
-        let jsonSetting = '{"username": "", "startDayOfWeek": "0", "language": "en", "timezone": "Europe/London", "timeformat": "24", "lastUsedFacilityId": "00000000-0000-0000-0000-000000000000", "lastUsedCalendarView":"byDay"}';
+        let dateNow = this.formatDate(new Date());
+        let jsonSetting = `{"username": "", "startDayOfWeek": "0", "language": "en", "timezone": "Europe/London", "timeformat": "24", "lastUsedFacilityId": "00000000-0000-0000-0000-000000000000", "lastUsedCalendarView":"byDay", "lastUsedSelectedDay":"${dateNow}"}`;
         let userSetting = new UserSettingData();
         userSetting.copyInto(JSON.parse(jsonSetting));
         return userSetting;
     }
 
+    formatDate(date: Date): string {
+        let month = '' + (date.getMonth() + 1);
+        let day = '' + date.getDate();
+        let year = date.getFullYear();
+    
+        if (month.length < 2)
+          month = '0' + month;
+        if (day.length < 2)
+          day = '0' + day;
+    
+        return `${year}-${month}-${day} 12:00:00`;
+      }
 }

@@ -14,9 +14,10 @@
             </button>
         </mat-toolbar>
 
+        <mat-progress-bar *ngIf="loader" mode="indeterminate" class="indeterminate-progress-bar"></mat-progress-bar>
 
-        <div class="card-content">
-
+        <div class="card-content" *ngIf="!loader">
+            
             <div class="left-column">
                 <mat-error
                     *ngIf="caseForm.get('clientCaseId')?.invalid && (caseForm.get('clientCaseId')?.dirty || caseForm.get('clientCaseId')?.touched)">
@@ -82,9 +83,9 @@
                     <!-- <p class="toggle-button-label">{{"gender" | translate}}</p> -->
                     <mat-label class="toggle-button-label">{{"gender" | translate}}</mat-label>
                     <mat-button-toggle-group formControlName="gender" aria-label="Font Style">
-                        <mat-button-toggle value=1>{{"male" | translate}}</mat-button-toggle>
-                        <mat-button-toggle value=2>{{"female" | translate}}</mat-button-toggle>
-                        <mat-button-toggle value=0>{{"other" | translate}}</mat-button-toggle>
+                        <mat-button-toggle value=0>{{"male" | translate}}</mat-button-toggle>
+                        <mat-button-toggle value=1>{{"female" | translate}}</mat-button-toggle>
+                        <mat-button-toggle value=2>{{"other" | translate}}</mat-button-toggle>
                     </mat-button-toggle-group>
                 </section>
 
@@ -158,15 +159,6 @@
                     </mat-select>
                 </mat-form-field>
 
-                <section class="toggle-button-container">
-                    <mat-label class="toggle-button-label">{{"burnMode" | translate}}</mat-label>
-                    <mat-button-toggle-group formControlName="burnMode" aria-label="Font Style">
-                        <mat-button-toggle value="simple">{{"simple" | translate}}</mat-button-toggle>
-                        <mat-button-toggle value="eco">{{"eco" | translate}}</mat-button-toggle>
-                        <mat-button-toggle value="production">{{"production" | translate}}</mat-button-toggle>
-                    </mat-button-toggle-group>
-                </section>
-
                 <section class="schedule-start-time-container">
                     <mat-label class="toggle-button-label">{{"scheduledStartTime" | translate}}</mat-label>
                     <div class="schedule-start-time-right-column">
@@ -186,22 +178,12 @@
             <div class="right-column">
                 <mat-form-field appearance="fill">
                     <mat-label>{{"caseStatus" | translate}}</mat-label>
-                    <mat-select formControlName="status">
-                        <mat-option *ngFor="let caseStatus of caseStatuses" [value]="caseStatus.id">
-                            {{caseStatus.name}}
+                    <mat-select formControlName="facilityStatus">
+                        <mat-option *ngFor="let facilityStatus of facilityStatuses" [value]="facilityStatus.id">
+                            {{facilityStatus.statusName}} <span class="start-process">{{getStartProcessTranslate(facilityStatus.startProcess)}}</span>
                         </mat-option>
                     </mat-select>
                 </mat-form-field>
-
-                <mat-selection-list #statuses formControlName="selectedFacilityStatuses">
-                    <mat-list-option *ngFor="let status of allFacilityStatuses" [selected]="isStatusSelected(status)" [value]="status">
-                        <mat-list-item class="option-list">
-                            <mat-icon class="icon-in-option">{{status.statusIcon}}</mat-icon> {{status.statusName}} <span class="start-process" *ngIf="status.startProcess">({{'startProcess' | translate}})</span>
-                            <!-- <div matListItemTitle>{{status.statusName}}</div> -->
-                        </mat-list-item>
-                        
-                    </mat-list-option>
-                </mat-selection-list>
 
             </div>
 

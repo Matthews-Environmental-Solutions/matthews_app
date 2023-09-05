@@ -25,13 +25,14 @@ public record CaseDto(
     string LastName,
     Guid? ModifiedBy, // Guid
     DateTime? ModifiedTime, // DateTime
-    Guid? PerformedBy, // Guid
+    string PerformedBy,
     Guid? ScheduledDevice, // Guid
     string ScheduledDeviceAlias,
     Guid? ScheduledFacility, // Guid
     DateTime? ScheduledStartTime, // DateTime
     CaseStatus Status,
-    double Weight // double
+    double Weight, // double
+    Guid? FacilityStatusId // Guid
     )
 {
 }

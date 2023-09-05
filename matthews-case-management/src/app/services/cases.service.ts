@@ -4,13 +4,14 @@ import { Observable, catchError, map, retry, throwError } from "rxjs";
 import { Case } from "../models/case.model";
 import { TranslateService } from "@ngx-translate/core";
 import { environment } from "src/environments/environment";
+import { CalendarService } from "./calendar.service";
 
 @Injectable({
     providedIn: 'root'
 })
 export class CaseService {
     apiURL = environment.apiUrl;
-    constructor(public httpClient: HttpClient, private translate: TranslateService) { }
+    constructor(public httpClient: HttpClient, private translate: TranslateService, private calendarService: CalendarService) { }
 
     getCasesFromJsonFile(days: Date[]) {
         return this.httpClient.get('/assets/cases.json');
@@ -41,8 +42,14 @@ export class CaseService {
     }
 
     getScheduledCasesByDay(facilityId: string, date: Date): Observable<Case[]> {
-        let formatedDate: string = this.formatDate(date);
-        let utcStartDate = new Date(formatedDate).toISOString();
+
+        // let formatedDate: string = this.formatDate(date);
+        // let utcStartDate = new Date(formatedDate).toISOString(); //BUG??????
+
+        date.setHours(0,0,0,0);
+        let utcStartDate = this.calendarService.getUtcDateFromUserProfileTimezoneByDate(date).toISOString();
+        // let utcStartDate3 = utcStartDate2.toISOString();
+        
         return this.httpClient.get<Case[]>(`${this.apiURL}/Case/GetScheduledCasesByDay/${facilityId}/${utcStartDate}`)
             .pipe(retry(1), catchError(this.handleError))
             .pipe(map((cases: Case[]) => {
@@ -52,8 +59,13 @@ export class CaseService {
     }
 
     getScheduledCasesByWeek(facilityId: string, dateStartDateOfWeek: Date): Observable<Case[]> {
-        let formatedStartDateOfWeek: string = this.formatDate(dateStartDateOfWeek);
-        let utcStartDateOfWeek = new Date(formatedStartDateOfWeek).toISOString();
+        
+        dateStartDateOfWeek.setHours(0,0,0,0);
+        let utcStartDateOfWeek = this.calendarService.getUtcDateFromUserProfileTimezoneByDate(dateStartDateOfWeek).toISOString();
+
+        // let formatedStartDateOfWeek: string = this.formatDate(dateStartDateOfWeek);
+        // let utcStartDateOfWeek = new Date(formatedStartDateOfWeek).toISOString();
+
         return this.httpClient.get<Case[]>(`${this.apiURL}/Case/GetScheduledCasesByWeek/${facilityId}/${utcStartDateOfWeek}`)
             .pipe(retry(1), catchError(this.handleError))
             .pipe(map((cases: Case[]) => {
@@ -68,7 +80,7 @@ export class CaseService {
     }
 
     update(caseForSave: Case): Observable<void> {
-        return this.httpClient.put<void>(`${this.apiURL}/Case/UpdateWithStatuses`, caseForSave)
+        return this.httpClient.put<void>(`${this.apiURL}/Case/Update`, caseForSave)
             .pipe(catchError(this.handleError));
     }
 
@@ -79,14 +91,15 @@ export class CaseService {
     // map case
     remapCase(item: Case): Case {
         switch (item.gender) {
+
             case 0:
-                item.genderText = this.translate.instant('other');
-                break;
-            case 1:
                 item.genderText = this.translate.instant('male');
                 break;
-            case 2:
+            case 1:
                 item.genderText = this.translate.instant('female');
+                break;
+            case 2:
+                item.genderText = this.translate.instant('other');
                 break;
         }
 
@@ -116,10 +129,10 @@ export class CaseService {
                 item.containerSizeText = this.translate.instant('none');
                 break;
             case 1:
-                item.containerSizeText = this.translate.instant('Infant');
+                item.containerSizeText = this.translate.instant('Standard');
                 break;
             case 2:
-                item.containerSizeText = this.translate.instant('Standard');
+                item.containerSizeText = this.translate.instant('Infant');
                 break;
             case 3:
                 item.containerSizeText = this.translate.instant('Bariatric');
@@ -142,7 +155,7 @@ export class CaseService {
             // Get server-side error
             errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
         }
-        window.alert(errorMessage);
+        // window.alert(errorMessage);
         return throwError(() => {
             return errorMessage;
         });

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using MatthewsApp.API.Models;
 using System;
+using Microsoft.AspNetCore.Http;
 
 namespace MatthewsApp.API.Mappers;
 
@@ -44,48 +45,8 @@ public static class CaseMapper
             entity.ScheduledFacility,
             entity.ScheduledStartTime,
             entity.Status,
-            entity.Weight
-        );
-    }
-
-    public static CaseWithStatusesDto ToDTOWithStatuses(this Case entity)
-    {
-        if (entity == default)
-        {
-            return default!;
-        }
-
-        return new CaseWithStatusesDto
-        (
-            entity.ActualDevice,
-            entity.ActualDeviceAlias,
-            entity.ActualEndTime,
-            entity.ActualFacility,
-            entity.ActualStartTime,
-            entity.Age,
-            entity.ClientCaseId,
-            entity.ClientId,
-            entity.ContainerSize,
-            entity.ContainerType,
-            entity.CreatedBy,
-            entity.CreatedTime,
-            entity.Electricity,
-            entity.FirstName,
-            entity.Fuel,
-            entity.Gender,
-            entity.Id,
-            entity.IsObsolete,
-            entity.LastName,
-            entity.ModifiedBy,
-            entity.ModifiedTime,
-            entity.PerformedBy,
-            entity.ScheduledDevice,
-            entity.ScheduledDeviceAlias,
-            entity.ScheduledFacility,
-            entity.ScheduledStartTime,
-            entity.Status,
             entity.Weight,
-            entity.CaseToFacilityStatuses.ToDTOs()
+            entity.FacilityStatusId
         );
     }
 
@@ -125,48 +86,31 @@ public static class CaseMapper
             ScheduledFacility = dto.ScheduledFacility,
             ScheduledStartTime = dto.ScheduledStartTime is null ? DateTime.MinValue : dto.ScheduledStartTime,
             Status = dto.Status,
-            Weight = dto.Weight
+            Weight = dto.Weight,
+            FacilityStatusId = dto.FacilityStatusId
         };
     }
 
-    public static Case ToEntity(this CaseWithStatusesDto dto) {
-        if (dto == default)
+    public static Case20Dto ToCase20Dto(this Case entity)
+    {
+        if (entity == default)
         {
             return default!;
         }
 
-        return new Case
-        {
-            ActualDevice = dto.ActualDevice,
-            ActualDeviceAlias = dto.ActualDeviceAlias,
-            ActualEndTime = dto.ActualEndTime,
-            ActualFacility = dto.ActualFacility,
-            ActualStartTime = dto.ActualStartTime,
-            Age = dto.Age,
-            ClientCaseId = dto.ClientCaseId,
-            ClientId = dto.ClientId,
-            ContainerSize = dto.ContainerSize,
-            ContainerType = dto.ContainerType,
-            CreatedBy = dto.CreatedBy,
-            CreatedTime = dto.CreatedTime,
-            Electricity = dto.Electricity,
-            FirstName = dto.FirstName,
-            Fuel = dto.Fuel,
-            Gender = dto.Gender,
-            Id = dto.Id,
-            IsObsolete = dto.IsObsolete,
-            LastName = dto.LastName,
-            ModifiedBy = dto.ModifiedBy,
-            ModifiedTime = dto.ModifiedTime,
-            PerformedBy = dto.PerformedBy,
-            ScheduledDevice = dto.ScheduledDevice,
-            ScheduledDeviceAlias = dto.ScheduledDeviceAlias,
-            ScheduledFacility = dto.ScheduledFacility,
-            ScheduledStartTime = dto.ScheduledStartTime is null ? DateTime.MinValue : dto.ScheduledStartTime,
-            Status = dto.Status,
-            Weight = dto.Weight,
-            CaseToFacilityStatuses = dto.CaseToFacilityStatuses.ToEntities()
-        };
+        return new Case20Dto
+        (
+            entity.Id,
+            entity.ClientCaseId,
+            entity.FirstName,
+            entity.LastName,
+            ((int) entity.ContainerSize).ToString(),
+            entity.Weight.ToString(),
+            ((int) entity.ContainerType).ToString(),
+            ((int) entity.Gender).ToString(),
+            entity.Age.ToString(),
+            "1"
+        );
     }
 
     public static IEnumerable<CaseDto> ToDTOs(this IEnumerable<Case> entities)
@@ -179,40 +123,8 @@ public static class CaseMapper
         return dtos.Select(e => e.ToEntity());
     }
 
-    public static IEnumerable<CaseWithStatusesDto> ToDTOsWithStatuses(this IEnumerable<Case> entities)
+    public static IEnumerable<Case20Dto> ToCase20DTOs(this IEnumerable<Case> entities)
     {
-        return entities.Select(e => e.ToDTOWithStatuses());
-    }
-
-    public static Case UpdateFieldsFromDto(this Case entity, CaseWithStatusesDto dto)
-    {
-        entity.ActualDevice = dto.ActualDevice;
-        entity.ActualDeviceAlias = dto.ActualDeviceAlias;
-        entity.ActualEndTime = dto.ActualEndTime;
-        entity.ActualFacility = dto.ActualFacility;
-        entity.ActualStartTime = dto.ActualStartTime;
-        entity.Age = dto.Age;
-        entity.ClientCaseId = dto.ClientCaseId;
-        entity.ClientId = dto.ClientId;
-        entity.ContainerSize = dto.ContainerSize;
-        entity.ContainerType = dto.ContainerType;
-        entity.CreatedBy = dto.CreatedBy;
-        entity.CreatedTime = dto.CreatedTime;
-        entity.Electricity = dto.Electricity;
-        entity.FirstName = dto.FirstName;
-        entity.Fuel = dto.Fuel;
-        entity.Gender = dto.Gender;
-        entity.IsObsolete = dto.IsObsolete;
-        entity.LastName = dto.LastName;
-        entity.ModifiedBy = dto.ModifiedBy;
-        entity.ModifiedTime = dto.ModifiedTime;
-        entity.PerformedBy = dto.PerformedBy;
-        entity.ScheduledDevice = dto.ScheduledDevice;
-        entity.ScheduledDeviceAlias = dto.ScheduledDeviceAlias;
-        entity.ScheduledFacility = dto.ScheduledFacility;
-        entity.ScheduledStartTime = dto.ScheduledStartTime is null ? DateTime.MinValue : dto.ScheduledStartTime;
-        entity.Status = dto.Status;
-        entity.Weight = dto.Weight;
-        return entity;
+        return entities.Select(e => e.ToCase20Dto());
     }
 }

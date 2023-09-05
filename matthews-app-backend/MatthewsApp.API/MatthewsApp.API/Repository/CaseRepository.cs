@@ -23,6 +23,13 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
     {
     }
 
+    public Case GetById (Guid id)
+    {
+        return _dataContext.Cases
+            .AsNoTracking()
+            .FirstOrDefault(c => c.Id == id);
+    }
+
     public override void Delete(Guid id)
     {
         var entity = _dataContext.Context.Set<Case>().Find((id));
@@ -39,9 +46,21 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
     public override async Task<Case> GetOne(Guid id)
     {
         return await _dataContext.Cases
-            .Include(c => c.CaseToFacilityStatuses)
             //.AsNoTracking()
             .FirstAsync(c => c.Id == id);
+    }
+
+    public async Task<Case> GetNextCaseForDevice(Guid deviceId)
+    {
+        IEnumerable<Case> cases = await _dataContext.Cases.ToArrayAsync();
+        return cases.Where(c => 
+                c.ScheduledDevice.Equals(deviceId)
+                && c.Status == CaseStatus.READY_TO_CREMATE
+                && c.IsObsolete == false
+            )
+            .OrderBy(c => c.ScheduledStartTime)
+            .ToList()
+            .First();
     }
 
     //ToDo: Ovo treba ukloniti.
@@ -70,14 +89,14 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
 
     public async Task<IEnumerable<Case>> GetScheduledCasesByDay(Guid facilityId, DateTime date)
     {
+        DateTime dateEnd = date.AddDays(1);
         IEnumerable<Case> cases = await _dataContext.Cases.ToArrayAsync();
         return cases.Where(c => 
             c.IsObsolete == false
             && c.ScheduledFacility.Equals(facilityId)
             && !c.ScheduledDevice.Equals(Guid.Empty)
-            && c.ScheduledStartTime.Value.Day.Equals(date.Day)
-            && c.ScheduledStartTime.Value.Month.Equals(date.Month)
-            && c.ScheduledStartTime.Value.Year.Equals(date.Year)
+            && c.ScheduledStartTime.Value >= date
+            && c.ScheduledStartTime.Value < dateEnd
             ).ToList();
     }
 
@@ -88,55 +107,36 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
         return cases.Where(c =>
             c.IsObsolete == false
             && c.ScheduledFacility.Equals(facilityId)
-            && c.ScheduledStartTime.Value.Date >= dateStartDateOfWeek.Date
-            && c.ScheduledStartTime.Value.Date < dateEnd.Date
+            && !c.ScheduledDevice.Equals(Guid.Empty)
+            && c.ScheduledStartTime.Value >= dateStartDateOfWeek
+            && c.ScheduledStartTime.Value < dateEnd
             ).ToList();
     }
 
-    public async Task UpdateWithStatuses(CaseWithStatusesDto dto)
+    public async Task<IEnumerable<Case>> GetFirst20ScheduledCases(Guid scheduledDeviceId)
     {
-        DbContext? context = _dataContext.Context;
-        var transaction = context.Database.BeginTransaction();
-        try
-        {
-
-            var entity = _dataContext.Cases.Include(c => c.CaseToFacilityStatuses).First(c => c.Id == dto.Id);
-
-            entity = entity.UpdateFieldsFromDto(dto);
-            entity.ModifiedTime = DateTime.Now;
-
-            // Remove unchecked statuses
-            for (int i = entity.CaseToFacilityStatuses.Count - 1; i >= 0; i--)
-            {
-                var statusFromEntity = entity.CaseToFacilityStatuses[i];
-                var statusFromDto = dto.CaseToFacilityStatuses.FirstOrDefault(fs => fs.CaseId == statusFromEntity.CaseId && fs.FacilityStatusId == statusFromEntity.FacilityStatusId);
-                if (statusFromDto.IsDone == false)
-                {
-                    entity.CaseToFacilityStatuses.RemoveAt(i);
-                }
-            }
-
-            // Add checked (new) statuses
-            foreach(var status in dto.CaseToFacilityStatuses)
-            {
-                bool founded = entity.CaseToFacilityStatuses.Any(fs => fs.CaseId == status.CaseId && fs.FacilityStatusId == status.FacilityStatusId);
-                if (status.IsDone && !founded)
-                {
-                    entity.CaseToFacilityStatuses.Add(status.ToEntity());
-                }
-            }
-
-            context.Set<Case>().Attach(entity);
-            context.Entry(entity).State = EntityState.Modified;
-            context.SaveChanges();
-            transaction.Commit();
-        }
-        catch (Exception ex)
-        {
-            transaction.Rollback();
-            throw;
-        }
+        IEnumerable<Case> cases = await _dataContext.Cases.ToArrayAsync();
+        return cases.Where(c =>
+            c.IsObsolete == false
+            && c.ScheduledStartTime > DateTime.MinValue.AddDays(100)
+            && !c.ScheduledFacility.Equals(Guid.Empty)
+            && c.ScheduledDevice.Equals(scheduledDeviceId)
+            && c.Status == CaseStatus.READY_TO_CREMATE
+            ).ToList().OrderBy(c => c.ScheduledStartTime).Take(20);
     }
+
+    public async Task<IEnumerable<Case>> GetScheduledCasesByTimePeriod(Guid facilityId, DateTime dateStart, DateTime dateEnd)
+    {
+        IEnumerable<Case> cases = await _dataContext.Cases.ToArrayAsync();
+        return cases.Where(c =>
+            c.IsObsolete == false
+            && c.ScheduledFacility.Equals(facilityId)
+            && !c.ScheduledDevice.Equals(Guid.Empty)
+            && c.ScheduledStartTime.Value >= dateStart
+            && c.ScheduledStartTime.Value < dateEnd
+            ).ToList();
+    }
+
 
     public async Task<IEnumerable<Case>> GetCasesByFacility(Guid facilityId)
     {
@@ -144,6 +144,17 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
         return cases.Where(c =>
             c.IsObsolete == false
             && c.ScheduledFacility.Equals(facilityId)
+            && (c.Status == CaseStatus.WAITING_FOR_PERMIT || c.Status == CaseStatus.UNSCHEDULED || c.Status == CaseStatus.READY_TO_CREMATE)
+            ).ToList();
+    }
+
+    public async Task<IEnumerable<Case>> GetReadyCasesByDevice(Guid deviceId)
+    {
+        IEnumerable<Case> cases = await _dataContext.Cases.ToArrayAsync();
+        return cases.Where(c =>
+            c.IsObsolete == false
+            && c.ScheduledDevice.Equals(deviceId)
+            && c.Status == CaseStatus.READY_TO_CREMATE
             ).ToList();
     }
 }

@@ -69,7 +69,7 @@ $buttons: mat-palette($mat-blue-gray, 700);
     grid-row-start: dr-first;
     grid-row-end: dr-line2;
     grid-column-start: dc-first;
-    grid-column-end: dc-end;
+    grid-column-end: dc-last;
 }
 
 .weekly-list {
