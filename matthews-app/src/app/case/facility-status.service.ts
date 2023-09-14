@@ -11,12 +11,12 @@ import { AuthHttpService } from '../core/auth-http.service';
   providedIn: 'root',
 })
 export class FacilityStatusService {
-  apiURL = environment.facilityStatusUrl;
+  apiURL = environment.apiUrl;
 
   constructor(private httpService: AuthHttpService) {}
 
   getAllStatusesByFacility(facilityId: string) {
-    const getFacilityUrl = `${this.apiURL}/GetFacilityStatusesByFacility/${facilityId}`;
+    const getFacilityUrl = `${this.apiURL}/FacilityStatus/GetFacilityStatusesByFacility/${facilityId}`;
     return this.httpService.request<FacilityStatus[]>('GET', getFacilityUrl, facilityId);
   }
 

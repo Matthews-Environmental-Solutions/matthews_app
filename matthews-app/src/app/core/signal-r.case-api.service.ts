@@ -8,6 +8,7 @@ import { LoadingService } from './loading.service';
 import * as signalR from '@microsoft/signalr';
 import { AppStoreService } from '../app.store.service';
 import { CaseService } from '../case/case.service';
+import { environment } from '../../environments/environment';
 declare let $: any;
 
 @Injectable({
@@ -26,7 +27,7 @@ export class SignalRCaseApiService {
 
   public initializeSignalRCaseApiConnection() {
     this.hubConnection = new signalR.HubConnectionBuilder()
-      .withUrl('https://develop.comdata.rs/MatthewsApp.API/casehub')
+      .withUrl(`${environment.apiUrl}/casehub`)
       .build();
     this.hubConnection
       .start()

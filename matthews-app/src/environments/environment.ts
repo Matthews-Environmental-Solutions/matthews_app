@@ -5,9 +5,8 @@
 
 export const environment = {
   production: false,
-  casesApiUrl: 'https://develop.comdata.rs/MatthewsApp.API/Case',
-  facilityStatusUrl: 'https://develop.comdata.rs/MatthewsApp.API/FacilityStatus',
-  i4connectedApiUrl: 'https://matthewscremation.i4connected.cloud/api/api/',
+  apiUrl: 'https://develop.comdata.rs/MatthewsApp.API',
+  i4connectedApiUrl: 'https://matthewscremation.i4connected.cloud/api',
   auth_config: {
     client_id: 'matthews.web',
     client_secret: '0be0470165fa49ca9631a2babc0a73d4',
@@ -19,11 +18,27 @@ export const environment = {
   }
 };
 
+//matthews web
 // export const environment = {
 //   production: false,
-//     casesApiUrl: 'https://develop.comdata.rs/MatthewsApp.API/Case',
-//     facilityStatusUrl: 'https://develop.comdata.rs/MatthewsApp.API/FacilityStatus',
-//     i4connectedApiUrl: 'https://matthewscremation.i4connected.cloud/api/api/',
+//   apiUrl: 'https://matthewscremation.i4connected.cloud/MatthewsApp.API',
+//   i4connectedApiUrl: 'https://matthewscremation.i4connected.cloud/api',
+//   auth_config: {
+//     client_id: 'matthews.web',
+//     client_secret: '0be0470165fa49ca9631a2babc0a73d4',
+//     server_host: 'https://matthewscremation.i4connected.cloud/identity',
+//     redirect_url: 'https://matthewscremation.i4connected.cloud/MatthewsApp.Mobile/authorizationcallback',
+//     end_session_redirect_url: 'https://matthewscremation.i4connected.cloud/MatthewsApp.Mobile/authorizationcallback',
+//     scopes: 'profile openid email offline_access matthews.api api',
+//     pkce: true
+//   }
+// };
+
+// matthews mob
+// export const environment = {
+//   production: false,
+//     apiUrl: 'https://matthewscremation.i4connected.cloud/MatthewsApp.API',
+//     i4connectedApiUrl: 'https://matthewscremation.i4connected.cloud/api',
 //   auth_config: {
 //     client_id: 'matthews.app',
 //     client_secret: 'b8f30abd541943ff92a1d36ca72ed25e',
@@ -34,7 +49,6 @@ export const environment = {
 //     pkce: true
 //   }
 // };
-
 
 /*
  * For easier debugging in development mode, you can import the following file
