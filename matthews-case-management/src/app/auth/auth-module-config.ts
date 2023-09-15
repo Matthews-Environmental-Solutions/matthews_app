@@ -1,8 +1,9 @@
 import { OAuthModuleConfig } from 'angular-oauth2-oidc';
+import { environment } from "src/environments/environment";
 
 export const authModuleConfig: OAuthModuleConfig = {
   resourceServer: {
-    allowedUrls: ['https://matthewscremation.i4connected.cloud/api', 'https://localhost:5001', 'https://develop.comdata.rs/MatthewsApp.API'],
+    allowedUrls: environment.allowedUrls,
     sendAccessToken: true,
   }
 };
