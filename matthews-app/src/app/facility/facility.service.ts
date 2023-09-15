@@ -18,15 +18,15 @@ export class FacilityService {
     ) { }
 
   getFacilities() {
-    return this.httpService.request<Facility[]>("GET", environment.i4connectedApiUrl + "sites/details/list");
+    return this.httpService.request<Facility[]>("GET", environment.i4connectedApiUrl + "/api/sites/details/list");
   }
 
   getUserInfo(userId: string) {
-    return this.httpService.request<UserInfo>("GET", environment.i4connectedApiUrl + "users/" + userId + "/info");
+    return this.httpService.request<UserInfo>("GET", environment.i4connectedApiUrl + "/api/users/" + userId + "/info");
   }
 
   getAttachment(accessToken: string, photoId: string) {
     const headers = new HttpHeaders().set('Authorization', `Bearer ${accessToken}`);
-    return this.http.get(environment.i4connectedApiUrl + "attachments/" + photoId, { headers: headers, responseType: 'blob' });
+    return this.http.get(environment.i4connectedApiUrl + "/api/attachments/" + photoId, { headers: headers, responseType: 'blob' });
   }
 }

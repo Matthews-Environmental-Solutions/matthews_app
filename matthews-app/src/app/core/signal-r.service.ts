@@ -5,6 +5,7 @@ import { Injectable } from '@angular/core';
 import { AuthService } from 'ionic-appauth';
 import { TokenResponse } from '@openid/appauth';
 import { LoadingService } from './loading.service';
+import { environment } from 'src/environments/environment';
 declare let $: any;
 
 export interface Measurement {
@@ -26,7 +27,7 @@ export class SignalRService {
 
   public async initializeSignalRConnection(): Promise<any> {
     this.loadingService.present();
-    const signalRServerEndPoint = 'https://matthewscremation.i4connected.cloud/api/signalr';
+    const signalRServerEndPoint = `${environment.i4connectedApiUrl}/signalr`;
     this.connection = $.hubConnection(signalRServerEndPoint);
     await this.getAccessToken().then((token) => {
       this.connection.qs = { access_token: token };

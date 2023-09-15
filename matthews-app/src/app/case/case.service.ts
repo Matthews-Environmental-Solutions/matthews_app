@@ -12,32 +12,32 @@ export class CaseService {
   }
 
   getCases(facilityId: string) {
-    const getScheduleUrl = `${environment.casesApiUrl}/GetAllCasesByFacility/${facilityId}`;
+    const getScheduleUrl = `${environment.apiUrl}/Case/GetAllCasesByFacility/${facilityId}`;
     return this.httpService.request<Case[]>('GET', getScheduleUrl, facilityId);
   }
 
   getReadyCasesByDevice(deviceId: string) {
-    const getReadyCases = `${environment.casesApiUrl}/GetReadyCasesByDevice/${deviceId}`;
+    const getReadyCases = `${environment.apiUrl}/Case/GetReadyCasesByDevice/${deviceId}`;
     return this.httpService.request<Case[]>('GET', getReadyCases, deviceId);
   }
 
   getNextCaseForDevice(deviceId: string) {
-    const getNextCaseUrl = `${environment.casesApiUrl}/GetNextCaseForDevice/${deviceId}`;
+    const getNextCaseUrl = `${environment.apiUrl}/Case/GetNextCaseForDevice/${deviceId}`;
     return this.httpService.request<Case>('GET', getNextCaseUrl, deviceId);
   }
 
   createCase(caseToAdd: Case) {
-    const postCaseUrl = `${environment.casesApiUrl}/Save`;
+    const postCaseUrl = `${environment.apiUrl}/Case/Save`;
     return this.httpService.request<Case>('POST', postCaseUrl, caseToAdd);
   }
 
   updateCase(id: string, caseToUpdate: Case) {
-    const updateCaseUrl = `${environment.casesApiUrl}/Update`;
+    const updateCaseUrl = `${environment.apiUrl}/Case/Update`;
     return this.httpService.request<Case>('PUT', updateCaseUrl, caseToUpdate);
   }
 
   deleteCase(caseId: string) {
-    const deleteCaseUrl = `${environment.casesApiUrl}/${caseId}`;
+    const deleteCaseUrl = `${environment.apiUrl}/Case/${caseId}`;
     return this.httpService.request<Case>('DELETE', deleteCaseUrl, caseId);
   }
 }

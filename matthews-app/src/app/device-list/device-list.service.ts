@@ -12,7 +12,7 @@ import { Signal } from './signal';
 })
 export class DeviceListService {
 
-  private productUrl = environment.i4connectedApiUrl + 'devices/';
+  private productUrl = environment.i4connectedApiUrl + '/api/devices/';
 
   constructor(
     private httpService: AuthHttpService
@@ -20,7 +20,7 @@ export class DeviceListService {
 
 getDevices(faiclityd: string)  {
 
-  return this.httpService.request<Device[]>("POST", "https://matthewscremation.i4connected.cloud/api/api/devices/list?pageSize=1000000&pageNumber=1&sortFields=0", {
+  return this.httpService.request<Device[]>("POST", `${environment.i4connectedApiUrl}/api/devices/list?pageSize=1000000&pageNumber=1&sortFields=0`, {
     "selectedItems": [
       {
         "id": faiclityd,
@@ -31,7 +31,7 @@ getDevices(faiclityd: string)  {
 }
 
 getSignalsForDevice(deviceId: string) {
-  return this.httpService.request<Signal[]>("POST", "https://matthewscremation.i4connected.cloud/api/api/signals/list?pageSize=1000000&pageNumber=1", {
+  return this.httpService.request<Signal[]>("POST", `${environment.i4connectedApiUrl}/api/signals/list?pageSize=1000000&pageNumber=1`, {
     "selectedItems": [
       {
         "id": deviceId,
