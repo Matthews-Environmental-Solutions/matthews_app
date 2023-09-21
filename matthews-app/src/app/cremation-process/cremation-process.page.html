@@ -59,13 +59,19 @@
             optional
           >
             <ng-template matStepLabel>
-                <span [ngClass]="parseSignalValue(signal.value) > 60 && isCaseSelected || parseSignalValue(signal.value) < 40 ? 'grayHeading' : 'blackHeading'">
+                <span [ngClass]="parseSignalValue(signal.value) > 60 || parseSignalValue(signal.value) < 40 ? 'grayHeading' : 'blackHeading'">
                   {{'Select Case'}}<br/>
                 </span>
-              <span class="font-size" *ngIf="!isCaseSelected"
+              <span class="font-size" *ngIf="!isCaseSelected && parseSignalValue(signal.value) < 60"
                 >No Case Selected
               </span>
-              <span class="font-size" *ngIf="isCaseSelected"
+              <span class="completed" *ngIf="!isCaseSelected && parseSignalValue(signal.value) > 60"
+                >No Case Selected
+              </span>
+              <span class="font-size" *ngIf="isCaseSelected && parseSignalValue(signal.value) < 60"
+                >{{case.firstName + ' ' + case.lastName + ' - ' + clientCaseId}}
+              </span>
+              <span class="completed" *ngIf="isCaseSelected && parseSignalValue(signal.value) > 60"
                 >{{case.firstName + ' ' + case.lastName + ' - ' + clientCaseId}}
               </span>
             </ng-template>
@@ -93,7 +99,7 @@
               >{{'Cremation in progress'}}</span
             >
             <span
-              class="font-size"
+              class="completed"
               *ngIf="parseSignalValue(signal.value) >= 100 ? true : false"
               >{{chamberStatus[100] ?? "-" | translate}}</span
             >
@@ -102,17 +108,7 @@
       </ng-container>
 
       <mat-step [completed]="isRakeOutStarted">
-        <ng-template matStepLabel>{{'CompleteCycle' | translate}}</ng-template>
-        <ng-container *ngIf="isCoolDownStarted && !isRakeOutStarted">
-          <ng-template matStepLabel
-            >{{'CompleteCycle' | translate}}</ng-template
-          >
-        </ng-container>
-        <ng-container *ngIf="!isCoolDownStarted && isRakeOutStarted">
-          <ng-template matStepLabel
-            >{{'CompleteCycle' | translate}}</ng-template
-          >
-        </ng-container>
+        <ng-template matStepLabel class="blackHeading">{{'CompleteCycle' | translate}}</ng-template>
       </mat-step>
     </mat-stepper>
   </ion-content>
@@ -404,9 +400,6 @@
                 <span class="footer-text"><b>Complete Process</b><br /></span>
                 <span class="footer-text"
                   >{{'CoolingInProgress' | translate}}...<br
-                /></span>
-                <span class="footer-text"
-                  >{{'Remaining' | translate}} {{cooldownTime}} min<br
                 /></span>
                 <ng-container *ngFor="let signal of selectedDevice.signals; trackBy:trackItems">
                   <span class="footer-text" *ngIf="signal.name === 'TT100_PV'">
