@@ -52,26 +52,26 @@
       <ng-container *ngFor="let signal of selectedDevice.signals">
         <mat-step
           *ngIf="signal.name === 'MACHINE_STATUS'"
-          [completed]="isCaseSelected || parseSignalValue(signal.value) > 60"
+          [completed]="isCaseSelected || parseSignalValue(signal.value) >= 50"
         >
           <ng-container
             *ngIf="selectedFacility$ | async as selectedFacility"
             optional
           >
             <ng-template matStepLabel>
-                <span [ngClass]="parseSignalValue(signal.value) > 60 || parseSignalValue(signal.value) < 40 ? 'grayHeading' : 'blackHeading'">
+                <span [ngClass]="parseSignalValue(signal.value) >= 50 || parseSignalValue(signal.value) < 40 ? 'grayHeading' : 'blackHeading'">
                   {{'Select Case'}}<br/>
                 </span>
-              <span class="font-size" *ngIf="!isCaseSelected && parseSignalValue(signal.value) < 60"
+              <span class="font-size" *ngIf="!isCaseSelected && parseSignalValue(signal.value) < 50"
                 >No Case Selected
               </span>
-              <span class="completed" *ngIf="!isCaseSelected && parseSignalValue(signal.value) > 60"
+              <span class="completed" *ngIf="!isCaseSelected && parseSignalValue(signal.value) >= 50"
                 >No Case Selected
               </span>
-              <span class="font-size" *ngIf="isCaseSelected && parseSignalValue(signal.value) < 60"
+              <span class="font-size" *ngIf="isCaseSelected && parseSignalValue(signal.value) < 50"
                 >{{case.firstName + ' ' + case.lastName + ' - ' + clientCaseId}}
               </span>
-              <span class="completed" *ngIf="isCaseSelected && parseSignalValue(signal.value) > 60"
+              <span class="completed" *ngIf="isCaseSelected && parseSignalValue(signal.value) >= 50"
                 >{{case.firstName + ' ' + case.lastName + ' - ' + clientCaseId}}
               </span>
             </ng-template>
@@ -286,6 +286,7 @@
                   expand="block"
                   (click)="startCycle(selectedDevice)"
                   class="btnsuccess"
+                  [disabled]="parseSignalValue(signal.value) < 60"
                 >
                   <ion-icon slot="end" name="arrow-forward"></ion-icon>
                   {{'StartCycle' | translate}}

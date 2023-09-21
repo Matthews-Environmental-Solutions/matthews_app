@@ -50,13 +50,13 @@ export class CremationProcessPage implements OnInit {
         if (
           signal.name === 'MACHINE_STATUS' &&
           parseInt(signal.value) >= 40 &&
-          parseInt(signal.value) < 80
+          parseInt(signal.value) < 50
           &&!this.isCaseSelected
         ) {
           this.move(1);
         } else if (
           signal.name === 'MACHINE_STATUS' &&
-          parseInt(signal.value) >= 80 &&
+          parseInt(signal.value) >= 50 &&
           parseInt(signal.value) < 100 &&
           !this.isCremationStopped
         ) {
