@@ -11,5 +11,6 @@ export interface Device {
   deviceTypeName: string;
   deviceModelId: number;
   deviceModelName: string;
+  deviceBurnMode: string;
   signals: Signal[];
 }

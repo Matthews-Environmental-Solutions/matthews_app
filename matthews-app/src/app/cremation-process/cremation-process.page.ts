@@ -153,7 +153,7 @@ export class CremationProcessPage implements OnInit {
     });
   }
 
-  parseSignalValue(value: string) {
+  parseSignalValue(value: string): number{
     return parseInt(value);
   }
 

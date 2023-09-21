@@ -99,6 +99,22 @@ ion-footer{
   color: black;
 }
 
+.completed {
+  font-size: 15px !important;
+  font-weight: 375 !important;
+  color: gray;
+}
+
+.grayHeading {
+  color: gray;
+  font-size: 18px !important;
+}
+
+.blackHeading {
+  color: black;
+  font-size: 18px !important;
+}
+
 // :host ::ng-deep .mat-vertical-content-container {
 //   pointer-events:none;
 // }

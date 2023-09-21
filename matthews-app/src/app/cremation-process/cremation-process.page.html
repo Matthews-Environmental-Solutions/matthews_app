@@ -2,7 +2,7 @@
 <ng-container *ngIf="selectedDevice$ | async as selectedDevice">
   <ion-header>
     <ion-toolbar style="--background: #455a64">
-      <ion-title>{{selectedDevice.alias}}</ion-title>
+      <ion-title color="white">{{selectedDevice.alias}}</ion-title>
       <ion-buttons slot="start">
         <ion-back-button></ion-back-button>
       </ion-buttons>
@@ -20,8 +20,10 @@
           *ngIf="signal.name === 'MACHINE_STATUS'"
           [completed]="parseSignalValue(signal.value) >= 40"
         >
-          <ng-template matStepLabel
-            >{{'Prepare System'}}<br />
+          <ng-template matStepLabel>
+            <span [ngClass]="parseSignalValue(signal.value) >= 40 ? 'grayHeading' : 'blackHeading'">
+              {{'Prepare System'}}<br />
+            </span>
             <span
               class="font-size"
               *ngIf="parseSignalValue(signal.value) == 0 ? true : false"
@@ -39,7 +41,7 @@
               translate}}
             </span>
             <span
-              class="font-size"
+              class="completed"
               *ngIf="parseSignalValue(signal.value)>= 40 ? true : false"
               >{{"Preheat Complete"}}
             </span>
@@ -50,14 +52,19 @@
       <ng-container *ngFor="let signal of selectedDevice.signals">
         <mat-step
           *ngIf="signal.name === 'MACHINE_STATUS'"
-          [completed]="isCaseSelected || parseSignalValue(signal.value) > 50"
+          [completed]="isCaseSelected || parseSignalValue(signal.value) > 60"
         >
           <ng-container
             *ngIf="selectedFacility$ | async as selectedFacility"
             optional
           >
-            <ng-template matStepLabel
-              >Select Case<br />
+            <ng-template matStepLabel>
+                <span [ngClass]="parseSignalValue(signal.value) > 60 && isCaseSelected || parseSignalValue(signal.value) < 40 ? 'grayHeading' : 'blackHeading'">
+                  {{'Select Case'}}<br/>
+                </span>
+              <span class="font-size" *ngIf="!isCaseSelected"
+                >No Case Selected
+              </span>
               <span class="font-size" *ngIf="isCaseSelected"
                 >{{case.firstName + ' ' + case.lastName + ' - ' + clientCaseId}}
               </span>
@@ -71,8 +78,10 @@
           *ngIf="signal.name === 'MACHINE_STATUS'"
           [completed]="parseSignalValue(signal.value) >= 100 ? true : false"
         >
-          <ng-template matStepLabel
-            >{{'StartCycle' | translate}}<br />
+          <ng-template matStepLabel>
+              <span [ngClass]="parseSignalValue(signal.value) >= 100 || parseSignalValue(signal.value) < 80? 'grayHeading' : 'blackHeading'">
+                {{'StartCycle' | translate}}<br/>
+              </span>
             <span
               class="font-size"
               *ngIf="parseSignalValue(signal.value) <= 80 ? true : false"
