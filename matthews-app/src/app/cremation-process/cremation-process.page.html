@@ -85,7 +85,7 @@
           [completed]="parseSignalValue(signal.value) >= 100 ? true : false"
         >
           <ng-template matStepLabel>
-              <span [ngClass]="parseSignalValue(signal.value) >= 100 || parseSignalValue(signal.value) < 80? 'grayHeading' : 'blackHeading'">
+              <span [ngClass]="parseSignalValue(signal.value) >= 100 || parseSignalValue(signal.value) < 50? 'grayHeading' : 'blackHeading'">
                 {{'StartCycle' | translate}}<br/>
               </span>
             <span
