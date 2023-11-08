@@ -480,6 +480,11 @@ export class CremationProcessPage implements OnInit {
     this.appStore.openCasesModal(deviceId);
   }
 
+  clearSelectedCase() {
+    //this.appStore.updateSelectedCase(null);
+    this.isCaseSelected = false;
+  }
+
   mapCase(res) {
     if (res !== undefined && res.id !== undefined) {
       this.case.firstName = res.firstName;
