@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /* eslint-disable @angular-eslint/component-selector */
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
@@ -5,6 +6,7 @@ import { NavController } from '@ionic/angular';
 import { AppStoreService } from '../app.store.service';
 import { MachineStatus } from '../core/enums';
 import { SignalRService } from '../core/signal-r.service';
+import { Device } from './device';
 
 @Component({
   selector: 'app-device-list',
@@ -44,6 +46,11 @@ export class DeviceListPage implements OnInit, OnDestroy {
   cancelSearch(): void {
     this.showSearchbar = false;
     this.searchTerm = '';
+  }
+
+  deviceHasMachineStatus(device: Device): boolean {
+    // Check if the device has the 'MACHINE_STATUS' signal with a non-null value
+    return device.signals && device.signals.some(signal => signal.name === 'MACHINE_STATUS' && signal.value !== null && signal.value !== undefined);
   }
 
   updateSelectedCremator(deviceId: string) {

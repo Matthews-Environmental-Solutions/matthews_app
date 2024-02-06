@@ -15,6 +15,7 @@ import {TranslateHttpLoader} from '@ngx-translate/http-loader';
 import { FormsModule } from '@angular/forms';
 import { DatePipe } from '@angular/common';
 import { PipesModule } from './pipes/pipes.module';
+import { MatIconModule} from '@angular/material/icon';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(httpClient: HttpClient) {
@@ -26,6 +27,7 @@ export function HttpLoaderFactory(httpClient: HttpClient) {
   imports: [
     BrowserModule,
     HttpClientModule,
+    MatIconModule,
     IonicModule.forRoot(),
     AppRoutingModule,
     BrowserAnimationsModule,

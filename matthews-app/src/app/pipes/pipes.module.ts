@@ -3,11 +3,12 @@
 import { NgModule } from "@angular/core";
 import { EnumFormatPipe } from "./enum-format.pipe";
 import { CamelCasePipe } from "./camel-case.pipe";
+import { SortPipe } from "./sort.pipe";
 
 @NgModule({
-  declarations: [EnumFormatPipe, CamelCasePipe],
+  declarations: [EnumFormatPipe, CamelCasePipe, SortPipe],
   imports: [],
-  exports: [EnumFormatPipe, CamelCasePipe]
+  exports: [EnumFormatPipe, CamelCasePipe, SortPipe]
 })
 export class PipesModule {
    static forRoot() {

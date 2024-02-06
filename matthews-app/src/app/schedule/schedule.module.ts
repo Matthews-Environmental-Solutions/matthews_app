@@ -13,6 +13,7 @@ import { LongPressModule } from 'ionic-long-press';
 import { TranslateModule } from '@ngx-translate/core';
 import { EnumFormatPipe } from '../pipes/enum-format.pipe';
 import { PipesModule } from '../pipes/pipes.module';
+import { MatIconModule} from '@angular/material/icon';
 
 
 @NgModule({
@@ -20,6 +21,7 @@ import { PipesModule } from '../pipes/pipes.module';
     CommonModule,
     FormsModule,
     IonicModule,
+    MatIconModule,
     SchedulePageRoutingModule,
     Ng2SearchPipeModule,
     LongPressModule,

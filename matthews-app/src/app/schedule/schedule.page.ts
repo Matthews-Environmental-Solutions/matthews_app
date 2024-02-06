@@ -116,7 +116,7 @@ export class SchedulePage implements OnInit, OnDestroy {
       return this.translateService.instant('scheduleDateMissing');
     }
     else {
-      return this.translateService.instant('scheduleDate') + ': ' + this.datePipe.transform(date, 'dd/MM/yyyy');
+      return this.translateService.instant('scheduleDate') + ': ' + this.datePipe.transform(date, 'short');
     }
   }
 }

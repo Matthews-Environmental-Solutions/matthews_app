@@ -67,7 +67,7 @@
     
   <ng-container *ngIf="deviceList$ | async as deviceList">
     <ion-item *ngIf="!fromProcess" lines="full">
-      <ion-label position="floating">{{'Device' | translate}}</ion-label>
+      <ion-label position="floating">Scheduled Machine</ion-label>
       <ion-select name="selectDevice"  placeholder="Select Device" [(ngModel)]="newCase.scheduledDevice" >
               <ion-select-option *ngFor="let device of deviceList;" value={{device.id}}>{{ device.alias }}</ion-select-option>
       </ion-select>

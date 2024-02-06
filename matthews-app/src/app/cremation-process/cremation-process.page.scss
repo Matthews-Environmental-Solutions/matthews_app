@@ -115,6 +115,12 @@ ion-footer{
   font-size: 18px !important;
 }
 
+.button-container {
+  display: flex; /* Use flexbox for horizontal alignment */
+  justify-content: space-between; /* Distribute space between the buttons */
+  align-items: center; /* Align items vertically in the center */
+}
+
 // :host ::ng-deep .mat-vertical-content-container {
 //   pointer-events:none;
 // }
