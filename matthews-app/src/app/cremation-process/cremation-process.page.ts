@@ -433,14 +433,52 @@ export class CremationProcessPage implements OnInit {
     this.presentAlert(alertOptions);
   }
 
+  systemShutdown(stepper: MatStepper, selectedDevice: Device) {
+    const alertOptions: AlertOptions = {
+      header: 'Confirm System ShutDown',
+      message: 'Confirm System ShutDown',
+      buttons: [
+        {
+          text: this.translateService.instant('Cancel'),
+          role: 'cancel',
+        },
+        {
+          text: this.translateService.instant('Confirm'),
+          role: 'confirm',
+          handler: () => {
+            this.resetStepper(stepper);
+            const signal = selectedDevice.signals.find(
+              (signal) => signal.name === 'COOLDOWN'
+            );
+            this.cremationProcessService.writeSignalValue(signal?.id, 1);
+            const signal1 = selectedDevice.signals.find(
+              (signal1) => signal1.name === 'BURN_MODE'
+            );
+            this.cremationProcessService.writeSignalValue(signal1?.id, 1);
+            this.stepNumber = 0;
+            this.resetIntervals();
+            this.isCaseSelected = false;
+          },
+        },
+      ],
+    };
+
+    this.presentAlert(alertOptions);
+  }
+
   cancelSearch(): void {
     this.showSearchbar = false;
     this.searchTerm = '';
   }
 
-  segmentChanged(ev: any) {
+  segmentChanged(ev: any, selectedDevice: Device) {
     this.selectedBurnMode = ev.detail.value;
     console.log('Segment changed', ev);
+    const signal = selectedDevice.signals.find(
+      (signal) => signal.name === 'BURN_MODE'
+    );
+    //console.log('Signal ID: ' + signal?.id);
+    this.cremationProcessService.writeSignalValue(signal?.id, ev.detail.value);
   }
 
   async presentAlert(options: AlertOptions) {

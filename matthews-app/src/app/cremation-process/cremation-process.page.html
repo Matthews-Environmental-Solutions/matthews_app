@@ -130,7 +130,7 @@
                 <span class="footer-text">Press START to continue</span>
               </div>
               <div class="actions">
-                <ion-segment (ionChange)="segmentChanged($event)">
+                <ion-segment (ionChange)="segmentChanged($event, selectedDevice)">
                   <ion-segment-button
                     *ngFor="let s of burnModeKeys;"
                     value="{{s}}"
@@ -142,7 +142,7 @@
                   <ion-button expand="block" (click)="startPreheat(selectedDevice)" class="btnsuccess">
                     {{ 'StartPreheat' | translate }}
                   </ion-button>
-                  <ion-button class="btnsuccess">
+                  <ion-button class="btnsuccess" (click)="systemShutdown(stepper, selectedDevice)">
                     System Shutdown
                   </ion-button>
                 </div>
@@ -178,7 +178,7 @@
                 >
                   {{'StopPreheat' | translate}}
               </ion-button>
-                  <ion-button class="btnsuccess">
+                  <ion-button class="btnsuccess" (click)="systemShutdown(stepper, selectedDevice)">
                     System Shutdown
                   </ion-button>
                 </div>
@@ -231,7 +231,7 @@
                   </ion-button>
                   <ion-button 
                   expand="block"
-                  class="btnsuccesstwo">
+                  class="btnsuccesstwo" (click)="systemShutdown(stepper, selectedDevice)">
                     System Shutdown
                   </ion-button>
                 </div>
