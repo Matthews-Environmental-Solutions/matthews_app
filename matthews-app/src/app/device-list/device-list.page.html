@@ -29,10 +29,11 @@
         <ion-icon name="flame-outline"></ion-icon>
         <ion-card-header>
           <ion-card-title>{{device.alias ?? device.name}}</ion-card-title>
-          <ion-card-subtitle *ngIf="!device.signals">-</ion-card-subtitle>
+          <!-- <ion-card-subtitle *ngIf="!device.signals">No machine status</ion-card-subtitle> -->
           <ng-container *ngFor="let signal of device.signals">
             <ion-card-subtitle *ngIf="signal.name === 'MACHINE_STATUS'">{{machineStatus[signal.value] | translate}}</ion-card-subtitle>
           </ng-container>
+          <ion-card-subtitle *ngIf="!deviceHasMachineStatus(device)">No machine status</ion-card-subtitle>
         </ion-card-header>
         <ion-icon name="information" slot="end" (click)="navigateToDetailsPage($event, device.id, device.name)"></ion-icon>
       </ion-item>

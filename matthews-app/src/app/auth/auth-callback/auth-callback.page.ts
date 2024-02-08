@@ -19,7 +19,12 @@ export class AuthCallbackPage implements OnInit, OnDestroy {
   ngOnInit() {
     console.log(window.location.origin + this.router.url);
     this.sub = this.auth.events$.subscribe((action) => this.postCallback(action));
-    this.auth.authorizationCallback(window.location.origin + this.router.url);
+    //this.auth.authorizationCallback(window.location.origin + this.router.url);
+    try {
+      this.auth.authorizationCallback(window.location.origin + this.router.url);
+    } catch (error) {
+      console.log('capacitor error');
+    }
   }
 
   ngOnDestroy() {
@@ -27,7 +32,7 @@ export class AuthCallbackPage implements OnInit, OnDestroy {
   }
 
   postCallback(action: IAuthAction) {
-    console.log(JSON.stringify(action))
+    console.log(JSON.stringify(action));
     if (action.action === AuthActions.SignInSuccess) {
       this.navCtrl.navigateRoot('app');
     }
