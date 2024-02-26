@@ -3,7 +3,7 @@ import { environment } from '../../environments/environment';
 
 export const authConfig: AuthConfig = {
 
-    issuer: 'https://matthewscremation.i4connected.cloud/identity',
+    issuer: 'https://matthewsenvironmental.i4connected.cloud/identity',
 
     redirectUri: window.location.origin + environment.baseUrl, // it is:   http://localhost:4200,  'https://develop.comdata.rs/MatthewsApp.API'
     // silentRefreshRedirectUri: window.location.origin + environment.baseUrl + '/silent-refresh.html',
