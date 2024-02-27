@@ -8,12 +8,15 @@
             <button mat-icon-button aria-label="navigate next" (click)="nextWeek()">
                 <mat-icon class="navigation-button">navigate_next</mat-icon>
             </button>
-            <span class="card-header-text">{{"week" | translate}} {{weekNumber}} | {{getFirstWeekDate()}} -
+            <span *ngIf="calendarView == 'byDay'" class="card-header-text">{{"showingCasesFor" | translate}} <span class="date-bold">{{selectedDay | timepipe: true}}</span></span>
+            <span *ngIf="calendarView == 'byWeek'" class="card-header-text">{{"week" | translate}} {{weekNumber}} | {{getFirstWeekDate()}} -
                 {{getLastWeekDate()}}</span>
         </div>
 
         <div class="header-right">
-            <div *ngIf="calendarView == 'byDay'" class="selected-day-showing">{{"showingCasesFor" | translate}} <span class="date-bold">{{selectedDay | timepipe: true}}</span></div>
+            <button *ngIf="calendarView == 'byDay'" mat-button class="header-right-period-buttons" (click)="todayClick()">
+                {{'today' | translate}}
+            </button>
             <button mat-icon-button [matMenuTriggerFor]="calendarMenu" aria-label="pick date"
                 #clickHoverMenuTrigger="matMenuTrigger">
                 <mat-icon class="calendar-icon">calendar_month</mat-icon>

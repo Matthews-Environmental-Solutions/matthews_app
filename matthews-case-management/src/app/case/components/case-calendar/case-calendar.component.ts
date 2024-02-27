@@ -67,6 +67,18 @@ export class CaseCalendarComponent implements OnInit, OnDestroy {
     this.subs.unsubscribe();
   }
 
+  todayClick() {
+    var todayClick = new Date();
+    todayClick.setHours(12, 0, 0, 0);
+
+    this.stateService.setSelectedDate(todayClick);
+
+    let userSetting = this.userSettingService.getUserSettingLastValue();
+    userSetting.lastUsedSelectedDay = todayClick;
+    localStorage.setItem(userSetting.username, JSON.stringify(userSetting));
+    this.userSettingService.setUserSetting(userSetting);
+  }
+
   switchCalendarView(viewDaily: 'byDay' | 'byWeek') {
     this.calendarView = viewDaily;
     let userSetting = this.userSettingService.getUserSettingLastValue();

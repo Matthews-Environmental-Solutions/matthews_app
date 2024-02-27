@@ -23,6 +23,7 @@
     "lastName": "Nachname",
     "weight": "Gewicht",
     "gender": "Geschlecht",
+    "today": "Heute",
     "age": "Alter",
     "containerType": "Containertyp",
     "loadSize": "Ladungsgröße",
