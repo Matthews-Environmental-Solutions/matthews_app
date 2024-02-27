@@ -33,7 +33,7 @@
     <div class="weekly-list">
         <div class="weekly-list-1">
             <ng-container *ngFor="let case of casesForDay1">
-                <div class="weekly-item">
+                <div class="weekly-item" (click)="openCaseInfo(case)">
                     <div class="weekly-item-row-1">
                         <div class="weekly-item-row-1-cell-1" 
                         [ngClass]="{'case-status-color-green': case.status == 1, 'case-status-color-red': case.status == 2, 'case-status-color-blue': case.status == 3, 'case-status-color-orange': case.status == 4}">ID {{case.clientCaseId}}</div>

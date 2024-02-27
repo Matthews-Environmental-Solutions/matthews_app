@@ -1,0 +1,32 @@
+.dialog-content {
+    font-size: 12px;
+    /* Adjust the value as needed */
+    margin-bottom: 9px;
+    font-size: 15px;
+    font-weight: bold;
+}
+
+.dialog-header {
+    margin-bottom: 0px;
+    /* Adjust the value as needed */
+    margin-top: 0px;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.dialog-title {
+    margin-bottom: 0px;
+    /* Adjust the value as needed */
+    margin-top: 0px;
+    color: #02708e;
+}
+
+.mat-dialog-content.not-scrollable {
+    max-height: 300px; /* or set a specific value like '300px' */
+    overflow: hidden;
+}
+
+::ng-deep .mat-mdc-dialog-container {
+    --mdc-dialog-supporting-text-line-height: 15px; /* Your desired line height */
+  }
+  

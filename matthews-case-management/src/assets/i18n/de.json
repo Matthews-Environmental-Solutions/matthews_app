@@ -86,7 +86,7 @@
     "sunday": "Sonntag",
     "monday": "Montag",
     "hours": "Std.",
-
+    "device": "Gerät",
     "title": "Service-Feedback für {{company}}",
     "name": {
         "label": "Namen",

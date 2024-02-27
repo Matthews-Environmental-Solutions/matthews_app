@@ -5,6 +5,8 @@ import { Case } from 'src/app/models/case.model';
 import { CalendarService } from 'src/app/services/calendar.service';
 import { CaseService } from 'src/app/services/cases.service';
 import { StateService } from 'src/app/services/states.service';
+import { CaseInfoDialogComponent } from '../../dialogs/case-info.dialog/case-info.dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'case-calendar-weekly',
@@ -33,7 +35,8 @@ export class CaseCalendarWeeklyComponent implements OnInit {
 
   private subs = new Subscription();
 
-  constructor(private translate: TranslateService, private caseService: CaseService, private stateService: StateService, private calendarService: CalendarService) {
+  constructor(private translate: TranslateService, private caseService: CaseService, private stateService: StateService, private calendarService: CalendarService,
+    public dialog: MatDialog) {
   }
 
   ngOnInit(): void {
@@ -77,6 +80,18 @@ export class CaseCalendarWeeklyComponent implements OnInit {
 
   ngOnDestroy(): void {
     this.subs.unsubscribe();
+  }
+
+  openCaseInfo(caseSent: Case): void {
+    const dialogRef = this.dialog.open(CaseInfoDialogComponent, {
+      data: caseSent,
+      height: '300px',
+      width: '230px',
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log(`Dialog result: ${result}`);
+    });
   }
 
   getCasesByWeek(): void {

@@ -86,7 +86,7 @@
     "sunday": "Sunday",
     "monday": "Monday",
     "hours": "hours",
-    
+    "device": "Device",
     "title": "Service feedback for {{company}}",
     "name": {
         "label": "Name",
