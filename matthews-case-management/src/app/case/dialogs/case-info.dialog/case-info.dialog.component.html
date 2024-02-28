@@ -11,5 +11,5 @@
     <p class="dialog-header">{{'scheduledStartTime' | translate}}</p>
     <p class="dialog-content">{{data.scheduledStartTime | timepipe: false}}</p>
     <p class="dialog-header">{{'device' | translate}}</p>
-    <p class="dialog-content">{{data.actualDeviceAlias | timepipe: false}}</p>
+    <p class="dialog-content">{{data.actualDeviceAlias ? data.actualDeviceAlias : 'No device found'}}</p>
 </mat-dialog-content>
