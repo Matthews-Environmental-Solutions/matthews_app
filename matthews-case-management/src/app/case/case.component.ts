@@ -92,7 +92,17 @@ export class CaseComponent implements OnInit {
   }
 
   logout(): void {
+    let dateNow = new Date();
+    let userSetting = this.userSettingService.getUserSettingLastValue();
+    userSetting.lastUsedSelectedDay = dateNow;
+    this.setUserSettingToLocalStore(userSetting.username, userSetting);
+
     this.authService.logout();
+  }
+
+  setUserSettingToLocalStore(username: string, userSetting: UserSettingData) {
+    localStorage.setItem(username, JSON.stringify(userSetting));
+    this.userSettingService.setUserSetting(userSetting);
   }
 
   openProfileDialog(): void {
