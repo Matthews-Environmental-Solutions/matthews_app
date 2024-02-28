@@ -85,8 +85,9 @@ export class CaseCalendarWeeklyComponent implements OnInit {
   openCaseInfo(caseSent: Case): void {
     const dialogRef = this.dialog.open(CaseInfoDialogComponent, {
       data: caseSent,
-      height: '300px',
-      width: '230px',
+      height: '325px',
+      width: '250px',
+      autoFocus: false
     });
 
     dialogRef.afterClosed().subscribe(result => {

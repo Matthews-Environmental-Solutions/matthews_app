@@ -1,5 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, of, take } from 'rxjs';
 import { Case } from 'src/app/models/case.model';
@@ -12,6 +13,7 @@ import { Case } from 'src/app/models/case.model';
 export class CaseInfoDialogComponent {
 
   constructor(
+    private router: Router,
     private translate: TranslateService,
     public dialogRef: MatDialogRef<CaseInfoDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: Case,
@@ -31,6 +33,11 @@ export class CaseInfoDialogComponent {
       default:
         return of('');
     }
+  }
+
+  gotoCaseEdit(caseId: string) {
+    this.router.navigate([`case/${caseId}`]);
+    this.dialogRef.close();
   }
 
 }
