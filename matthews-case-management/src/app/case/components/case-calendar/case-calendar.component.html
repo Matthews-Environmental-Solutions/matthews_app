@@ -14,7 +14,7 @@
         </div>
 
         <div class="header-right">
-            <button *ngIf="calendarView == 'byDay'" mat-button class="header-right-period-buttons" (click)="todayClick()">
+            <button mat-button class="header-right-period-buttons" (click)="todayClick()">
                 {{'today' | translate}}
             </button>
             <button mat-icon-button [matMenuTriggerFor]="calendarMenu" aria-label="pick date"
@@ -43,9 +43,9 @@
 
     <div class="card-header-filter">
         <span>
-            <button mat-button color="{{wasIClicked('all')}}" (click)="onDeviceFilterClick('all')">{{"all" | translate}} ({{numberOfCases}})</button>
+            <button mat-button [ngStyle]="getTextDecorationStyle('all')" (click)="onDeviceFilterClick('all')">{{"all" | translate}} ({{numberOfCases}})</button>
             <ng-container *ngFor="let device of devices">
-                | <button mat-button color="{{wasIClicked(device.id)}}" (click)="onDeviceFilterClick(device.id)">{{device.alias}} ({{device.numberOfAttachedCases}})</button>
+                | <button mat-button [ngStyle]="getTextDecorationStyle(device.id)" (click)="onDeviceFilterClick(device.id)">{{device.alias}} ({{device.numberOfAttachedCases}})</button>
             </ng-container>
         </span>
     </div>

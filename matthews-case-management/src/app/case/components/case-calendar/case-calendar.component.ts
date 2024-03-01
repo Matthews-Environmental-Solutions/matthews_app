@@ -69,14 +69,15 @@ export class CaseCalendarComponent implements OnInit, OnDestroy {
 
   todayClick() {
     var todayClick = new Date();
+
     todayClick.setHours(12, 0, 0, 0);
 
-    this.stateService.setSelectedDate(todayClick);
+    this.daySelectedEvent(todayClick);
 
-    let userSetting = this.userSettingService.getUserSettingLastValue();
-    userSetting.lastUsedSelectedDay = todayClick;
-    localStorage.setItem(userSetting.username, JSON.stringify(userSetting));
-    this.userSettingService.setUserSetting(userSetting);
+    // let userSetting = this.userSettingService.getUserSettingLastValue();
+    // userSetting.lastUsedSelectedDay = todayClick;
+    // localStorage.setItem(userSetting.username, JSON.stringify(userSetting));
+    // this.userSettingService.setUserSetting(userSetting);
   }
 
   switchCalendarView(viewDaily: 'byDay' | 'byWeek') {
@@ -137,6 +138,14 @@ export class CaseCalendarComponent implements OnInit, OnDestroy {
   onDeviceFilterClick(deviceIdFilter: string) {
     this.clickedDeviceFilterButton = deviceIdFilter;
     this.stateService.setFilterCasesByDeviceId(deviceIdFilter);
+  }
+
+  getTextDecorationStyle(buttonId: string): { [key: string]: string } {
+    const color = this.wasIClicked(buttonId);
+    return {
+      color: color,
+      'text-decoration': this.clickedDeviceFilterButton === buttonId ? 'underline' : 'none'
+    };
   }
 
   wasIClicked(buttonId: string): 'primary' | 'accent' {
