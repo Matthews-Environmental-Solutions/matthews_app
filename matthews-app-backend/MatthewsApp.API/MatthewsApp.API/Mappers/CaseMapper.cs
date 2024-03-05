@@ -46,7 +46,8 @@ public static class CaseMapper
             entity.ScheduledStartTime,
             entity.Status,
             entity.Weight,
-            entity.FacilityStatusId
+            entity.FacilityStatusId,
+            entity.FacilityStatus?.StatusName
         );
     }
 
