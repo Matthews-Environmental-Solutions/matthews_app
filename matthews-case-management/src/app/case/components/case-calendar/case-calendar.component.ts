@@ -92,11 +92,22 @@ export class CaseCalendarComponent implements OnInit, OnDestroy {
     this.hiddenDayForNavigation = this.calendarService.addDays(this.hiddenDayForNavigation, -7);
     this.getDays(this.hiddenDayForNavigation);
 
+    if (this.calendarView == 'byDay') {
+      let datePrevious: Date = new Date(this.selectedDay);
+      datePrevious.setDate(this.selectedDay.getDate() - 1);
+      this.daySelectedEvent(datePrevious);
+    }
   }
 
   nextWeek() {
     this.hiddenDayForNavigation = this.calendarService.addDays(this.hiddenDayForNavigation, 7);
     this.getDays(this.hiddenDayForNavigation);
+
+    if (this.calendarView == 'byDay') {
+      let dateNext: Date = new Date(this.selectedDay);
+      dateNext.setDate(this.selectedDay.getDate() + 1);
+      this.daySelectedEvent(dateNext);
+    }
   }
 
   getDays(date: Date) {
@@ -117,7 +128,7 @@ export class CaseCalendarComponent implements OnInit, OnDestroy {
     if (date instanceof Date) {
 
       let time = this.calendarService.getDateInUserProfilesTimezone(date);
-      console.log("time: ", time);
+      //console.log("time: ", time);
 
       date.setHours(12, 0, 0, 0);
       this.selectedDay = date;
