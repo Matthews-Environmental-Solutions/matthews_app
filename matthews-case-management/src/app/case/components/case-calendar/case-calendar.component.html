@@ -8,7 +8,7 @@
             <button mat-icon-button aria-label="navigate next" (click)="nextWeek()">
                 <mat-icon class="navigation-button">navigate_next</mat-icon>
             </button>
-            <span *ngIf="calendarView == 'byDay'" class="card-header-text">{{"showingCasesFor" | translate}} <span class="date-bold">{{selectedDay | timepipe: true}}</span></span>
+            <span *ngIf="calendarView == 'byDay'" class="card-header-text">{{"showingCasesFor" | translate}} <span class="date-bold">{{selectedDay | date:'mediumDate'}}</span></span>
             <span *ngIf="calendarView == 'byWeek'" class="card-header-text">{{"week" | translate}} {{weekNumber}} | {{getFirstWeekDate()}} -
                 {{getLastWeekDate()}}</span>
         </div>
