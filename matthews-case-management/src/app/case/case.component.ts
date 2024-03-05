@@ -16,6 +16,7 @@ import { MatSelectChange } from '@angular/material/select';
 import { Subscription, skip } from 'rxjs';
 import { WfactorySnackBarService } from '../components/wfactory-snack-bar/wfactory-snack-bar.service';
 import { SignalrService } from '../services/signalr.service';
+import { UserDetails } from '../models/user-details.model';
 
 @Component({
   selector: 'app-case',
@@ -85,6 +86,17 @@ export class CaseComponent implements OnInit {
 
     this.signalRService.startConnection();
     this.signalRService.addCaseDataListener();
+
+    this.i4connectedService.getUserInfoDetails(this.authService.loggedInUser.sub).subscribe(userDetails => {
+      var user = new UserDetails();
+      user.id = userDetails.id;
+      user.firstName = userDetails.firstName;
+      user.lastName = userDetails.lastName;
+      user.email = userDetails.email;
+      user.roles = userDetails.roles;
+
+      this.stateService.setUserDetailsBS(user);
+    });
   }
 
   ngOnDestroy(): void {

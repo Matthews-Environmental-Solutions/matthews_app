@@ -72,7 +72,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
 
     public async Task<IEnumerable<Case>> GetAllUnscheduled()
     {
-        IEnumerable<Case> cases = await _dataContext.Cases.ToArrayAsync();
+        IEnumerable<Case> cases = await _dataContext.Cases.Include(c => c.FacilityStatus).ToArrayAsync();
 
         return cases.Where(c => 
              (

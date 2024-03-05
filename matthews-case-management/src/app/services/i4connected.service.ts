@@ -4,6 +4,7 @@ import { Observable, catchError, forkJoin, map, retry, switchMap, throwError } f
 import { Facility } from "../models/facility.model";
 import { Device } from "../models/device.model";
 import { environment } from "src/environments/environment";
+import { UserDetails } from "../models/user-details.model";
 
 @Injectable({
     providedIn: 'root'
@@ -55,6 +56,11 @@ export class I4connectedService {
                     }
                 ]
             });
+    }
+
+    getUserInfoDetails(userId: string): Observable<UserDetails> {
+        return this.httpClient.get<UserDetails>(`${this.apiUrl}/api/users/${userId}/details`)
+            .pipe(retry(1), catchError(this.handleError));;
     }
 
     // Error handling

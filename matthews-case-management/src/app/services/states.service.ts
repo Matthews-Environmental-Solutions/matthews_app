@@ -6,6 +6,7 @@ import { Device } from "../models/device.model";
 import { I4connectedService } from "./i4connected.service";
 import { Case } from "../models/case.model";
 import { v4 as uuidv4 } from 'uuid';
+import { UserDetails } from "../models/user-details.model";
 
 @Injectable({
     providedIn: 'root'
@@ -42,6 +43,9 @@ export class StateService {
     public refreshCasesList$: Observable<string>;
     private refreshCasesListBS = new BehaviorSubject<string>(this.getDefaultRefreshCasesList());
 
+    public userDetails$: Observable<UserDetails>;
+    private userDetailsBS = new BehaviorSubject<UserDetails>(this.getDefaultUserDetails());
+
     constructor(private calendarService: CalendarService, private userSettingService: UserSettingService, private i4connectedService: I4connectedService) {
         this.selectedFacilityId$ = this.selectedFacilityIdBehaviorSubject;
         this.selectedDate$ = this.selectedDateBehaviorSubject;
@@ -53,6 +57,7 @@ export class StateService {
         this.filterCasesByDeviceId$ = this.filterCasesByDeviceIdBehaviorSubject;
         this.filterUnscheduledCasesByFacilityId$ = this.filterUnscheduledCasesByFacilityIdBehaviorSubject;
         this.refreshCasesList$ = this.refreshCasesListBS;
+        this.userDetails$ = this.userDetailsBS;
     }
 
 
@@ -198,5 +203,19 @@ export class StateService {
 
     getDefaultRefreshCasesList(): string{
         return uuidv4();
+    }
+
+
+    // userDetailsBS
+    setUserDetailsBS(user: UserDetails) {
+        this.userDetailsBS.next(user);
+    }
+
+    getUserDetails() : UserDetails {
+        return this.userDetailsBS.value;
+    }
+
+    getDefaultUserDetails(): UserDetails{
+        return new UserDetails();
     }
 }
