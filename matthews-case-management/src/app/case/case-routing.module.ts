@@ -5,6 +5,7 @@ import { CaseAddEditComponent } from './components/case-add-edit/case-add-edit.c
 import { CaseComponent } from './case.component';
 import { FacilityComponent } from './components/facility/facility.component';
 import { CaseAddEditGuard } from './case-add-edit-guard.service';
+import { FacilityGuard } from './components/facility/facility-status-guard.service';
 
 const routes: Routes = [
   {
@@ -24,7 +25,8 @@ const routes: Routes = [
       },
       {
         path: 'facility',
-        component: FacilityComponent
+        component: FacilityComponent,
+        canActivate: [FacilityGuard]
       }
     ]
   }

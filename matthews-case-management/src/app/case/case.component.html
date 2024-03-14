@@ -11,7 +11,7 @@
           {{"addCase" | translate}}
         </button>
   
-        <button mat-raised-button class="btn-color-green padding-left" [routerLink]="['/facility']">
+        <button mat-raised-button class="btn-color-green padding-left" [routerLink]="['/facility']" *ngIf="isButtonVisible">
           <mat-icon>other_houses</mat-icon>
           {{"facilityStatuses" | translate}}
         </button>
