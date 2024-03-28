@@ -6,6 +6,7 @@
     "addCase": "Fall hinzufügen",
     "day": "Tag",
     "week": "Woche",
+    "mustBeNumericValue": "Muss ein numerischer Wert sein",
     "cremationComplete": "Einäscherung abgeschlossen",
     "inProgress": "In Bearbeitung",
     "readyToCremate": "Bereit zur Einäscherung",

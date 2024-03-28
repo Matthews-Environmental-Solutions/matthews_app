@@ -6,6 +6,7 @@
       <span class="spacer"></span>
 
       <div class="toolbar-buttons">
+
         <button mat-raised-button class="btn-color-green padding-left" [routerLink]="['/case']">
           <mat-icon>add_circle</mat-icon>
           {{"addCase" | translate}}
@@ -62,6 +63,7 @@
           <button mat-button color="{{wasIClicked('all')}}" (click)="onFacilityFilterClick('all')" class="modified-button">{{'allCases' | translate}}</button>
           <button mat-button color="{{wasIClicked('bySelectedFacility')}}" (click)="onFacilityFilterClick('bySelectedFacility')" class="modified-button">{{'selectedFacilityOnly' | translate}}</button>
         </div>
+        <span class="card-right-cases-number">{{numberOfUnscheduledCases}} {{ numberOfUnscheduledCases === 1 ? 'case' : 'cases' }} selected</span>
         <mat-progress-bar *ngIf="loader" mode="indeterminate" class="indeterminate-progress-bar"></mat-progress-bar>
       </mat-card-header>
       <mat-card-content class="card-right-sidebar-list">

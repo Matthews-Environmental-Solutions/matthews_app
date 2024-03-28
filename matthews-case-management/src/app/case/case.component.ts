@@ -35,6 +35,7 @@ export class CaseComponent implements OnInit {
   clickedFacilityFilterButton: string = 'all';
   loader: boolean = false;
   isButtonVisible: boolean = false;
+  numberOfUnscheduledCases: number = 0;
 
   private subs = new Subscription();
 
@@ -174,10 +175,8 @@ export class CaseComponent implements OnInit {
       this.unscheduledCases.filter(c => this.facilities.some(f=> f.id == c.scheduledFacility))
       : 
       this.unscheduledCases.filter(c => c.scheduledFacility == this.selectedFacilityId);
-  }
 
-  // isButtonVisible(): boolean {
-  //   return this.stateService.getCanActivateFacilityUrlBS();
-  // }
+    this.numberOfUnscheduledCases = this.filteredUnscheduledCases.length;
+  }
   
 }

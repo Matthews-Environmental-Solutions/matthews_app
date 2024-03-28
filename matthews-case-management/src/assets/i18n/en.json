@@ -6,6 +6,7 @@
     "addCase": "Add case",
     "day": "Day",
     "week": "Week",
+    "mustBeNumericValue": "Must be numeric value",
     "cremationComplete": "Cremation complete",
     "inProgress": "In process",
     "readyToCremate": "Ready to cremate",

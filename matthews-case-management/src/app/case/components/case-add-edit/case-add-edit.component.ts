@@ -64,6 +64,8 @@ export class CaseAddEditComponent implements OnInit {
   timeInterval = 1;
   timeInput = true;
 
+  facilityForm!: FormGroup;
+
   private subs = new Subscription();
 
   constructor(
@@ -116,6 +118,17 @@ export class CaseAddEditComponent implements OnInit {
     });
 
     // debugger;
+    this.facilityForm = this.fb.group({
+      facility: new FormControl('')
+    });
+
+    const preSelectedFacility = this.stateService.getSelectedFacility();
+    console.log(preSelectedFacility);
+    if (preSelectedFacility) {
+      this.facilityForm.get('facility')!.setValue(preSelectedFacility);
+      const syntheticEvent: MatSelectChange = { value: preSelectedFacility, source: null! }; // Create synthetic event
+      this.facilityChanged(syntheticEvent); // Call the method with synthetic event
+    }
   }
 
   ngOnDestroy(): void {

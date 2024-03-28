@@ -111,13 +111,24 @@
                         Facility is required.
                     </span>
                 </mat-error>
-                <mat-form-field appearance="fill">
+                <!-- <mat-form-field appearance="fill">
                     <mat-label>{{"facility" | translate}}</mat-label>
                     <mat-select formControlName="facility" (selectionChange)="facilityChanged($event)">
                         <mat-option *ngFor="let facility of facilities" [value]="facility.id">
                             {{facility.name}}
                         </mat-option>
                     </mat-select>
+                </mat-form-field> -->
+                
+                <mat-form-field appearance="fill">
+                    <mat-label>{{ "facility" | translate }}</mat-label>
+                    <form [formGroup]="facilityForm">
+                        <mat-select formControlName="facility" (selectionChange)="facilityChanged($event)">
+                            <mat-option *ngFor="let facility of facilities" [value]="facility.id">
+                                {{ facility.name }}
+                            </mat-option>
+                        </mat-select>
+                    </form>
                 </mat-form-field>
 
                 <mat-form-field appearance="fill">
