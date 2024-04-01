@@ -6,6 +6,7 @@
     "addCase": "Add case",
     "day": "Day",
     "week": "Week",
+    "mustBeNumericValue": "Must be numeric value",
     "cremationComplete": "Cremation complete",
     "inProgress": "In process",
     "readyToCremate": "Ready to cremate",
@@ -23,6 +24,7 @@
     "lastName": "Last name",
     "weight": "Weight",
     "gender": "Gender",
+    "today": "Today",
     "age": "Age",
     "containerType": "Container type",
     "loadSize": "Load size",
@@ -85,7 +87,7 @@
     "sunday": "Sunday",
     "monday": "Monday",
     "hours": "hours",
-    
+    "device": "Device",
     "title": "Service feedback for {{company}}",
     "name": {
         "label": "Name",

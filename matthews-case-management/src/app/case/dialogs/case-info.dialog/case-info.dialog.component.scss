@@ -1,0 +1,54 @@
+.dialog-content {
+    font-size: 12px;
+    /* Adjust the value as needed */
+    margin-bottom: 7px;
+    font-size: 14px;
+    color:black;
+    //font-weight: bold;
+}
+
+.dialog-header {
+    margin-bottom: 0px;
+    /* Adjust the value as needed */
+    margin-top: 0px;
+    font-size: 13px;
+    color: black;
+    //font-weight: bold;
+}
+
+.dialog-title {
+    margin-bottom: 0px;
+    /* Adjust the value as needed */
+    margin-top: 0px;
+    color: #02708e;
+}
+
+.mat-dialog-content.not-scrollable {
+    max-height: 300px; /* or set a specific value like '300px' */
+    overflow: hidden;
+}
+
+::ng-deep .mat-mdc-dialog-container {
+    --mdc-dialog-supporting-text-line-height: 15px; /* Your desired line height */
+}
+
+.unscheduled-item-button {
+    font-size: medium;
+    margin-right: 10px;
+}
+
+.unscheduled-item-right {
+    width: 30px;
+    margin-top: 5px;
+    margin-right: 23px;
+}
+
+.dialog {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0;
+    margin: 0;
+}
+
+  

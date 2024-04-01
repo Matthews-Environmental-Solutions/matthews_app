@@ -8,12 +8,15 @@
             <button mat-icon-button aria-label="navigate next" (click)="nextWeek()">
                 <mat-icon class="navigation-button">navigate_next</mat-icon>
             </button>
-            <span class="card-header-text">{{"week" | translate}} {{weekNumber}} | {{getFirstWeekDate()}} -
+            <span *ngIf="calendarView == 'byDay'" class="card-header-text">{{"showingCasesFor" | translate}} <span class="date-bold">{{selectedDay | date:'mediumDate'}}</span></span>
+            <span *ngIf="calendarView == 'byWeek'" class="card-header-text">{{"week" | translate}} {{weekNumber}} | {{getFirstWeekDate()}} -
                 {{getLastWeekDate()}}</span>
         </div>
 
         <div class="header-right">
-            <div *ngIf="calendarView == 'byDay'" class="selected-day-showing">{{"showingCasesFor" | translate}} <span class="date-bold">{{selectedDay | timepipe: true}}</span></div>
+            <button mat-button class="header-right-period-buttons" (click)="todayClick()">
+                {{'today' | translate}}
+            </button>
             <button mat-icon-button [matMenuTriggerFor]="calendarMenu" aria-label="pick date"
                 #clickHoverMenuTrigger="matMenuTrigger">
                 <mat-icon class="calendar-icon">calendar_month</mat-icon>
@@ -40,9 +43,9 @@
 
     <div class="card-header-filter">
         <span>
-            <button mat-button color="{{wasIClicked('all')}}" (click)="onDeviceFilterClick('all')">{{"all" | translate}} ({{numberOfCases}})</button>
+            <button mat-button [ngStyle]="getTextDecorationStyle('all')" (click)="onDeviceFilterClick('all')">{{"all" | translate}} ({{numberOfCases}})</button>
             <ng-container *ngFor="let device of devices">
-                | <button mat-button color="{{wasIClicked(device.id)}}" (click)="onDeviceFilterClick(device.id)">{{device.alias}} ({{device.numberOfAttachedCases}})</button>
+                | <button mat-button [ngStyle]="getTextDecorationStyle(device.id)" (click)="onDeviceFilterClick(device.id)">{{device.alias}} ({{device.numberOfAttachedCases}})</button>
             </ng-container>
         </span>
     </div>

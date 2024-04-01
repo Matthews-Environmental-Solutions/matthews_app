@@ -36,8 +36,8 @@ export interface ICase {
     fuel: string;
     electricity: string;
 
-    facilityStatusId?: string
-
+    facilityStatusId?: string;
+    facilityStatusText?: string;
 }
 
 export class Case implements ICase{
@@ -79,4 +79,5 @@ export class Case implements ICase{
     electricity: string = '';
 
     facilityStatusId?: string = '00000000-0000-0000-0000-000000000000';
+    facilityStatusText?: string = '';
 }

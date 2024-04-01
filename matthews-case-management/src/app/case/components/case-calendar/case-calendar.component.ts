@@ -67,6 +67,19 @@ export class CaseCalendarComponent implements OnInit, OnDestroy {
     this.subs.unsubscribe();
   }
 
+  todayClick() {
+    var todayClick = new Date();
+
+    todayClick.setHours(12, 0, 0, 0);
+
+    this.daySelectedEvent(todayClick);
+
+    // let userSetting = this.userSettingService.getUserSettingLastValue();
+    // userSetting.lastUsedSelectedDay = todayClick;
+    // localStorage.setItem(userSetting.username, JSON.stringify(userSetting));
+    // this.userSettingService.setUserSetting(userSetting);
+  }
+
   switchCalendarView(viewDaily: 'byDay' | 'byWeek') {
     this.calendarView = viewDaily;
     let userSetting = this.userSettingService.getUserSettingLastValue();
@@ -79,11 +92,22 @@ export class CaseCalendarComponent implements OnInit, OnDestroy {
     this.hiddenDayForNavigation = this.calendarService.addDays(this.hiddenDayForNavigation, -7);
     this.getDays(this.hiddenDayForNavigation);
 
+    if (this.calendarView == 'byDay') {
+      let datePrevious: Date = new Date(this.selectedDay);
+      datePrevious.setDate(this.selectedDay.getDate() - 1);
+      this.daySelectedEvent(datePrevious);
+    }
   }
 
   nextWeek() {
     this.hiddenDayForNavigation = this.calendarService.addDays(this.hiddenDayForNavigation, 7);
     this.getDays(this.hiddenDayForNavigation);
+
+    if (this.calendarView == 'byDay') {
+      let dateNext: Date = new Date(this.selectedDay);
+      dateNext.setDate(this.selectedDay.getDate() + 1);
+      this.daySelectedEvent(dateNext);
+    }
   }
 
   getDays(date: Date) {
@@ -104,7 +128,7 @@ export class CaseCalendarComponent implements OnInit, OnDestroy {
     if (date instanceof Date) {
 
       let time = this.calendarService.getDateInUserProfilesTimezone(date);
-      console.log("time: ", time);
+      //console.log("time: ", time);
 
       date.setHours(12, 0, 0, 0);
       this.selectedDay = date;
@@ -125,6 +149,14 @@ export class CaseCalendarComponent implements OnInit, OnDestroy {
   onDeviceFilterClick(deviceIdFilter: string) {
     this.clickedDeviceFilterButton = deviceIdFilter;
     this.stateService.setFilterCasesByDeviceId(deviceIdFilter);
+  }
+
+  getTextDecorationStyle(buttonId: string): { [key: string]: string } {
+    const color = this.wasIClicked(buttonId);
+    return {
+      color: color,
+      'text-decoration': this.clickedDeviceFilterButton === buttonId ? 'underline' : 'none'
+    };
   }
 
   wasIClicked(buttonId: string): 'primary' | 'accent' {

@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { BehaviorSubject, Observable } from "rxjs";
+import { BehaviorSubject, Observable, of } from "rxjs";
 import { CalendarService } from "./calendar.service";
 import { UserSettingService } from "./user-setting.service";
 import { Device } from "../models/device.model";
@@ -46,6 +46,9 @@ export class StateService {
     public userDetails$: Observable<UserDetails>;
     private userDetailsBS = new BehaviorSubject<UserDetails>(this.getDefaultUserDetails());
 
+    public canActivateFacilityUrl$: Observable<boolean>;
+    public canActivateFacilityUrlBS = new BehaviorSubject<boolean>(this.getDefaultUserPermissionForFacility());
+
     constructor(private calendarService: CalendarService, private userSettingService: UserSettingService, private i4connectedService: I4connectedService) {
         this.selectedFacilityId$ = this.selectedFacilityIdBehaviorSubject;
         this.selectedDate$ = this.selectedDateBehaviorSubject;
@@ -58,8 +61,11 @@ export class StateService {
         this.filterUnscheduledCasesByFacilityId$ = this.filterUnscheduledCasesByFacilityIdBehaviorSubject;
         this.refreshCasesList$ = this.refreshCasesListBS;
         this.userDetails$ = this.userDetailsBS;
+        this.canActivateFacilityUrl$ = this.canActivateFacilityUrlBS;
+        this.setCanActivateFacilityUrlBS(this.getCanActivateFacilityUrlBS());
     }
 
+    // public canActivateFacilityUrl$ : Observable<boolean> = this.checkUserPermissionForFacility();
 
     // selectedFacilityIdBehaviorSubject
     setSelectedFacility(facility: string): void {
@@ -209,6 +215,7 @@ export class StateService {
     // userDetailsBS
     setUserDetailsBS(user: UserDetails) {
         this.userDetailsBS.next(user);
+        this.setCanActivateFacilityUrlBS(this.checkUserPermissionForFacility());
     }
 
     getUserDetails() : UserDetails {
@@ -217,5 +224,26 @@ export class StateService {
 
     getDefaultUserDetails(): UserDetails{
         return new UserDetails();
+    }
+
+
+    // canActivateFacilityUrlBS
+    setCanActivateFacilityUrlBS(permission: boolean) {
+        this.canActivateFacilityUrlBS.next(permission);
+    }
+
+    getCanActivateFacilityUrlBS() : boolean {
+        return this.canActivateFacilityUrlBS.value;
+    }
+
+    getDefaultUserPermissionForFacility() {
+        return this.checkUserPermissionForFacility();
+    }
+
+    checkUserPermissionForFacility(): boolean {
+        const userDetails = this.getUserDetails();
+        const requiredRoles = ['Site Manager', 'Multi-Site Manager', 'MES Support', 'SuperAdministrator'];
+        var permission = requiredRoles.some(role => userDetails.roles.includes(role));
+        return permission;
     }
 }

@@ -11,6 +11,7 @@ import { FacilityStatusDialogComponent } from '../../dialogs/facility-status/fac
 import { WfactorySnackBarService } from 'src/app/components/wfactory-snack-bar/wfactory-snack-bar.service';
 import { TranslateService } from '@ngx-translate/core';
 import { DeleteFacilityStatusDialogComponent } from '../../dialogs/delete-facility-status/delete-facility-status.dialog.component';
+import { StateService } from 'src/app/services/states.service';
 
 @Component({
   selector: 'app-facility',
@@ -37,6 +38,7 @@ export class FacilityComponent implements OnInit {
     private router: Router,
     private _shackBar: WfactorySnackBarService,
     private translate: TranslateService,
+    private stateService: StateService,
     public dialog: MatDialog) {
     this.subs.add(this.i4connectedService.getSites().subscribe(data => {
       this.facilitiesDataSource = new MatTableDataSource<Facility>(data);
@@ -75,7 +77,7 @@ export class FacilityComponent implements OnInit {
   }
 
   ngOnInit(): void {
-
+    console.log(this.stateService.getUserDetails());
   }
 
   ngOnDestroy(): void {

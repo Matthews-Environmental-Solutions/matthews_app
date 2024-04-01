@@ -72,7 +72,7 @@ $primary: mat-palette($mat-lime, A400);
 
 .card-right-sidebar-title {
   font-size: x-large;
-  margin-bottom: 15px;
+  // margin-bottom: 5px;
   display: flex;
   flex-direction: column;
   position: relative;
@@ -89,6 +89,12 @@ $primary: mat-palette($mat-lime, A400);
   overflow-y: auto;
   overflow-x: hidden;
   margin-bottom: 10px;
+}
+
+.card-right-cases-number {
+  margin-top: 5px;
+  font-size: medium;
+  font-weight: bold;
 }
 
 .logo {

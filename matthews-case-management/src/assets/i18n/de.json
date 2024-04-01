@@ -6,6 +6,7 @@
     "addCase": "Fall hinzufügen",
     "day": "Tag",
     "week": "Woche",
+    "mustBeNumericValue": "Muss ein numerischer Wert sein",
     "cremationComplete": "Einäscherung abgeschlossen",
     "inProgress": "In Bearbeitung",
     "readyToCremate": "Bereit zur Einäscherung",
@@ -23,6 +24,7 @@
     "lastName": "Nachname",
     "weight": "Gewicht",
     "gender": "Geschlecht",
+    "today": "Heute",
     "age": "Alter",
     "containerType": "Containertyp",
     "loadSize": "Ladungsgröße",
@@ -85,7 +87,7 @@
     "sunday": "Sonntag",
     "monday": "Montag",
     "hours": "Std.",
-
+    "device": "Gerät",
     "title": "Service-Feedback für {{company}}",
     "name": {
         "label": "Namen",

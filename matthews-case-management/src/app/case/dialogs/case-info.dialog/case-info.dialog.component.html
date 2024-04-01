@@ -1,0 +1,28 @@
+<!-- <h1 mat-dialog-title class="dialog-title">ID: {{data.clientCaseId}}</h1>
+<div class="unscheduled-item-right">
+    <button mat-icon-button aria-label="edit icon" (click)="gotoCaseEdit(data.id)">
+        <mat-icon class="unscheduled-item-button">open_in_new</mat-icon>
+    </button>
+</div> -->
+<div class="dialog">
+    <h1 mat-dialog-title class="dialog-title">ID: {{data.clientCaseId}}</h1>
+    <div class="unscheduled-item-right">
+        <button mat-icon-button aria-label="edit icon" (click)="gotoCaseEdit(data.id)">
+            <mat-icon class="unscheduled-item-button">open_in_new</mat-icon>
+        </button>
+    </div>
+  </div>  
+<mat-dialog-content>
+    <p class="dialog-header">Name:</p>
+    <p class="dialog-content">{{data.firstName}} {{data.lastName}}</p>
+    <p class="dialog-header">Status:</p>
+    <p class="dialog-content">{{getStatusDescription(+data.status) | async}}</p>
+    <p class="dialog-header">{{'containerType' | translate}}:</p>
+    <p class="dialog-content">{{data.containerTypeText}}</p>
+    <p class="dialog-header">{{'weight' | translate}}:</p>
+    <p class="dialog-content">{{data.weight}}kg</p>
+    <p class="dialog-header">{{'scheduledStartTime' | translate}}:</p>
+    <p class="dialog-content">{{data.scheduledStartTime | timepipe: false}}</p>
+    <p class="dialog-header">{{'device' | translate}}:</p>
+    <p class="dialog-content">{{data.scheduledDeviceAlias ? data.scheduledDeviceAlias : 'No device found'}}</p>
+</mat-dialog-content>

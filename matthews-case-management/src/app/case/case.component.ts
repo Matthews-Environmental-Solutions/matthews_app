@@ -31,8 +31,11 @@ export class CaseComponent implements OnInit {
   filteredUnscheduledCases: Case[] = [];
   loggedInUser: UserInfoAuth | undefined;
   userSetting: UserSettingData | undefined;
+  userDetails: UserDetails = new UserDetails;
   clickedFacilityFilterButton: string = 'all';
   loader: boolean = false;
+  isButtonVisible: boolean = false;
+  numberOfUnscheduledCases: number = 0;
 
   private subs = new Subscription();
 
@@ -60,6 +63,8 @@ export class CaseComponent implements OnInit {
       this.userSetting = this.userSettingService.getUserSettingLastValue();
       this.selectedFacilityId = this.userSetting.lastUsedFacilityId;
       this.stateService.setSelectedFacility( this.selectedFacilityId);
+      // this.userDetails = this.stateService.getUserDetails();
+      // console.log(this.userDetails);
     }));
 
     this.subs.add(this.stateService.selectedFacilityId$.pipe(skip(1)).subscribe(fId => {
@@ -84,6 +89,10 @@ export class CaseComponent implements OnInit {
       this.caseService.getUnscheduledCases().subscribe(cases => {this.filterCases(cases); this.loader = false;});
     }));
 
+    this.subs.add(this.stateService.canActivateFacilityUrl$.pipe(skip(1)).subscribe(permission => {
+      this.isButtonVisible = permission;
+    }))
+
     this.signalRService.startConnection();
     this.signalRService.addCaseDataListener();
 
@@ -104,7 +113,17 @@ export class CaseComponent implements OnInit {
   }
 
   logout(): void {
+    let dateNow = new Date();
+    let userSetting = this.userSettingService.getUserSettingLastValue();
+    userSetting.lastUsedSelectedDay = dateNow;
+    this.setUserSettingToLocalStore(userSetting.username, userSetting);
+
     this.authService.logout();
+  }
+
+  setUserSettingToLocalStore(username: string, userSetting: UserSettingData) {
+    localStorage.setItem(username, JSON.stringify(userSetting));
+    this.userSettingService.setUserSetting(userSetting);
   }
 
   openProfileDialog(): void {
@@ -156,5 +175,8 @@ export class CaseComponent implements OnInit {
       this.unscheduledCases.filter(c => this.facilities.some(f=> f.id == c.scheduledFacility))
       : 
       this.unscheduledCases.filter(c => c.scheduledFacility == this.selectedFacilityId);
+
+    this.numberOfUnscheduledCases = this.filteredUnscheduledCases.length;
   }
+  
 }
