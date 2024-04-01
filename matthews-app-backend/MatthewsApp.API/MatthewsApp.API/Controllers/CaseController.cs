@@ -210,6 +210,7 @@ public class CaseController : Controller
         {
             _ = await service.ResetDemo();
             _logger.LogInformation("---------- RESET DEMO successfull");
+            return Ok(true);
         }
         catch (Exception ex)
         {

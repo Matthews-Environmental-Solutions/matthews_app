@@ -157,4 +157,84 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             && c.Status == CaseStatus.READY_TO_CREMATE
             ).ToList();
     }
+
+    public Task CleanDbForDemo(Guid deviceId)
+    {
+        try
+        {
+            var casesToDelete = _dataContext.Cases.Where(c => c.ScheduledDevice == deviceId).ToArray();
+            foreach (var c in casesToDelete)
+            {
+                DeleteEntry(c);
+            }
+            return Task.CompletedTask;
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
+
+    public Task SeedDbForDemo(Guid deviceId)
+    {
+        DateTime todayAtMidnight = DateTime.Now.Date;
+
+        var case1 = new Case
+        {
+            Id = Guid.NewGuid(),
+            CreatedBy = Guid.Empty,
+            CreatedTime = DateTime.Now,
+
+            ClientId = "123",
+            ClientCaseId = "SB-203101",
+            FirstName = "Rebeca",
+            LastName = "Machado",
+            Weight = 390,
+            Gender = GenderType.FEMALE,
+            ContainerType = ContainerType.CARDBOARD,
+            ContainerSize = ContainerSize.BARIATRIC,
+            Age = 64,
+            Status = CaseStatus.READY_TO_CREMATE,
+            ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
+            ScheduledDevice = deviceId,
+            ScheduledDeviceAlias = "Device DEMO",
+            ScheduledStartTime = todayAtMidnight,
+            ActualDeviceAlias = "Device DEMO",
+            PerformedBy = "Demo User",
+            Fuel = String.Empty,
+            Electricity = String.Empty,
+            FacilityStatusId = Guid.Parse("ada13916-8972-4eff-b2a7-b1d6b48c9191")
+        };
+        Create(case1);
+
+        var case2 = new Case
+        {
+            Id = Guid.NewGuid(),
+            CreatedBy = Guid.Empty,
+            CreatedTime = DateTime.Now,
+
+            ClientId = "123",
+            ClientCaseId = "SB-203102",
+            FirstName = "Matias",
+            LastName = "Reyna",
+            Weight = 190,
+            Gender = GenderType.MALE,
+            ContainerType = ContainerType.CARDBOARD,
+            ContainerSize = ContainerSize.STANDARD,
+            Age = 63,
+            Status = CaseStatus.WAITING_FOR_PERMIT,
+            ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
+            ScheduledDevice = deviceId,
+            ScheduledDeviceAlias = "Device DEMO",
+            ScheduledStartTime = todayAtMidnight,
+            ActualDeviceAlias = "Device DEMO",
+            PerformedBy = "Demo User",
+            Fuel = String.Empty,
+            Electricity = String.Empty,
+            FacilityStatusId = Guid.Parse("a9366ef0-acf8-44a3-b955-b66a3266b090") // Awaiting documents
+        };
+        Create(case2);
+
+        return Task.CompletedTask;
+    }
 }

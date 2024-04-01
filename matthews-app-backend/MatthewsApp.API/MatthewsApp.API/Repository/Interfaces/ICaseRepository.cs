@@ -8,6 +8,7 @@ namespace MatthewsApp.API.Repository.Interfaces;
 
 public interface ICaseRepository : IBaseRepository<Case, Guid>
 {
+    Task CleanDbForDemo(Guid deviceId);
     Task<IEnumerable<Case>> GetAllUnscheduled();
     Case GetById(Guid id);
     Task<IEnumerable<Case>> GetCasesByFacility(Guid facilityId);
@@ -17,4 +18,5 @@ public interface ICaseRepository : IBaseRepository<Case, Guid>
     Task<IEnumerable<Case>> GetScheduledCasesByDay(Guid facilityId, DateTime date);
     Task<IEnumerable<Case>> GetScheduledCasesByTimePeriod(Guid facilityId, DateTime dateStart, DateTime dateEnd);
     Task<IEnumerable<Case>> GetScheduledCasesByWeek(Guid facilityId, DateTime dateStartDateOfWeek);
+    Task SeedDbForDemo(Guid deviceId);
 }

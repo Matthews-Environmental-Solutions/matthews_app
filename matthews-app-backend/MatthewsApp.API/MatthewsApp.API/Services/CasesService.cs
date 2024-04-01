@@ -341,9 +341,28 @@ public class CasesService : ICasesService
         }
     }
 
-    public Task<bool> ResetDemo()
+    /// <summary>
+    /// This method is used to reset the demo data only on specific device.
+    /// </summary>
+    /// <returns></returns>
+    public async Task<bool> ResetDemo()
     {
-        throw new NotImplementedException();
+        try
+        {
+            Guid deviceId = Guid.Parse("f2f5eccc-0c98-4579-941f-a9d81e3817a5");
+
+            await _caseRepository.CleanDbForDemo(deviceId);
+            await _caseRepository.SeedDbForDemo(deviceId);
+
+            List<Guid> ids = new List<Guid>();
+            ids.Add(deviceId);
+            _ea.GetEvent<EventCaseAnyChange>().Publish(ids);
+            return true;
+        }
+        catch (Exception)
+        {
+            throw;
+        }
     }
 
     //public static string UTF8toASCII(string text)
