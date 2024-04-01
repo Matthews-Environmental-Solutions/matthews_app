@@ -30,6 +30,7 @@ public interface ICasesService
     void UpdateCaseWhenCaseEnd(EndCaseDto dto);
     Task<Case> GetNextCaseForDevice(Guid deviceId);
     Task<IEnumerable<Case>> GetReadyCasesByDevice(Guid deviceId);
+    Task<bool> ResetDemo();
 }
 
 public class CasesService : ICasesService
@@ -338,6 +339,11 @@ public class CasesService : ICasesService
         {
             _ea.GetEvent<EventCaseAnyChange>().Publish(deviceIds);
         }
+    }
+
+    public Task<bool> ResetDemo()
+    {
+        throw new NotImplementedException();
     }
 
     //public static string UTF8toASCII(string text)

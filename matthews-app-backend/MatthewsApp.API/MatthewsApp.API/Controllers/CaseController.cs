@@ -200,4 +200,22 @@ public class CaseController : Controller
         }
         return Ok(Case.ToDTO());
     }
+
+    [HttpGet("ResetDemo")]
+    public async Task<ActionResult<bool>> ResetDemo()
+    {
+        _logger.LogInformation("---------- RESET DEMO");
+
+        try
+        {
+            _ = await service.ResetDemo();
+            _logger.LogInformation("---------- RESET DEMO successfull");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError($"---------- RESET DEMO error: {ex.Message}: {ex.StackTrace}");
+            return BadRequest(ex.Message);
+        }
+
+    }
 }
