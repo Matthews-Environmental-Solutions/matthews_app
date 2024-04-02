@@ -40,4 +40,9 @@ export class CaseService {
     const deleteCaseUrl = `${environment.apiUrl}/Case/${caseId}`;
     return this.httpService.request<Case>('DELETE', deleteCaseUrl, caseId);
   }
+
+  resetDemo() {
+    const resetDemoUrl = `${environment.apiUrl}/Case/ResetDemo`;
+    return this.httpService.request<boolean>('GET', resetDemoUrl);
+  }
 }

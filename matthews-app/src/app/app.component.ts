@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/quotes */
 /* eslint-disable @angular-eslint/component-selector */
 import { Component, Inject, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
@@ -6,6 +7,8 @@ import { SplashScreen } from '@capacitor/splash-screen';
 import { AuthService } from 'ionic-appauth';
 import { AppStoreService } from './app.store.service';
 import { TranslateService } from '@ngx-translate/core';
+import { CremationProcessService } from './cremation-process/cremation-process.service';
+import { CaseService } from './case/case.service';
 
 @Component({
   selector: 'app-root',
@@ -22,7 +25,9 @@ export class AppComponent {
     private platform: Platform,
     private auth: AuthService,
     private appStoreService: AppStoreService,
-    public translateService: TranslateService
+    public translateService: TranslateService,
+    public cremationProcessService: CremationProcessService,
+    public caseService: CaseService
   ) {
     this.initializeApp();
     this.sideMenu();
@@ -64,5 +69,13 @@ export class AppComponent {
 
   languageChange() {
     this.translateService.use(this.language);
+  }
+
+  resetDemo() {
+    //const signalId = "dd121ea5-12f5-4430-9f32-303b6e353291";
+    const signalId = "ab36c612-42fb-481b-8050-0b5b207cfe6b";
+    this.cremationProcessService.writeSignalValue(signalId, 1);
+    this.caseService.resetDemo();
+    console.log('Reseted Demo');
   }
 }
