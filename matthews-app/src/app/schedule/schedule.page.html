@@ -26,9 +26,8 @@
         <ion-select-option *ngFor="let facility of scheduleVm.facilities;" value="{{ facility.id }}">{{ facility.name }}</ion-select-option>
       </ion-select>
     </ion-item>
-    <p></p>
     <ion-list>
-      <ion-item-sliding *ngFor="let case of scheduleVm.cases | filter:searchTerm">
+      <ion-item-sliding *ngFor="let case of scheduleVm.cases | filter:searchTerm | sort">
         <ion-item-options side="end">
           <ion-buttons slot="primary">
             <ion-button (click)="deleteCase(case)">
@@ -39,12 +38,12 @@
         <ion-item detail='true' (click)="presentModal(case)">
           <!-- [routerLink]="['/case', case.id]" -->
           <ion-label>
-            <h3>{{case.caseId}}</h3>
+            <!-- <h3>{{case.id}}</h3> -->
             <p>
               <b>{{case.firstName | titlecase}} {{case.lastName | titlecase}}</b>
             </p>
             <p>{{caseStatus[case.status] | translate | enumFormat | titlecase}}</p>
-            <p>{{'Device' | translate}}: {{case.scheduledDeviceAlias}}</p>
+            <p>Machine: {{case.scheduledDeviceAlias}}</p>
             <p [ngClass]="checkScheduledStartTime(case.scheduledStartTime) ? 'scheduled-date-found' : 'scheduled-date-missing'">{{displayScheduledStartTime(case.scheduledStartTime)}}</p>
           </ion-label>
         </ion-item>
