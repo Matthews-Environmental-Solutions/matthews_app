@@ -688,7 +688,6 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
             ScheduledDevice = deviceId,
             ScheduledDeviceAlias = "Device DEMO",
-            ScheduledStartTime = todayAtMidnight.AddDays(2), // Adjusted scheduled start time
             ActualDeviceAlias = "Device DEMO",
             PerformedBy = "Demo User",
             Fuel = String.Empty,
@@ -715,7 +714,6 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
             ScheduledDevice = deviceId,
             ScheduledDeviceAlias = "Device DEMO",
-            ScheduledStartTime = todayAtMidnight.AddDays(2), // Adjusted scheduled start time
             ActualDeviceAlias = "Device DEMO",
             PerformedBy = "Demo User",
             Fuel = String.Empty,
@@ -742,7 +740,6 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
             ScheduledDevice = deviceId,
             ScheduledDeviceAlias = "Device DEMO",
-            ScheduledStartTime = todayAtMidnight.AddDays(2), // Adjusted scheduled start time
             ActualDeviceAlias = "Device DEMO",
             PerformedBy = "Demo User",
             Fuel = String.Empty,
@@ -769,7 +766,6 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
             ScheduledDevice = deviceId,
             ScheduledDeviceAlias = "Device DEMO",
-            ScheduledStartTime = todayAtMidnight.AddDays(2), // Adjusted scheduled start time
             ActualDeviceAlias = "Device DEMO",
             PerformedBy = "Demo User",
             Fuel = String.Empty,
@@ -796,7 +792,6 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
             ScheduledDevice = deviceId,
             ScheduledDeviceAlias = "Device DEMO",
-            ScheduledStartTime = todayAtMidnight.AddDays(2), // Adjusted scheduled start time
             ActualDeviceAlias = "Device DEMO",
             PerformedBy = "Demo User",
             Fuel = String.Empty,
@@ -823,7 +818,6 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
             ScheduledDevice = deviceId,
             ScheduledDeviceAlias = "Device DEMO",
-            ScheduledStartTime = todayAtMidnight.AddDays(2), // Adjusted scheduled start time
             ActualDeviceAlias = "Device DEMO",
             PerformedBy = "Demo User",
             Fuel = String.Empty,
@@ -850,7 +844,6 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
             ScheduledDevice = deviceId,
             ScheduledDeviceAlias = "Device DEMO",
-            ScheduledStartTime = todayAtMidnight.AddDays(2), // Adjusted scheduled start time
             ActualDeviceAlias = "Device DEMO",
             PerformedBy = "Demo User",
             Fuel = String.Empty,
