@@ -357,6 +357,8 @@ public class CasesService : ICasesService
             List<Guid> ids = new List<Guid>();
             ids.Add(deviceId);
             _ea.GetEvent<EventCaseAnyChange>().Publish(ids);
+            // SignalR
+            _caseHub.SendMessageToRefreshList($"Create 20 cases done.");
             return true;
         }
         catch (Exception)

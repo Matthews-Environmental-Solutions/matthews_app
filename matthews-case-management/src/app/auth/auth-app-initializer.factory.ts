@@ -37,7 +37,6 @@ export function authAppInitializerFactory(authService: AuthService, userSettingS
         authService.loggedInUser = new UserInfoAuth();
         authService.loggedInUser.copyInto(jsonLoggedInUser);
 
-
         //user setting
         let userSetting = localStorage.getItem(authService.loggedInUser.name);
         if (!userSetting) {
