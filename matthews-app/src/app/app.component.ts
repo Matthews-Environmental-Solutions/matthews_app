@@ -72,8 +72,8 @@ export class AppComponent {
   }
 
   resetDemo() {
-    //const signalId = "dd121ea5-12f5-4430-9f32-303b6e353291";
-    const signalId = "ab36c612-42fb-481b-8050-0b5b207cfe6b";
+    const signalId = "dd121ea5-12f5-4430-9f32-303b6e353291";
+    //const signalId = "ab36c612-42fb-481b-8050-0b5b207cfe6b";
     this.cremationProcessService.writeSignalValue(signalId, 1);
     this.caseService.resetDemo();
     console.log('Reseted Demo');

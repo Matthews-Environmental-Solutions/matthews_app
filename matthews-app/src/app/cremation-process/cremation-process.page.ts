@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/quotes */
 /* eslint-disable radix */
 /* eslint-disable @typescript-eslint/no-shadow */
 /* eslint-disable max-len */
@@ -151,6 +152,10 @@ export class CremationProcessPage implements OnInit {
         this.mapCase(res);
       }
     });
+  }
+
+  checkStep() {
+    console.log("radi");
   }
 
   parseSignalValue(value: string): number{

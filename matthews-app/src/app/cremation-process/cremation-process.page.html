@@ -44,7 +44,11 @@
               class="completed"
               *ngIf="parseSignalValue(signal.value)>= 40 ? true : false"
               >{{"Preheat Complete"}}
-            </span>
+            </span><br>
+            <span class="completed"
+                  >Selected mode: {{burnMode[selectedBurnMode] ?? "-" |
+                  translate}}<br
+                /></span>
           </ng-template>
         </mat-step>
       </ng-container>
@@ -59,7 +63,7 @@
             optional
           >
             <ng-template matStepLabel>
-                <span [ngClass]="parseSignalValue(signal.value) >= 50 || parseSignalValue(signal.value) < 40 ? 'grayHeading' : 'blackHeading'">
+                <span [ngClass]="parseSignalValue(signal.value) >= 50 || parseSignalValue(signal.value) < 40 ? 'grayHeading' : 'blackHeading'" (click)="checkStep()">
                   {{'Select Case'}}<br/>
                 </span>
               <span class="font-size" *ngIf="!isCaseSelected && parseSignalValue(signal.value) < 50"
@@ -69,10 +73,12 @@
                 >No Case Selected
               </span>
               <span class="font-size" *ngIf="isCaseSelected && parseSignalValue(signal.value) < 50"
-                >{{case.firstName + ' ' + case.lastName + ' - ' + clientCaseId}}
+                >{{case.firstName + ' ' + case.lastName}}<br>
+                {{"Case ID: " + clientCaseId}}
               </span>
               <span class="completed" *ngIf="isCaseSelected && parseSignalValue(signal.value) >= 50"
-                >{{case.firstName + ' ' + case.lastName + ' - ' + clientCaseId}}
+                >{{case.firstName + ' ' + case.lastName}}<br>
+                {{"Case ID: " + clientCaseId}}
               </span>
             </ng-template>
           </ng-container>
