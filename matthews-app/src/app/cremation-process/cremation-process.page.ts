@@ -23,7 +23,7 @@ import {
   ContainerTypeSelection,
   GenderSelection,
 } from '../case/selection-option';
-import { skip, tap } from 'rxjs/operators';
+import { filter, find, map, skip, tap } from 'rxjs/operators';
 import { CaseService } from '../case/case.service';
 import { Signal } from '../device-list/signal';
 
@@ -47,6 +47,17 @@ export class CremationProcessPage implements OnInit {
         }
         if (signal.name === 'TT101_PV') {
           this.signalTt101 = signal.value;
+        }
+        if (signal.name ==='CASE_REQUIRED') {
+          const cases = this.appStore.deviceCases$;
+          // cases.pipe(
+          //   // Map the emitted array to the specific Case object with clientCaseId === 1
+          //   map(caseArray => caseArray.find(data => data.clientCaseId === signal.value))
+          // ).subscribe(foundCase => {
+          //   // foundCase is the specific Case object with clientCaseId === 1
+          //   this.appStore.updateCase(foundCase);
+          //   console.log('updated');
+          // });
         }
         if (
           signal.name === 'MACHINE_STATUS' &&

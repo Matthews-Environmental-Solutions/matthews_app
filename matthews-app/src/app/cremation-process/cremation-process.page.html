@@ -1,8 +1,8 @@
 <!-- eslint-disable @angular-eslint/template/eqeqeq -->
 <ng-container *ngIf="selectedDevice$ | async as selectedDevice">
   <ion-header>
-    <ion-toolbar style="--background: #455a64">
-      <ion-title color="white">{{selectedDevice.alias}}</ion-title>
+    <ion-toolbar style="--background: #455a64" color="medium">
+      <ion-title>{{selectedDevice.alias}}</ion-title>
       <ion-buttons slot="start">
         <ion-back-button></ion-back-button>
       </ion-buttons>
@@ -32,14 +32,14 @@
             <span
               class="font-size"
               *ngIf="parseSignalValue(signal.value) <= 30 && parseSignalValue(signal.value) >= 20 ? true : false"
-              >{{"Preheat in Progress"}}<br />
+              >{{"Preheat in Progress"}}
             </span>
-            <span
+            <!-- <span
               class="font-size"
               *ngIf="parseSignalValue(signal.value) <= 30 && parseSignalValue(signal.value) >= 20 ? true : false"
               >{{"Selected Mode: "}}{{burnMode[selectedBurnMode] ?? "-" |
               translate}}
-            </span>
+            </span> -->
             <span
               class="completed"
               *ngIf="parseSignalValue(signal.value)>= 40 ? true : false"
