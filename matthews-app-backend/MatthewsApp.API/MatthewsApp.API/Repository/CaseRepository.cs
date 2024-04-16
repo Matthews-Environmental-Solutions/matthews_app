@@ -108,6 +108,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             c.IsObsolete == false
             && c.ScheduledFacility.Equals(facilityId)
             && !c.ScheduledDevice.Equals(Guid.Empty)
+            && c.ScheduledStartTime.HasValue
             && c.ScheduledStartTime.Value >= dateStartDateOfWeek
             && c.ScheduledStartTime.Value < dateEnd
             ).ToList();
