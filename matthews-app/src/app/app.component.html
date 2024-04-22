@@ -32,6 +32,10 @@
           </ion-select>
         </ion-item>
       </div>
+      <div class="toggle-container">
+        <ion-label class="label">Change theme</ion-label>
+        <ion-toggle class="toggle" [(ngModel)]="darkModeSliderValue" (ngModelChange)="toggleTheme()"></ion-toggle>
+      </div>
     </ion-content>
   </ion-menu>
   <ion-router-outlet Id="main"></ion-router-outlet>

@@ -14,3 +14,14 @@
     margin-right: 14px;
   }
 }
+
+.toggle-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 16px; /* Adjust padding as needed */
+}
+
+.label {
+  margin-right: 16px; /* Adjust margin as needed */
+}

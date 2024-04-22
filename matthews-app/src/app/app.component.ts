@@ -20,6 +20,7 @@ export class AppComponent {
   navigate: any;
   userInfo$ = this.appStoreService.userInfo$;
   language: string;
+  darkModeSliderValue = false;
 
   constructor(
     private platform: Platform,
@@ -77,5 +78,27 @@ export class AppComponent {
     this.cremationProcessService.writeSignalValue(signalId, 1);
     this.caseService.resetDemo();
     console.log('Reseted Demo');
+  }
+
+  toggleTheme() {
+    const darkModeEnabled = this.darkModeSliderValue;
+
+    const rootElement = document.documentElement || document.body;
+
+    rootElement.setAttribute('data-theme', darkModeEnabled ? 'dark' : 'light');
+
+    if (window.matchMedia('(prefers-color-scheme: light)').matches) {
+      window.matchMedia('(prefers-color-scheme: dark)').addListener(this.updateColorScheme);
+    } else {
+      window.matchMedia('(prefers-color-scheme: light)').addListener(this.updateColorScheme);
+    }
+  }
+
+  updateColorScheme(event: MediaQueryListEvent) {
+    if (event.matches) {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    } else {
+      document.documentElement.setAttribute('data-theme', 'light');
+    }
   }
 }
