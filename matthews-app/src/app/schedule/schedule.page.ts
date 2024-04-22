@@ -101,11 +101,12 @@ export class SchedulePage implements OnInit, OnDestroy {
 
   setDefaultValues() {
     this.caseStore.scheduleVm$.subscribe(result => {
-      this.defaultFacilityId = result.facilities[0].id;
+      this.defaultFacilityId = (result.selectedFacility !== null && typeof result.selectedFacility !== 'undefined' && Object.keys(result.selectedFacility).length !== 0) ? result.selectedFacility.id : result.facilities[0].id;
     });
 
     this.caseStore.getCases(this.defaultFacilityId);
   }
+
 
   checkScheduledStartTime(date: string): boolean {
     return !(date == '0001-01-01T00:00:00Z' || date == null);
