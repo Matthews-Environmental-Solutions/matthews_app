@@ -63,7 +63,7 @@
             optional
           >
             <ng-template matStepLabel>
-                <span [ngClass]="parseSignalValue(signal.value) >= 50 || parseSignalValue(signal.value) < 40 ? 'grayHeading' : 'blackHeading'" (click)="checkStep()">
+                <span [ngClass]="parseSignalValue(signal.value) >= 50 || parseSignalValue(signal.value) < 40 ? 'grayHeading' : 'blackHeading'" (click)="moveToFirst(parseSignalValue(signal.value))">
                   {{'Select Case'}}<br/>
                 </span>
               <span class="font-size" *ngIf="!isCaseSelected && parseSignalValue(signal.value) < 50"
@@ -91,7 +91,7 @@
           [completed]="parseSignalValue(signal.value) >= 100 ? true : false"
         >
           <ng-template matStepLabel>
-              <span [ngClass]="parseSignalValue(signal.value) >= 100 || parseSignalValue(signal.value) < 50? 'grayHeading' : 'blackHeading'">
+              <span [ngClass]="parseSignalValue(signal.value) >= 100 || parseSignalValue(signal.value) < 50? 'grayHeading' : 'blackHeading'" (click)="moveToSecond(parseSignalValue(signal.value))">
                 {{'StartCycle' | translate}}<br/>
               </span>
             <span
@@ -262,7 +262,7 @@
                 <div class="actions">
                   <ion-button
                     expand="block"
-                    *ngIf="isCaseSelected"
+                    *ngIf="isCaseSelected && parseSignalValue(signal.value) <= 60"
                     (click)="clearSelectedCase()"
                     class="btnchangecase"
                   >

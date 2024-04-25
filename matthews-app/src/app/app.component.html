@@ -1,6 +1,6 @@
 <ion-app >
   <ion-menu side="end" menuId="main-menu" contentId="main">
-    <ion-content *ngIf="userInfo$ | async as userInfo" color="light">
+    <ion-content *ngIf="userInfo$ | async as userInfo">
       <div class="header-content">
         <img src={{userInfo.photoBase64}} alt=""/>
         <ion-label>
@@ -32,9 +32,11 @@
           </ion-select>
         </ion-item>
       </div>
-      <div class="toggle-container">
-        <ion-label class="label">Change theme</ion-label>
-        <ion-toggle class="toggle" [(ngModel)]="darkModeSliderValue" (ngModelChange)="toggleTheme()"></ion-toggle>
+      <div>
+        <ion-item>
+          <ion-label translate>Change Theme</ion-label>
+            <ion-toggle class="toggle" [(ngModel)]="darkModeSliderValue" (ngModelChange)="toggleTheme()"></ion-toggle>
+        </ion-item>
       </div>
     </ion-content>
   </ion-menu>

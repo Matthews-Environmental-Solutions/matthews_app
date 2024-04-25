@@ -165,10 +165,6 @@ export class CremationProcessPage implements OnInit {
     });
   }
 
-  checkStep() {
-    console.log("radi");
-  }
-
   parseSignalValue(value: string): number{
     return parseInt(value);
   }
@@ -565,6 +561,33 @@ export class CremationProcessPage implements OnInit {
       this.stepper.selectedIndex = index;
       this.stepNumber = index;
     }, 0);
+  }
+
+  moveToFirst(machineValue: number) {
+    if (machineValue >= 40 && machineValue <= 90) {
+      setTimeout(() => {
+        this.stepper.selectedIndex = 1;
+        this.stepNumber = 1;
+      }, 0);
+    }
+  }
+
+  moveToSecond(machineValue: number) {
+    if (machineValue >= 50 && machineValue <= 90) {
+      setTimeout(() => {
+        this.stepper.selectedIndex = 2;
+        this.stepNumber = 2;
+      }, 0);
+    }
+  }
+
+  moveToThird(machineValue: number) {
+    if (machineValue >= 100) {
+      setTimeout(() => {
+        this.stepper.selectedIndex = 3;
+        this.stepNumber = 3;
+      }, 0);
+    }
   }
 
   logStepNumber() {
