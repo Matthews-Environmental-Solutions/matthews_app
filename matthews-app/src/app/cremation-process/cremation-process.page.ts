@@ -78,7 +78,7 @@ export class CremationProcessPage implements OnInit {
           parseInt(signal.value) >= 100
         ) {
           this.move(3);
-          this.isCaseSelected = false;
+          //this.isCaseSelected = false;
         } else if (
           signal.name === 'MACHINE_STATUS' &&
           parseInt(signal.value) < 40
@@ -564,7 +564,7 @@ export class CremationProcessPage implements OnInit {
   }
 
   moveToFirst(machineValue: number) {
-    if (machineValue >= 40 && machineValue <= 90) {
+    if (machineValue >= 40) {
       setTimeout(() => {
         this.stepper.selectedIndex = 1;
         this.stepNumber = 1;

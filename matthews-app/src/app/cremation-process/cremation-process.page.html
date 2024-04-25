@@ -113,9 +113,17 @@
         </mat-step>
       </ng-container>
 
-      <mat-step [completed]="isRakeOutStarted">
-        <ng-template matStepLabel class="blackHeading">{{'CompleteCycle' | translate}}</ng-template>
+      <ng-container *ngFor="let signal of selectedDevice.signals">
+      <mat-step 
+      *ngIf="signal.name === 'MACHINE_STATUS'"
+      [completed]="isRakeOutStarted">
+        <ng-template matStepLabel class="blackHeading">
+          <span (click)="moveToThird(parseSignalValue(signal.value))">{{'CompleteCycle' | translate}}<br/>
+          </span>
+        </ng-template>
       </mat-step>
+    </ng-container>
+
     </mat-stepper>
   </ion-content>
 
