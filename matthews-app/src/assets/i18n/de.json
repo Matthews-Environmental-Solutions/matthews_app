@@ -24,6 +24,8 @@
   "ResumeCycle": "Zyklus Fortsetzen",
   "ExtendCycle": "Zyklus Verlängern",
   "EndCycle": "Zyklus Beenden",
+  "SkipCooldown": "Abklingzeit überspringen",
+  "SkipCooldownMessage": "Das Überspringen des Abkühlzyklus kann die Bediener während des Ausschubs hohen Temperaturen aussetzen. Persönliche Schutzausrüstung erforderlich.",
   "EndCycleMessage": "Der Zyklus wird gestoppt. Bestätigen Sie?",
   "CompleteCycle": "Vollständiger Zyklus",
   "CoolDown": "Abkühlen",

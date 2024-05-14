@@ -24,6 +24,8 @@
   "ResumeCycle": "Resume Cycle",
   "ExtendCycle": "Extend Cycle",
   "EndCycle": "End Cycle",
+  "SkipCooldown": "Skip cooldown",
+  "SkipCooldownMessage": "Skipping the cooldown cycle may expose operators to high temperature during rake out. Personal Protective Gear required.",
   "EndCycleMessage": "The cycle will be stopped. Confirm?",
   "CompleteCycle": "Complete Cycle",
   "CoolDown": "Cool Down",

@@ -42,23 +42,23 @@ export class CremationProcessPage implements OnInit {
         return;
       }
       selectedDevice.signals.forEach((signal) => {
-        if(signal.name === 'TT100_PV') {
+        if (signal.name === 'TT100_PV') {
           this.signalTt100 = signal.value;
         }
         if (signal.name === 'TT101_PV') {
           this.signalTt101 = signal.value;
         }
-        if (signal.name ==='LOADED_ID') {
+        if (signal.name === 'LOADED_ID') {
           this.selectCaseFromId(signal.value);
         }
-        if (signal.name ==='BURN_MODE') {
+        if (signal.name === 'BURN_MODE') {
           this.selectedBurnMode = parseInt(signal.value, 10);
         }
         if (
           signal.name === 'MACHINE_STATUS' &&
           parseInt(signal.value) >= 40 &&
           parseInt(signal.value) < 50
-          &&!this.isCaseSelected
+          && !this.isCaseSelected
         ) {
           this.move(1);
         } else if (
@@ -141,7 +141,7 @@ export class CremationProcessPage implements OnInit {
     private cremationProcessService: CremationProcessService,
     public alertController: AlertController,
     private caseService: CaseService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.matStepperIntl.optionalLabel = '';
@@ -160,7 +160,7 @@ export class CremationProcessPage implements OnInit {
     });
   }
 
-  parseSignalValue(value: string): number{
+  parseSignalValue(value: string): number {
     return parseInt(value);
   }
 
@@ -362,12 +362,33 @@ export class CremationProcessPage implements OnInit {
             this.cremationProcessService.writeSignalValue(signal?.id, 1);
             this.cremationTime = 0;
             this.isCremationStopped = true;
+            this.coolDown(selectedDevice);
             this.move(3);
           },
         },
       ],
     };
 
+    this.presentAlert(alertOptions);
+  }
+
+  skipCooldown(stepper: MatStepper) {
+    const alertOptions: AlertOptions = {
+      header: this.translateService.instant('SkipCooldown'),
+      message: this.translateService.instant('SkipCooldownMessage'),
+      buttons: [
+        {
+          text: this.translateService.instant('Cancel'),
+          role: 'cancel',
+        },
+        {
+          text: this.translateService.instant('Confirm'),
+          role: 'confirm',
+          handler: () => {
+          },
+        },
+      ],
+    };
     this.presentAlert(alertOptions);
   }
 
@@ -522,9 +543,9 @@ export class CremationProcessPage implements OnInit {
   }
 
   selectCaseFromId(caseId: string) {
-    if((caseId !== undefined && null) && caseId.length > 1) {
-    this.caseService.getCase(caseId)
-    .then((selCase) => this.appStore.updateSelectedCase(selCase));
+    if ((caseId !== undefined && null) && caseId.length > 1) {
+      this.caseService.getCase(caseId)
+        .then((selCase) => this.appStore.updateSelectedCase(selCase));
     } else {
       return;
     }
@@ -608,7 +629,7 @@ export class CremationProcessPage implements OnInit {
 
   presentModalFromProcess(deviceId: string) {
     this.appStore.openCaseModalFromProcess(
-    { scheduledDevice: deviceId } as Case
+      { scheduledDevice: deviceId } as Case
     );
   }
 }
