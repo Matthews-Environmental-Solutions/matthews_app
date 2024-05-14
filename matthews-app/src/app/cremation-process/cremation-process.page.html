@@ -338,10 +338,10 @@
                 /></span>
                 <ng-container *ngFor="let signal of selectedDevice.signals; trackBy:trackItems">
                   <span class="footer-text" *ngIf="signal.name === 'TT100_PV'">
-                    {{'PrimChamber' | translate}}: {{signal.value}}°C <br
+                    {{'PrimChamber' | translate}}: {{signal.value | number: '1.0-0' }}°C <br
                   /></span>
                   <span class="footer-text" *ngIf="signal.name === 'TT101_PV'">
-                    {{'SecChamber' | translate}}: {{signal.value}}°C <br
+                    {{'SecChamber' | translate}}: {{signal.value | number: '1.0-0' }}°C <br
                   /></span>
                 </ng-container>
                 <span class="footer-text"

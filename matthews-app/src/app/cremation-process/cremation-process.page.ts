@@ -48,16 +48,11 @@ export class CremationProcessPage implements OnInit {
         if (signal.name === 'TT101_PV') {
           this.signalTt101 = signal.value;
         }
-        if (signal.name ==='CASE_REQUIRED') {
-          const cases = this.appStore.deviceCases$;
-          // cases.pipe(
-          //   // Map the emitted array to the specific Case object with clientCaseId === 1
-          //   map(caseArray => caseArray.find(data => data.clientCaseId === signal.value))
-          // ).subscribe(foundCase => {
-          //   // foundCase is the specific Case object with clientCaseId === 1
-          //   this.appStore.updateCase(foundCase);
-          //   console.log('updated');
-          // });
+        if (signal.name ==='LOADED_ID') {
+          this.selectCaseFromId(signal.value);
+        }
+        if (signal.name ==='BURN_MODE') {
+          this.selectedBurnMode = parseInt(signal.value, 10);
         }
         if (
           signal.name === 'MACHINE_STATUS' &&
@@ -524,6 +519,15 @@ export class CremationProcessPage implements OnInit {
     this.caseService
       .getNextCaseForDevice(deviceId)
       .then((nextCase) => this.appStore.updateSelectedCase(nextCase));
+  }
+
+  selectCaseFromId(caseId: string) {
+    if((caseId !== undefined && null) && caseId.length > 1) {
+    this.caseService.getCase(caseId)
+    .then((selCase) => this.appStore.updateSelectedCase(selCase));
+    } else {
+      return;
+    }
   }
 
   presentCasesModal(deviceId: string) {

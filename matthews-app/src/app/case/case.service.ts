@@ -31,6 +31,11 @@ export class CaseService {
     return this.httpService.request<Case>('POST', postCaseUrl, caseToAdd);
   }
 
+  getCase(caseId: string) {
+    const getCaseUrl = `${environment.apiUrl}/Case/${caseId}`;
+    return this.httpService.request<Case>('GET', getCaseUrl, caseId);
+  }
+
   updateCase(id: string, caseToUpdate: Case) {
     const updateCaseUrl = `${environment.apiUrl}/Case/Update`;
     return this.httpService.request<Case>('PUT', updateCaseUrl, caseToUpdate);
