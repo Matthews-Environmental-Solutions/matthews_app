@@ -153,11 +153,11 @@
                   </ion-segment-button>
                 </ion-segment>
                 <div class="button-container">
-                  <ion-button expand="block" (click)="startPreheat(selectedDevice)" class="btnsuccess">
+                  <ion-button expand="block" (click)="startPreheat(selectedDevice)" class="btnsuccessinline">
                     {{ 'StartPreheat' | translate }}
                   </ion-button>
-                  <ion-button class="btnsuccess" (click)="systemShutdown(stepper, selectedDevice)">
-                    System Shutdown
+                  <ion-button class="btnbackwardinline" (click)="systemShutdown(stepper, selectedDevice)">
+                    Shutdown
                   </ion-button>
                 </div>
               </div>
@@ -186,14 +186,13 @@
               <div class="actions">
                 <div class="button-container">
                   <ion-button
-                  expand="block"
                   (click)="stopPreheat(selectedDevice)"
-                  class="btndanger"
+                  class="btnbackwardinline"
                 >
                   {{'StopPreheat' | translate}}
               </ion-button>
-                  <ion-button class="btnsuccess" (click)="systemShutdown(stepper, selectedDevice)">
-                    System Shutdown
+                  <ion-button class="btnbackwardinline" (click)="systemShutdown(stepper, selectedDevice)">
+                    Shutdown
                   </ion-button>
                 </div>
               </div>
@@ -238,14 +237,14 @@
                   </ion-button>
                   <ion-button
                     expand="block"
-                    class="btnsuccesstwo"
+                    class="btnsuccess"
                     (click)="autoSelectNextCase(deviceId)"
                   >
                     AUTO SELECT NEXT IN SCHEDULE
                   </ion-button>
                   <ion-button 
                   expand="block"
-                  class="btnsuccesstwo" (click)="systemShutdown(stepper, selectedDevice)">
+                  class="btnbackward" (click)="systemShutdown(stepper, selectedDevice)">
                     System Shutdown
                   </ion-button>
                 </div>
@@ -272,7 +271,7 @@
                     expand="block"
                     *ngIf="isCaseSelected && parseSignalValue(signal.value) <= 60"
                     (click)="clearSelectedCase()"
-                    class="btnchangecase"
+                    class="btnbackward"
                   >
                     CLEAR SELECTED CASE
                   </ion-button>
@@ -280,7 +279,7 @@
                     expand="block"
                     type="button"
                     (click)="move(2); caseRequest(selectedDevice)"
-                    class="btnsuccesstwo"
+                    class="btnsuccess"
                     >Continue</ion-button
                   >
                 </div>
@@ -375,7 +374,7 @@
                 <ion-button
                   expand="block"
                   (click)="endCycle(stepper, selectedDevice)"
-                  color="danger"
+                  class="btnbackward"
                 >
                   {{'EndCycle' | translate}}
                 </ion-button>
@@ -408,7 +407,7 @@
                 <ion-button
                   expand="block"
                   (click)="coolDown(selectedDevice)"
-                  color="tertiary"
+                  class="btnsuccess"
                 >
                   <ion-icon slot="end" name="arrow-forward"></ion-icon>
                   {{'CoolDown' | translate}}
@@ -437,11 +436,11 @@
                 </ng-container>
               </div>
               <div class="actions">
-                <ion-button color="danger" expand="block" (click)="skipCooldown(stepper)">
+                <ion-button expand="block" class="btnbackward" (click)="skipCooldown(stepper)">
                   <ion-icon slot="end" name="arrow-forward"></ion-icon>
                   {{'SkipCooldown' | translate}}
                 </ion-button>
-                <ion-button color="tertiary" expand="block" (click)="rakeOut(selectedDevice)">
+                <ion-button expand="block" class="btnsuccess" (click)="rakeOut(selectedDevice)">
                   <ion-icon slot="end" name="arrow-forward"></ion-icon>
                   {{'RakeOut' | translate}}
                 </ion-button>
@@ -460,7 +459,7 @@
                 <ion-button
                   expand="block"
                   (click)="rakeOutConfirmation(stepper, selectedDevice)"
-                  color="secondary"
+                  class="btnsuccess"
                 >
                   <ion-icon slot="end" name="arrow-forward"></ion-icon>
                   {{'ConfirmRakeOutIsFinished' | translate}}.

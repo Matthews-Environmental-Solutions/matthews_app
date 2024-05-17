@@ -36,14 +36,30 @@ ion-segment-button.ios {
   --border-radius: 20px;
 }
 
-
 .btnsuccess {
-  --background:#013220;
+  --background: #00b050;
+}
+
+.btnbackward {
+  --background: #7f7f7f;
+}
+
+.btnother {
+  --background: #f2f4f5;
+  color: black;
   margin-inline: 0;
 }
 
-.btnsuccesstwo {
-  --background:#013220;
+.btnsuccessinline {
+  --background:#00b050;
+  margin-inline: 0;
+  width: 100%;
+}
+
+.btnbackwardinline {
+  --background: #7f7f7f;
+  margin-inline: 0;
+  width: 100%;
 }
 
 .btndanger {
@@ -90,7 +106,7 @@ ion-footer{
 .inline {
   display: inline-block;
   width: 158px;
-  --background: #cbe5c0;
+  --background: #f2f4f5;
   color: black;
 }
 
@@ -119,7 +135,9 @@ ion-footer{
   display: flex; /* Use flexbox for horizontal alignment */
   justify-content: space-between; /* Distribute space between the buttons */
   align-items: center; /* Align items vertically in the center */
+  gap: 1px; /* Add a 1-pixel gap between the buttons */
 }
+
 
 // :host ::ng-deep .mat-vertical-content-container {
 //   pointer-events:none;
