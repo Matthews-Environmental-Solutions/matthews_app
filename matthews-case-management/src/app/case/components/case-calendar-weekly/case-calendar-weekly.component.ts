@@ -1,12 +1,14 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { Subscription, skip } from 'rxjs';
+import { Subscription, catchError, delay, filter, of, retryWhen, skip, take, tap } from 'rxjs';
 import { Case } from 'src/app/models/case.model';
 import { CalendarService } from 'src/app/services/calendar.service';
 import { CaseService } from 'src/app/services/cases.service';
 import { StateService } from 'src/app/services/states.service';
 import { CaseInfoDialogComponent } from '../../dialogs/case-info.dialog/case-info.dialog.component';
 import { MatDialog } from '@angular/material/dialog';
+import { FacilityStatus } from 'src/app/models/facility-status.model';
+import { FacilityStatusService } from 'src/app/services/facility-status.service';
 
 @Component({
   selector: 'case-calendar-weekly',
@@ -20,6 +22,7 @@ export class CaseCalendarWeeklyComponent implements OnInit {
 
   cases: Case[] = [];
   filteredCases: Case[] = [];
+  facilityStatuses: FacilityStatus[] = [];
   selectedFacilityId!: string;
   firstDateInWeek!: Date;
   loader: boolean = false;
@@ -36,13 +39,24 @@ export class CaseCalendarWeeklyComponent implements OnInit {
   private subs = new Subscription();
 
   constructor(private translate: TranslateService, private caseService: CaseService, private stateService: StateService, private calendarService: CalendarService,
-    public dialog: MatDialog) {
+    public dialog: MatDialog, private facilityStatusService: FacilityStatusService) {
   }
 
   ngOnInit(): void {
-    this.subs.add(this.stateService.selectedFacilityId$.subscribe(f => {
-      this.selectedFacilityId = f;
-    }));
+
+    // this.subs.add(this.stateService.selectedFacilityId$.subscribe(f => {
+    //   this.selectedFacilityId = f
+    // }));
+
+    this.subs.add(
+      this.stateService.selectedFacilityId$.subscribe(f => {
+        this.selectedFacilityId = f;
+        if(f.length > 1)
+          this.facilityStatusService.getAllStatusesByFacility(f).subscribe(fStatuses => {
+            this.facilityStatuses = fStatuses;
+          })
+      })
+    );
 
     this.subs.add(this.stateService.firstDateInWeek$.subscribe(d => {
       this.firstDateInWeek = d;
@@ -183,6 +197,35 @@ export class CaseCalendarWeeklyComponent implements OnInit {
         return 'arrow_circle_right';
       case 4:
         return 'hourglass_top';
+      default:
+        return '';
+    }
+  }
+
+  getIcon(facilityStatus: string | undefined): string {
+
+    const statusObj = this.facilityStatuses.find(status => status.id === facilityStatus);
+    const statusName = statusObj ? statusObj.statusName : facilityStatus;
+
+    switch (statusName) {
+      case 'Prepare documentation':
+        return 'import_contacts';
+      case 'Medical Device Removal Needed':
+        return 'cyclone';
+      case 'Awaiting Documents':
+        return 'import_contacts';
+      case 'New Cremation Case':
+        return 'hive';
+      case 'Ready to Cremate':
+        return 'change_circle';
+      case 'Cremation in Progress':
+        return 'electric_bolt';
+      case 'Cremation Complete':
+        return 'verified_user';
+      case 'Its ready':
+        return 'electric_bolt';
+      case undefined:
+        return '';
       default:
         return '';
     }
