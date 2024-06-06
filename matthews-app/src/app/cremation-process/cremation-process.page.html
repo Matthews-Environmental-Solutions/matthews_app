@@ -21,7 +21,7 @@
           [completed]="parseSignalValue(signal.value) >= 40"
         >
           <ng-template matStepLabel>
-            <span [ngClass]="parseSignalValue(signal.value) >= 40 ? 'grayHeading' : 'blackHeading'">
+            <span [ngClass]="parseSignalValue(signal.value) >= 40 ? 'grayHeading' : 'blackHeading'" (click)="moveToZero()">
               {{'Prepare System'}}<br />
             </span>
             <span
@@ -197,6 +197,28 @@
                 </div>
               </div>
             </ng-container>
+
+            <ng-container
+              *ngIf="parseSignalValue(signal.value) > 30 ? true : false && stepNumber == 0"
+            >
+              <div class="wrapper">
+                <span class="footer-text"><b>Prepare System</b><br /></span>
+                <span class="footer-text">Preheat Complete<br /></span>
+                <!-- <ng-container *ngFor="let signal of selectedDevice.signals"> -->
+                  <span class="footer-text">
+                    {{'PrimChamber' | translate}}: {{signalTt100}}°C <br
+                  /></span>
+                  <span class="footer-text">
+                    {{'SecChamber' | translate}}: {{signalTt101}}°C <br
+                  /></span>
+                <!-- </ng-container> -->
+                <span class="footer-text"
+                  >{{"Selected Mode: "}}{{burnMode[selectedBurnMode] ?? "-" |
+                  translate}}</span
+                >
+              </div>
+              </ng-container>
+
           </ng-container>
         </ng-container>
       </div>

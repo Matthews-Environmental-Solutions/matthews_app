@@ -588,6 +588,13 @@ export class CremationProcessPage implements OnInit {
     }, 0);
   }
 
+  moveToZero() {
+    setTimeout(() => {
+      this.stepper.selectedIndex = 0;
+      this.stepNumber = 0;
+    }, 0);
+  }
+
   moveToFirst(machineValue: number) {
     if (machineValue >= 40) {
       setTimeout(() => {
