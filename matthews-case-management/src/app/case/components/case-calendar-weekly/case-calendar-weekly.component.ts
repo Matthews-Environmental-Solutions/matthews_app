@@ -219,7 +219,7 @@ export class CaseCalendarWeeklyComponent implements OnInit {
       case 'Ready to Cremate':
         return 'change_circle';
       case 'Cremation in Progress':
-        return 'electric_bolt';
+        return 'whatshot';
       case 'Cremation Complete':
         return 'verified_user';
       case 'Its ready':
