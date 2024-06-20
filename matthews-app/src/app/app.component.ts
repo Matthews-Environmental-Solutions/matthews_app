@@ -15,7 +15,7 @@ import { CaseService } from './case/case.service';
   templateUrl: 'app.component.html',
   styleUrls: ['app.component.scss'],
 })
-export class AppComponent {
+export class AppComponent implements OnInit{
 
   navigate: any;
   userInfo$ = this.appStoreService.userInfo$;
@@ -38,6 +38,19 @@ export class AppComponent {
     const browserLang = this.translateService.getBrowserLang();
     this.translateService.use(browserLang.match(/en|de/) ? browserLang : 'en');
     this.language = this.translateService.currentLang;
+  }
+
+  ngOnInit() {
+    this.initializeTheme();
+    this.addMediaQueryListeners();
+  }
+
+  addMediaQueryListeners() {
+    const darkSchemeQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    darkSchemeQuery.addEventListener('change', (e) => this.updateColorScheme(e));
+
+    const lightSchemeQuery = window.matchMedia('(prefers-color-scheme: light)');
+    lightSchemeQuery.addEventListener('change', (e) => this.updateColorScheme(e));
   }
 
   sideMenu() {
@@ -80,25 +93,28 @@ export class AppComponent {
     console.log('Reseted Demo');
   }
 
-  toggleTheme() {
-    const darkModeEnabled = this.darkModeSliderValue;
+  initializeTheme() {
+    const prefersDark = window.matchMedia('(prefers-color-scheme: light)').matches;
+    this.darkModeSliderValue = prefersDark;
 
+    this.applyTheme(this.darkModeSliderValue);
+  }
+
+  toggleTheme(event: any) {
+    this.darkModeSliderValue = event.detail.checked;
+    this.applyTheme(this.darkModeSliderValue);
+  }
+
+  applyTheme(isDarkMode: boolean) {
     const rootElement = document.documentElement || document.body;
-
-    rootElement.setAttribute('data-theme', darkModeEnabled ? 'dark' : 'light');
-
-    if (window.matchMedia('(prefers-color-scheme: light)').matches) {
-      window.matchMedia('(prefers-color-scheme: dark)').addListener(this.updateColorScheme);
-    } else {
-      window.matchMedia('(prefers-color-scheme: light)').addListener(this.updateColorScheme);
-    }
+    rootElement.setAttribute('data-theme', isDarkMode ? 'dark' : 'light');
   }
 
   updateColorScheme(event: MediaQueryListEvent) {
     if (event.matches) {
-      document.documentElement.setAttribute('data-theme', 'dark');
+      this.applyTheme(true);
     } else {
-      document.documentElement.setAttribute('data-theme', 'light');
+      this.applyTheme(false);
     }
   }
 }

@@ -35,7 +35,7 @@
       <div>
         <ion-item>
           <ion-label translate>Dark Theme</ion-label>
-            <ion-toggle class="toggle" [(ngModel)]="darkModeSliderValue" (ngModelChange)="toggleTheme()"></ion-toggle>
+            <ion-toggle class="toggle" [(ngModel)]="darkModeSliderValue" (ionChange)="toggleTheme($event)"></ion-toggle>
         </ion-item>
       </div>
     </ion-content>
