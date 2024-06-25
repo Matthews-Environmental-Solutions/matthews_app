@@ -466,6 +466,7 @@ public class CaseMqttService : IHostedService
             jsonDict.Add($"CASE_{counter}_GENDER", caseFor20.GENDER);
             jsonDict.Add($"CASE_{counter}_AGE", caseFor20.AGE);
             jsonDict.Add($"CASE_{counter}_READY", caseFor20.READY);
+            jsonDict.Add($"CASE_{counter}_SCHEDULED_START_TIME", caseFor20.SCHEDULED_START_TIME);
         }
 
         if (counter < 20)
@@ -483,6 +484,7 @@ public class CaseMqttService : IHostedService
                 jsonDict.Add($"CASE_{i}_GENDER", string.Empty);
                 jsonDict.Add($"CASE_{i}_AGE", string.Empty);
                 jsonDict.Add($"CASE_{i}_READY", string.Empty);
+                jsonDict.Add($"CASE_{i}_SCHEDULED_START_TIME", string.Empty);
             }
         }
 

@@ -33,7 +33,8 @@ public record CaseDto(
     CaseStatus Status,
     double Weight, // double
     Guid? FacilityStatusId, // Guid
-    string facilityStatusText
+    string facilityStatusText,
+    string? PhysicalId
     )
 {
 }

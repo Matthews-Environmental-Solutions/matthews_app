@@ -47,7 +47,8 @@ public static class CaseMapper
             entity.Status,
             entity.Weight,
             entity.FacilityStatusId,
-            entity.FacilityStatus?.StatusName
+            entity.FacilityStatus?.StatusName,
+            entity.PhysicalId
         );
     }
 
@@ -88,7 +89,8 @@ public static class CaseMapper
             ScheduledStartTime = dto.ScheduledStartTime is null ? DateTime.MinValue : dto.ScheduledStartTime,
             Status = dto.Status,
             Weight = dto.Weight,
-            FacilityStatusId = dto.FacilityStatusId
+            FacilityStatusId = dto.FacilityStatusId,
+            PhysicalId = dto.PhysicalId
         };
     }
 
@@ -110,7 +112,8 @@ public static class CaseMapper
             ((int) entity.ContainerType).ToString(),
             ((int) entity.Gender).ToString(),
             entity.Age.ToString(),
-            "1"
+            "1",
+            entity.ScheduledStartTime?.ToString("yyyy-MM-dd HH:mm")
         );
     }
 

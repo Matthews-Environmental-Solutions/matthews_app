@@ -170,6 +170,7 @@ public class CasesService : ICasesService
         entity.ScheduledStartTime = dto.StartTime;
         entity.ClientId = "1"; //ClientID is missing in CaseStart object from Flexy
         entity.ClientCaseId = dto.LOADED_CLIENT_ID;
+        entity.PhysicalId = dto.LOADED_PHYSICAL_ID;
 
         return entity;
     }
