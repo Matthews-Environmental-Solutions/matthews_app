@@ -35,4 +35,6 @@ public class StartCaseDto {
 
     [JsonConverter(typeof(StringToIntConverter))]
     public int LOADED_AGE { get; set; }
+
+    public string LOADED_PHYSICAL_ID { get; set; }
 }

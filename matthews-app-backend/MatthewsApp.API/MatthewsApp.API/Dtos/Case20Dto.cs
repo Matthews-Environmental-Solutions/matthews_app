@@ -12,7 +12,8 @@ public record Case20Dto (
     string COFFIN_TYPE,
     string GENDER,
     string AGE,
-    string READY
+    string READY,
+    string SCHEDULED_START_TIME
     )
 {
 }

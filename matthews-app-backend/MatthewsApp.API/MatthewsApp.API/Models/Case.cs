@@ -90,4 +90,7 @@ public class Case : BaseEntity
 
     public Guid? FacilityStatusId { get; set; }
     public FacilityStatus? FacilityStatus { get; set; }
+
+    [Column(TypeName = "nvarchar(256)")]
+    public string? PhysicalId { get; set; }
 }

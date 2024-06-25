@@ -117,6 +117,7 @@ public class CasesService : ICasesService
         {
             entity = MakeNewCaseFromDto(dto);
             entityDoesNotExistInDb = true;
+            entity.Status = CaseStatus.READY_TO_CREMATE;
         }
         else
         {
@@ -126,6 +127,7 @@ public class CasesService : ICasesService
                 entity = MakeNewCaseFromDto(dto);
                 entityDoesNotExistInDb = true;
             }
+            entity.Status = CaseStatus.IN_PROGRESS;
         }
 
         entity.ActualStartTime = dto.StartTime;
@@ -139,7 +141,6 @@ public class CasesService : ICasesService
 
         entity.ScheduledDeviceAlias = cremator is not null ? cremator.alias : string.Empty;
         entity.PerformedBy = dto.User;
-        entity.Status = CaseStatus.IN_PROGRESS;
 
         if (entityDoesNotExistInDb)
         {
@@ -170,6 +171,7 @@ public class CasesService : ICasesService
         entity.ScheduledStartTime = dto.StartTime;
         entity.ClientId = "1"; //ClientID is missing in CaseStart object from Flexy
         entity.ClientCaseId = dto.LOADED_CLIENT_ID;
+        entity.PhysicalId = dto.LOADED_PHYSICAL_ID;
 
         return entity;
     }

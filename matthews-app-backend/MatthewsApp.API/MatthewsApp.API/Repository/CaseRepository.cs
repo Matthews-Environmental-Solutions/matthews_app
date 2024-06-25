@@ -95,6 +95,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             c.IsObsolete == false
             && c.ScheduledFacility.Equals(facilityId)
             && !c.ScheduledDevice.Equals(Guid.Empty)
+            && c.ScheduledStartTime.HasValue
             && c.ScheduledStartTime.Value >= date
             && c.ScheduledStartTime.Value < dateEnd
             ).ToList();
@@ -119,6 +120,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
         IEnumerable<Case> cases = await _dataContext.Cases.ToArrayAsync();
         return cases.Where(c =>
             c.IsObsolete == false
+            && c.ScheduledStartTime.HasValue
             && c.ScheduledStartTime > DateTime.MinValue.AddDays(100)
             && !c.ScheduledFacility.Equals(Guid.Empty)
             && c.ScheduledDevice.Equals(scheduledDeviceId)
@@ -133,6 +135,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             c.IsObsolete == false
             && c.ScheduledFacility.Equals(facilityId)
             && !c.ScheduledDevice.Equals(Guid.Empty)
+            && c.ScheduledStartTime.HasValue
             && c.ScheduledStartTime.Value >= dateStart
             && c.ScheduledStartTime.Value < dateEnd
             ).ToList();
