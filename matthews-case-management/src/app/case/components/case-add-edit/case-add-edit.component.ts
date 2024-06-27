@@ -97,6 +97,7 @@ export class CaseAddEditComponent implements OnInit {
       scheduledStartDateTime: new FormControl(null),
 
       facilityStatus: new FormControl('', { nonNullable: true }),
+      physicalId: new FormControl('', { nonNullable: true })
     });
 
     this.subs.add(this.i4connectedService.getSites().subscribe(data => {
@@ -153,6 +154,7 @@ export class CaseAddEditComponent implements OnInit {
         this.caseForm.get('containerSize')?.setValue(response.containerSize);
 
         this.caseForm.get('facilityStatus')?.setValue(response.facilityStatusId);
+        this.caseForm.get('physicalId')?.setValue(response.physicalId);
 
         if (response.scheduledStartTime && response.scheduledStartTime !== this.DATETIME_MIN) {
           let startTime = this.calendarService.getDateInUserProfilesTimezone(response.scheduledStartTime);
@@ -221,6 +223,7 @@ export class CaseAddEditComponent implements OnInit {
     this.case.scheduledStartTime = this.calendarService.getUtcDateFromUserProfileTimezone(this.caseForm.get('scheduledStartDateTime')?.value);
     this.case.scheduledFacility = this.selectedFacilityId.length == 0 ? this.GUID_EMPTY : this.selectedFacilityId;
     this.case.facilityStatusId = (this.caseForm.get('facilityStatus')?.value == '') ? this.GUID_EMPTY : this.caseForm.get('facilityStatus')?.value;
+    this.case.physicalId = this.caseForm.get('physicalId')?.value;
 
     // set STATUS to UNSCHEDULED
     if (this.case.scheduledDevice == this.GUID_EMPTY || this.case.scheduledStartTime == null || this.case.scheduledStartTime == this.DATETIME_MIN || this.case.scheduledFacility == this.GUID_EMPTY) {
