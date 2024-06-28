@@ -104,6 +104,10 @@ export class CaseAddEditComponent implements OnInit {
       this.facilities = data;
     }));
 
+    this.subs.add(this.stateService.selectedFacilityId$.subscribe(f => {
+      this.caseForm.get('facility')?.setValue(f);
+    }));
+
     this.twelvehour = this.userSettingService.getUserSettingLastValue().timeformat == '12' ?? false;
   }
 
