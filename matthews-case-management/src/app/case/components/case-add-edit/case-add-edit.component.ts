@@ -24,6 +24,7 @@ import { Facility } from 'src/app/models/facility.model';
 import { I4connectedService } from 'src/app/services/i4connected.service';
 import { MatSelectChange } from '@angular/material/select';
 import { CalendarService } from 'src/app/services/calendar.service';
+import { MatGridTileHeaderCssMatStyler } from '@angular/material/grid-list';
 
 @Component({
   selector: 'case-add-edit',
@@ -63,6 +64,7 @@ export class CaseAddEditComponent implements OnInit {
   twelvehour = false;
   timeInterval = 1;
   timeInput = true;
+  deleteCaseButton = false;
 
   facilityForm!: FormGroup;
 
@@ -117,6 +119,7 @@ export class CaseAddEditComponent implements OnInit {
       this.title = id == null ? 'addNewCase' : 'editCase';
       if (id) {
         this.getCaseFromApi(id);
+        this.deleteCaseButton = true;
       } else {
         this.loader = false;
       }
@@ -272,6 +275,23 @@ export class CaseAddEditComponent implements OnInit {
           //this.router.navigate([``]);
         }
       });
+    }
+  }
+
+  deleteCase() {
+    if (this.case?.id !== undefined && this.case?.id !== null) {
+      this.caseService.deleteCase(this.case.id).subscribe({
+        next: (response) => {
+          this._shackBar.showNotification(this.translate.instant('caseSuccessfullyUpdated'), 'success');
+        },
+        // error: (err) => {
+        //   this._shackBar.showNotification(this.translate.instant(err), 'error');
+        //   //this.router.navigate([``]);
+        // }
+      });
+    }
+    else {
+      this._shackBar.showNotification("No case selected", 'error');
     }
   }
 
