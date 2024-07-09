@@ -13,7 +13,8 @@ public record Case20Dto (
     string GENDER,
     string AGE,
     string READY,
-    string SCHEDULED_START_TIME
+    string SCHEDULED_START_TIME,
+    string LOADED_PHYSICAL_ID
     )
 {
 }
