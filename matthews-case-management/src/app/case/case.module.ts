@@ -61,6 +61,7 @@ import { FacilityStatusDialogComponent } from './dialogs/facility-status/facilit
 import { DeleteFacilityStatusDialogComponent } from './dialogs/delete-facility-status/delete-facility-status.dialog.component';
 import { CaseDetailsDialogComponent } from './dialogs/case-details/case-details.dialog.component';
 import { CaseInfoDialogComponent } from './dialogs/case-info.dialog/case-info.dialog.component';
+import { DeleteDialogComponent } from './dialogs/delete-dialog/delete-dialog.component';
 
 @NgModule({
   declarations: [
@@ -76,7 +77,8 @@ import { CaseInfoDialogComponent } from './dialogs/case-info.dialog/case-info.di
     FacilityStatusDialogComponent,
     DeleteFacilityStatusDialogComponent,
     CaseDetailsDialogComponent,
-    CaseInfoDialogComponent
+    CaseInfoDialogComponent,
+    DeleteDialogComponent
   ],
   imports: [
     CommonModule,

@@ -25,6 +25,8 @@ import { I4connectedService } from 'src/app/services/i4connected.service';
 import { MatSelectChange } from '@angular/material/select';
 import { CalendarService } from 'src/app/services/calendar.service';
 import { MatGridTileHeaderCssMatStyler } from '@angular/material/grid-list';
+import { DeleteDialogComponent } from '../../dialogs/delete-dialog/delete-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'case-add-edit',
@@ -71,6 +73,7 @@ export class CaseAddEditComponent implements OnInit {
   private subs = new Subscription();
 
   constructor(
+    public dialog: MatDialog,
     private route: ActivatedRoute,
     private fb: FormBuilder,
     private caseService: CaseService,
@@ -278,11 +281,26 @@ export class CaseAddEditComponent implements OnInit {
     }
   }
 
+  openDeleteCaseDialog(enterAnimationDuration: string, exitAnimationDuration: string): void {
+    const dialogRef = this.dialog.open(DeleteDialogComponent, {
+        width: '250px',
+        height: '200px',
+        enterAnimationDuration,
+        exitAnimationDuration,
+        data: {
+          deleteCase: () => this.deleteCase(),
+          name: this.case?.firstName,
+          surname: this.case?.lastName
+      }
+    });
+  }
+
   deleteCase() {
     if (this.case?.id !== undefined && this.case?.id !== null) {
       this.caseService.deleteCase(this.case.id).subscribe({
         next: (response) => {
-          this._shackBar.showNotification(this.translate.instant('caseSuccessfullyUpdated'), 'success');
+          this._shackBar.showNotification(this.translate.instant('caseSuccessfullyDeleted'), 'success');
+          this.router.navigate([``]);
         },
         // error: (err) => {
         //   this._shackBar.showNotification(this.translate.instant(err), 'error');

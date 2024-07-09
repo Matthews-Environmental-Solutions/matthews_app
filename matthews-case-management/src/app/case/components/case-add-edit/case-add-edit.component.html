@@ -189,7 +189,7 @@
                     <input formControlName="physicalId" matInput placeholder="Enter physical ID" value="">
                 </mat-form-field>
 
-                <button mat-raised-button class="deleteButton" (click)="deleteCase()" *ngIf="deleteCaseButton">
+                <button type="button" mat-raised-button class="deleteButton" (click)="openDeleteCaseDialog('0ms', '0ms')" *ngIf="deleteCaseButton">
                     <mat-icon>delete_forever</mat-icon>
                     {{"deleteCase" | translate}}
                   </button>
