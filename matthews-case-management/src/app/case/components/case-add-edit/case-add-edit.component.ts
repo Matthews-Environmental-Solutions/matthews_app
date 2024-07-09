@@ -24,6 +24,9 @@ import { Facility } from 'src/app/models/facility.model';
 import { I4connectedService } from 'src/app/services/i4connected.service';
 import { MatSelectChange } from '@angular/material/select';
 import { CalendarService } from 'src/app/services/calendar.service';
+import { MatGridTileHeaderCssMatStyler } from '@angular/material/grid-list';
+import { DeleteDialogComponent } from '../../dialogs/delete-dialog/delete-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'case-add-edit',
@@ -63,12 +66,14 @@ export class CaseAddEditComponent implements OnInit {
   twelvehour = false;
   timeInterval = 1;
   timeInput = true;
+  deleteCaseButton = false;
 
   facilityForm!: FormGroup;
 
   private subs = new Subscription();
 
   constructor(
+    public dialog: MatDialog,
     private route: ActivatedRoute,
     private fb: FormBuilder,
     private caseService: CaseService,
@@ -97,10 +102,15 @@ export class CaseAddEditComponent implements OnInit {
       scheduledStartDateTime: new FormControl(null),
 
       facilityStatus: new FormControl('', { nonNullable: true }),
+      physicalId: new FormControl('', { nonNullable: true })
     });
 
     this.subs.add(this.i4connectedService.getSites().subscribe(data => {
       this.facilities = data;
+    }));
+
+    this.subs.add(this.stateService.selectedFacilityId$.subscribe(f => {
+      this.caseForm.get('facility')?.setValue(f);
     }));
 
     this.twelvehour = this.userSettingService.getUserSettingLastValue().timeformat == '12' ?? false;
@@ -112,6 +122,7 @@ export class CaseAddEditComponent implements OnInit {
       this.title = id == null ? 'addNewCase' : 'editCase';
       if (id) {
         this.getCaseFromApi(id);
+        this.deleteCaseButton = true;
       } else {
         this.loader = false;
       }
@@ -153,6 +164,7 @@ export class CaseAddEditComponent implements OnInit {
         this.caseForm.get('containerSize')?.setValue(response.containerSize);
 
         this.caseForm.get('facilityStatus')?.setValue(response.facilityStatusId);
+        this.caseForm.get('physicalId')?.setValue(response.physicalId);
 
         if (response.scheduledStartTime && response.scheduledStartTime !== this.DATETIME_MIN) {
           let startTime = this.calendarService.getDateInUserProfilesTimezone(response.scheduledStartTime);
@@ -221,6 +233,7 @@ export class CaseAddEditComponent implements OnInit {
     this.case.scheduledStartTime = this.calendarService.getUtcDateFromUserProfileTimezone(this.caseForm.get('scheduledStartDateTime')?.value);
     this.case.scheduledFacility = this.selectedFacilityId.length == 0 ? this.GUID_EMPTY : this.selectedFacilityId;
     this.case.facilityStatusId = (this.caseForm.get('facilityStatus')?.value == '') ? this.GUID_EMPTY : this.caseForm.get('facilityStatus')?.value;
+    this.case.physicalId = this.caseForm.get('physicalId')?.value;
 
     // set STATUS to UNSCHEDULED
     if (this.case.scheduledDevice == this.GUID_EMPTY || this.case.scheduledStartTime == null || this.case.scheduledStartTime == this.DATETIME_MIN || this.case.scheduledFacility == this.GUID_EMPTY) {
@@ -265,6 +278,38 @@ export class CaseAddEditComponent implements OnInit {
           //this.router.navigate([``]);
         }
       });
+    }
+  }
+
+  openDeleteCaseDialog(enterAnimationDuration: string, exitAnimationDuration: string): void {
+    const dialogRef = this.dialog.open(DeleteDialogComponent, {
+        width: '250px',
+        height: '200px',
+        enterAnimationDuration,
+        exitAnimationDuration,
+        data: {
+          deleteCase: () => this.deleteCase(),
+          name: this.case?.firstName,
+          surname: this.case?.lastName
+      }
+    });
+  }
+
+  deleteCase() {
+    if (this.case?.id !== undefined && this.case?.id !== null) {
+      this.caseService.deleteCase(this.case.id).subscribe({
+        next: (response) => {
+          this._shackBar.showNotification(this.translate.instant('caseSuccessfullyDeleted'), 'success');
+          this.router.navigate([``]);
+        },
+        // error: (err) => {
+        //   this._shackBar.showNotification(this.translate.instant(err), 'error');
+        //   //this.router.navigate([``]);
+        // }
+      });
+    }
+    else {
+      this._shackBar.showNotification("No case selected", 'error');
     }
   }
 

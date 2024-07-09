@@ -134,5 +134,7 @@ export class Case {
 
   facilityStatusId?: string = '00000000-0000-0000-0000-000000000000';
 
+  physicalId?: string = '';
+
   //caseToFacilityStatuses: CaseToFacilityStatus[] = [];
 }

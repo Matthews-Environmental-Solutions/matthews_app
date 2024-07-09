@@ -115,6 +115,7 @@ export class CasePage implements OnInit {
     this.newCase.scheduledDevice = this.selectedCase.scheduledDevice;
     this.newCase.scheduledStartTime = this.selectedCase.scheduledStartTime;
     this.newCase.facilityStatusId = this.selectedCase.facilityStatusId;
+    this.newCase.physicalId = this.selectedCase.physicalId;
     //console.log(this.newCase.gender + ':' + this.newCase.genderText);
   }
 
@@ -136,6 +137,7 @@ export class CasePage implements OnInit {
       if (!this.fromProcess) {
         this.newCase.scheduledFacility = this.selectedCase.scheduledFacility;
       }
+      this.newCase.physicalId = this.newCase.physicalId;
       this.newCase.createdTime = this.formatDateAndTime(new Date().toString());
 
       if (this.fromProcess) {
@@ -199,6 +201,7 @@ export class CasePage implements OnInit {
         this.containerTypes[this.newCase.containerType].name;
       this.newCase.status = +this.newCase.status;
       this.newCase.scheduledFacility = this.selectedCase.scheduledFacility;
+      this.newCase.physicalId = this.newCase.physicalId;
       this.newCase.createdTime = this.formatDateAndTime(new Date().toString());
 
       if (

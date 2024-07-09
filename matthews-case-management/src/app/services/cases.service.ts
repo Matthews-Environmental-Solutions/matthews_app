@@ -84,6 +84,11 @@ export class CaseService {
             .pipe(catchError(this.handleError));
     }
 
+    deleteCase(caseId: string) {
+        const deleteCaseUrl = `${environment.apiUrl}/Case/${caseId}`;
+        return this.httpClient.request<Case>('DELETE', deleteCaseUrl);
+    }
+
     formatDate(date: Date): string {
         return date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " 00:00:00";
     }

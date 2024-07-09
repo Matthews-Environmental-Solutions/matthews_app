@@ -1,0 +1,11 @@
+<div class="dialog-container">
+    <h1 mat-dialog-title>{{ "deleteCase" | translate }}</h1>
+    <div mat-dialog-content class="dialog-content">
+      {{ "deleteConfirmation" | translate }} <b>{{ data.name }} </b> <b>{{ data.surname }}</b>?
+    </div>
+    <div mat-dialog-actions class="dialog-actions">
+      <button mat-raised-button (click)="onCancelClick()">{{ "no" | translate }}</button>
+      <button mat-raised-button (click)="onDeleteClick()">{{ "yes" | translate }}</button>
+    </div>
+  </div>
+  

@@ -25,6 +25,10 @@
       <ion-label position="floating">{{'Last Name' | translate}}</ion-label>
       <ion-input type="text" [(ngModel)]="newCase.lastName" name="lastname" required></ion-input>
     </ion-item>
+    <ion-item lines="full">
+      <ion-label position="floating">Physical ID</ion-label>
+      <ion-input type="text" [(ngModel)]="newCase.physicalId" name="physicalId" required></ion-input>
+    </ion-item>
     <ion-row>
       <ion-col>
         <ion-item lines="full">

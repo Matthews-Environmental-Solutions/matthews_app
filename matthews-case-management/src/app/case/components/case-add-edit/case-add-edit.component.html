@@ -80,7 +80,6 @@
                     </span>
                 </mat-error>
                 <section class="toggle-button-container">
-                    <!-- <p class="toggle-button-label">{{"gender" | translate}}</p> -->
                     <mat-label class="toggle-button-label">{{"gender" | translate}}</mat-label>
                     <mat-button-toggle-group formControlName="gender" aria-label="Font Style">
                         <mat-button-toggle value=0>{{"male" | translate}}</mat-button-toggle>
@@ -111,24 +110,13 @@
                         Facility is required.
                     </span>
                 </mat-error>
-                <!-- <mat-form-field appearance="fill">
+                <mat-form-field appearance="fill">
                     <mat-label>{{"facility" | translate}}</mat-label>
                     <mat-select formControlName="facility" (selectionChange)="facilityChanged($event)">
                         <mat-option *ngFor="let facility of facilities" [value]="facility.id">
                             {{facility.name}}
                         </mat-option>
                     </mat-select>
-                </mat-form-field> -->
-                
-                <mat-form-field appearance="fill">
-                    <mat-label>{{ "facility" | translate }}</mat-label>
-                    <form [formGroup]="facilityForm">
-                        <mat-select formControlName="facility" (selectionChange)="facilityChanged($event)">
-                            <mat-option *ngFor="let facility of facilities" [value]="facility.id">
-                                {{ facility.name }}
-                            </mat-option>
-                        </mat-select>
-                    </form>
                 </mat-form-field>
 
                 <mat-form-field appearance="fill">
@@ -196,6 +184,15 @@
                     </mat-select>
                 </mat-form-field>
 
+                <mat-form-field appearance="fill">
+                    <mat-label>Physical ID</mat-label>
+                    <input formControlName="physicalId" matInput placeholder="Enter physical ID" value="">
+                </mat-form-field>
+
+                <button type="button" mat-raised-button class="deleteButton" (click)="openDeleteCaseDialog('0ms', '0ms')" *ngIf="deleteCaseButton">
+                    <mat-icon>delete_forever</mat-icon>
+                    {{"deleteCase" | translate}}
+                  </button>
             </div>
 
         </div>
