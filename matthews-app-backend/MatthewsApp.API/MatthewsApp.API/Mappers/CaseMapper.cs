@@ -113,7 +113,8 @@ public static class CaseMapper
             ((int) entity.Gender).ToString(),
             entity.Age.ToString(),
             "1",
-            entity.ScheduledStartTime?.ToString("yyyy-MM-dd HH:mm")
+            entity.ScheduledStartTime?.ToString("yyyy-MM-dd HH:mm"),
+            entity.PhysicalId ?? String.Empty
         );
     }
 
