@@ -15,12 +15,19 @@ export interface Measurement {
   value: string;
 }
 
+export interface Alarm {
+  id: string;
+  eventId: string;
+  description: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
 
 export class SignalRService {
-  public proxy: any;
+  public proxyMeasurement: any;
+  public proxyEvent: any;
   private connection: any;
 
   constructor(private authService: AuthService, private loadingService: LoadingService) { }
@@ -31,7 +38,8 @@ export class SignalRService {
     this.connection = $.hubConnection(signalRServerEndPoint);
     await this.getAccessToken().then((token) => {
       this.connection.qs = { access_token: token };
-      this.proxy = this.connection.createHubProxy('measurementHub');
+      this.proxyMeasurement = this.connection.createHubProxy('measurementHub');
+      this.proxyEvent = this.connection.createHubProxy('eventhub');
     });
 
     return this.connection;
@@ -46,14 +54,19 @@ export class SignalRService {
     });
   }
 
-  public addListener( func: (measurement) => void) : void {
-    console.log('addListener');
-    this.proxy.on('onMeasurement', func);
+  public addListenerMeasurement( func: (measurement) => void) : void {
+    console.log('addMeasurementListener');
+    this.proxyMeasurement.on('onMeasurement', func);
+  }
+
+  public addListenerEvent( func: (event) => void) : void {
+    console.log('addEventListener');
+    this.proxyEvent.on('onEvent', func);
   }
 
   public subscribeToSignalValues(signalId: string[]) {
     console.log('subscribeToSignalValues');
-    this.proxy.invoke('SubscribeAll', signalId)
+    this.proxyMeasurement.invoke('SubscribeAll', signalId)
             .done((measurement) => {
                 console.log('SubscribeAll:  =>' + JSON.stringify(measurement));
               });
@@ -61,7 +74,7 @@ export class SignalRService {
 
   public readValueFromSignal(signalId: string) {
     console.log('readValueFromSignal');
-    this.proxy.invoke('Read', signalId)
+    this.proxyMeasurement.invoke('Read', signalId)
             .done((measurement) => {
                 console.log(measurement);
               });

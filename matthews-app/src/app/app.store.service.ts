@@ -17,7 +17,7 @@ import { UserInfo } from './core/userInfo';
 import { AuthService, ConsoleLogObserver } from 'ionic-appauth';
 import { LoadingService } from './core/loading.service';
 import { CremationProcessService } from './cremation-process/cremation-process.service';
-import { Measurement, SignalRService } from './core/signal-r.service';
+import { Alarm, Measurement, SignalRService } from './core/signal-r.service';
 import { Signal } from './device-list/signal';
 
 export interface AppState {
@@ -26,6 +26,7 @@ export interface AppState {
   facilities: Facility[];
   loading: boolean;
   deviceList: Device[];
+  alarmList: Alarm[];
   userInfo: UserInfo;
   selectedDevice: Device;
   selectedFacility: Facility;
@@ -51,6 +52,7 @@ export class AppStoreService extends ComponentStore<AppState> {
       facilities: [],
       loading: false,
       deviceList: [],
+      alarmList: [],
       userInfo: {} as UserInfo,
       selectedDevice: {} as Device,
       selectedFacility: {} as Facility,
@@ -225,6 +227,20 @@ export class AppStoreService extends ComponentStore<AppState> {
     })
   );
 
+  readonly updateAlarmEventFromSignalR = this.updater(
+    (state: AppState, alarm: Alarm) => {
+      const stateCopy = JSON.parse(JSON.stringify(state)) as AppState;
+
+      stateCopy.alarmList.push(alarm);
+
+      return {
+        ...state,
+        alarmList: stateCopy.alarmList
+      };
+    }
+  );
+
+
   readonly updateSignalWithValueFromSingalR = this.updater(
     (state: AppState, measurement: Measurement) => {
       const stateCopy = JSON.parse(JSON.stringify(state)) as AppState;
@@ -292,11 +308,12 @@ export class AppStoreService extends ComponentStore<AppState> {
           .then((devices: Device[]) => {
             this.updateDeviceList(devices);
             this.addMeasurementListener();
+            this.addEventListener();
             devices.forEach((device) => {
               this.deviceListService
                 .getSignalsForDevice(device.id)
                 .then((signals) => {
-                  this.signalRService.proxy
+                  this.signalRService.proxyMeasurement
                     .invoke(
                       'SubscribeAll',
                       signals.map((x) => x.id)
@@ -323,7 +340,7 @@ export class AppStoreService extends ComponentStore<AppState> {
   );
 
   addMeasurementListener() {
-    this.signalRService.addListener((measurement: Measurement) => {
+    this.signalRService.addListenerMeasurement((measurement: Measurement) => {
       this.updateSignalWithValueFromSingalR(measurement);
       // devices.forEach(device => {
       //     if(device.signals.find(signal => signal.id === measurement.signalId)?.value)
@@ -333,6 +350,12 @@ export class AppStoreService extends ComponentStore<AppState> {
       //       this.updateDeviceSignals(deviceSignalsMap);
       //     }
       // });
+    });
+  }
+
+  addEventListener() {
+    this.signalRService.addListenerEvent((alarm: Alarm) => {
+      this.updateAlarmEventFromSignalR(alarm);
     });
   }
 

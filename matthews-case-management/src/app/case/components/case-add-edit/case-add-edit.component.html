@@ -3,6 +3,10 @@
         <mat-toolbar class="add-edit-toolbar">
             <span>{{title | translate}}</span>
             <span class="spacer"></span>
+            <button type="button" mat-raised-button class="deleteButton" (click)="openDeleteCaseDialog('0ms', '0ms')" *ngIf="deleteCaseButton">
+                <mat-icon>delete_forever</mat-icon>
+                {{"deleteCase" | translate}}
+              </button>
             <button mat-raised-button class="add-edit-header-buttons" routerLink="/">
                 <mat-icon class="material-symbols-outlined">cancel</mat-icon>
                 {{"cancel" | translate}}
@@ -189,10 +193,6 @@
                     <input formControlName="physicalId" matInput placeholder="Enter physical ID" value="">
                 </mat-form-field>
 
-                <button type="button" mat-raised-button class="deleteButton" (click)="openDeleteCaseDialog('0ms', '0ms')" *ngIf="deleteCaseButton">
-                    <mat-icon>delete_forever</mat-icon>
-                    {{"deleteCase" | translate}}
-                  </button>
             </div>
 
         </div>
