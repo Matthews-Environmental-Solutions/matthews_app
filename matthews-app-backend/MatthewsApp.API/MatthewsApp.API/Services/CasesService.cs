@@ -77,11 +77,15 @@ public class CasesService : ICasesService
     {
         _caseRepository.Delete(entity.Id);
         List<Guid> ids = new List<Guid>();
-        ids.Add(entity.Id);
 
-        // Send event
-        SendEventToHostedService(entity, ids);
+        if(entity.ScheduledDevice != null && entity.ScheduledDevice != Guid.Empty)
+        {
+            ids.Add((Guid)entity.ScheduledDevice);
 
+            // Send event
+            SendEventToHostedService(entity, ids);
+        }
+        
         // SignalR
         _caseHub.SendMessageToRefreshList($"Delete done.");
     }

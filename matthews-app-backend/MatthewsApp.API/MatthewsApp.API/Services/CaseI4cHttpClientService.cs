@@ -6,9 +6,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Security.Authentication;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace MatthewsApp.API.Services;
 
@@ -21,13 +23,33 @@ public interface ICaseI4cHttpClientService
 
 public class CaseI4cHttpClientService : ICaseI4cHttpClientService
 {
-
-    private static readonly HttpClient _httpClient = new HttpClient();
+    private HttpClient _httpClient;
     private IConfiguration _configuration;
     private string _accessToken;
-
+    
     public CaseI4cHttpClientService(IConfiguration configuration)
     {
+        HttpClientHandler handler = new HttpClientHandler()
+        {
+            SslProtocols = SslProtocols.Tls12 | SslProtocols.Tls11 | SslProtocols.Tls13,
+
+            // You can enable this if you need to bypass SSL certificate validation
+            // This is generally not recommended for production code
+            ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
+
+            //ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) =>
+            //{
+            //    string knownThumbprint = "6F1432136873ADFDF4F68D6B9B1ED20944327600";
+
+            //    if (cert.GetCertHashString() == knownThumbprint)
+            //    {
+            //        return true; // Bypass validation for this specific certificate
+            //    }
+
+            //    return sslPolicyErrors == System.Net.Security.SslPolicyErrors.None; // Perform standard validation otherwise
+            //}
+        };
+        _httpClient = new HttpClient(handler);
         _configuration = configuration;
         _httpClient.BaseAddress = new Uri(_configuration["i4connectedApiUrl"]);
         _httpClient.Timeout = new TimeSpan(0, 0, 30);
@@ -120,7 +142,7 @@ public class CaseI4cHttpClientService : ICaseI4cHttpClientService
             Scope = _configuration["OAuth2Introspection:Scope"],
             UserName = _configuration["OAuth2Introspection:UserName"],
             Password = _configuration["OAuth2Introspection:Password"],
-            ClientId = _configuration["OAuth2Introspection:ClientId"],
+            ClientId = _configuration["OAuth2Introspection:ClientId"],            
         };
 
         // 2. Authenticates and get an access token from Identity Server

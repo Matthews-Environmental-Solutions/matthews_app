@@ -9,6 +9,7 @@ using MatthewsApp.API.Swagger.Filters;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -92,6 +93,10 @@ public class Startup
                     options.ClientId = "matthews.api";
                     options.ClientSecret = "62819d04e4ca43d993b7e9b769180e83";
                 });
+
+        services.Configure<ForwardedHeadersOptions>(options => { 
+            options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+        });
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -101,6 +106,8 @@ public class Startup
             .ReadFrom.Configuration(Configuration)
             //.WriteTo.File("C:\\mylogs\\log.txt", rollingInterval: RollingInterval.Day)
             .CreateLogger();
+
+        app.UseForwardedHeaders();
 
         if (env.IsDevelopment())
         {
