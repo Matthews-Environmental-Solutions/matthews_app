@@ -202,7 +202,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
             ScheduledDevice = deviceId,
             ScheduledDeviceAlias = "Device DEMO",
-            ScheduledStartTime = todayAtMidnight.AddDays(-0.666666667),
+            ScheduledStartTime = todayAtMidnight.AddDays(0.33),
             ActualDeviceAlias = "Device DEMO",
             PerformedBy = "Demo User",
             Fuel = String.Empty,
@@ -230,7 +230,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
             ScheduledDevice = deviceId,
             ScheduledDeviceAlias = "Device DEMO",
-            ScheduledStartTime = todayAtMidnight.AddDays(-0.625),
+            ScheduledStartTime = todayAtMidnight.AddDays(0.395833333),
             ActualDeviceAlias = "Device DEMO",
             PerformedBy = "Demo User",
             Fuel = String.Empty,
@@ -258,7 +258,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
             ScheduledDevice = deviceId,
             ScheduledDeviceAlias = "Device DEMO",
-            ScheduledStartTime = todayAtMidnight.AddDays(-0.583333333),
+            ScheduledStartTime = todayAtMidnight.AddDays(0.458333333),
             ActualDeviceAlias = "Device DEMO",
             PerformedBy = "Demo User",
             Fuel = String.Empty,
@@ -287,7 +287,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
             ScheduledDevice = deviceId,
             ScheduledDeviceAlias = "Device DEMO",
-            ScheduledStartTime = todayAtMidnight.AddDays(-0.541666667), // Adjusted scheduled start time
+            ScheduledStartTime = todayAtMidnight.AddDays(0.520833333), // Adjusted scheduled start time
             ActualDeviceAlias = "Device DEMO",
             PerformedBy = "Demo User",
             Fuel = String.Empty,
@@ -314,7 +314,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
             ScheduledDevice = deviceId,
             ScheduledDeviceAlias = "Device DEMO",
-            ScheduledStartTime = todayAtMidnight.AddDays(0.25), // Adjusted scheduled start time
+            ScheduledStartTime = todayAtMidnight.AddDays(0.583333333), // Adjusted scheduled start time
             ActualDeviceAlias = "Device DEMO",
             PerformedBy = "Demo User",
             Fuel = String.Empty,
@@ -341,7 +341,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
             ScheduledDevice = deviceId,
             ScheduledDeviceAlias = "Device DEMO",
-            ScheduledStartTime = todayAtMidnight.AddDays(0.333333333), // Adjusted scheduled start time
+            ScheduledStartTime = todayAtMidnight.AddDays(1.333333333), // Adjusted scheduled start time
             ActualDeviceAlias = "Device DEMO",
             PerformedBy = "Demo User",
             Fuel = String.Empty,
@@ -368,7 +368,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
             ScheduledDevice = deviceId,
             ScheduledDeviceAlias = "Device DEMO",
-            ScheduledStartTime = todayAtMidnight.AddDays(0.416666667), // Adjusted scheduled start time
+            ScheduledStartTime = todayAtMidnight.AddDays(1.458333333), // Adjusted scheduled start time
             ActualDeviceAlias = "Device DEMO",
             PerformedBy = "Demo User",
             Fuel = String.Empty,
@@ -395,7 +395,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
             ScheduledDevice = deviceId,
             ScheduledDeviceAlias = "Device DEMO",
-            ScheduledStartTime = todayAtMidnight.AddDays(0.5), // Adjusted scheduled start time
+            ScheduledStartTime = todayAtMidnight.AddDays(1.520833333), // Adjusted scheduled start time
             ActualDeviceAlias = "Device DEMO",
             PerformedBy = "Demo User",
             Fuel = String.Empty,
@@ -422,7 +422,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
             ScheduledDevice = deviceId,
             ScheduledDeviceAlias = "Device DEMO",
-            ScheduledStartTime = todayAtMidnight.AddDays(1.25), // Adjusted scheduled start time
+            ScheduledStartTime = todayAtMidnight.AddDays(1.583333333), // Adjusted scheduled start time
             ActualDeviceAlias = "Device DEMO",
             PerformedBy = "Demo User",
             Fuel = String.Empty,
@@ -449,7 +449,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
             ScheduledDevice = deviceId,
             ScheduledDeviceAlias = "Device DEMO",
-            ScheduledStartTime = todayAtMidnight.AddDays(1.291666667), // Adjusted scheduled start time
+            ScheduledStartTime = todayAtMidnight.AddDays(2.333333333), // Adjusted scheduled start time
             ActualDeviceAlias = "Device DEMO",
             PerformedBy = "Demo User",
             Fuel = String.Empty,
@@ -476,7 +476,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
             ScheduledDevice = deviceId,
             ScheduledDeviceAlias = "Device DEMO",
-            ScheduledStartTime = todayAtMidnight.AddDays(1.333333333), // Adjusted scheduled start time
+            ScheduledStartTime = todayAtMidnight.AddDays(2.395833333), // Adjusted scheduled start time
             ActualDeviceAlias = "Device DEMO",
             PerformedBy = "Demo User",
             Fuel = String.Empty,
@@ -503,7 +503,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
             ScheduledDevice = deviceId,
             ScheduledDeviceAlias = "Device DEMO",
-            ScheduledStartTime = todayAtMidnight.AddDays(1.375), // Adjusted scheduled start time
+            ScheduledStartTime = todayAtMidnight.AddDays(2.458333333), // Adjusted scheduled start time
             ActualDeviceAlias = "Device DEMO",
             PerformedBy = "Demo User",
             Fuel = String.Empty,
@@ -530,7 +530,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
             ScheduledDevice = deviceId,
             ScheduledDeviceAlias = "Device DEMO",
-            ScheduledStartTime = todayAtMidnight.AddDays(1.416666667), // Adjusted scheduled start time
+            ScheduledStartTime = todayAtMidnight.AddDays(2.520833333), // Adjusted scheduled start time
             ActualDeviceAlias = "Device DEMO",
             PerformedBy = "Demo User",
             Fuel = String.Empty,
@@ -557,7 +557,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
             ScheduledDevice = deviceId,
             ScheduledDeviceAlias = "Device DEMO",
-            ScheduledStartTime = todayAtMidnight.AddDays(2.25), // Adjusted scheduled start time
+            ScheduledStartTime = todayAtMidnight.AddDays(3.333333333), // Adjusted scheduled start time
             ActualDeviceAlias = "Device DEMO",
             PerformedBy = "Demo User",
             Fuel = String.Empty,
@@ -584,7 +584,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
             ScheduledDevice = deviceId,
             ScheduledDeviceAlias = "Device DEMO",
-            ScheduledStartTime = todayAtMidnight.AddDays(2.416666667), // Adjusted scheduled start time
+            ScheduledStartTime = todayAtMidnight.AddDays(3.395833333), // Adjusted scheduled start time
             ActualDeviceAlias = "Device DEMO",
             PerformedBy = "Demo User",
             Fuel = String.Empty,
@@ -611,7 +611,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
             ScheduledDevice = deviceId,
             ScheduledDeviceAlias = "Device DEMO",
-            ScheduledStartTime = todayAtMidnight.AddDays(2.583333333), // Adjusted scheduled start time
+            ScheduledStartTime = todayAtMidnight.AddDays(3.458333333), // Adjusted scheduled start time
             ActualDeviceAlias = "Device DEMO",
             PerformedBy = "Demo User",
             Fuel = String.Empty,
@@ -638,7 +638,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
             ScheduledDevice = deviceId,
             ScheduledDeviceAlias = "Device DEMO",
-            ScheduledStartTime = todayAtMidnight.AddDays(3.5), // Adjusted scheduled start time
+            ScheduledStartTime = todayAtMidnight.AddDays(3.520833333), // Adjusted scheduled start time
             ActualDeviceAlias = "Device DEMO",
             PerformedBy = "Demo User",
             Fuel = String.Empty,
@@ -856,6 +856,680 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
         };
         Create(case25);
 
+        var case26 = new Case
+        {
+            Id = Guid.NewGuid(),
+            CreatedBy = Guid.Empty,
+            CreatedTime = DateTime.Now,
+            ClientId = "123",
+            ClientCaseId = "SB - 203099",
+            FirstName = "Abe",
+            LastName = "Hodge",
+            Weight = 390,
+            Gender = GenderType.MALE,
+            ContainerType = ContainerType.CARDBOARD,
+            ContainerSize = ContainerSize.BARIATRIC,
+            Age = 64,
+            Status = CaseStatus.CREMATION_COMPLETE,
+            ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
+            ScheduledDevice = deviceId,
+            ScheduledDeviceAlias = "Device DEMO",
+            ActualDeviceAlias = "Device DEMO",
+            PerformedBy = "Demo User",
+            ActualStartTime = todayAtMidnight.AddDays(-0.666666667),
+            ActualEndTime = todayAtMidnight.AddDays(-0.375),
+            Fuel = String.Empty,
+            Electricity = String.Empty,
+            FacilityStatusId = Guid.Parse("ef74e5a8-06a3-4690-b4c8-dc692421c082")
+        };
+
+        var case27 = new Case
+        {
+            Id = Guid.NewGuid(),
+            CreatedBy = Guid.Empty,
+            CreatedTime = DateTime.Now,
+            ClientId = "123",
+            ClientCaseId = "SB-203098",
+            FirstName = "Alejandra",
+            LastName = "Hooper",
+            Weight = 190,
+            Gender = GenderType.FEMALE,
+            ContainerType = ContainerType.CARDBOARD,
+            ContainerSize = ContainerSize.STANDARD,
+            Age = 63,
+            Status = CaseStatus.CREMATION_COMPLETE,
+            ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
+            ScheduledDevice = deviceId,
+            ScheduledDeviceAlias = "Device DEMO",
+            ActualDeviceAlias = "Device DEMO",
+            PerformedBy = "Demo User",
+            ActualStartTime = todayAtMidnight.AddDays(-0.604166667),
+            ActualEndTime = todayAtMidnight.AddDays(-0.375),
+            Fuel = String.Empty,
+            Electricity = String.Empty,
+            FacilityStatusId = Guid.Parse("ef74e5a8-06a3-4690-b4c8-dc692421c082")
+        };
+
+        var case28 = new Case
+        {
+            Id = Guid.NewGuid(),
+            CreatedBy = Guid.Empty,
+            CreatedTime = DateTime.Now,
+            ClientId = "123",
+            ClientCaseId = "SB-203097",
+            FirstName = "Amparo",
+            LastName = "Powell",
+            Weight = 125,
+            Gender = GenderType.MALE,
+            ContainerType = ContainerType.HARDWOOD,
+            ContainerSize = ContainerSize.STANDARD,
+            Age = 91,
+            Status = CaseStatus.CREMATION_COMPLETE,
+            ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
+            ScheduledDevice = deviceId,
+            ScheduledDeviceAlias = "Device DEMO",
+            ActualDeviceAlias = "Device DEMO",
+            PerformedBy = "Demo User",
+            ActualStartTime = todayAtMidnight.AddDays(-1.666666667),
+            ActualEndTime = todayAtMidnight.AddDays(-1.375),
+            Fuel = String.Empty,
+            Electricity = String.Empty,
+            FacilityStatusId = Guid.Parse("ef74e5a8-06a3-4690-b4c8-dc692421c082")
+        };
+
+        var case29 = new Case
+        {
+            Id = Guid.NewGuid(),
+            CreatedBy = Guid.Empty,
+            CreatedTime = DateTime.Now,
+            ClientId = "123",
+            ClientCaseId = "SB-203096",
+            FirstName = "Arnold",
+            LastName = "Matthews",
+            Weight = 180,
+            Gender = GenderType.MALE,
+            ContainerType = ContainerType.CARDBOARD,
+            ContainerSize = ContainerSize.STANDARD,
+            Age = 67,
+            Status = CaseStatus.CREMATION_COMPLETE,
+            ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
+            ScheduledDevice = deviceId,
+            ScheduledDeviceAlias = "Device DEMO",
+            ActualDeviceAlias = "Device DEMO",
+            PerformedBy = "Demo User",
+            ActualStartTime = todayAtMidnight.AddDays(-1.604166667),
+            ActualEndTime = todayAtMidnight.AddDays(-1.375),
+            Fuel = String.Empty,
+            Electricity = String.Empty,
+            FacilityStatusId = Guid.Parse("ef74e5a8-06a3-4690-b4c8-dc692421c082")
+        };
+
+        var case30 = new Case
+        {
+            Id = Guid.NewGuid(),
+            CreatedBy = Guid.Empty,
+            CreatedTime = DateTime.Now,
+            ClientId = "123",
+            ClientCaseId = "SB-203095",
+            FirstName = "Carly",
+            LastName = "Mccann",
+            Weight = 23,
+            Gender = GenderType.FEMALE,
+            ContainerType = ContainerType.MDF_PARTICLE_BOARD,
+            ContainerSize = ContainerSize.INFANT,
+            Age = 5,
+            Status = CaseStatus.CREMATION_COMPLETE,
+            ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
+            ScheduledDevice = deviceId,
+            ScheduledDeviceAlias = "Device DEMO",
+            ActualDeviceAlias = "Device DEMO",
+            PerformedBy = "Demo User",
+            ActualStartTime = todayAtMidnight.AddDays(-1.541666667),
+            ActualEndTime = todayAtMidnight.AddDays(-1.375),
+            Fuel = String.Empty,
+            Electricity = String.Empty,
+            FacilityStatusId = Guid.Parse("ef74e5a8-06a3-4690-b4c8-dc692421c082")
+        };
+
+        var case31 = new Case
+        {
+            Id = Guid.NewGuid(),
+            CreatedBy = Guid.Empty,
+            CreatedTime = DateTime.Now,
+            ClientId = "123",
+            ClientCaseId = "SB-203094",
+            FirstName = "Cecelia",
+            LastName = "Martinez",
+            Weight = 139,
+            Gender = GenderType.FEMALE,
+            ContainerType = ContainerType.HARDWOOD,
+            ContainerSize = ContainerSize.STANDARD,
+            Age = 55,
+            Status = CaseStatus.CREMATION_COMPLETE,
+            ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
+            ScheduledDevice = deviceId,
+            ScheduledDeviceAlias = "Device DEMO",
+            ActualDeviceAlias = "Device DEMO",
+            PerformedBy = "Demo User",
+            ActualStartTime = todayAtMidnight.AddDays(-1.479166667),
+            ActualEndTime = todayAtMidnight.AddDays(-1.375),
+            Fuel = String.Empty,
+            Electricity = String.Empty,
+            FacilityStatusId = Guid.Parse("ef74e5a8-06a3-4690-b4c8-dc692421c082")
+        };
+
+        var case32 = new Case
+        {
+            Id = Guid.NewGuid(),
+            CreatedBy = Guid.Empty,
+            CreatedTime = DateTime.Now,
+            ClientId = "123",
+            ClientCaseId = "SB-203093",
+            FirstName = "Celina",
+            LastName = "Griffin",
+            Weight = 116,
+            Gender = GenderType.FEMALE,
+            ContainerType = ContainerType.CARDBOARD,
+            ContainerSize = ContainerSize.STANDARD,
+            Age = 67,
+            Status = CaseStatus.CREMATION_COMPLETE,
+            ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
+            ScheduledDevice = deviceId,
+            ScheduledDeviceAlias = "Device DEMO",
+            ActualDeviceAlias = "Device DEMO",
+            PerformedBy = "Demo User",
+            ActualStartTime = todayAtMidnight.AddDays(-2.666666667),
+            ActualEndTime = todayAtMidnight.AddDays(-2.375),
+            Fuel = String.Empty,
+            Electricity = String.Empty,
+            FacilityStatusId = Guid.Parse("ef74e5a8-06a3-4690-b4c8-dc692421c082")
+        };
+
+        var case33 = new Case
+        {
+            Id = Guid.NewGuid(),
+            CreatedBy = Guid.Empty,
+            CreatedTime = DateTime.Now,
+            ClientId = "123",
+            ClientCaseId = "SB-203092",
+            FirstName = "Crystal",
+            LastName = "Solomon",
+            Weight = 125,
+            Gender = GenderType.FEMALE,
+            ContainerType = ContainerType.CARDBOARD,
+            ContainerSize = ContainerSize.STANDARD,
+            Age = 65,
+            Status = CaseStatus.CREMATION_COMPLETE,
+            ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
+            ScheduledDevice = deviceId,
+            ScheduledDeviceAlias = "Device DEMO",
+            ActualDeviceAlias = "Device DEMO",
+            PerformedBy = "Demo User",
+            ActualStartTime = todayAtMidnight.AddDays(-2.604166667),
+            ActualEndTime = todayAtMidnight.AddDays(-2.375),
+            Fuel = String.Empty,
+            Electricity = String.Empty,
+            FacilityStatusId = Guid.Parse("ef74e5a8-06a3-4690-b4c8-dc692421c082")
+        };
+
+        var case34 = new Case
+        {
+            Id = Guid.NewGuid(),
+            CreatedBy = Guid.Empty,
+            CreatedTime = DateTime.Now,
+            ClientId = "123",
+            ClientCaseId = "SB-203091",
+            FirstName = "Dusty",
+            LastName = "Gill",
+            Weight = 171,
+            Gender = GenderType.MALE,
+            ContainerType = ContainerType.CARDBOARD,
+            ContainerSize = ContainerSize.STANDARD,
+            Age = 56,
+            Status = CaseStatus.CREMATION_COMPLETE,
+            ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
+            ScheduledDevice = deviceId,
+            ScheduledDeviceAlias = "Device DEMO",
+            ActualDeviceAlias = "Device DEMO",
+            PerformedBy = "Demo User",
+            ActualStartTime = todayAtMidnight.AddDays(-2.541666667),
+            ActualEndTime = todayAtMidnight.AddDays(-2.375),
+            Fuel = String.Empty,
+            Electricity = String.Empty,
+            FacilityStatusId = Guid.Parse("ef74e5a8-06a3-4690-b4c8-dc692421c082")
+        };
+
+        var case35 = new Case
+        {
+            Id = Guid.NewGuid(),
+            CreatedBy = Guid.Empty,
+            CreatedTime = DateTime.Now,
+            ClientId = "123",
+            ClientCaseId = "SB-203090",
+            FirstName = "Eusebio",
+            LastName = "Blair",
+            Weight = 343,
+            Gender = GenderType.MALE,
+            ContainerType = ContainerType.HARDWOOD,
+            ContainerSize = ContainerSize.BARIATRIC,
+            Age = 59,
+            Status = CaseStatus.CREMATION_COMPLETE,
+            ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
+            ScheduledDevice = deviceId,
+            ScheduledDeviceAlias = "Device DEMO",
+            ActualDeviceAlias = "Device DEMO",
+            PerformedBy = "Demo User",
+            ActualStartTime = todayAtMidnight.AddDays(-2.479166667),
+            ActualEndTime = todayAtMidnight.AddDays(-2.375),
+            Fuel = String.Empty,
+            Electricity = String.Empty,
+            FacilityStatusId = Guid.Parse("ef74e5a8-06a3-4690-b4c8-dc692421c082")
+        };
+
+        var case36 = new Case
+        {
+            Id = Guid.NewGuid(),
+            CreatedBy = Guid.Empty,
+            CreatedTime = DateTime.Now,
+            ClientId = "123",
+            ClientCaseId = "SB-203089",
+            FirstName = "Hosea",
+            LastName = "Mcclure",
+            Weight = 188,
+            Gender = GenderType.MALE,
+            ContainerType = ContainerType.BAG_SHROUD,
+            ContainerSize = ContainerSize.STANDARD,
+            Age = 75,
+            Status = CaseStatus.CREMATION_COMPLETE,
+            ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
+            ScheduledDevice = deviceId,
+            ScheduledDeviceAlias = "Device DEMO",
+            ActualDeviceAlias = "Device DEMO",
+            PerformedBy = "Demo User",
+            ActualStartTime = todayAtMidnight.AddDays(-2.416666667),
+            ActualEndTime = todayAtMidnight.AddDays(-2.375),
+            Fuel = String.Empty,
+            Electricity = String.Empty,
+            FacilityStatusId = Guid.Parse("ef74e5a8-06a3-4690-b4c8-dc692421c082")
+        };
+
+        var case37 = new Case
+        {
+            Id = Guid.NewGuid(),
+            CreatedBy = Guid.Empty,
+            CreatedTime = DateTime.Now,
+            ClientId = "123",
+            ClientCaseId = "SB-203088",
+            FirstName = "Jarvis",
+            LastName = "Webster",
+            Weight = 135,
+            Gender = GenderType.MALE,
+            ContainerType = ContainerType.HARDWOOD,
+            ContainerSize = ContainerSize.STANDARD,
+            Age = 61,
+            Status = CaseStatus.CREMATION_COMPLETE,
+            ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
+            ScheduledDevice = deviceId,
+            ScheduledDeviceAlias = "Device DEMO",
+            ActualDeviceAlias = "Device DEMO",
+            PerformedBy = "Demo User",
+            ActualStartTime = todayAtMidnight.AddDays(-3.604166667),
+            ActualEndTime = todayAtMidnight.AddDays(-3.375),
+            Fuel = String.Empty,
+            Electricity = String.Empty,
+            FacilityStatusId = Guid.Parse("ef74e5a8-06a3-4690-b4c8-dc692421c082")
+        };
+
+        var case38 = new Case
+        {
+            Id = Guid.NewGuid(),
+            CreatedBy = Guid.Empty,
+            CreatedTime = DateTime.Now,
+            ClientId = "123",
+            ClientCaseId = "SB-203087",
+            FirstName = "Jenny",
+            LastName = "Mata",
+            Weight = 101,
+            Gender = GenderType.FEMALE,
+            ContainerType = ContainerType.CARDBOARD,
+            ContainerSize = ContainerSize.STANDARD,
+            Age = 81,
+            Status = CaseStatus.CREMATION_COMPLETE,
+            ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
+            ScheduledDevice = deviceId,
+            ScheduledDeviceAlias = "Device DEMO",
+            ActualDeviceAlias = "Device DEMO",
+            PerformedBy = "Demo User",
+            ActualStartTime = todayAtMidnight.AddDays(-3.541666667),
+            ActualEndTime = todayAtMidnight.AddDays(-3.375),
+            Fuel = String.Empty,
+            Electricity = String.Empty,
+            FacilityStatusId = Guid.Parse("ef74e5a8-06a3-4690-b4c8-dc692421c082")
+        };
+
+        var case39 = new Case
+        {
+            Id = Guid.NewGuid(),
+            CreatedBy = Guid.Empty,
+            CreatedTime = DateTime.Now,
+            ClientId = "123",
+            ClientCaseId = "SB-203086",
+            FirstName = "Katherine",
+            LastName = "Keller",
+            Weight = 180,
+            Gender = GenderType.FEMALE,
+            ContainerType = ContainerType.CARDBOARD,
+            ContainerSize = ContainerSize.STANDARD,
+            Age = 67,
+            Status = CaseStatus.CREMATION_COMPLETE,
+            ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
+            ScheduledDevice = deviceId,
+            ScheduledDeviceAlias = "Device DEMO",
+            ActualDeviceAlias = "Device DEMO",
+            PerformedBy = "Demo User",
+            ActualStartTime = todayAtMidnight.AddDays(-3.479166667),
+            ActualEndTime = todayAtMidnight.AddDays(-3.375),
+            Fuel = String.Empty,
+            Electricity = String.Empty,
+            FacilityStatusId = Guid.Parse("ef74e5a8-06a3-4690-b4c8-dc692421c082")
+        };
+
+        var case40 = new Case
+        {
+            Id = Guid.NewGuid(),
+            CreatedBy = Guid.Empty,
+            CreatedTime = DateTime.Now,
+            ClientId = "123",
+            ClientCaseId = "SB-203085",
+            FirstName = "Latasha",
+            LastName = "Woodard",
+            Weight = 143,
+            Gender = GenderType.FEMALE,
+            ContainerType = ContainerType.BAG_SHROUD,
+            ContainerSize = ContainerSize.STANDARD,
+            Age = 54,
+            Status = CaseStatus.CREMATION_COMPLETE,
+            ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
+            ScheduledDevice = deviceId,
+            ScheduledDeviceAlias = "Device DEMO",
+            ActualDeviceAlias = "Device DEMO",
+            PerformedBy = "Demo User",
+            ActualStartTime = todayAtMidnight.AddDays(-3.416666667),
+            ActualEndTime = todayAtMidnight.AddDays(-3.375),
+            Fuel = String.Empty,
+            Electricity = String.Empty,
+            FacilityStatusId = Guid.Parse("ef74e5a8-06a3-4690-b4c8-dc692421c082")
+        };
+
+        var case41 = new Case
+        {
+            Id = Guid.NewGuid(),
+            CreatedBy = Guid.Empty,
+            CreatedTime = DateTime.Now,
+            ClientId = "123",
+            ClientCaseId = "SB-203084",
+            FirstName = "Lidia",
+            LastName = "Sloan",
+            Weight = 132,
+            Gender = GenderType.FEMALE,
+            ContainerType = ContainerType.HARDWOOD,
+            ContainerSize = ContainerSize.STANDARD,
+            Age = 86,
+            Status = CaseStatus.CREMATION_COMPLETE,
+            ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
+            ScheduledDevice = deviceId,
+            ScheduledDeviceAlias = "Device DEMO",
+            ActualDeviceAlias = "Device DEMO",
+            PerformedBy = "Demo User",
+            ActualStartTime = todayAtMidnight.AddDays(-3.354166667),
+            ActualEndTime = todayAtMidnight.AddDays(-3.375),
+            Fuel = String.Empty,
+            Electricity = String.Empty,
+            FacilityStatusId = Guid.Parse("ef74e5a8-06a3-4690-b4c8-dc692421c082")
+        };
+
+        var case42 = new Case
+        {
+            Id = Guid.NewGuid(),
+            CreatedBy = Guid.Empty,
+            CreatedTime = DateTime.Now,
+            ClientId = "123",
+            ClientCaseId = "SB-203083",
+            FirstName = "Lynette",
+            LastName = "Gardner",
+            Weight = 141,
+            Gender = GenderType.FEMALE,
+            ContainerType = ContainerType.CARDBOARD,
+            ContainerSize = ContainerSize.STANDARD,
+            Age = 86,
+            Status = CaseStatus.CREMATION_COMPLETE,
+            ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
+            ScheduledDevice = deviceId,
+            ScheduledDeviceAlias = "Device DEMO",
+            ActualDeviceAlias = "Device DEMO",
+            PerformedBy = "Demo User",
+            ActualStartTime = todayAtMidnight.AddDays(-4.666666667),
+            ActualEndTime = todayAtMidnight.AddDays(-4.375),
+            Fuel = String.Empty,
+            Electricity = String.Empty,
+            FacilityStatusId = Guid.Parse("ef74e5a8-06a3-4690-b4c8-dc692421c082")
+        };
+
+        var case43 = new Case
+        {
+            Id = Guid.NewGuid(),
+            CreatedBy = Guid.Empty,
+            CreatedTime = DateTime.Now,
+            ClientId = "123",
+            ClientCaseId = "SB-203082",
+            FirstName = "Mae",
+            LastName = "Woodward",
+            Weight = 225,
+            Gender = GenderType.FEMALE,
+            ContainerType = ContainerType.CARDBOARD,
+            ContainerSize = ContainerSize.STANDARD,
+            Age = 84,
+            Status = CaseStatus.CREMATION_COMPLETE,
+            ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
+            ScheduledDevice = deviceId,
+            ScheduledDeviceAlias = "Device DEMO",
+            ActualDeviceAlias = "Device DEMO",
+            PerformedBy = "Demo User",
+            ActualStartTime = todayAtMidnight.AddDays(-4.604166667),
+            ActualEndTime = todayAtMidnight.AddDays(-4.375),
+            Fuel = String.Empty,
+            Electricity = String.Empty,
+            FacilityStatusId = Guid.Parse("ef74e5a8-06a3-4690-b4c8-dc692421c082")
+        };
+
+        var case44 = new Case
+        {
+            Id = Guid.NewGuid(),
+            CreatedBy = Guid.Empty,
+            CreatedTime = DateTime.Now,
+            ClientId = "123",
+            ClientCaseId = "SB-203081",
+            FirstName = "Markus",
+            LastName = "Mccormick",
+            Weight = 165,
+            Gender = GenderType.MALE,
+            ContainerType = ContainerType.BAG_SHROUD,
+            ContainerSize = ContainerSize.STANDARD,
+            Age = 83,
+            Status = CaseStatus.CREMATION_COMPLETE,
+            ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
+            ScheduledDevice = deviceId,
+            ScheduledDeviceAlias = "Device DEMO",
+            ActualDeviceAlias = "Device DEMO",
+            PerformedBy = "Demo User",
+            ActualStartTime = todayAtMidnight.AddDays(-4.541666667),
+            ActualEndTime = todayAtMidnight.AddDays(-4.375),
+            Fuel = String.Empty,
+            Electricity = String.Empty,
+            FacilityStatusId = Guid.Parse("ef74e5a8-06a3-4690-b4c8-dc692421c082")
+        };
+
+        var case45 = new Case
+        {
+            Id = Guid.NewGuid(),
+            CreatedBy = Guid.Empty,
+            CreatedTime = DateTime.Now,
+            ClientId = "123",
+            ClientCaseId = "SB-203080",
+            FirstName = "Merlin",
+            LastName = "Daniel",
+            Weight = 195,
+            Gender = GenderType.MALE,
+            ContainerType = ContainerType.HARDWOOD,
+            ContainerSize = ContainerSize.STANDARD,
+            Age = 83,
+            Status = CaseStatus.CREMATION_COMPLETE,
+            ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
+            ScheduledDevice = deviceId,
+            ScheduledDeviceAlias = "Device DEMO",
+            ActualDeviceAlias = "Device DEMO",
+            PerformedBy = "Demo User",
+            ActualStartTime = todayAtMidnight.AddDays(-4.479166667),
+            ActualEndTime = todayAtMidnight.AddDays(-4.375),
+            Fuel = String.Empty,
+            Electricity = String.Empty,
+            FacilityStatusId = Guid.Parse("ef74e5a8-06a3-4690-b4c8-dc692421c082")
+        };
+
+        var case46 = new Case
+        {
+            Id = Guid.NewGuid(),
+            CreatedBy = Guid.Empty,
+            CreatedTime = DateTime.Now,
+            ClientId = "123",
+            ClientCaseId = "SB-203079",
+            FirstName = "Sharlene",
+            LastName = "Russell",
+            Weight = 90,
+            Gender = GenderType.FEMALE,
+            ContainerType = ContainerType.BAG_SHROUD,
+            ContainerSize = ContainerSize.STANDARD,
+            Age = 83,
+            Status = CaseStatus.CREMATION_COMPLETE,
+            ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
+            ScheduledDevice = deviceId,
+            ScheduledDeviceAlias = "Device DEMO",
+            ActualDeviceAlias = "Device DEMO",
+            PerformedBy = "Demo User",
+            ActualStartTime = todayAtMidnight.AddDays(-5.666666667),
+            ActualEndTime = todayAtMidnight.AddDays(-5.375),
+            Fuel = String.Empty,
+            Electricity = String.Empty,
+            FacilityStatusId = Guid.Parse("ef74e5a8-06a3-4690-b4c8-dc692421c082")
+        };
+
+        var case47 = new Case
+        {
+            Id = Guid.NewGuid(),
+            CreatedBy = Guid.Empty,
+            CreatedTime = DateTime.Now,
+            ClientId = "123",
+            ClientCaseId = "SB-203078",
+            FirstName = "Sid",
+            LastName = "Solis",
+            Weight = 145,
+            Gender = GenderType.MALE,
+            ContainerType = ContainerType.CARDBOARD,
+            ContainerSize = ContainerSize.STANDARD,
+            Age = 72,
+            Status = CaseStatus.CREMATION_COMPLETE,
+            ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
+            ScheduledDevice = deviceId,
+            ScheduledDeviceAlias = "Device DEMO",
+            ActualDeviceAlias = "Device DEMO",
+            PerformedBy = "Demo User",
+            ActualStartTime = todayAtMidnight.AddDays(-5.604166667),
+            ActualEndTime = todayAtMidnight.AddDays(-5.375),
+            Fuel = String.Empty,
+            Electricity = String.Empty,
+            FacilityStatusId = Guid.Parse("ef74e5a8-06a3-4690-b4c8-dc692421c082")
+        };
+
+        var case48 = new Case
+        {
+            Id = Guid.NewGuid(),
+            CreatedBy = Guid.Empty,
+            CreatedTime = DateTime.Now,
+            ClientId = "123",
+            ClientCaseId = "SB-203077",
+            FirstName = "Tracy",
+            LastName = "Payne",
+            Weight = 223,
+            Gender = GenderType.FEMALE,
+            ContainerType = ContainerType.CARDBOARD,
+            ContainerSize = ContainerSize.STANDARD,
+            Age = 53,
+            Status = CaseStatus.CREMATION_COMPLETE,
+            ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
+            ScheduledDevice = deviceId,
+            ScheduledDeviceAlias = "Device DEMO",
+            ActualDeviceAlias = "Device DEMO",
+            PerformedBy = "Demo User",
+            ActualStartTime = todayAtMidnight.AddDays(-5.541666667),
+            ActualEndTime = todayAtMidnight.AddDays(-5.375),
+            Fuel = String.Empty,
+            Electricity = String.Empty,
+            FacilityStatusId = Guid.Parse("ef74e5a8-06a3-4690-b4c8-dc692421c082")
+        };
+
+        var case49 = new Case
+        {
+            Id = Guid.NewGuid(),
+            CreatedBy = Guid.Empty,
+            CreatedTime = DateTime.Now,
+            ClientId = "123",
+            ClientCaseId = "SB-203076",
+            FirstName = "Trudy",
+            LastName = "Farrell",
+            Weight = 94,
+            Gender = GenderType.FEMALE,
+            ContainerType = ContainerType.HARDWOOD,
+            ContainerSize = ContainerSize.STANDARD,
+            Age = 92,
+            Status = CaseStatus.CREMATION_COMPLETE,
+            ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
+            ScheduledDevice = deviceId,
+            ScheduledDeviceAlias = "Device DEMO",
+            ActualDeviceAlias = "Device DEMO",
+            PerformedBy = "Demo User",
+            ActualStartTime = todayAtMidnight.AddDays(-5.479166667),
+            ActualEndTime = todayAtMidnight.AddDays(-5.375),
+            Fuel = String.Empty,
+            Electricity = String.Empty,
+            FacilityStatusId = Guid.Parse("ef74e5a8-06a3-4690-b4c8-dc692421c082")
+        };
+
+        var case50 = new Case
+        {
+            Id = Guid.NewGuid(),
+            CreatedBy = Guid.Empty,
+            CreatedTime = DateTime.Now,
+            ClientId = "123",
+            ClientCaseId = "SB-203075",
+            FirstName = "Wade",
+            LastName = "Hancock",
+            Weight = 203,
+            Gender = GenderType.MALE,
+            ContainerType = ContainerType.HARDWOOD,
+            ContainerSize = ContainerSize.STANDARD,
+            Age = 85,
+            Status = CaseStatus.CREMATION_COMPLETE,
+            ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
+            ScheduledDevice = deviceId,
+            ScheduledDeviceAlias = "Device DEMO",
+            ActualDeviceAlias = "Device DEMO",
+            PerformedBy = "Demo User",
+            ActualStartTime = todayAtMidnight.AddDays(-5.416666667),
+            ActualEndTime = todayAtMidnight.AddDays(-5.375),
+            Fuel = String.Empty,
+            Electricity = String.Empty,
+            FacilityStatusId = Guid.Parse("ef74e5a8-06a3-4690-b4c8-dc692421c082")
+        };
 
         return Task.CompletedTask;
     }
