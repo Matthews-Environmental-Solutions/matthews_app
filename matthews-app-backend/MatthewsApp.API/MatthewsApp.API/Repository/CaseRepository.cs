@@ -883,6 +883,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             Electricity = String.Empty,
             FacilityStatusId = Guid.Parse("ef74e5a8-06a3-4690-b4c8-dc692421c082")
         };
+        Create(case26);
 
         var case27 = new Case
         {
@@ -911,6 +912,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             Electricity = String.Empty,
             FacilityStatusId = Guid.Parse("ef74e5a8-06a3-4690-b4c8-dc692421c082")
         };
+        Create(case27);
 
         var case28 = new Case
         {
@@ -939,6 +941,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             Electricity = String.Empty,
             FacilityStatusId = Guid.Parse("ef74e5a8-06a3-4690-b4c8-dc692421c082")
         };
+        Create(case28);
 
         var case29 = new Case
         {
@@ -967,6 +970,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             Electricity = String.Empty,
             FacilityStatusId = Guid.Parse("ef74e5a8-06a3-4690-b4c8-dc692421c082")
         };
+        Create(case29);
 
         var case30 = new Case
         {
@@ -995,6 +999,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             Electricity = String.Empty,
             FacilityStatusId = Guid.Parse("ef74e5a8-06a3-4690-b4c8-dc692421c082")
         };
+        Create(case30);
 
         var case31 = new Case
         {
@@ -1023,6 +1028,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             Electricity = String.Empty,
             FacilityStatusId = Guid.Parse("ef74e5a8-06a3-4690-b4c8-dc692421c082")
         };
+        Create(case31);
 
         var case32 = new Case
         {
@@ -1051,6 +1057,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             Electricity = String.Empty,
             FacilityStatusId = Guid.Parse("ef74e5a8-06a3-4690-b4c8-dc692421c082")
         };
+        Create(case32);
 
         var case33 = new Case
         {
@@ -1079,6 +1086,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             Electricity = String.Empty,
             FacilityStatusId = Guid.Parse("ef74e5a8-06a3-4690-b4c8-dc692421c082")
         };
+        Create(case33);
 
         var case34 = new Case
         {
@@ -1107,6 +1115,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             Electricity = String.Empty,
             FacilityStatusId = Guid.Parse("ef74e5a8-06a3-4690-b4c8-dc692421c082")
         };
+        Create(case34);
 
         var case35 = new Case
         {
@@ -1135,6 +1144,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             Electricity = String.Empty,
             FacilityStatusId = Guid.Parse("ef74e5a8-06a3-4690-b4c8-dc692421c082")
         };
+        Create(case35);
 
         var case36 = new Case
         {
@@ -1163,6 +1173,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             Electricity = String.Empty,
             FacilityStatusId = Guid.Parse("ef74e5a8-06a3-4690-b4c8-dc692421c082")
         };
+        Create(case36);
 
         var case37 = new Case
         {
@@ -1191,6 +1202,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             Electricity = String.Empty,
             FacilityStatusId = Guid.Parse("ef74e5a8-06a3-4690-b4c8-dc692421c082")
         };
+        Create(case37);
 
         var case38 = new Case
         {
@@ -1219,6 +1231,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             Electricity = String.Empty,
             FacilityStatusId = Guid.Parse("ef74e5a8-06a3-4690-b4c8-dc692421c082")
         };
+        Create(case38);
 
         var case39 = new Case
         {
@@ -1247,6 +1260,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             Electricity = String.Empty,
             FacilityStatusId = Guid.Parse("ef74e5a8-06a3-4690-b4c8-dc692421c082")
         };
+        Create(case39);
 
         var case40 = new Case
         {
@@ -1275,6 +1289,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             Electricity = String.Empty,
             FacilityStatusId = Guid.Parse("ef74e5a8-06a3-4690-b4c8-dc692421c082")
         };
+        Create(case40);
 
         var case41 = new Case
         {
@@ -1303,6 +1318,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             Electricity = String.Empty,
             FacilityStatusId = Guid.Parse("ef74e5a8-06a3-4690-b4c8-dc692421c082")
         };
+        Create(case41);
 
         var case42 = new Case
         {
@@ -1331,6 +1347,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             Electricity = String.Empty,
             FacilityStatusId = Guid.Parse("ef74e5a8-06a3-4690-b4c8-dc692421c082")
         };
+        Create(case42);
 
         var case43 = new Case
         {
@@ -1359,6 +1376,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             Electricity = String.Empty,
             FacilityStatusId = Guid.Parse("ef74e5a8-06a3-4690-b4c8-dc692421c082")
         };
+        Create(case43);
 
         var case44 = new Case
         {
@@ -1387,6 +1405,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             Electricity = String.Empty,
             FacilityStatusId = Guid.Parse("ef74e5a8-06a3-4690-b4c8-dc692421c082")
         };
+        Create(case44);
 
         var case45 = new Case
         {
@@ -1415,6 +1434,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             Electricity = String.Empty,
             FacilityStatusId = Guid.Parse("ef74e5a8-06a3-4690-b4c8-dc692421c082")
         };
+        Create(case45);
 
         var case46 = new Case
         {
@@ -1443,6 +1463,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             Electricity = String.Empty,
             FacilityStatusId = Guid.Parse("ef74e5a8-06a3-4690-b4c8-dc692421c082")
         };
+        Create(case46);
 
         var case47 = new Case
         {
@@ -1471,6 +1492,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             Electricity = String.Empty,
             FacilityStatusId = Guid.Parse("ef74e5a8-06a3-4690-b4c8-dc692421c082")
         };
+        Create(case47);
 
         var case48 = new Case
         {
@@ -1499,6 +1521,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             Electricity = String.Empty,
             FacilityStatusId = Guid.Parse("ef74e5a8-06a3-4690-b4c8-dc692421c082")
         };
+        Create(case48);
 
         var case49 = new Case
         {
@@ -1527,6 +1550,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             Electricity = String.Empty,
             FacilityStatusId = Guid.Parse("ef74e5a8-06a3-4690-b4c8-dc692421c082")
         };
+        Create(case49);
 
         var case50 = new Case
         {
@@ -1555,6 +1579,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             Electricity = String.Empty,
             FacilityStatusId = Guid.Parse("ef74e5a8-06a3-4690-b4c8-dc692421c082")
         };
+        Create(case50);
 
         return Task.CompletedTask;
     }
