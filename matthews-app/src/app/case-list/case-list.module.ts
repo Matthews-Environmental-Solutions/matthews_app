@@ -8,7 +8,6 @@ import { CaseListPageRoutingModule } from './case-list-routing.module';
 
 import { CaseListPage } from './case-list.page';
 import { Ng2SearchPipeModule } from 'ng2-search-filter';
-import { LongPressModule } from 'ionic-long-press';
 import { TranslateModule } from '@ngx-translate/core';
 import { PipesModule } from '../pipes/pipes.module';
 
@@ -19,7 +18,6 @@ import { PipesModule } from '../pipes/pipes.module';
     IonicModule,
     CaseListPageRoutingModule,
     Ng2SearchPipeModule,
-    LongPressModule,
     TranslateModule,
     PipesModule
   ],
