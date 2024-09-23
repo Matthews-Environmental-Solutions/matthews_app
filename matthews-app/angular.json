@@ -212,7 +212,6 @@
               "browserTarget": "app:build:matthewsweb"
             },
             "ci": {
-              "progress": false
             }
           }
         },
