@@ -32,7 +32,7 @@ export class CaseComponent implements OnInit {
   loggedInUser: UserInfoAuth | undefined;
   userSetting: UserSettingData | undefined;
   userDetails: UserDetails = new UserDetails;
-  clickedFacilityFilterButton: string = 'all';
+  clickedFacilityFilterButton: string = 'bySelectedFacility';
   loader: boolean = false;
   isButtonVisible: boolean = false;
   numberOfUnscheduledCases: number = 0;
