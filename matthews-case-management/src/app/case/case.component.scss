@@ -191,3 +191,16 @@ $primary: mat-palette($mat-lime, A400);
   padding-top: 3px;
   padding-bottom: 12px;
 }
+
+.selected-button {
+  color: black;
+  // font-weight: bold;
+  text-decoration: underline;
+  font-size: 1rem; /* Adjust the size as needed */
+}
+
+.default-button {
+  color: blue !important;
+  font-weight: normal;
+  // font-size: 1rem; /* Default font size */
+}
