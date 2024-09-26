@@ -13,10 +13,12 @@ ion-item {
   font-style: italic !important;
  }
 
- scheduled-date-found {
-  
- }
-
-//  ion-searchbar {
-//    width: 120px;
-//  }
+.transparent-button {
+  --background: transparent;  /* Make the button transparent */
+  --border-color: transparent;  /* Remove border */
+  --padding-start: 0;
+  --padding-end: 0;
+  width: 100%;  /* Make the buttons fill the available width */
+  text-align: center;  /* Center text inside the button */
+  height: 3em;
+}
