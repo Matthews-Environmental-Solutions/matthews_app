@@ -34,3 +34,35 @@ ion-item {
   text-decoration: underline;
   font-weight: bold;
 }
+
+.chevron-button {
+  --background: transparent;  /* Highlighted background for selected button */
+  --border-color: transparent;  /* Remove border */
+  --padding-start: 0;
+  --padding-end: 0; 
+  color: blue;
+  flex-shrink: 0;
+}
+
+.chevron-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; 
+  width: 100%; /* Distribute space between the buttons */
+  padding: 0;  /* Remove padding if necessary */
+  margin: 0; 
+}
+
+.text-container {
+  display: flex;
+  flex-direction: column;  /* Stack the paragraphs vertically */
+  text-align: center;  /* Center the text */
+  flex-grow: 1;
+}
+
+.blue-text {
+  margin: 0;  /* Remove default margin for better alignment */
+  padding: 0;
+  color: blue;
+  font-weight: bold;
+}
