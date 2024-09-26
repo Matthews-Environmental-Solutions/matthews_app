@@ -22,3 +22,15 @@ ion-item {
   text-align: center;  /* Center text inside the button */
   height: 3em;
 }
+
+.selected {
+  --background: transparent;  /* Highlighted background for selected button */
+  --border-color: transparent;  /* Remove border */
+  --padding-start: 0;
+  --padding-end: 0;
+  width: 100%;  /* Make the buttons fill the available width */
+  text-align: center;  /* Center text inside the button */
+  height: 3em;        /* Change the text color when selected */
+  text-decoration: underline;
+  font-weight: bold;
+}

@@ -24,6 +24,7 @@ export class SchedulePage implements OnInit, OnDestroy {
   defaultFacilityId: any;
   caseStatus = CaseStatuses;
   selectedFacility = new Facility();
+  selectedButton: string = 'day';
 
   constructor(private caseStore: AppStoreService, public modalController: ModalController, public alertController: AlertController,
     private translateService: TranslateService, private signalRCaseApiService: SignalRCaseApiService, private appStore: AppStoreService, private datePipe: DatePipe) { }
@@ -119,5 +120,9 @@ export class SchedulePage implements OnInit, OnDestroy {
     else {
       return this.translateService.instant('scheduleDate') + ': ' + this.datePipe.transform(date, 'short');
     }
+  }
+
+  selectButton(button: string) {
+    this.selectedButton = button;
   }
 }

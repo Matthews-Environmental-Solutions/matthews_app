@@ -27,9 +27,9 @@
       </ion-select>
     </ion-item>
     <ion-item-divider>
-      <ion-button expand="block" fill="clear" class="transparent-button">Day</ion-button>
-      <ion-button expand="block" fill="clear" class="transparent-button">Week</ion-button>
-      <ion-button expand="block" fill="clear" class="transparent-button">Unscheduled</ion-button>
+      <ion-button expand="block" fill="clear" [ngClass]="{'transparent-button': selectedButton !== 'day', 'selected': selectedButton === 'day'}" (click)="selectButton('day')">{{'day' | translate}}</ion-button>
+      <ion-button expand="block" fill="clear" [ngClass]="{'transparent-button': selectedButton !== 'week', 'selected': selectedButton === 'week'}" (click)="selectButton('week')">{{'week' | translate}}</ion-button>
+      <ion-button expand="block" fill="clear" [ngClass]="{'transparent-button': selectedButton !== 'unscheduled', 'selected': selectedButton === 'unscheduled'}" (click)="selectButton('unscheduled')">{{'unscheduled' | translate}}</ion-button>
     </ion-item-divider>
     <ion-list>
       <ion-item-sliding *ngFor="let case of scheduleVm.cases | filter:searchTerm | sort">
