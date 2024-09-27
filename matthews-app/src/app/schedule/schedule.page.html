@@ -21,6 +21,7 @@
 
 <ion-content *ngIf="scheduleVm$ | async as scheduleVm">
   <ng-container *ngIf="scheduleVm.cases">
+    <div *ngIf="updateCounts(scheduleVm.cases)"></div>
     <ion-item lines="full">
       <ion-label>{{'SelectFacility' | translate}}:</ion-label>
       <ion-select [interfaceOptions]="{cssClass:'custom-popover'}" value="{{ defaultFacilityId }}" interface="popover"
@@ -32,34 +33,34 @@
     <ion-item-divider>
       <ion-button expand="block" fill="clear"
         [ngClass]="{'transparent-button': selectedButton !== 'day', 'selected': selectedButton === 'day'}"
-        (click)="selectButton('day')">{{'day' | translate}}</ion-button>
+        (click)="selectButton('day'); switchView('byDay')">{{'day' | translate}}</ion-button>
       <ion-button expand="block" fill="clear"
         [ngClass]="{'transparent-button': selectedButton !== 'week', 'selected': selectedButton === 'week'}"
-        (click)="selectButton('week')">{{'week' | translate}}</ion-button>
+        (click)="selectButton('week'); switchView('byWeek')">{{'week' | translate}}</ion-button>
       <ion-button expand="block" fill="clear"
         [ngClass]="{'transparent-button': selectedButton !== 'unscheduled', 'selected': selectedButton === 'unscheduled'}"
-        (click)="selectButton('unscheduled')">{{'unscheduled' | translate}}</ion-button>
+        (click)="selectButton('unscheduled'); switchView('byUnscheduled')">{{'unscheduled' | translate}}</ion-button>
     </ion-item-divider>
 
-    <ion-item >
+    <ion-item *ngIf="calendarView != 'byUnscheduled'">
 
-      <ion-button aria-label="Favorite" fill="clear" class="chevron-button">
+      <ion-button aria-label="Favorite" fill="clear" class="chevron-button" (click)="previousWeek()">
         <ion-icon name="chevron-back-outline" size="large" aria-hidden="true"></ion-icon>
       </ion-button>
 
       <div class="text-container">
-        <p class="blue-text">September 9-16</p>
-        <p class="blue-text">Scheduled: 7 Completed: 1</p>
+        <p *ngIf="calendarView == 'byDay'" class="blue-text">{{selectedDay | date:'mediumDate'}}</p>
+        <p class="blue-text">Scheduled: {{scheduledCount}} Completed: {{completedCount}}</p>
       </div>
 
-      <ion-button aria-label="Favorite" fill="clear" class="chevron-button">
+      <ion-button aria-label="Favorite" fill="clear" class="chevron-button" (click)="nextWeek()">
         <ion-icon name="chevron-forward-outline" size="large" aria-hidden="true"></ion-icon>
       </ion-button>
 
     </ion-item>
 
-    <ion-list>
-      <ion-item-sliding *ngFor="let case of scheduleVm.cases | filter:searchTerm | sort">
+    <ion-list *ngIf="calendarView == 'byDay'">
+      <ion-item-sliding *ngFor="let case of filterCases(scheduleVm.cases) | filter:searchTerm | sort">
         <ion-item-options side="end">
           <ion-buttons slot="primary">
             <ion-button (click)="deleteCase(case)">
@@ -69,6 +70,7 @@
         </ion-item-options>
         <ion-item detail='true' (click)="presentModal(case)">
           <ion-label>
+            <p>{{case.clientCaseId}}</p>
             <p>
               <b>{{case.firstName | titlecase}} {{case.lastName | titlecase}}</b>
             </p>

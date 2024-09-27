@@ -1,7 +1,7 @@
 /* eslint-disable max-len */
 /* eslint-disable eqeqeq */
 /* eslint-disable @angular-eslint/component-selector */
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewChecked, Component, OnDestroy, OnInit } from '@angular/core';
 import { AppStoreService } from '../app.store.service';
 import { AlertController, AlertOptions, ModalController } from '@ionic/angular';
 import { Case } from '../case/case';
@@ -25,6 +25,13 @@ export class SchedulePage implements OnInit, OnDestroy {
   caseStatus = CaseStatuses;
   selectedFacility = new Facility();
   selectedButton: string = 'day';
+
+  calendarView: 'byDay' | 'byWeek' | 'byUnscheduled' = 'byDay';
+  selectedDay: Date = new Date();
+  hiddenDayForNavigation: Date = new Date(this.selectedDay);
+
+  scheduledCount: number = 0;
+  completedCount: number = 0;
 
   constructor(private caseStore: AppStoreService, public modalController: ModalController, public alertController: AlertController,
     private translateService: TranslateService, private signalRCaseApiService: SignalRCaseApiService, private appStore: AppStoreService, private datePipe: DatePipe) { }
@@ -124,5 +131,58 @@ export class SchedulePage implements OnInit, OnDestroy {
 
   selectButton(button: string) {
     this.selectedButton = button;
+  }
+
+  switchView(viewDaily: 'byDay' | 'byWeek' | 'byUnscheduled') {
+    this.calendarView = viewDaily;
+  }
+
+  previousWeek() {
+    if (this.calendarView == 'byDay') {
+      let datePrevious: Date = new Date(this.selectedDay);
+      datePrevious.setDate(this.selectedDay.getDate() - 1);
+      this.daySelectedEvent(datePrevious);
+    }
+  }
+
+  nextWeek() {
+    if (this.calendarView == 'byDay') {
+      let dateNext: Date = new Date(this.selectedDay);
+      dateNext.setDate(this.selectedDay.getDate() + 1);
+      this.daySelectedEvent(dateNext);
+    }
+  }
+
+  daySelectedEvent(date: Date) {
+    if (date instanceof Date) {
+
+      //let time = this.calendarService.getDateInUserProfilesTimezone(date);
+
+      date.setHours(12, 0, 0, 0);
+      this.selectedDay = date;
+      this.hiddenDayForNavigation = date;
+      //this.getDays(this.selectedDay);
+    }
+  }
+
+  filterCases(cases: Case[]): Case[] {
+    this.scheduledCount = 0;  // Reset counts before filtering
+    this.completedCount = 0;
+
+    const filteredCases = cases.filter(caseItem => this.isSameDay(new Date(caseItem.scheduledStartTime), this.selectedDay));
+
+    return filteredCases;
+  }
+
+  isSameDay(date1: Date, date2: Date): boolean {
+    return date1.getFullYear() === date2.getFullYear() &&
+           date1.getMonth() === date2.getMonth() &&
+           date1.getDate() === date2.getDate();
+  }
+
+  updateCounts(cases: Case[]) {
+    const filteredCases = this.filterCases(cases);
+    this.scheduledCount = filteredCases.length;
+    this.completedCount = filteredCases.filter(caseItem => caseItem.status === 1).length;
   }
 }
