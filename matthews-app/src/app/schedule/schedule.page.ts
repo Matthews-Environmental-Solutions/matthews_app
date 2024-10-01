@@ -174,6 +174,13 @@ export class SchedulePage implements OnInit, OnDestroy {
     return filteredCases;
   }
 
+  filterUnscheduledCases(cases: Case[]) : Case [] {
+
+    const filteredCases = cases.filter(caseItem => caseItem.status == 0);
+    return filteredCases;
+
+  }
+
   isSameDay(date1: Date, date2: Date): boolean {
     return date1.getFullYear() === date2.getFullYear() &&
            date1.getMonth() === date2.getMonth() &&

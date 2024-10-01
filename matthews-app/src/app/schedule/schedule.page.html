@@ -83,5 +83,29 @@
         </ion-item>
       </ion-item-sliding>
     </ion-list>
+    <ion-list *ngIf="calendarView == 'byUnscheduled'">
+      <ion-item-sliding *ngFor="let case of filterUnscheduledCases(scheduleVm.cases) | filter:searchTerm | sort">
+        <ion-item-options side="end">
+          <ion-buttons slot="primary">
+            <ion-button (click)="deleteCase(case)">
+              <ion-icon name="trash-outline"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-item-options>
+        <ion-item detail='true' (click)="presentModal(case)">
+          <ion-label>
+            <p>{{case.clientCaseId}}</p>
+            <p>
+              <b>{{case.firstName | titlecase}} {{case.lastName | titlecase}}</b>
+            </p>
+            <p>{{caseStatus[case.status] | translate | enumFormat | titlecase}}</p>
+            <p>Machine: {{case.scheduledDeviceAlias}}</p>
+            <p
+              [ngClass]="checkScheduledStartTime(case.scheduledStartTime) ? 'scheduled-date-found' : 'scheduled-date-missing'">
+              {{displayScheduledStartTime(case.scheduledStartTime)}}</p>
+          </ion-label>
+        </ion-item>
+      </ion-item-sliding>
+    </ion-list>
   </ng-container>
 </ion-content>
