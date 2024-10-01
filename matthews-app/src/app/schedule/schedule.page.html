@@ -48,9 +48,14 @@
         <ion-icon name="chevron-back-outline" size="large" aria-hidden="true"></ion-icon>
       </ion-button>
 
-      <div class="text-container">
-        <p *ngIf="calendarView == 'byDay'" class="blue-text">{{selectedDay | date:'mediumDate'}}</p>
+      <div class="text-container" *ngIf="calendarView == 'byDay'">
+        <p class="blue-text">{{selectedDay | date:'mediumDate'}}</p>
         <p class="blue-text">Scheduled: {{scheduledCount}} Completed: {{completedCount}}</p>
+      </div>
+
+      <div class="text-container" *ngIf="calendarView == 'byWeek'">
+        <p  class="blue-text">{{getMonthFromDate()}} {{getFirstDayOfTheWeek()}} - {{getLastDayOfTheWeek()}}, {{getYearFromDate()}}</p>
+        <p class="blue-text">Scheduled: {{weeklyScheduledCount}} Completed: {{weeklyCompletedCount}}</p>
       </div>
 
       <ion-button aria-label="Favorite" fill="clear" class="chevron-button" (click)="nextWeek()">
@@ -83,6 +88,34 @@
         </ion-item>
       </ion-item-sliding>
     </ion-list>
+
+    <ion-list *ngIf="calendarView == 'byWeek'">
+      <ion-item-sliding *ngFor="let day of days; let i = index">
+        <ion-item detail="true">
+          <ion-grid>
+            <ion-row>
+              <!-- Left column for day information -->
+              <ion-col size="6">
+                <ion-label>
+                  <p>{{ day }}</p>
+                  <p>{{ getWeeklyDay(i) }}</p>
+                </ion-label>
+              </ion-col>
+    
+              <!-- Right column for "Scheduled" and "Completed" -->
+              <ion-col size="6" class="ion-text-right">
+                <ion-label>
+                  <p>Scheduled: {{getScheduledForDay(scheduleVm.cases, i)}}</p>
+                  <p>Completed: {{getCompletedForDay(scheduleVm.cases, i)}}</p>
+                </ion-label>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </ion-item>
+      </ion-item-sliding>
+    </ion-list>
+    
+
     <ion-list *ngIf="calendarView == 'byUnscheduled'">
       <ion-item-sliding *ngFor="let case of filterUnscheduledCases(scheduleVm.cases) | filter:searchTerm | sort">
         <ion-item-options side="end">

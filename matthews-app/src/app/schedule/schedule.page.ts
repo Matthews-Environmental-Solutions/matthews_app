@@ -33,6 +33,12 @@ export class SchedulePage implements OnInit, OnDestroy {
   scheduledCount: number = 0;
   completedCount: number = 0;
 
+  weeklyScheduledCount: number = 0;
+  weeklyCompletedCount: number = 0;
+
+  days: string[] = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+
   constructor(private caseStore: AppStoreService, public modalController: ModalController, public alertController: AlertController,
     private translateService: TranslateService, private signalRCaseApiService: SignalRCaseApiService, private appStore: AppStoreService, private datePipe: DatePipe) { }
 
@@ -181,6 +187,83 @@ export class SchedulePage implements OnInit, OnDestroy {
 
   }
 
+  countWeeklyCases(cases: Case[]) {
+    this.weeklyScheduledCount = 0;
+    this.weeklyCompletedCount = 0;
+  
+    const firstDayOfWeek = new Date(this.selectedDay);
+    const dayOfWeek = firstDayOfWeek.getDay();
+    firstDayOfWeek.setDate(firstDayOfWeek.getDate() - dayOfWeek); // First day 
+  
+    const lastDayOfWeek = new Date(firstDayOfWeek);
+    lastDayOfWeek.setDate(firstDayOfWeek.getDate() + 6); // Last day 
+  
+    cases.forEach(caseItem => {
+      const scheduledDate = new Date(caseItem.scheduledStartTime);
+  
+      if (scheduledDate >= firstDayOfWeek && scheduledDate <= lastDayOfWeek) {
+        this.weeklyScheduledCount++;
+        if (caseItem.status === 1) { // 1  'completed'
+          this.weeklyCompletedCount++;
+        }
+      }
+    });
+  }
+  
+
+  getFirstDayOfTheWeek(): string {
+    const dayOfWeek = this.selectedDay.getDay(); // Get the day of the week (0 for Sunday, 1 for Monday, etc.)
+    const firstDayOfWeek = new Date(this.selectedDay); // Clone the selected day
+    firstDayOfWeek.setDate(this.selectedDay.getDate() - dayOfWeek); // Subtract days to get Sunday (or Monday)
+    return this.datePipe.transform(firstDayOfWeek, 'd'); // Return formatted date
+  }
+  
+
+  getLastDayOfTheWeek(): string {
+    const dayOfWeek = this.selectedDay.getDay(); // Get the day of the week
+    const lastDayOfWeek = new Date(this.selectedDay); // Clone the selected day
+    lastDayOfWeek.setDate(this.selectedDay.getDate() + (6 - dayOfWeek)); // Add days to get Saturday (or Sunday)
+    return this.datePipe.transform(lastDayOfWeek, 'd'); // Return formatted date
+  }
+
+  getWeeklyDay(index: number): string {
+    const dayOfWeek = this.selectedDay.getDay();
+    const day = new Date(this.selectedDay);
+    day.setDate(this.selectedDay.getDate() - dayOfWeek + index);
+    return this.datePipe.transform(day, 'MMM d, yyyy');
+  }
+
+  filterCasesForDay(cases: Case[], index: number) {
+    const dayOfWeek = this.selectedDay.getDay();
+    const day = new Date(this.selectedDay);
+    day.setDate(this.selectedDay.getDate() - dayOfWeek + index);
+    const filteredCases = cases.filter(caseItem => this.isSameDay(new Date(caseItem.scheduledStartTime), day));
+    return filteredCases;
+  }
+
+  getScheduledForDay(cases: Case[], index: number) {
+    const filteredCases = this.filterCasesForDay(cases, index);
+    return filteredCases.length;
+  }
+
+  getCompletedForDay(cases: Case[], index: number) {
+    const filteredCases = this.filterCasesForDay(cases, index);
+    return filteredCases.filter(caseItem => caseItem.status === 1).length;
+  }
+
+  countScheduledCasesForEachDay(cases: Case[]) {
+   
+  }
+  
+  getMonthFromDate() {
+    let currntMonth: string[] = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December", ];
+    return currntMonth[this.selectedDay.getMonth()];
+  }
+
+  getYearFromDate() {
+    return this.selectedDay.getFullYear();
+  }
+
   isSameDay(date1: Date, date2: Date): boolean {
     return date1.getFullYear() === date2.getFullYear() &&
            date1.getMonth() === date2.getMonth() &&
@@ -188,6 +271,7 @@ export class SchedulePage implements OnInit, OnDestroy {
   }
 
   updateCounts(cases: Case[]) {
+    this.countWeeklyCases(cases);
     const filteredCases = this.filterCases(cases);
     this.scheduledCount = filteredCases.length;
     this.completedCount = filteredCases.filter(caseItem => caseItem.status === 1).length;
