@@ -149,12 +149,22 @@ export class SchedulePage implements OnInit, OnDestroy {
       datePrevious.setDate(this.selectedDay.getDate() - 1);
       this.daySelectedEvent(datePrevious);
     }
+    if (this.calendarView == 'byWeek') {
+      let datePrevious: Date = new Date(this.selectedDay);
+      datePrevious.setDate(this.selectedDay.getDate() - 7);
+      this.daySelectedEvent(datePrevious);
+    }
   }
 
   nextWeek() {
     if (this.calendarView == 'byDay') {
       let dateNext: Date = new Date(this.selectedDay);
       dateNext.setDate(this.selectedDay.getDate() + 1);
+      this.daySelectedEvent(dateNext);
+    }
+    if (this.calendarView == 'byWeek') {
+      let dateNext: Date = new Date(this.selectedDay);
+      dateNext.setDate(this.selectedDay.getDate() + 7);
       this.daySelectedEvent(dateNext);
     }
   }
