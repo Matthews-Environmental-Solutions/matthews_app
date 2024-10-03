@@ -91,7 +91,7 @@
 
     <ion-list *ngIf="calendarView == 'byWeek'">
       <ion-item-sliding *ngFor="let day of days; let i = index">
-        <ion-item detail="true">
+        <ion-item detail="true" (click)="switchToDay(getWeeklyDay(i))">
           <ion-grid>
             <ion-row>
               <!-- Left column for day information -->

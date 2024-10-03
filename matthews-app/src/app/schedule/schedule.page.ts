@@ -219,6 +219,13 @@ export class SchedulePage implements OnInit, OnDestroy {
       }
     });
   }
+
+  switchToDay(date: string) {
+    const day = new Date(date);
+    this.selectedDay = day;
+    this.switchView('byDay');
+    this.selectedButton = 'day';
+  }
   
 
   getFirstDayOfTheWeek(): string {
