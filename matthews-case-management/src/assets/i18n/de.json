@@ -96,5 +96,6 @@
     "name": {
         "label": "Namen",
         "placeholder": "Name eingeben"
-    }
+    },
+    "generalStatus": "General status"
 }

@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using System;
 using System.Collections.Generic;
+using MatthewsApp.API.Enums;
 
 namespace MatthewsApp.API.Models;
 
@@ -23,6 +24,7 @@ public class FacilityStatus : BaseEntity
     [Column(TypeName = "nvarchar(16)")]
     public string? StatusIcon { get; set; }
 
-    public bool StartProcess { get; set; }
+    [Required]
+    public CaseStatus Status { get; set; } = CaseStatus.UNSCHEDULED;
 
 }

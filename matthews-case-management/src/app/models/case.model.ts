@@ -14,7 +14,6 @@ export interface ICase {
     containerSizeText: string;
     isObsolete: boolean;
     age: number;
-    status: number;
 
     scheduledFacility?: string;
     scheduledDevice?: string;
@@ -36,8 +35,8 @@ export interface ICase {
     fuel: string;
     electricity: string;
 
-    facilityStatusId?: string;
-    facilityStatusText?: string;
+    facilityStatusId: string;
+    facilityStatusText: string;
 }
 
 export class Case implements ICase{
@@ -56,7 +55,6 @@ export class Case implements ICase{
     containerSizeText: string = '';
     isObsolete: boolean = false;
     age: number = 100;
-    status: number = 0;
     
     scheduledFacility: string = '00000000-0000-0000-0000-000000000000';
     scheduledDevice?: string = '00000000-0000-0000-0000-000000000000';
@@ -78,7 +76,9 @@ export class Case implements ICase{
     fuel: string = '';
     electricity: string = '';
 
-    facilityStatusId?: string = '00000000-0000-0000-0000-000000000000';
-    facilityStatusText?: string = '';
+    facilityStatusId: string = '00000000-0000-0000-0000-000000000000';
+    facilityStatusText: string = '';
     physicalId?: string = '';
+
+    status: number = -1;
 }

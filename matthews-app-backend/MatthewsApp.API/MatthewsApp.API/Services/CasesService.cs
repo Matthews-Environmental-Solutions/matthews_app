@@ -31,19 +31,22 @@ public interface ICasesService
     Task<Case> GetNextCaseForDevice(Guid deviceId);
     Task<IEnumerable<Case>> GetReadyCasesByDevice(Guid deviceId);
     Task<bool> ResetDemo();
+    Task<IEnumerable<CaseStatusDto>> GetCaseStatuses();
 }
 
 public class CasesService : ICasesService
 {
     private readonly ICaseI4cHttpClientService _caseI4CHttpClientService;
     private readonly ICaseRepository _caseRepository;
+    private readonly IFacilityStatusRepository _facilityStatusRepository;
     private readonly ILogger<CasesService> _logger;
     private readonly CaseHub _caseHub;
     private IEventAggregator _ea;
 
-    public CasesService(ICaseRepository repository, IEventAggregator ea, CaseHub caseHub, ICaseI4cHttpClientService caseI4CHttpClientService, ILogger<CasesService> logger)
+    public CasesService(ICaseRepository repository, IFacilityStatusRepository facilityStatusRepository, IEventAggregator ea, CaseHub caseHub, ICaseI4cHttpClientService caseI4CHttpClientService, ILogger<CasesService> logger)
     {
         _caseI4CHttpClientService = caseI4CHttpClientService;
+        _facilityStatusRepository = facilityStatusRepository;
         _caseRepository = repository;
         _caseHub = caseHub;
         _logger = logger;
@@ -54,7 +57,7 @@ public class CasesService : ICasesService
     {
         if (entity.FacilityStatusId == Guid.Empty)
         {
-            entity.FacilityStatusId = null;
+            throw new ArgumentException("FacilityStatusId is required.");
         }
         //entity.FirstName = UTF8toASCII(entity.FirstName);
         //entity.LastName = UTF8toASCII(entity.LastName);
@@ -121,7 +124,7 @@ public class CasesService : ICasesService
         {
             entity = MakeNewCaseFromDto(dto);
             entityDoesNotExistInDb = true;
-            entity.Status = CaseStatus.READY_TO_CREMATE;
+            entity.FacilityStatus = _facilityStatusRepository.GetReadyToCremateFacilityStatus(dto.FACILITY_ID);//ToDo: Check if this is correct
         }
         else
         {
@@ -131,7 +134,7 @@ public class CasesService : ICasesService
                 entity = MakeNewCaseFromDto(dto);
                 entityDoesNotExistInDb = true;
             }
-            entity.Status = CaseStatus.IN_PROGRESS;
+            entity.FacilityStatus = _facilityStatusRepository.GetInProgressFacilityStatus(dto.FACILITY_ID);//ToDo: Check if this is correct
         }
 
         entity.ActualStartTime = dto.StartTime;
@@ -146,16 +149,23 @@ public class CasesService : ICasesService
         entity.ScheduledDeviceAlias = cremator is not null ? cremator.alias : string.Empty;
         entity.PerformedBy = dto.User;
 
-        if (entityDoesNotExistInDb)
+        try
         {
-            Create(entity);
-        }
-        else
-        {
-            Update(entity);
-        }
+            if (entityDoesNotExistInDb)
+            {
+                Create(entity);
+            }
+            else
+            {
+                Update(entity);
+            }
 
-        return new Tuple<Case, bool>(entity, entityDoesNotExistInDb);
+            return new Tuple<Case, bool>(entity, entityDoesNotExistInDb);
+        }
+        catch (Exception)
+        {
+            throw;
+        }
     }
 
     private Case MakeNewCaseFromDto(StartCaseDto dto)
@@ -187,7 +197,7 @@ public class CasesService : ICasesService
         entity.ActualEndTime = dto.EndTime;
         entity.Fuel = dto.FuelUsed.ToString();
         entity.Electricity = dto.ElectricityUsed.ToString();
-        entity.Status = CaseStatus.CREMATION_COMPLETE;
+        //entity.Status = CaseStatus.CREMATION_COMPLETE;
         Update(entity);
     }
 
@@ -371,6 +381,19 @@ public class CasesService : ICasesService
         {
             throw;
         }
+    }
+
+    public async Task<IEnumerable<CaseStatusDto>> GetCaseStatuses()
+    {
+        var caseStatuses = Enum.GetValues(typeof(CaseStatus))
+                           .Cast<CaseStatus>()
+                           .Select(cs => new CaseStatusDto
+                           {
+                               Name = cs.ToString(),
+                               Value = (int)cs
+                           });
+
+        return await Task.FromResult(caseStatuses);
     }
 
     //public static string UTF8toASCII(string text)

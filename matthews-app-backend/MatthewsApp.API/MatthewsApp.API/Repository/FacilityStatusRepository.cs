@@ -1,4 +1,5 @@
-﻿using MatthewsApp.API.Models;
+﻿using MatthewsApp.API.Enums;
+using MatthewsApp.API.Models;
 using MatthewsApp.API.Repository.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -24,5 +25,25 @@ public class FacilityStatusRepository : BaseRepository<FacilityStatus, Guid>, IF
     public async override Task<FacilityStatus> GetOne(Guid id)
     {
         return await _dataContext.Context.Set<FacilityStatus>().FirstOrDefaultAsync(f => f.Id == id);
+    }
+
+    public FacilityStatus GetReadyToCremateFacilityStatus(Guid facilityId)
+    {
+        return _dataContext.FacilityStatuses.FirstOrDefault(f => f.FacilityId == facilityId && f.Status == CaseStatus.READY_TO_CREMATE);
+    }
+
+    public FacilityStatus GetInProgressFacilityStatus(Guid facilityId)
+    {
+        return _dataContext.FacilityStatuses.FirstOrDefault(f => f.FacilityId == facilityId && f.Status == CaseStatus.IN_PROGRESS);
+    }
+
+    public FacilityStatus GetCremationCompleteFacilityStatus(Guid facilityId)
+    {
+        return _dataContext.FacilityStatuses.FirstOrDefault(f => f.FacilityId == facilityId && f.Status == CaseStatus.CREMATION_COMPLETE);
+    }
+
+    public FacilityStatus GetFirstAwaitingPermissionFacilityStatus(Guid facilityId)
+    {
+        return _dataContext.FacilityStatuses.FirstOrDefault(f => f.FacilityId == facilityId && f.Status == CaseStatus.WAITING_FOR_PERMIT);
     }
 }

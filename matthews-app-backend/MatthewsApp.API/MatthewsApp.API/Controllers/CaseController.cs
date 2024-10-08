@@ -1,4 +1,5 @@
 ﻿using MatthewsApp.API.Dtos;
+using MatthewsApp.API.Enums;
 using MatthewsApp.API.Mappers;
 using MatthewsApp.API.Models;
 using MatthewsApp.API.Services;
@@ -199,6 +200,21 @@ public class CaseController : Controller
             return NotFound();
         }
         return Ok(Case.ToDTO());
+    }
+
+    [HttpGet("GetCaseStatuses")]
+    public async Task<ActionResult<IEnumerable<CaseStatusDto>>> GetCaseStatuses()
+    {
+        _logger.LogInformation("---------- GetCaseStatuses");
+
+        try
+        {
+            return Ok(await service.GetCaseStatuses());
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 
     [HttpGet("ResetDemo")]

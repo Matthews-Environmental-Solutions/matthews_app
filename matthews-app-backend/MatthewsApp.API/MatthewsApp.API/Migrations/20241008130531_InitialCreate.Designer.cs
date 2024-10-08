@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MatthewsApp.API.Migrations
 {
     [DbContext(typeof(MatthewsAppDBContext))]
-    [Migration("20230714111208_InitialCreate")]
+    [Migration("20241008130531_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -72,7 +72,7 @@ namespace MatthewsApp.API.Migrations
                     b.Property<string>("Electricity")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("FacilityStatusId")
+                    b.Property<Guid>("FacilityStatusId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("FirstName")
@@ -98,8 +98,11 @@ namespace MatthewsApp.API.Migrations
                     b.Property<DateTime?>("ModifiedTime")
                         .HasColumnType("datetime2(7)");
 
-                    b.Property<Guid?>("PerformedBy")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("PerformedBy")
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<string>("PhysicalId")
+                        .HasColumnType("nvarchar(256)");
 
                     b.Property<Guid?>("ScheduledDevice")
                         .HasColumnType("uniqueidentifier");
@@ -112,9 +115,6 @@ namespace MatthewsApp.API.Migrations
 
                     b.Property<DateTime?>("ScheduledStartTime")
                         .HasColumnType("datetime2(7)");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
 
                     b.Property<double>("Weight")
                         .HasColumnType("float");
@@ -147,8 +147,8 @@ namespace MatthewsApp.API.Migrations
                     b.Property<DateTime?>("ModifiedTime")
                         .HasColumnType("datetime2(7)");
 
-                    b.Property<bool>("StartProcess")
-                        .HasColumnType("bit");
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
 
                     b.Property<int>("StatusCode")
                         .HasColumnType("int");
@@ -169,7 +169,9 @@ namespace MatthewsApp.API.Migrations
                 {
                     b.HasOne("MatthewsApp.API.Models.FacilityStatus", "FacilityStatus")
                         .WithMany()
-                        .HasForeignKey("FacilityStatusId");
+                        .HasForeignKey("FacilityStatusId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("FacilityStatus");
                 });

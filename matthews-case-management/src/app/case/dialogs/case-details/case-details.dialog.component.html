@@ -3,7 +3,7 @@
     <div class="dialog-content-field">
         <mat-label for="">{{'caseStatus' | translate}}</mat-label>:
         <div class="field-value">
-            <ng-container *ngIf="(getStatusDescription(+data.status) | async ) as status">
+            <ng-container *ngIf="data.facilityStatusText as status">
                 <span>{{status}}</span>
             </ng-container>
         </div>

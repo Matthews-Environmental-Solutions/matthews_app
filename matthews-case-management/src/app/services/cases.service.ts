@@ -1,21 +1,25 @@
 import { HttpClient } from "@angular/common/http";
-import { Injectable } from "@angular/core";
-import { Observable, catchError, map, retry, throwError } from "rxjs";
+import { Inject, Injectable } from "@angular/core";
+import { Observable, catchError, concat, concatMap, map, of, retry, throwError } from "rxjs";
 import { Case } from "../models/case.model";
 import { TranslateService } from "@ngx-translate/core";
 import { environment } from "src/environments/environment";
 import { CalendarService } from "./calendar.service";
+import { CaseStatusDto } from "../models/case-status-dto.model";
+import { FacilityStatusService } from "./facility-status.service";
+import { FacilityStatus } from "../models/facility-status.model";
 
 @Injectable({
     providedIn: 'root'
 })
 export class CaseService {
     apiURL = environment.apiUrl;
-    constructor(public httpClient: HttpClient, private translate: TranslateService, private calendarService: CalendarService) { }
 
-    getCasesFromJsonFile(days: Date[]) {
-        return this.httpClient.get('/assets/cases.json');
-    }
+    constructor(public httpClient: HttpClient, private translate: TranslateService, private calendarService: CalendarService, @Inject(FacilityStatusService) public facilityStatusService: FacilityStatusService) { }
+
+    // getCasesFromJsonFile(days: Date[]) {
+    //     return this.httpClient.get('/assets/cases.json');
+    // }
 
     getCaseById(caseId: string): Observable<Case> {
         return this.httpClient.get<Case>(`${this.apiURL}/Case/${caseId}`)
@@ -23,14 +27,14 @@ export class CaseService {
             .pipe(map(item => this.remapCase(item)));
     }
 
-    getCases(days: Date[]): Observable<Case[]> {
-        return this.httpClient.get<Case[]>(this.apiURL + '/Case/GetAllCases')
-            .pipe(retry(1), catchError(this.handleError))
-            .pipe(map((cases: Case[]) => {
-                cases = cases.map(item => this.remapCase(item));
-                return cases;
-            }));
-    }
+    // getCases(days: Date[]): Observable<Case[]> {
+    //     return this.httpClient.get<Case[]>(this.apiURL + '/Case/GetAllCases')
+    //         .pipe(retry(1), catchError(this.handleError))
+    //         .pipe(map((cases: Case[]) => {
+    //             cases = cases.map(item => this.remapCase(item));
+    //             return cases;
+    //         }));
+    // }
 
     getUnscheduledCases(): Observable<Case[]> {
         return this.httpClient.get<Case[]>(this.apiURL + '/Case/GetUnscheduledCases')
@@ -45,33 +49,57 @@ export class CaseService {
 
         // let formatedDate: string = this.formatDate(date);
         // let utcStartDate = new Date(formatedDate).toISOString(); //BUG??????
+        
+        // var facilityStatusesOb = this.facilityStatusService.getAllStatusesByFacility(facilityId).subscribe(fStatuses => {
+        //     this.facilityStatuses = fStatuses;
+        // });
+
+        const facilityStatusesOb = this.facilityStatusService.getAllStatusesByFacility(facilityId);
 
         date.setHours(0,0,0,0);
         let utcStartDate = this.calendarService.getUtcDateFromUserProfileTimezoneByDate(date).toISOString();
         // let utcStartDate3 = utcStartDate2.toISOString();
         
-        return this.httpClient.get<Case[]>(`${this.apiURL}/Case/GetScheduledCasesByDay/${facilityId}/${utcStartDate}`)
+        const casesOb = (facilityStatuses: FacilityStatus[]) => this.httpClient.get<Case[]>(`${this.apiURL}/Case/GetScheduledCasesByDay/${facilityId}/${utcStartDate}`)
             .pipe(retry(1), catchError(this.handleError))
             .pipe(map((cases: Case[]) => {
                 cases = cases.map(item => this.remapCase(item));
+                cases = cases.map(item => this.remapStatus(item, facilityStatuses));
                 return cases;
             }));
+
+        return facilityStatusesOb.pipe(
+            concatMap(facilityStatuses => casesOb(facilityStatuses))
+        );
     }
 
     getScheduledCasesByWeek(facilityId: string, dateStartDateOfWeek: Date): Observable<Case[]> {
         
+        const facilityStatusesOb = this.facilityStatusService.getAllStatusesByFacility(facilityId);
+
         dateStartDateOfWeek.setHours(0,0,0,0);
         let utcStartDateOfWeek = this.calendarService.getUtcDateFromUserProfileTimezoneByDate(dateStartDateOfWeek).toISOString();
 
         // let formatedStartDateOfWeek: string = this.formatDate(dateStartDateOfWeek);
         // let utcStartDateOfWeek = new Date(formatedStartDateOfWeek).toISOString();
 
-        return this.httpClient.get<Case[]>(`${this.apiURL}/Case/GetScheduledCasesByWeek/${facilityId}/${utcStartDateOfWeek}`)
+        const casesOb = (facilityStatuses: FacilityStatus[]) => this.httpClient.get<Case[]>(`${this.apiURL}/Case/GetScheduledCasesByWeek/${facilityId}/${utcStartDateOfWeek}`)
             .pipe(retry(1), catchError(this.handleError))
             .pipe(map((cases: Case[]) => {
                 cases = cases.map(item => this.remapCase(item));
+                cases = cases.map(item => this.remapStatus(item, facilityStatuses));
                 return cases;
             }));
+
+        return facilityStatusesOb.pipe(
+            concatMap(facilityStatuses => casesOb(facilityStatuses))
+        );
+    }
+
+    getCaseStatuses(): Observable<CaseStatusDto[]> {
+        
+        return this.httpClient.get<CaseStatusDto[]>(`${this.apiURL}/Case/GetCaseStatuses`)
+            .pipe(retry(1), catchError(this.handleError));
     }
 
     save(caseForSave: Case): Observable<void> {
@@ -147,6 +175,11 @@ export class CaseService {
         item.scheduledStartTime = item.scheduledStartTime && item.scheduledStartTime?.length > 0 ? this.formatDateAndTime(item.scheduledStartTime) : '';
 
 
+        return item;
+    }
+
+    remapStatus(item: Case, facilityStatuses: FacilityStatus[]): Case {
+        item.status = facilityStatuses.find(s => s.id == item.facilityStatusId)?.status || 4;
         return item;
     }
 

@@ -66,7 +66,7 @@ public class MatthewsAppDBContext : DbContext, IMatthewsAppDBContext
 
         modelBuilder.Entity<Case>()
             .Property(c => c.FacilityStatusId)
-            .IsRequired(false);
+            .IsRequired(true);
 
         // FacilityStatus 
 

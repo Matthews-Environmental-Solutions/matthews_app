@@ -29,7 +29,7 @@
                         <div class="header-1">{{'statusCode' | translate}}</div>
                         <div class="header-2">{{'statusName' | translate}}</div>
                         <div class="header-3">{{'statusIcon' | translate}}</div>
-                        <div class="header-4">{{'startProcess' | translate}}</div>
+                        <div class="header-4">{{'generalStatus' | translate}}</div>
                         <div class="header-5"></div>
                         <ng-template matExpansionPanelContent>
                             <div class="facility-status-list">
@@ -46,7 +46,7 @@
                                         </div>
                                         <div class="item-4">
                                             <div class="facility-status-item">
-                                                {{startProcessToString(fStatus.startProcess)}}
+                                                {{caseStatusToString(fStatus.status)}}
                                             </div>
                                         </div>
                                         <div class="item-5">

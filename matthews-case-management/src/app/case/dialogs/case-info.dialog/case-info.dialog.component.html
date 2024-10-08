@@ -16,7 +16,7 @@
     <p class="dialog-header">Name:</p>
     <p class="dialog-content">{{data.firstName}} {{data.lastName}}</p>
     <p class="dialog-header">Status:</p>
-    <p class="dialog-content">{{getStatusDescription(+data.status) | async}}</p>
+    <p class="dialog-content">{{data.facilityStatusText}}</p>
     <p class="dialog-header">{{'containerType' | translate}}:</p>
     <p class="dialog-content">{{data.containerTypeText}}</p>
     <p class="dialog-header">{{'weight' | translate}}:</p>
