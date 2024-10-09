@@ -63,7 +63,7 @@
             <mat-label>{{"facility" | translate}}</mat-label>
             <mat-select formControlName="generalCaseStatus" (selectionChange)="caseStatusChanged($event)">
                 <mat-option *ngFor="let stat of generalCaseStatuses" [value]="stat.value">
-                    {{stat.name}}
+                    {{translateGeneralStatus(stat.name)}}
                 </mat-option>
             </mat-select>
         </mat-form-field>

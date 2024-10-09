@@ -97,5 +97,10 @@
         "label": "Namen",
         "placeholder": "Name eingeben"
     },
-    "generalStatus": "General status"
+    "generalStatus": "General status",
+    "UNSCHEDULED": "Nicht geplant",
+    "CREMATION_COMPLETE": "Einäscherung abgeschlossen",
+    "IN_PROGRESS": "In Bearbeitung",
+    "READY_TO_CREMATE": "Bereit zur Einäscherung",
+    "WAITING_FOR_PERMIT": "Warte auf Erlaubnis"
 }

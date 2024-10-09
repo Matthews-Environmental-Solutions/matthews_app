@@ -85,6 +85,10 @@ export class FacilityStatusDialogComponent implements OnInit {
     this.data.statusIcon = iconKey;
   }
 
+  translateGeneralStatus(statusKey: string): string {
+    return this.translate.instant(statusKey);
+  }
+
   caseStatusChanged(status :MatSelectChange){
 
   }

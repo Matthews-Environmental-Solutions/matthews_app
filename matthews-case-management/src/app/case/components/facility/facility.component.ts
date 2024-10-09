@@ -89,9 +89,10 @@ export class FacilityComponent implements OnInit {
     this.subs.unsubscribe();
   }
 
-  caseStatusToString(statusValue: number): string {
+  translateCaseStatus(statusValue: number): string {
     var status = this.generalCaseStatuses.find(gs => gs.value == statusValue);
-    return status == null ? '' : status.name;
+    var name = status == null ? '' : status.name;
+    return this.translate.instant(name);
   }
 
   backToCalendar() {

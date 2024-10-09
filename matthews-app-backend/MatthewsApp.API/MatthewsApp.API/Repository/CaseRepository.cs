@@ -186,9 +186,9 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
         DateTime todayAtMidnight = DateTime.Now.Date;
         Guid DemoFacilityId = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494");
 
-        Guid AwaitingPermissionStatus = _facilityStatusRepository.GetFirstAwaitingPermissionFacilityStatus(DemoFacilityId).FacilityId; // Awaiting documents
-        Guid CremationCompleteStatus = _facilityStatusRepository.GetCremationCompleteFacilityStatus(DemoFacilityId).FacilityId; // Cremation complete
-        Guid ReadyToCremateStatus = _facilityStatusRepository.GetReadyToCremateFacilityStatus(DemoFacilityId).FacilityId; // Ready to cremate
+        Guid AwaitingPermissionStatus = _facilityStatusRepository.GetFirstAwaitingPermissionFacilityStatus(DemoFacilityId).Id; // Awaiting documents
+        Guid CremationCompleteStatus = _facilityStatusRepository.GetCremationCompleteFacilityStatus(DemoFacilityId).Id; // Cremation complete
+        Guid ReadyToCremateStatus = _facilityStatusRepository.GetReadyToCremateFacilityStatus(DemoFacilityId).Id; // Ready to cremate
 
         var case1 = new Case
         {

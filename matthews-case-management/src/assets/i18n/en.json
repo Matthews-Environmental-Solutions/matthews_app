@@ -97,5 +97,10 @@
         "label": "Name",
         "placeholder": "Enter Name"
     },
-    "generalStatus": "General status"
+    "generalStatus": "General status",
+    "UNSCHEDULED": "Unscheduled",
+    "CREMATION_COMPLETE": "Cremation complete",
+    "IN_PROGRESS": "In progress",
+    "READY_TO_CREMATE": "Ready to cremate",
+    "WAITING_FOR_PERMIT": "Awaiting permission"
 }

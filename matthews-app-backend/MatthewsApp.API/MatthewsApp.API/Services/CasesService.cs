@@ -391,8 +391,8 @@ public class CasesService : ICasesService
                            {
                                Name = cs.ToString(),
                                Value = (int)cs
-                           });
-
+                           }).Where(cs => !cs.Name.Equals("UNSCHEDULED"));
+        
         return await Task.FromResult(caseStatuses);
     }
 
