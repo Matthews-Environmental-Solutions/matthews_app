@@ -31,6 +31,7 @@ export interface AppState {
   selectedDevice: Device;
   selectedFacility: Facility;
   deviceCases: Case[];
+  weeklyCaseCount: number;
 }
 
 @Injectable({
@@ -57,6 +58,7 @@ export class AppStoreService extends ComponentStore<AppState> {
       selectedDevice: {} as Device,
       selectedFacility: {} as Facility,
       deviceCases: [],
+      weeklyCaseCount: 0
     });
   }
 
@@ -89,6 +91,11 @@ export class AppStoreService extends ComponentStore<AppState> {
   readonly deviceCases$: Observable<Case[]> = this.select(
     (state) => state.deviceCases
   );
+
+  readonly weeklyCaseCount$: Observable<number> = this.select(
+    (state) => state.weeklyCaseCount
+  );
+  
 
   readonly scheduleVm$ = this.select(
     this.cases$,
@@ -376,6 +383,61 @@ export class AppStoreService extends ComponentStore<AppState> {
       )
     )
   );
+
+  readonly getCasesByDay = this.effect<[string, Date]>((cases$) =>
+    cases$.pipe(
+      tap(() => this.loadingService.present()),
+      switchMap(([facilityId, date]) =>
+        this.caseService.getScheduledCasesByDay(facilityId, date).then((response: Case[]) => {
+          this.updateCases(
+            response.filter(
+              (caseToFilter) =>
+                caseToFilter.scheduledFacility === facilityId &&
+                caseToFilter.isObsolete === false
+            )
+          );
+          this.loadingService.dismiss();
+        })
+      )
+    )
+  );
+
+  // readonly getCasesByWeek = this.effect<[string, Date]>((cases$) =>
+  //   cases$.pipe(
+  //     tap(() => this.loadingService.present()),
+  //     switchMap(([facilityId, date]) =>
+  //       this.caseService.getScheduledCasesByWeek(facilityId, date).then((response: Case[]) => {
+  //         this.updateCases(
+  //           response.filter(
+  //             (caseToFilter) =>
+  //               caseToFilter.scheduledFacility === facilityId &&
+  //               caseToFilter.isObsolete === false
+  //           )
+  //         );
+  //         this.loadingService.dismiss();
+  //       })
+  //     )
+  //   )
+  // );
+
+  readonly getCasesByWeek = this.effect<[string, Date]>((cases$) =>
+    cases$.pipe(
+      tap(() => this.loadingService.present()),
+      switchMap(([facilityId, date]) =>
+        this.caseService.getScheduledCasesByWeek(facilityId, date).then((response: Case[]) => {
+          const filteredCases = response.filter(
+            (caseToFilter) =>
+              caseToFilter.scheduledFacility === facilityId &&
+              caseToFilter.isObsolete === false
+          );
+          this.updateCases(filteredCases);
+          this.patchState({ weeklyCaseCount: filteredCases.length }); // Update the count in state
+          this.loadingService.dismiss();
+        })
+      )
+    )
+  );
+  
 
   readonly getCasesForDevice = this.effect<string>((cases$) =>
     cases$.pipe(

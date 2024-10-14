@@ -2,11 +2,15 @@ import { Injectable } from '@angular/core';
 import { AuthHttpService } from '../core/auth-http.service';
 import { Case } from './case';
 import { environment } from '../../environments/environment';
+import { HttpClient } from '@microsoft/signalr';
+import { Observable } from 'rxjs';
+import { catchError, map, retry } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CaseService {
+
 
   constructor(private httpService: AuthHttpService) {
   }
@@ -50,4 +54,25 @@ export class CaseService {
     const resetDemoUrl = `${environment.apiUrl}/Case/ResetDemo`;
     return this.httpService.request<boolean>('GET', resetDemoUrl);
   }
+
+  getScheduledCasesByDay(facilityId: string, date: Date): Promise<Case[]> {
+
+    date.setHours(0, 0, 0, 0);
+    let utcStartDate = date.toISOString();
+
+    const getCasesByDayUrl = `${environment.apiUrl}/Case/GetScheduledCasesByDay/${facilityId}/${utcStartDate}`; 
+    return this.httpService.request<Case[]>('GET', getCasesByDayUrl);
+
+  }
+
+  getScheduledCasesByWeek(facilityId: string, dateStartDateOfWeek: Date): Promise<Case[]> {
+    
+    dateStartDateOfWeek.setHours(0, 0, 0, 0);
+    let utcStartDateOfWeek = dateStartDateOfWeek.toISOString();
+
+    const getCasesByWeekUrl = `${environment.apiUrl}/Case/GetScheduledCasesByWeek/${facilityId}/${utcStartDateOfWeek}`
+    return this.httpService.request<Case[]>('GET', getCasesByWeekUrl);
+  }
+
+
 }
