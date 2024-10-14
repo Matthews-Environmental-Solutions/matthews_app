@@ -8,6 +8,8 @@ import { CaseService } from 'src/app/services/cases.service';
 import { StateService } from 'src/app/services/states.service';
 import { UserSettingService } from 'src/app/services/user-setting.service';
 import { CaseDetailsDialogComponent } from '../../dialogs/case-details/case-details.dialog.component';
+import { FacilityStatusService } from 'src/app/services/facility-status.service';
+import { FacilityStatus } from 'src/app/models/facility-status.model';
 
 
 @Component({
@@ -24,6 +26,7 @@ export class CaseCalendarDailyComponent implements OnInit {
 
   cases: Case[] = [];
   filteredCases: Case[] = [];
+  facilityStatuses: FacilityStatus[] = [];
   selectedDay!: Date;
   selectedFacilityId!: string;
   filterDeviceId: string = 'all';
@@ -41,6 +44,7 @@ export class CaseCalendarDailyComponent implements OnInit {
     private stateService: StateService,
     private userSettingService: UserSettingService,
     public dialog: MatDialog,
+    private facilityStatusService: FacilityStatusService,
     private router: Router) {
   }
 
@@ -56,6 +60,10 @@ export class CaseCalendarDailyComponent implements OnInit {
 
     this.subs.add(this.stateService.selectedFacilityId$.subscribe(f => {
       this.selectedFacilityId = f;
+      if(f.length > 1)
+        this.facilityStatusService.getAllStatusesByFacility(f).subscribe(fStatuses => {
+          this.facilityStatuses = fStatuses;
+        })
     }));
 
     this.subs.add(this.stateService.selectedDate$.subscribe(d => {
@@ -149,34 +157,14 @@ export class CaseCalendarDailyComponent implements OnInit {
     this.router.navigate([`case/${caseId}`]);
   }
 
-  getIconName(status: number): string {
-    switch (status) {
-      case 1:
-        return 'check_circle';
-      case 2:
-        return 'local_fire_department';
-      case 3:
-        return 'arrow_circle_right';
-      case 4:
-        return 'hourglass_top';
-      default:
-        return '';
-    }
+  getIcon(facilityStatus: string | undefined): string {
+    const statusObj = this.facilityStatuses.find(status => status.id === facilityStatus) ?? undefined;
+    return statusObj ? statusObj.statusIcon : '';
   }
 
-  getStatusDescription(status: number): Observable<string> {
-    switch (status) {
-      case 1:
-        return this.translate.get('cremationComplete').pipe(take(1));
-      case 2:
-        return this.translate.get('inProgress').pipe(take(1));
-      case 3:
-        return this.translate.get('readyToCremate').pipe(take(1));
-      case 4:
-        return this.translate.get('waitingForPermit').pipe(take(1));
-      default:
-        return of('');
-    }
+  getStatusDescription(facilityStatus: string | undefined): string {
+    const statusObj = this.facilityStatuses.find(status => status.id === facilityStatus) ?? undefined;
+    return statusObj ? statusObj.statusName : '';
   }
 
   isEmptyString = (data: string): boolean => typeof data === "string" && data.trim().length == 0;
@@ -196,4 +184,10 @@ export class CaseCalendarDailyComponent implements OnInit {
         }
       });
   }
+
+  getGeneralCaseStatus(facilityStatusId: string): number {
+    let status = this.facilityStatuses.find(s => s.id == facilityStatusId);
+    return status ? status.status : NaN;
+  }
+
 }

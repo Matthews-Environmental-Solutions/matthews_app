@@ -290,15 +290,21 @@ public class CaseMqttService : IHostedService
                     StartCasePayloadDto payload = JsonSerializer.Deserialize<StartCasePayloadDto>(receivedMessage);
                     StartCaseDto startCase = JsonSerializer.Deserialize<StartCaseDto>(payload.CaseStart);
 
-                    Tuple<Case, bool> response = await _casesService.UpdateCaseWhenCaseStart(startCase);
-
-                    // if LOADED_ID was empty, we will create it and will send back to Flexy
-                    if (response.Item2)
+                    try
                     {
-                        IMqttClient client = FindClientByClientId(e.ClientId);
-                        string topic = e.ApplicationMessage.Topic;
-                        var topicSegmentsList = topic.Split("/");
-                        SendCaseIdToFlexy(client, response.Item1, $"{topicSegmentsList[0]}/{topicSegmentsList[1]}");
+                        Tuple<Case, bool> response = await _casesService.UpdateCaseWhenCaseStart(startCase);
+
+                        // if LOADED_ID was empty, we will create it and will send back to Flexy
+                        if (response.Item2)
+                        {
+                            IMqttClient client = FindClientByClientId(e.ClientId);
+                            string topic = e.ApplicationMessage.Topic;
+                            var topicSegmentsList = topic.Split("/");
+                            SendCaseIdToFlexy(client, response.Item1, $"{topicSegmentsList[0]}/{topicSegmentsList[1]}");
+                        }
+                    }
+                    catch (Exception)
+                    {                       
                     }
                 }
 

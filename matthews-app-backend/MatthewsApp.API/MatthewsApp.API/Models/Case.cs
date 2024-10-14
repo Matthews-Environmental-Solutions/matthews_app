@@ -41,10 +41,7 @@ public class Case : BaseEntity
 
     public int Age { get; set; }
 
-    [Required]
-    public CaseStatus Status { get; set; } = CaseStatus.UNSCHEDULED;
-
-
+  
 
 
     [Column(TypeName = "uniqueidentifier")]
@@ -87,9 +84,9 @@ public class Case : BaseEntity
 
     public string Electricity { get; set; }
 
-
-    public Guid? FacilityStatusId { get; set; }
-    public FacilityStatus? FacilityStatus { get; set; }
+    [Required]
+    public Guid FacilityStatusId { get; set; }
+    public FacilityStatus FacilityStatus { get; set; }
 
     [Column(TypeName = "nvarchar(256)")]
     public string? PhysicalId { get; set; }

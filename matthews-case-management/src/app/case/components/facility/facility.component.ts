@@ -12,6 +12,8 @@ import { WfactorySnackBarService } from 'src/app/components/wfactory-snack-bar/w
 import { TranslateService } from '@ngx-translate/core';
 import { DeleteFacilityStatusDialogComponent } from '../../dialogs/delete-facility-status/delete-facility-status.dialog.component';
 import { StateService } from 'src/app/services/states.service';
+import { CaseService } from 'src/app/services/cases.service';
+import { CaseStatusDto } from 'src/app/models/case-status-dto.model';
 
 @Component({
   selector: 'app-facility',
@@ -29,6 +31,7 @@ export class FacilityComponent implements OnInit {
   selectedFacility: Facility = { id: this.GUID_EMPTY, name: '', icon: '' };
   facilityStatuses!: FacilityStatus[];
   selectedStatusForEdit: FacilityStatus = new FacilityStatus();
+  generalCaseStatuses: CaseStatusDto[] = [];
 
   private subs = new Subscription();
 
@@ -39,6 +42,7 @@ export class FacilityComponent implements OnInit {
     private _shackBar: WfactorySnackBarService,
     private translate: TranslateService,
     private stateService: StateService,
+    private caseService: CaseService,
     public dialog: MatDialog) {
     this.subs.add(this.i4connectedService.getSites().subscribe(data => {
       this.facilitiesDataSource = new MatTableDataSource<Facility>(data);
@@ -78,14 +82,17 @@ export class FacilityComponent implements OnInit {
 
   ngOnInit(): void {
     console.log(this.stateService.getUserDetails());
+    this.caseService.getCaseStatuses().subscribe(statuses => this.generalCaseStatuses = statuses);
   }
 
   ngOnDestroy(): void {
     this.subs.unsubscribe();
   }
 
-  startProcessToString(start: boolean): string {
-    return start ? this.translate.instant('yes') : this.translate.instant('no');
+  translateCaseStatus(statusValue: number): string {
+    var status = this.generalCaseStatuses.find(gs => gs.value == statusValue);
+    var name = status == null ? '' : status.name;
+    return this.translate.instant(name);
   }
 
   backToCalendar() {

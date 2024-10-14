@@ -1,10 +1,13 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatSelectChange } from '@angular/material/select';
 import { TranslateService } from '@ngx-translate/core';
 import { AuthService } from 'src/app/auth/auth.service';
+import { CaseStatusDto } from 'src/app/models/case-status-dto.model';
 import { FacilityStatus } from 'src/app/models/facility-status.model';
 import { Icon } from 'src/app/models/icon.model';
+import { CaseService } from 'src/app/services/cases.service';
 import { FacilityStatusService } from 'src/app/services/facility-status.service';
 
 @Component({
@@ -18,12 +21,14 @@ export class FacilityStatusDialogComponent implements OnInit {
   title!: string;
   statusForm: FormGroup;
   icons: Icon[] = [];
+  generalCaseStatuses: CaseStatusDto[] = [];
 
   constructor(
     public dialogRef: MatDialogRef<FacilityStatusDialogComponent>,
     private translate: TranslateService,
     private authService: AuthService,
     private facilityStatusService: FacilityStatusService,
+    private caseService: CaseService,
     @Inject(MAT_DIALOG_DATA) public data: FacilityStatus) {
 
 /**
@@ -42,7 +47,7 @@ export class FacilityStatusDialogComponent implements OnInit {
         statusCode: new FormControl(data.statusCode, [Validators.required, Validators.pattern("^[0-9]*$"), Validators.maxLength(4)]),
         statusName: new FormControl(data.statusName, [Validators.required]),
         statusIcon: new FormControl(data.statusIcon, [Validators.required]),
-        startProcess: new FormControl(data.startProcess, [Validators.required])
+        generalCaseStatus: new FormControl(data.status, [Validators.required]),
       });
 
 
@@ -52,6 +57,7 @@ export class FacilityStatusDialogComponent implements OnInit {
     console.log('data', this.data);
     this.title = this.data.id == this.GUID_EMPTY ? this.translate.instant('addNewFacilityStatus') : this.translate.instant('editFacilityStatus');
     this.facilityStatusService.getIconsFromJsonFile().subscribe(icons => this.icons = icons);
+    this.caseService.getCaseStatuses().subscribe(statuses => this.generalCaseStatuses = statuses);
   }
 
   onNoClick(): void {
@@ -70,13 +76,21 @@ export class FacilityStatusDialogComponent implements OnInit {
     this.data.statusCode = this.statusForm.get('statusCode')?.value;
     this.data.statusName = this.statusForm.get('statusName')?.value;
     this.data.statusIcon = this.statusForm.get('statusIcon')?.value;
-    this.data.startProcess = this.statusForm.get('startProcess')?.value;
+    this.data.status = this.statusForm.get('generalCaseStatus')?.value;
     this.dialogRef.close(this.data);
   }
 
   onIconClick(iconKey: string) {
     this.statusForm.get('statusIcon')?.setValue(iconKey);
     this.data.statusIcon = iconKey;
+  }
+
+  translateGeneralStatus(statusKey: string): string {
+    return this.translate.instant(statusKey);
+  }
+
+  caseStatusChanged(status :MatSelectChange){
+
   }
 
   formatDate(date: Date): string {

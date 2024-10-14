@@ -1,4 +1,5 @@
 ﻿using MatthewsApp.API.Dtos;
+using MatthewsApp.API.Enums;
 using MatthewsApp.API.Models;
 using System;
 using System.Collections.Generic;
@@ -26,7 +27,7 @@ public static class FacilityStatusMapper
             entity.StatusCode,
             entity.StatusName,
             entity.StatusIcon,
-            entity.StartProcess
+            (int)entity.Status
         );
     }
 
@@ -48,7 +49,7 @@ public static class FacilityStatusMapper
             StatusCode = dto.StatusCode,
             StatusName = dto.StatusName,
             StatusIcon = dto.StatusIcon,
-            StartProcess = dto.StartProcess
+            Status = (CaseStatus)dto.Status
         };
     }
 

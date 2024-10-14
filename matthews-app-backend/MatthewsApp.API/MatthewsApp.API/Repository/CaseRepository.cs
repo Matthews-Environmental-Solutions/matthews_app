@@ -18,9 +18,11 @@ namespace MatthewsApp.API.Repository;
 
 public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
 {
+    private readonly IFacilityStatusRepository _facilityStatusRepository;
 
-    public CaseRepository(IMatthewsAppDBContext context) : base(context) 
+    public CaseRepository(IMatthewsAppDBContext context, IFacilityStatusRepository facilityStatusRepository) : base(context)
     {
+        _facilityStatusRepository = facilityStatusRepository;
     }
 
     public Case GetById (Guid id)
@@ -52,10 +54,11 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
 
     public async Task<Case> GetNextCaseForDevice(Guid deviceId)
     {
-        IEnumerable<Case> cases = await _dataContext.Cases.ToArrayAsync();
+        IEnumerable<Case> cases = await _dataContext.Cases.Include(c => c.FacilityStatus).ToArrayAsync();
+
         return cases.Where(c => 
                 c.ScheduledDevice.Equals(deviceId)
-                && c.Status == CaseStatus.READY_TO_CREMATE
+                && c.FacilityStatus.Status == CaseStatus.READY_TO_CREMATE
                 && c.IsObsolete == false
             )
             .OrderBy(c => c.ScheduledStartTime)
@@ -77,7 +80,6 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
         return cases.Where(c => 
              (
                 c.ScheduledStartTime < DateTime.MinValue.AddDays(100) 
-                || c.Status == CaseStatus.UNSCHEDULED
                 || c.ScheduledFacility == Guid.Empty
                 || c.ScheduledDevice == Guid.Empty
              )
@@ -117,14 +119,14 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
 
     public async Task<IEnumerable<Case>> GetFirst20ScheduledCases(Guid scheduledDeviceId)
     {
-        IEnumerable<Case> cases = await _dataContext.Cases.ToArrayAsync();
+        IEnumerable<Case> cases = await _dataContext.Cases.Include(c => c.FacilityStatus).ToArrayAsync();
         return cases.Where(c =>
             c.IsObsolete == false
             && c.ScheduledStartTime.HasValue
             && c.ScheduledStartTime > DateTime.MinValue.AddDays(100)
             && !c.ScheduledFacility.Equals(Guid.Empty)
             && c.ScheduledDevice.Equals(scheduledDeviceId)
-            && c.Status == CaseStatus.READY_TO_CREMATE
+            && c.FacilityStatus.Status == CaseStatus.READY_TO_CREMATE
             ).ToList().OrderBy(c => c.ScheduledStartTime).Take(20);
     }
 
@@ -144,21 +146,21 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
 
     public async Task<IEnumerable<Case>> GetCasesByFacility(Guid facilityId)
     {
-        IEnumerable<Case> cases = await _dataContext.Cases.ToArrayAsync();
+        IEnumerable<Case> cases = await _dataContext.Cases.Include(c => c.FacilityStatus).ToArrayAsync();
         return cases.Where(c =>
             c.IsObsolete == false
             && c.ScheduledFacility.Equals(facilityId)
-            && (c.Status == CaseStatus.WAITING_FOR_PERMIT || c.Status == CaseStatus.UNSCHEDULED || c.Status == CaseStatus.READY_TO_CREMATE)
+            && (c.FacilityStatus.Status == CaseStatus.WAITING_FOR_PERMIT || c.FacilityStatus.Status == CaseStatus.UNSCHEDULED || c.FacilityStatus.Status == CaseStatus.READY_TO_CREMATE)
             ).ToList();
     }
 
     public async Task<IEnumerable<Case>> GetReadyCasesByDevice(Guid deviceId)
     {
-        IEnumerable<Case> cases = await _dataContext.Cases.ToArrayAsync();
+        IEnumerable<Case> cases = await _dataContext.Cases.Include(c => c.FacilityStatus).ToArrayAsync();
         return cases.Where(c =>
             c.IsObsolete == false
             && c.ScheduledDevice.Equals(deviceId)
-            && c.Status == CaseStatus.READY_TO_CREMATE
+            && c.FacilityStatus.Status == CaseStatus.READY_TO_CREMATE
             ).ToList();
     }
 
@@ -182,6 +184,11 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
     public Task SeedDbForDemo(Guid deviceId)
     {
         DateTime todayAtMidnight = DateTime.Now.Date;
+        Guid DemoFacilityId = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494");
+
+        Guid AwaitingPermissionStatus = _facilityStatusRepository.GetFirstAwaitingPermissionFacilityStatus(DemoFacilityId).Id; // Awaiting documents
+        Guid CremationCompleteStatus = _facilityStatusRepository.GetCremationCompleteFacilityStatus(DemoFacilityId).Id; // Cremation complete
+        Guid ReadyToCremateStatus = _facilityStatusRepository.GetReadyToCremateFacilityStatus(DemoFacilityId).Id; // Ready to cremate
 
         var case1 = new Case
         {
@@ -198,7 +205,6 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ContainerType = ContainerType.CARDBOARD,
             ContainerSize = ContainerSize.BARIATRIC,
             Age = 64,
-            Status = CaseStatus.READY_TO_CREMATE,
             ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
             ScheduledDevice = deviceId,
             ScheduledDeviceAlias = "Device DEMO",
@@ -207,7 +213,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             PerformedBy = "Demo User",
             Fuel = String.Empty,
             Electricity = String.Empty,
-            FacilityStatusId = Guid.Parse("ada13916-8972-4eff-b2a7-b1d6b48c9191") // Ready to cremate
+            FacilityStatusId = ReadyToCremateStatus
         };
         Create(case1);
 
@@ -226,7 +232,6 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ContainerType = ContainerType.CARDBOARD,
             ContainerSize = ContainerSize.STANDARD,
             Age = 63,
-            Status = CaseStatus.WAITING_FOR_PERMIT,
             ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
             ScheduledDevice = deviceId,
             ScheduledDeviceAlias = "Device DEMO",
@@ -235,7 +240,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             PerformedBy = "Demo User",
             Fuel = String.Empty,
             Electricity = String.Empty,
-            FacilityStatusId = Guid.Parse("a9366ef0-acf8-44a3-b955-b66a3266b090") // Awaiting documents
+            FacilityStatusId = AwaitingPermissionStatus
         };
         Create(case2);
 
@@ -254,7 +259,6 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ContainerType = ContainerType.HARDWOOD,
             ContainerSize = ContainerSize.STANDARD,
             Age = 91,
-            Status = CaseStatus.WAITING_FOR_PERMIT,
             ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
             ScheduledDevice = deviceId,
             ScheduledDeviceAlias = "Device DEMO",
@@ -263,7 +267,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             PerformedBy = "Demo User",
             Fuel = String.Empty,
             Electricity = String.Empty,
-            FacilityStatusId = Guid.Parse("ada13916-8972-4eff-b2a7-b1d6b48c9191") // Ready to cremate
+            FacilityStatusId = AwaitingPermissionStatus
         };
         Create(case3);
 
@@ -283,7 +287,6 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ContainerType = ContainerType.CARDBOARD,
             ContainerSize = ContainerSize.STANDARD,
             Age = 67,
-            Status = CaseStatus.WAITING_FOR_PERMIT,
             ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
             ScheduledDevice = deviceId,
             ScheduledDeviceAlias = "Device DEMO",
@@ -292,7 +295,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             PerformedBy = "Demo User",
             Fuel = String.Empty,
             Electricity = String.Empty,
-            FacilityStatusId = Guid.Parse("a9366ef0-acf8-44a3-b955-b66a3266b090") // Awaiting documents
+            FacilityStatusId = AwaitingPermissionStatus
         };
         Create(case4);
 
@@ -310,7 +313,6 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ContainerType = ContainerType.MDF_PARTICLE_BOARD,
             ContainerSize = ContainerSize.INFANT,
             Age = 5,
-            Status = CaseStatus.WAITING_FOR_PERMIT,
             ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
             ScheduledDevice = deviceId,
             ScheduledDeviceAlias = "Device DEMO",
@@ -319,7 +321,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             PerformedBy = "Demo User",
             Fuel = String.Empty,
             Electricity = String.Empty,
-            FacilityStatusId = Guid.Parse("a9366ef0-acf8-44a3-b955-b66a3266b090") // Awaiting documents
+            FacilityStatusId = AwaitingPermissionStatus
         };
         Create(case5);
 
@@ -337,7 +339,6 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ContainerType = ContainerType.HARDWOOD,
             ContainerSize = ContainerSize.STANDARD,
             Age = 55,
-            Status = CaseStatus.READY_TO_CREMATE,
             ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
             ScheduledDevice = deviceId,
             ScheduledDeviceAlias = "Device DEMO",
@@ -346,7 +347,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             PerformedBy = "Demo User",
             Fuel = String.Empty,
             Electricity = String.Empty,
-            FacilityStatusId = Guid.Parse("ada13916-8972-4eff-b2a7-b1d6b48c9191") // Ready to cremate
+            FacilityStatusId = ReadyToCremateStatus
         };
         Create(case6);
 
@@ -364,7 +365,6 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ContainerType = ContainerType.CARDBOARD,
             ContainerSize = ContainerSize.STANDARD,
             Age = 67,
-            Status = CaseStatus.READY_TO_CREMATE,
             ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
             ScheduledDevice = deviceId,
             ScheduledDeviceAlias = "Device DEMO",
@@ -373,7 +373,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             PerformedBy = "Demo User",
             Fuel = String.Empty,
             Electricity = String.Empty,
-            FacilityStatusId = Guid.Parse("ada13916-8972-4eff-b2a7-b1d6b48c9191") // Ready to cremate
+            FacilityStatusId = ReadyToCremateStatus
         };
         Create(case7);
 
@@ -391,7 +391,6 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ContainerType = ContainerType.CARDBOARD,
             ContainerSize = ContainerSize.STANDARD,
             Age = 65,
-            Status = CaseStatus.WAITING_FOR_PERMIT,
             ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
             ScheduledDevice = deviceId,
             ScheduledDeviceAlias = "Device DEMO",
@@ -400,7 +399,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             PerformedBy = "Demo User",
             Fuel = String.Empty,
             Electricity = String.Empty,
-            FacilityStatusId = Guid.Parse("a9366ef0-acf8-44a3-b955-b66a3266b090") // Awaiting documents
+            FacilityStatusId = AwaitingPermissionStatus
         };
         Create(case8);
 
@@ -418,7 +417,6 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ContainerType = ContainerType.CARDBOARD,
             ContainerSize = ContainerSize.STANDARD,
             Age = 56,
-            Status = CaseStatus.WAITING_FOR_PERMIT,
             ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
             ScheduledDevice = deviceId,
             ScheduledDeviceAlias = "Device DEMO",
@@ -427,7 +425,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             PerformedBy = "Demo User",
             Fuel = String.Empty,
             Electricity = String.Empty,
-            FacilityStatusId = Guid.Parse("a9366ef0-acf8-44a3-b955-b66a3266b090") // Awaiting documents
+            FacilityStatusId = AwaitingPermissionStatus
         };
         Create(case9);
 
@@ -445,7 +443,6 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ContainerType = ContainerType.HARDWOOD,
             ContainerSize = ContainerSize.BARIATRIC,
             Age = 59,
-            Status = CaseStatus.READY_TO_CREMATE,
             ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
             ScheduledDevice = deviceId,
             ScheduledDeviceAlias = "Device DEMO",
@@ -454,7 +451,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             PerformedBy = "Demo User",
             Fuel = String.Empty,
             Electricity = String.Empty,
-            FacilityStatusId = Guid.Parse("ada13916-8972-4eff-b2a7-b1d6b48c9191") // Ready to cremate
+            FacilityStatusId = ReadyToCremateStatus
         };
         Create(case10);
 
@@ -472,7 +469,6 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ContainerType = ContainerType.BAG_SHROUD,
             ContainerSize = ContainerSize.STANDARD,
             Age = 75,
-            Status = CaseStatus.READY_TO_CREMATE,
             ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
             ScheduledDevice = deviceId,
             ScheduledDeviceAlias = "Device DEMO",
@@ -481,7 +477,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             PerformedBy = "Demo User",
             Fuel = String.Empty,
             Electricity = String.Empty,
-            FacilityStatusId = Guid.Parse("ada13916-8972-4eff-b2a7-b1d6b48c9191") // Ready to cremate
+            FacilityStatusId = ReadyToCremateStatus
         };
         Create(case11);
 
@@ -499,7 +495,6 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ContainerType = ContainerType.HARDWOOD,
             ContainerSize = ContainerSize.STANDARD,
             Age = 61,
-            Status = CaseStatus.READY_TO_CREMATE,
             ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
             ScheduledDevice = deviceId,
             ScheduledDeviceAlias = "Device DEMO",
@@ -508,7 +503,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             PerformedBy = "Demo User",
             Fuel = String.Empty,
             Electricity = String.Empty,
-            FacilityStatusId = Guid.Parse("ada13916-8972-4eff-b2a7-b1d6b48c9191") // Ready to cremate
+            FacilityStatusId = ReadyToCremateStatus
         };
         Create(case12);
 
@@ -526,7 +521,6 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ContainerType = ContainerType.CARDBOARD,
             ContainerSize = ContainerSize.STANDARD,
             Age = 81,
-            Status = CaseStatus.WAITING_FOR_PERMIT,
             ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
             ScheduledDevice = deviceId,
             ScheduledDeviceAlias = "Device DEMO",
@@ -535,7 +529,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             PerformedBy = "Demo User",
             Fuel = String.Empty,
             Electricity = String.Empty,
-            FacilityStatusId = Guid.Parse("a9366ef0-acf8-44a3-b955-b66a3266b090") // Awaiting documents
+            FacilityStatusId = AwaitingPermissionStatus
         };
         Create(case13);
 
@@ -553,7 +547,6 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ContainerType = ContainerType.CARDBOARD,
             ContainerSize = ContainerSize.STANDARD,
             Age = 67,
-            Status = CaseStatus.WAITING_FOR_PERMIT,
             ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
             ScheduledDevice = deviceId,
             ScheduledDeviceAlias = "Device DEMO",
@@ -562,7 +555,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             PerformedBy = "Demo User",
             Fuel = String.Empty,
             Electricity = String.Empty,
-            FacilityStatusId = Guid.Parse("a9366ef0-acf8-44a3-b955-b66a3266b090") // Awaiting documents
+            FacilityStatusId = AwaitingPermissionStatus
         };
         Create(case14);
 
@@ -580,7 +573,6 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ContainerType = ContainerType.BAG_SHROUD,
             ContainerSize = ContainerSize.STANDARD,
             Age = 54,
-            Status = CaseStatus.WAITING_FOR_PERMIT,
             ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
             ScheduledDevice = deviceId,
             ScheduledDeviceAlias = "Device DEMO",
@@ -589,7 +581,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             PerformedBy = "Demo User",
             Fuel = String.Empty,
             Electricity = String.Empty,
-            FacilityStatusId = Guid.Parse("f92460ab-4947-441f-9adf-5c81667fc982") // Medical device removal needed
+            FacilityStatusId = AwaitingPermissionStatus
         };
         Create(case15);
 
@@ -607,7 +599,6 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ContainerType = ContainerType.HARDWOOD,
             ContainerSize = ContainerSize.STANDARD,
             Age = 86,
-            Status = CaseStatus.WAITING_FOR_PERMIT,
             ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
             ScheduledDevice = deviceId,
             ScheduledDeviceAlias = "Device DEMO",
@@ -616,7 +607,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             PerformedBy = "Demo User",
             Fuel = String.Empty,
             Electricity = String.Empty,
-            FacilityStatusId = Guid.Parse("f92460ab-4947-441f-9adf-5c81667fc982") // Medical device removal needed
+            FacilityStatusId = AwaitingPermissionStatus
         };
         Create(case16);
 
@@ -634,7 +625,6 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ContainerType = ContainerType.CARDBOARD,
             ContainerSize = ContainerSize.STANDARD,
             Age = 86,
-            Status = CaseStatus.WAITING_FOR_PERMIT,
             ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
             ScheduledDevice = deviceId,
             ScheduledDeviceAlias = "Device DEMO",
@@ -643,7 +633,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             PerformedBy = "Demo User",
             Fuel = String.Empty,
             Electricity = String.Empty,
-            FacilityStatusId = Guid.Parse("a9366ef0-acf8-44a3-b955-b66a3266b090") // Awaiting documents
+            FacilityStatusId = AwaitingPermissionStatus
         };
         Create(case17);
 
@@ -661,7 +651,6 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ContainerType = ContainerType.CARDBOARD,
             ContainerSize = ContainerSize.STANDARD,
             Age = 84,
-            Status = CaseStatus.WAITING_FOR_PERMIT,
             ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
             ScheduledDevice = deviceId,
             ScheduledDeviceAlias = "Device DEMO",
@@ -670,10 +659,11 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             PerformedBy = "Demo User",
             Fuel = String.Empty,
             Electricity = String.Empty,
-            FacilityStatusId = Guid.Parse("a9366ef0-acf8-44a3-b955-b66a3266b090") // Awaiting documents
+            FacilityStatusId = AwaitingPermissionStatus
         };
         Create(case18);
 
+        //UNSCHEDULED
         var case19 = new Case
         {
             Id = Guid.NewGuid(),
@@ -688,7 +678,6 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ContainerType = ContainerType.BAG_SHROUD,
             ContainerSize = ContainerSize.STANDARD,
             Age = 83,
-            Status = CaseStatus.UNSCHEDULED,
             ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
             ScheduledDevice = deviceId,
             ScheduledDeviceAlias = "Device DEMO",
@@ -696,10 +685,11 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             PerformedBy = "Demo User",
             Fuel = String.Empty,
             Electricity = String.Empty,
-            FacilityStatusId = Guid.Parse("a9366ef0-acf8-44a3-b955-b66a3266b090") // Awaiting documents
+            FacilityStatusId = AwaitingPermissionStatus
         };
         Create(case19);
 
+        //UNSCHEDULED
         var case20 = new Case
         {
             Id = Guid.NewGuid(),
@@ -714,7 +704,6 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ContainerType = ContainerType.HARDWOOD,
             ContainerSize = ContainerSize.STANDARD,
             Age = 83,
-            Status = CaseStatus.UNSCHEDULED,
             ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
             ScheduledDevice = deviceId,
             ScheduledDeviceAlias = "Device DEMO",
@@ -722,10 +711,11 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             PerformedBy = "Demo User",
             Fuel = String.Empty,
             Electricity = String.Empty,
-            FacilityStatusId = Guid.Parse("ef74e5a8-06a3-4690-b4c8-dc692421c082") // New cremation case
+            FacilityStatusId = AwaitingPermissionStatus
         };
         Create(case20);
 
+        //UNSCHEDULED
         var case21 = new Case
         {
             Id = Guid.NewGuid(),
@@ -740,7 +730,6 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ContainerType = ContainerType.BAG_SHROUD,
             ContainerSize = ContainerSize.STANDARD,
             Age = 83,
-            Status = CaseStatus.UNSCHEDULED,
             ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
             ScheduledDevice = deviceId,
             ScheduledDeviceAlias = "Device DEMO",
@@ -748,10 +737,11 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             PerformedBy = "Demo User",
             Fuel = String.Empty,
             Electricity = String.Empty,
-            FacilityStatusId = Guid.Parse("a9366ef0-acf8-44a3-b955-b66a3266b090") // Awaiting documents
+            FacilityStatusId = AwaitingPermissionStatus
         };
         Create(case21);
 
+        //UNSCHEDULED
         var case22 = new Case
         {
             Id = Guid.NewGuid(),
@@ -766,7 +756,6 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ContainerType = ContainerType.CARDBOARD,
             ContainerSize = ContainerSize.STANDARD,
             Age = 72,
-            Status = CaseStatus.UNSCHEDULED,
             ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
             ScheduledDevice = deviceId,
             ScheduledDeviceAlias = "Device DEMO",
@@ -774,10 +763,11 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             PerformedBy = "Demo User",
             Fuel = String.Empty,
             Electricity = String.Empty,
-            FacilityStatusId = Guid.Parse("a9366ef0-acf8-44a3-b955-b66a3266b090") // Awaiting documents
+            FacilityStatusId = AwaitingPermissionStatus
         };
         Create(case22);
 
+        //UNSCHEDULED
         var case23 = new Case
         {
             Id = Guid.NewGuid(),
@@ -792,7 +782,6 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ContainerType = ContainerType.CARDBOARD,
             ContainerSize = ContainerSize.STANDARD,
             Age = 53,
-            Status = CaseStatus.UNSCHEDULED,
             ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
             ScheduledDevice = deviceId,
             ScheduledDeviceAlias = "Device DEMO",
@@ -800,10 +789,11 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             PerformedBy = "Demo User",
             Fuel = String.Empty,
             Electricity = String.Empty,
-            FacilityStatusId = Guid.Parse("a9366ef0-acf8-44a3-b955-b66a3266b090") // Awaiting documents
+            FacilityStatusId = AwaitingPermissionStatus
         };
         Create(case23);
 
+        //UNSCHEDULED
         var case24 = new Case
         {
             Id = Guid.NewGuid(),
@@ -818,7 +808,6 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ContainerType = ContainerType.HARDWOOD,
             ContainerSize = ContainerSize.STANDARD,
             Age = 92,
-            Status = CaseStatus.UNSCHEDULED,
             ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
             ScheduledDevice = deviceId,
             ScheduledDeviceAlias = "Device DEMO",
@@ -826,10 +815,11 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             PerformedBy = "Demo User",
             Fuel = String.Empty,
             Electricity = String.Empty,
-            FacilityStatusId = Guid.Parse("ef74e5a8-06a3-4690-b4c8-dc692421c082") // New cremation case
+            FacilityStatusId = AwaitingPermissionStatus
         };
         Create(case24);
 
+        //UNSCHEDULED
         var case25 = new Case
         {
             Id = Guid.NewGuid(),
@@ -844,7 +834,6 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ContainerType = ContainerType.HARDWOOD,
             ContainerSize = ContainerSize.STANDARD,
             Age = 85,
-            Status = CaseStatus.UNSCHEDULED,
             ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
             ScheduledDevice = deviceId,
             ScheduledDeviceAlias = "Device DEMO",
@@ -852,7 +841,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             PerformedBy = "Demo User",
             Fuel = String.Empty,
             Electricity = String.Empty,
-            FacilityStatusId = Guid.Parse("ef74e5a8-06a3-4690-b4c8-dc692421c082") // New cremation case
+            FacilityStatusId = AwaitingPermissionStatus
         };
         Create(case25);
 
@@ -870,7 +859,6 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ContainerType = ContainerType.CARDBOARD,
             ContainerSize = ContainerSize.BARIATRIC,
             Age = 64,
-            Status = CaseStatus.CREMATION_COMPLETE,
             ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
             ScheduledDevice = deviceId,
             ScheduledDeviceAlias = "Device DEMO",
@@ -881,7 +869,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ActualEndTime = todayAtMidnight.AddDays(-0.375),
             Fuel = String.Empty,
             Electricity = String.Empty,
-            FacilityStatusId = Guid.Parse("ef74e5a8-06a3-4690-b4c8-dc692421c082")
+            FacilityStatusId = CremationCompleteStatus
         };
         Create(case26);
 
@@ -899,7 +887,6 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ContainerType = ContainerType.CARDBOARD,
             ContainerSize = ContainerSize.STANDARD,
             Age = 63,
-            Status = CaseStatus.CREMATION_COMPLETE,
             ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
             ScheduledDevice = deviceId,
             ScheduledDeviceAlias = "Device DEMO",
@@ -910,7 +897,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ActualEndTime = todayAtMidnight.AddDays(-0.375),
             Fuel = String.Empty,
             Electricity = String.Empty,
-            FacilityStatusId = Guid.Parse("ef74e5a8-06a3-4690-b4c8-dc692421c082")
+            FacilityStatusId = CremationCompleteStatus
         };
         Create(case27);
 
@@ -928,7 +915,6 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ContainerType = ContainerType.HARDWOOD,
             ContainerSize = ContainerSize.STANDARD,
             Age = 91,
-            Status = CaseStatus.CREMATION_COMPLETE,
             ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
             ScheduledDevice = deviceId,
             ScheduledDeviceAlias = "Device DEMO",
@@ -939,7 +925,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ActualEndTime = todayAtMidnight.AddDays(-1.375),
             Fuel = String.Empty,
             Electricity = String.Empty,
-            FacilityStatusId = Guid.Parse("ef74e5a8-06a3-4690-b4c8-dc692421c082")
+            FacilityStatusId = CremationCompleteStatus
         };
         Create(case28);
 
@@ -957,7 +943,6 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ContainerType = ContainerType.CARDBOARD,
             ContainerSize = ContainerSize.STANDARD,
             Age = 67,
-            Status = CaseStatus.CREMATION_COMPLETE,
             ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
             ScheduledDevice = deviceId,
             ScheduledDeviceAlias = "Device DEMO",
@@ -968,7 +953,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ActualEndTime = todayAtMidnight.AddDays(-1.375),
             Fuel = String.Empty,
             Electricity = String.Empty,
-            FacilityStatusId = Guid.Parse("ef74e5a8-06a3-4690-b4c8-dc692421c082")
+            FacilityStatusId = CremationCompleteStatus
         };
         Create(case29);
 
@@ -986,7 +971,6 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ContainerType = ContainerType.MDF_PARTICLE_BOARD,
             ContainerSize = ContainerSize.INFANT,
             Age = 5,
-            Status = CaseStatus.CREMATION_COMPLETE,
             ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
             ScheduledDevice = deviceId,
             ScheduledDeviceAlias = "Device DEMO",
@@ -997,7 +981,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ActualEndTime = todayAtMidnight.AddDays(-1.375),
             Fuel = String.Empty,
             Electricity = String.Empty,
-            FacilityStatusId = Guid.Parse("ef74e5a8-06a3-4690-b4c8-dc692421c082")
+            FacilityStatusId = CremationCompleteStatus
         };
         Create(case30);
 
@@ -1015,7 +999,6 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ContainerType = ContainerType.HARDWOOD,
             ContainerSize = ContainerSize.STANDARD,
             Age = 55,
-            Status = CaseStatus.CREMATION_COMPLETE,
             ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
             ScheduledDevice = deviceId,
             ScheduledDeviceAlias = "Device DEMO",
@@ -1026,7 +1009,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ActualEndTime = todayAtMidnight.AddDays(-1.375),
             Fuel = String.Empty,
             Electricity = String.Empty,
-            FacilityStatusId = Guid.Parse("ef74e5a8-06a3-4690-b4c8-dc692421c082")
+            FacilityStatusId = CremationCompleteStatus
         };
         Create(case31);
 
@@ -1044,7 +1027,6 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ContainerType = ContainerType.CARDBOARD,
             ContainerSize = ContainerSize.STANDARD,
             Age = 67,
-            Status = CaseStatus.CREMATION_COMPLETE,
             ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
             ScheduledDevice = deviceId,
             ScheduledDeviceAlias = "Device DEMO",
@@ -1055,7 +1037,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ActualEndTime = todayAtMidnight.AddDays(-2.375),
             Fuel = String.Empty,
             Electricity = String.Empty,
-            FacilityStatusId = Guid.Parse("ef74e5a8-06a3-4690-b4c8-dc692421c082")
+            FacilityStatusId = CremationCompleteStatus
         };
         Create(case32);
 
@@ -1073,7 +1055,6 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ContainerType = ContainerType.CARDBOARD,
             ContainerSize = ContainerSize.STANDARD,
             Age = 65,
-            Status = CaseStatus.CREMATION_COMPLETE,
             ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
             ScheduledDevice = deviceId,
             ScheduledDeviceAlias = "Device DEMO",
@@ -1084,7 +1065,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ActualEndTime = todayAtMidnight.AddDays(-2.375),
             Fuel = String.Empty,
             Electricity = String.Empty,
-            FacilityStatusId = Guid.Parse("ef74e5a8-06a3-4690-b4c8-dc692421c082")
+            FacilityStatusId = CremationCompleteStatus
         };
         Create(case33);
 
@@ -1102,7 +1083,6 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ContainerType = ContainerType.CARDBOARD,
             ContainerSize = ContainerSize.STANDARD,
             Age = 56,
-            Status = CaseStatus.CREMATION_COMPLETE,
             ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
             ScheduledDevice = deviceId,
             ScheduledDeviceAlias = "Device DEMO",
@@ -1113,7 +1093,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ActualEndTime = todayAtMidnight.AddDays(-2.375),
             Fuel = String.Empty,
             Electricity = String.Empty,
-            FacilityStatusId = Guid.Parse("ef74e5a8-06a3-4690-b4c8-dc692421c082")
+            FacilityStatusId = CremationCompleteStatus
         };
         Create(case34);
 
@@ -1131,7 +1111,6 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ContainerType = ContainerType.HARDWOOD,
             ContainerSize = ContainerSize.BARIATRIC,
             Age = 59,
-            Status = CaseStatus.CREMATION_COMPLETE,
             ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
             ScheduledDevice = deviceId,
             ScheduledDeviceAlias = "Device DEMO",
@@ -1142,7 +1121,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ActualEndTime = todayAtMidnight.AddDays(-2.375),
             Fuel = String.Empty,
             Electricity = String.Empty,
-            FacilityStatusId = Guid.Parse("ef74e5a8-06a3-4690-b4c8-dc692421c082")
+            FacilityStatusId = CremationCompleteStatus
         };
         Create(case35);
 
@@ -1160,7 +1139,6 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ContainerType = ContainerType.BAG_SHROUD,
             ContainerSize = ContainerSize.STANDARD,
             Age = 75,
-            Status = CaseStatus.CREMATION_COMPLETE,
             ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
             ScheduledDevice = deviceId,
             ScheduledDeviceAlias = "Device DEMO",
@@ -1171,7 +1149,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ActualEndTime = todayAtMidnight.AddDays(-2.375),
             Fuel = String.Empty,
             Electricity = String.Empty,
-            FacilityStatusId = Guid.Parse("ef74e5a8-06a3-4690-b4c8-dc692421c082")
+            FacilityStatusId = CremationCompleteStatus
         };
         Create(case36);
 
@@ -1189,7 +1167,6 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ContainerType = ContainerType.HARDWOOD,
             ContainerSize = ContainerSize.STANDARD,
             Age = 61,
-            Status = CaseStatus.CREMATION_COMPLETE,
             ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
             ScheduledDevice = deviceId,
             ScheduledDeviceAlias = "Device DEMO",
@@ -1200,7 +1177,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ActualEndTime = todayAtMidnight.AddDays(-3.375),
             Fuel = String.Empty,
             Electricity = String.Empty,
-            FacilityStatusId = Guid.Parse("ef74e5a8-06a3-4690-b4c8-dc692421c082")
+            FacilityStatusId = CremationCompleteStatus
         };
         Create(case37);
 
@@ -1218,7 +1195,6 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ContainerType = ContainerType.CARDBOARD,
             ContainerSize = ContainerSize.STANDARD,
             Age = 81,
-            Status = CaseStatus.CREMATION_COMPLETE,
             ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
             ScheduledDevice = deviceId,
             ScheduledDeviceAlias = "Device DEMO",
@@ -1229,7 +1205,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ActualEndTime = todayAtMidnight.AddDays(-3.375),
             Fuel = String.Empty,
             Electricity = String.Empty,
-            FacilityStatusId = Guid.Parse("ef74e5a8-06a3-4690-b4c8-dc692421c082")
+            FacilityStatusId = CremationCompleteStatus
         };
         Create(case38);
 
@@ -1247,7 +1223,6 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ContainerType = ContainerType.CARDBOARD,
             ContainerSize = ContainerSize.STANDARD,
             Age = 67,
-            Status = CaseStatus.CREMATION_COMPLETE,
             ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
             ScheduledDevice = deviceId,
             ScheduledDeviceAlias = "Device DEMO",
@@ -1258,7 +1233,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ActualEndTime = todayAtMidnight.AddDays(-3.375),
             Fuel = String.Empty,
             Electricity = String.Empty,
-            FacilityStatusId = Guid.Parse("ef74e5a8-06a3-4690-b4c8-dc692421c082")
+            FacilityStatusId = CremationCompleteStatus
         };
         Create(case39);
 
@@ -1276,7 +1251,6 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ContainerType = ContainerType.BAG_SHROUD,
             ContainerSize = ContainerSize.STANDARD,
             Age = 54,
-            Status = CaseStatus.CREMATION_COMPLETE,
             ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
             ScheduledDevice = deviceId,
             ScheduledDeviceAlias = "Device DEMO",
@@ -1287,7 +1261,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ActualEndTime = todayAtMidnight.AddDays(-3.375),
             Fuel = String.Empty,
             Electricity = String.Empty,
-            FacilityStatusId = Guid.Parse("ef74e5a8-06a3-4690-b4c8-dc692421c082")
+            FacilityStatusId = CremationCompleteStatus
         };
         Create(case40);
 
@@ -1305,7 +1279,6 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ContainerType = ContainerType.HARDWOOD,
             ContainerSize = ContainerSize.STANDARD,
             Age = 86,
-            Status = CaseStatus.CREMATION_COMPLETE,
             ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
             ScheduledDevice = deviceId,
             ScheduledDeviceAlias = "Device DEMO",
@@ -1316,7 +1289,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ActualEndTime = todayAtMidnight.AddDays(-3.375),
             Fuel = String.Empty,
             Electricity = String.Empty,
-            FacilityStatusId = Guid.Parse("ef74e5a8-06a3-4690-b4c8-dc692421c082")
+            FacilityStatusId = CremationCompleteStatus
         };
         Create(case41);
 
@@ -1334,7 +1307,6 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ContainerType = ContainerType.CARDBOARD,
             ContainerSize = ContainerSize.STANDARD,
             Age = 86,
-            Status = CaseStatus.CREMATION_COMPLETE,
             ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
             ScheduledDevice = deviceId,
             ScheduledDeviceAlias = "Device DEMO",
@@ -1345,7 +1317,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ActualEndTime = todayAtMidnight.AddDays(-4.375),
             Fuel = String.Empty,
             Electricity = String.Empty,
-            FacilityStatusId = Guid.Parse("ef74e5a8-06a3-4690-b4c8-dc692421c082")
+            FacilityStatusId = CremationCompleteStatus
         };
         Create(case42);
 
@@ -1363,7 +1335,6 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ContainerType = ContainerType.CARDBOARD,
             ContainerSize = ContainerSize.STANDARD,
             Age = 84,
-            Status = CaseStatus.CREMATION_COMPLETE,
             ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
             ScheduledDevice = deviceId,
             ScheduledDeviceAlias = "Device DEMO",
@@ -1374,7 +1345,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ActualEndTime = todayAtMidnight.AddDays(-4.375),
             Fuel = String.Empty,
             Electricity = String.Empty,
-            FacilityStatusId = Guid.Parse("ef74e5a8-06a3-4690-b4c8-dc692421c082")
+            FacilityStatusId = CremationCompleteStatus
         };
         Create(case43);
 
@@ -1392,7 +1363,6 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ContainerType = ContainerType.BAG_SHROUD,
             ContainerSize = ContainerSize.STANDARD,
             Age = 83,
-            Status = CaseStatus.CREMATION_COMPLETE,
             ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
             ScheduledDevice = deviceId,
             ScheduledDeviceAlias = "Device DEMO",
@@ -1403,7 +1373,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ActualEndTime = todayAtMidnight.AddDays(-4.375),
             Fuel = String.Empty,
             Electricity = String.Empty,
-            FacilityStatusId = Guid.Parse("ef74e5a8-06a3-4690-b4c8-dc692421c082")
+            FacilityStatusId = CremationCompleteStatus
         };
         Create(case44);
 
@@ -1421,7 +1391,6 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ContainerType = ContainerType.HARDWOOD,
             ContainerSize = ContainerSize.STANDARD,
             Age = 83,
-            Status = CaseStatus.CREMATION_COMPLETE,
             ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
             ScheduledDevice = deviceId,
             ScheduledDeviceAlias = "Device DEMO",
@@ -1432,7 +1401,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ActualEndTime = todayAtMidnight.AddDays(-4.375),
             Fuel = String.Empty,
             Electricity = String.Empty,
-            FacilityStatusId = Guid.Parse("ef74e5a8-06a3-4690-b4c8-dc692421c082")
+            FacilityStatusId = CremationCompleteStatus
         };
         Create(case45);
 
@@ -1450,7 +1419,6 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ContainerType = ContainerType.BAG_SHROUD,
             ContainerSize = ContainerSize.STANDARD,
             Age = 83,
-            Status = CaseStatus.CREMATION_COMPLETE,
             ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
             ScheduledDevice = deviceId,
             ScheduledDeviceAlias = "Device DEMO",
@@ -1461,7 +1429,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ActualEndTime = todayAtMidnight.AddDays(-5.375),
             Fuel = String.Empty,
             Electricity = String.Empty,
-            FacilityStatusId = Guid.Parse("ef74e5a8-06a3-4690-b4c8-dc692421c082")
+            FacilityStatusId = CremationCompleteStatus
         };
         Create(case46);
 
@@ -1479,7 +1447,6 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ContainerType = ContainerType.CARDBOARD,
             ContainerSize = ContainerSize.STANDARD,
             Age = 72,
-            Status = CaseStatus.CREMATION_COMPLETE,
             ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
             ScheduledDevice = deviceId,
             ScheduledDeviceAlias = "Device DEMO",
@@ -1490,7 +1457,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ActualEndTime = todayAtMidnight.AddDays(-5.375),
             Fuel = String.Empty,
             Electricity = String.Empty,
-            FacilityStatusId = Guid.Parse("ef74e5a8-06a3-4690-b4c8-dc692421c082")
+            FacilityStatusId = CremationCompleteStatus
         };
         Create(case47);
 
@@ -1508,7 +1475,6 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ContainerType = ContainerType.CARDBOARD,
             ContainerSize = ContainerSize.STANDARD,
             Age = 53,
-            Status = CaseStatus.CREMATION_COMPLETE,
             ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
             ScheduledDevice = deviceId,
             ScheduledDeviceAlias = "Device DEMO",
@@ -1519,7 +1485,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ActualEndTime = todayAtMidnight.AddDays(-5.375),
             Fuel = String.Empty,
             Electricity = String.Empty,
-            FacilityStatusId = Guid.Parse("ef74e5a8-06a3-4690-b4c8-dc692421c082")
+            FacilityStatusId = CremationCompleteStatus
         };
         Create(case48);
 
@@ -1537,7 +1503,6 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ContainerType = ContainerType.HARDWOOD,
             ContainerSize = ContainerSize.STANDARD,
             Age = 92,
-            Status = CaseStatus.CREMATION_COMPLETE,
             ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
             ScheduledDevice = deviceId,
             ScheduledDeviceAlias = "Device DEMO",
@@ -1548,7 +1513,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ActualEndTime = todayAtMidnight.AddDays(-5.375),
             Fuel = String.Empty,
             Electricity = String.Empty,
-            FacilityStatusId = Guid.Parse("ef74e5a8-06a3-4690-b4c8-dc692421c082")
+            FacilityStatusId = CremationCompleteStatus
         };
         Create(case49);
 
@@ -1566,7 +1531,6 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ContainerType = ContainerType.HARDWOOD,
             ContainerSize = ContainerSize.STANDARD,
             Age = 85,
-            Status = CaseStatus.CREMATION_COMPLETE,
             ScheduledFacility = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494"),
             ScheduledDevice = deviceId,
             ScheduledDeviceAlias = "Device DEMO",
@@ -1577,7 +1541,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ActualEndTime = todayAtMidnight.AddDays(-5.375),
             Fuel = String.Empty,
             Electricity = String.Empty,
-            FacilityStatusId = Guid.Parse("ef74e5a8-06a3-4690-b4c8-dc692421c082")
+            FacilityStatusId = CremationCompleteStatus
         };
         Create(case50);
 

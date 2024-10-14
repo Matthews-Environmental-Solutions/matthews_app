@@ -15,7 +15,7 @@ public record FacilityStatusDto(
     int StatusCode,
     string StatusName,
     string? StatusIcon,
-    bool StartProcess
+    int Status
     )
 {
 }

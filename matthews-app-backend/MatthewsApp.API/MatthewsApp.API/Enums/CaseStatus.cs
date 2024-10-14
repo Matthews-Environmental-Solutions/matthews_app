@@ -7,5 +7,6 @@ public enum CaseStatus
     CREMATION_COMPLETE,
     IN_PROGRESS,
     READY_TO_CREMATE,
-    WAITING_FOR_PERMIT
+    WAITING_FOR_PERMIT 
+        //change name to AWAITING_PERMITION
 }

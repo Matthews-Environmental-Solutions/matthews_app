@@ -58,9 +58,9 @@
                         <div class="case-status"
                             [ngClass]="{'case-status-color-green': case.status == 1, 'case-status-color-red': case.status == 2, 'case-status-color-blue': case.status == 3, 'case-status-color-orange': case.status == 4}">
                             <mat-icon class="material-symbols-outlined ">
-                                {{getIconName(+case.status)}}
+                                {{getIcon(case.facilityStatusId)}}
                             </mat-icon>
-                            <ng-container *ngIf="(getStatusDescription(+case.status) | async ) as status">
+                            <ng-container *ngIf="getStatusDescription(case.facilityStatusId) as status">
                                 <span>{{status}}</span>
                             </ng-container>
                         </div>

@@ -30,9 +30,8 @@ public record CaseDto(
     string ScheduledDeviceAlias,
     Guid? ScheduledFacility, // Guid
     DateTime? ScheduledStartTime, // DateTime
-    CaseStatus Status,
     double Weight, // double
-    Guid? FacilityStatusId, // Guid
+    Guid FacilityStatusId, // Guid
     string facilityStatusText,
     string? PhysicalId
     )

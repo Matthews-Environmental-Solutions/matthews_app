@@ -203,32 +203,8 @@ export class CaseCalendarWeeklyComponent implements OnInit {
   }
 
   getIcon(facilityStatus: string | undefined): string {
-
-    const statusObj = this.facilityStatuses.find(status => status.id === facilityStatus);
-    const statusName = statusObj ? statusObj.statusName : facilityStatus;
-
-    switch (statusName) {
-      case 'Prepare documentation':
-        return 'import_contacts';
-      case 'Medical Device Removal Needed':
-        return 'cyclone';
-      case 'Awaiting Documents':
-        return 'import_contacts';
-      case 'New Cremation Case':
-        return 'hive';
-      case 'Ready to Cremate':
-        return 'change_circle';
-      case 'Cremation in Progress':
-        return 'whatshot';
-      case 'Cremation Complete':
-        return 'verified_user';
-      case 'Its ready':
-        return 'electric_bolt';
-      case undefined:
-        return '';
-      default:
-        return '';
-    }
+    const statusObj = this.facilityStatuses.find(status => status.id === facilityStatus) ?? undefined;
+    return statusObj ? statusObj.statusIcon : '';
   }
 
   formatDate(date: Date): string {

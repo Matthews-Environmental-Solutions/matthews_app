@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { FormGroup, FormControl, FormBuilder, Validators } from '@angular/forms';
 import { isValid } from 'date-fns'
 
-import { CaseStatus } from 'src/app/models/case-status.model';
+import { CaseStatusDto } from 'src/app/models/case-status-dto.model';
 import { Case } from 'src/app/models/case.model';
 import { ContainerType } from 'src/app/models/container-type.model';
 import { ContainerSize } from 'src/app/models/load-size.model';
@@ -113,7 +113,7 @@ export class CaseAddEditComponent implements OnInit {
       this.caseForm.get('facility')?.setValue(f);
     }));
 
-    this.twelvehour = this.userSettingService.getUserSettingLastValue().timeformat == '12' ?? false;
+    this.twelvehour = this.userSettingService.getUserSettingLastValue().timeformat == '12';
   }
 
   ngOnInit(): void {
@@ -235,21 +235,21 @@ export class CaseAddEditComponent implements OnInit {
     this.case.facilityStatusId = (this.caseForm.get('facilityStatus')?.value == '') ? this.GUID_EMPTY : this.caseForm.get('facilityStatus')?.value;
     this.case.physicalId = this.caseForm.get('physicalId')?.value;
 
-    // set STATUS to UNSCHEDULED
-    if (this.case.scheduledDevice == this.GUID_EMPTY || this.case.scheduledStartTime == null || this.case.scheduledStartTime == this.DATETIME_MIN || this.case.scheduledFacility == this.GUID_EMPTY) {
-      this.case.status = this.UNSCHEDULED; // 0
-    }
+    // // set STATUS to UNSCHEDULED
+    // if (this.case.scheduledDevice == this.GUID_EMPTY || this.case.scheduledStartTime == null || this.case.scheduledStartTime == this.DATETIME_MIN || this.case.scheduledFacility == this.GUID_EMPTY) {
+    //   this.case.status = this.UNSCHEDULED; // 0
+    // }
 
-    // set STATUS to WAITING_FOR_PERMIT
-    if (this.case.scheduledDevice != this.GUID_EMPTY && this.case.scheduledStartTime != null && this.case.scheduledStartTime != this.DATETIME_MIN && this.case.scheduledFacility != this.GUID_EMPTY) {
-      this.case.status = this.WAITING_FOR_PERMIT; // 4
+    // // set STATUS to WAITING_FOR_PERMIT
+    // if (this.case.scheduledDevice != this.GUID_EMPTY && this.case.scheduledStartTime != null && this.case.scheduledStartTime != this.DATETIME_MIN && this.case.scheduledFacility != this.GUID_EMPTY) {
+    //   this.case.status = this.WAITING_FOR_PERMIT; // 4
 
-      // set STATUS to READY_TO_CREMATE
-      var selectedFacilityStatus = this.facilityStatuses.find(fs => fs.id == this.case?.facilityStatusId);
-      if (selectedFacilityStatus?.startProcess) {
-        this.case.status = this.READY_TO_CREMATE; // 3
-      }
-    }
+    //   // set STATUS to READY_TO_CREMATE
+    //   var selectedFacilityStatus = this.facilityStatuses.find(fs => fs.id == this.case?.facilityStatusId);
+    //   if (selectedFacilityStatus?.startProcess) {
+    //     this.case.status = this.READY_TO_CREMATE; // 3
+    //   }
+    // }
 
     if (!this.case.id || this.case.id == this.GUID_EMPTY) {
       this.caseService.save(this.case).subscribe({

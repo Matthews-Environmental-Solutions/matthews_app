@@ -44,7 +44,6 @@ public static class CaseMapper
             entity.ScheduledDeviceAlias,
             entity.ScheduledFacility,
             entity.ScheduledStartTime,
-            entity.Status,
             entity.Weight,
             entity.FacilityStatusId,
             entity.FacilityStatus?.StatusName,
@@ -87,7 +86,6 @@ public static class CaseMapper
             ScheduledDeviceAlias = dto.ScheduledDeviceAlias,
             ScheduledFacility = dto.ScheduledFacility,
             ScheduledStartTime = dto.ScheduledStartTime is null ? DateTime.MinValue : dto.ScheduledStartTime,
-            Status = dto.Status,
             Weight = dto.Weight,
             FacilityStatusId = dto.FacilityStatusId,
             PhysicalId = dto.PhysicalId
