@@ -79,7 +79,7 @@
     "deleteConfirmation": "Are you sure you want to delete",
     "facility": "Facility",
     "allCases": "All cases",
-    "selectedFacilityOnly": "By selected facility",
+    "selectedFacilityOnly": "Selected facility only",
     "pickIcon": "Pick the icon",
     "showingCasesFor": "Showing cases for",
     "actualStartTime": "Actual start time",

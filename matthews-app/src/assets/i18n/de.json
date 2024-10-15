@@ -99,5 +99,8 @@
   "bypass" : "Bypass",
   "abatement" : "Minderung",
   "scheduleDate": "Plandatum",
-  "scheduleDateMissing": "Terminplandatum fehlt"
+  "scheduleDateMissing": "Terminplandatum fehlt",
+  "day": "Tag",
+  "week": "Woche",
+  "unscheduled": "Außerplanmäßig"
 }

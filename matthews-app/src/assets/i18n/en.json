@@ -99,5 +99,8 @@
   "bypass" : "Bypass",
   "abatement" : "Abatement",
   "scheduleDate": "Schedule Date",
-  "scheduleDateMissing": "Schedule Date Missing"
+  "scheduleDateMissing": "Schedule Date Missing",
+  "day": "Day",
+  "week": "Week",
+  "unscheduled": "Unscheduled"
 }

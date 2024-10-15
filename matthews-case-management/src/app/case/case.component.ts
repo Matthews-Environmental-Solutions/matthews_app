@@ -32,7 +32,7 @@ export class CaseComponent implements OnInit {
   loggedInUser: UserInfoAuth | undefined;
   userSetting: UserSettingData | undefined;
   userDetails: UserDetails = new UserDetails;
-  clickedFacilityFilterButton: string = 'all';
+  clickedFacilityFilterButton: string = 'bySelectedFacility';
   loader: boolean = false;
   isButtonVisible: boolean = false;
   numberOfUnscheduledCases: number = 0;
@@ -165,9 +165,9 @@ export class CaseComponent implements OnInit {
     this.stateService.setFilterUnscheduledCasesByFacilityId(facilityIdFilter);
   }
 
-  wasIClicked(buttonId : string) : 'primary' | 'accent' {
-    return this.clickedFacilityFilterButton == buttonId ? 'accent' : 'primary';
-  }
+  wasIClicked(buttonId: string) {
+    return this.clickedFacilityFilterButton == buttonId ? 'selected-button' : 'default-button';
+  }  
 
   filterCases(cases: Case[]){
     this.unscheduledCases = cases;
