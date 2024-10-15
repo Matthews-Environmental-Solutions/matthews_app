@@ -60,7 +60,7 @@
                             <mat-icon class="material-symbols-outlined ">
                                 {{getIcon(case.facilityStatusId)}}
                             </mat-icon>
-                            <ng-container *ngIf="getStatusDescription(case.facilityStatusId) as status">
+                            <ng-container *ngIf="case.facilityStatusText as status">
                                 <span>{{status}}</span>
                             </ng-container>
                         </div>

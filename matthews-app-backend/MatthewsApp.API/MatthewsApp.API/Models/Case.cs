@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Net.NetworkInformation;
 
 namespace MatthewsApp.API.Models;
 
@@ -41,7 +42,7 @@ public class Case : BaseEntity
 
     public int Age { get; set; }
 
-  
+
 
 
     [Column(TypeName = "uniqueidentifier")]
@@ -90,4 +91,12 @@ public class Case : BaseEntity
 
     [Column(TypeName = "nvarchar(256)")]
     public string? PhysicalId { get; set; }
+
+    [NotMapped]
+    public CaseStatus Status {
+        get
+        {
+            return FacilityStatus.Status;
+        }
+    }
 }

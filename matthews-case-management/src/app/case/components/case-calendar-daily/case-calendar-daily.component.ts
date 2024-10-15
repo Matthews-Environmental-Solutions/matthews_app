@@ -162,11 +162,6 @@ export class CaseCalendarDailyComponent implements OnInit {
     return statusObj ? statusObj.statusIcon : '';
   }
 
-  getStatusDescription(facilityStatus: string | undefined): string {
-    const statusObj = this.facilityStatuses.find(status => status.id === facilityStatus) ?? undefined;
-    return statusObj ? statusObj.statusName : '';
-  }
-
   isEmptyString = (data: string): boolean => typeof data === "string" && data.trim().length == 0;
 
   openCaseDetails(c: Case): void {
