@@ -98,8 +98,6 @@ export class Case {
 
   age: number;
 
-  status: number = 0;
-
   scheduledFacility: string = '00000000-0000-0000-0000-000000000000';
 
   scheduledDevice?: string = '00000000-0000-0000-0000-000000000000';
@@ -132,9 +130,13 @@ export class Case {
 
   electricity: string = '';
 
-  facilityStatusId?: string = '00000000-0000-0000-0000-000000000000';
+  facilityStatusId: string = '00000000-0000-0000-0000-000000000000';
+
+  facilityStatusText?: string = '';
 
   physicalId?: string = '';
+
+  status: number = -1; 
 
   //caseToFacilityStatuses: CaseToFacilityStatus[] = [];
 }

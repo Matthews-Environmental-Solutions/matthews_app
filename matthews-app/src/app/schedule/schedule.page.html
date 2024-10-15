@@ -79,7 +79,7 @@
             <p>
               <b>{{case.firstName | titlecase}} {{case.lastName | titlecase}}</b>
             </p>
-            <p>{{caseStatus[case.status] | translate | titlecase}}</p>
+            <p>{{case.facilityStatusText | titlecase}}</p>
             <p>Machine: {{case.scheduledDeviceAlias}}</p>
             <p
               [ngClass]="checkScheduledStartTime(case.scheduledStartTime) ? 'scheduled-date-found' : 'scheduled-date-missing'">
@@ -117,7 +117,7 @@
     
 
     <ion-list *ngIf="calendarView == 'byUnscheduled'">
-      <ion-item-sliding *ngFor="let case of filterUnscheduledCases(scheduleVm.cases) | filter:searchTerm | sort">
+      <ion-item-sliding *ngFor="let case of scheduleVm.cases | filter:searchTerm | sort">
         <ion-item-options side="end">
           <ion-buttons slot="primary">
             <ion-button (click)="deleteCase(case)">
@@ -131,7 +131,7 @@
             <p>
               <b>{{case.firstName | titlecase}} {{case.lastName | titlecase}}</b>
             </p>
-            <p>{{caseStatus[case.status] | translate | enumFormat | titlecase}}</p>
+            <p>{{case.facilityStatusText| translate | enumFormat | titlecase}}</p>
             <p>Machine: {{case.scheduledDeviceAlias}}</p>
             <p
               [ngClass]="checkScheduledStartTime(case.scheduledStartTime) ? 'scheduled-date-found' : 'scheduled-date-missing'">

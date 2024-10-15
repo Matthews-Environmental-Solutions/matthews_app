@@ -17,5 +17,5 @@ export class FacilityStatus {
 
   statusIcon!: string;
 
-  startProcess = false;
+  status!: number;
 }

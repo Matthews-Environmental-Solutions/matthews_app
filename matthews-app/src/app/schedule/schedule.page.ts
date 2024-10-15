@@ -52,7 +52,7 @@ export class SchedulePage implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-      this.signalRCaseApiService.stopConnection();
+    this.signalRCaseApiService.stopConnection();
   }
 
   establishSignalRConnection(facilityId: string) {
@@ -64,7 +64,7 @@ export class SchedulePage implements OnInit, OnDestroy {
     this.selectedFacility.name = facility.name;
     this.selectedFacility.id = id;
     this.appStore.updateSelectedFacility(this.selectedFacility);
-   }
+  }
 
   deleteCase(selectedCase: Case) {
     const alertOptions: AlertOptions = {
@@ -96,7 +96,7 @@ export class SchedulePage implements OnInit, OnDestroy {
     console.log('onDidDismiss resolved with role', role);
   }
 
-  selectedFacilityChanged($event){
+  selectedFacilityChanged($event) {
     this.selectedFacilityId = $event.target.value;
     //this.caseStore.getCases(this.selectedFacilityId);
     this.caseStore.getCasesByDay([this.selectedFacilityId, this.selectedDay]);
@@ -114,7 +114,7 @@ export class SchedulePage implements OnInit, OnDestroy {
   presentModal(selectedCase?: Case) {
     this.caseStore.openCaseModal(selectedCase ?
       { ...selectedCase, scheduledFacility: this.selectedFacilityId ?? this.defaultFacilityId } :
-      { scheduledFacility : this.selectedFacilityId ?? this.defaultFacilityId } as Case);
+      { scheduledFacility: this.selectedFacilityId ?? this.defaultFacilityId } as Case);
   }
 
   setDefaultValues() {
@@ -122,8 +122,14 @@ export class SchedulePage implements OnInit, OnDestroy {
       this.defaultFacilityId = (result.selectedFacility !== null && typeof result.selectedFacility !== 'undefined' && Object.keys(result.selectedFacility).length !== 0) ? result.selectedFacility.id : result.facilities[0].id;
     });
 
-    //this.caseStore.getCases(this.defaultFacilityId);
-    this.caseStore.getCasesByDay([this.defaultFacilityId, this.selectedDay]);
+    this.caseStore.refreshCasesList$.subscribe(() => {
+      if (this.calendarView == 'byDay') {
+        this.caseStore.getCasesByDay([this.defaultFacilityId, this.selectedDay]);
+      }
+      if (this.calendarView == 'byWeek') {
+        this.caseStore.getCasesByWeek([this.defaultFacilityId, this.getFirstDayOfTheWeekAsDate()]);
+      }
+    });
   }
 
   checkScheduledStartTime(date: string): boolean {
@@ -145,13 +151,18 @@ export class SchedulePage implements OnInit, OnDestroy {
 
   switchView(viewDaily: 'byDay' | 'byWeek' | 'byUnscheduled') {
     this.calendarView = viewDaily;
-    if(viewDaily == 'byWeek') {
+    if (viewDaily == 'byDay') {
+      this.caseStore.getCasesByDay([this.selectedFacilityId, this.selectedDay]);
+    }
+    if (viewDaily == 'byWeek') {
       this.caseStore.getCasesByWeek([this.selectedFacilityId, this.getFirstDayOfTheWeekAsDate()]);
       this.caseStore.weeklyCaseCount$.subscribe(count => {
         this.weeklyScheduledCount = count;
         // Use this count in the UI or elsewhere
       });
-      
+    }
+    if (viewDaily == 'byUnscheduled') {
+      this.caseStore.getUnscheduledCases();
     }
   }
 
@@ -185,8 +196,6 @@ export class SchedulePage implements OnInit, OnDestroy {
   daySelectedEvent(date: Date) {
     if (date instanceof Date) {
 
-      //let time = this.calendarService.getDateInUserProfilesTimezone(date);
-
       date.setHours(12, 0, 0, 0);
       this.selectedDay = date;
       this.hiddenDayForNavigation = date;
@@ -205,45 +214,20 @@ export class SchedulePage implements OnInit, OnDestroy {
     return filteredCases;
   }
 
-  filterUnscheduledCases(cases: Case[]) : Case [] {
+  // filterUnscheduledCases(cases: Case[]) : Case [] {
 
-    const filteredCases = cases.filter(caseItem => caseItem.status == 0);
-    return filteredCases;
+  //   const filteredCases = cases.filter(caseItem => caseItem.status == 0);
+  //   return filteredCases;
 
-  }
-
-  countWeeklyCases(cases: Case[]) {
-    this.weeklyScheduledCount = 0;
-    this.weeklyCompletedCount = 0;
-  
-    const firstDayOfWeek = this.getFirstDayOfTheWeekAsDate();
-    const dayOfWeek = firstDayOfWeek.getDay();
-    firstDayOfWeek.setDate(firstDayOfWeek.getDate() - dayOfWeek); // First day 
-  
-    const lastDayOfWeek = new Date(firstDayOfWeek);
-    lastDayOfWeek.setDate(firstDayOfWeek.getDate() + 7); // Last day 
-  
-    cases.forEach(caseItem => {
-      const scheduledDate = new Date(caseItem.scheduledStartTime);
-  
-      if (scheduledDate >= firstDayOfWeek && scheduledDate <= lastDayOfWeek) {
-        this.weeklyScheduledCount++;
-        console.log(caseItem.firstName);
-        if (caseItem.status === 1) { // 1  'completed'
-          this.weeklyCompletedCount++;
-        }
-      }
-    });
-  }
+  // }
 
   switchToDay(date: string) {
     const day = new Date(date);
     this.selectedDay = day;
     this.switchView('byDay');
     this.selectedButton = 'day';
-    this.caseStore.getCasesByDay([this.selectedFacilityId, day]);
   }
-  
+
 
   getFirstDayOfTheWeek(): string {
     const dayOfWeek = this.selectedDay.getDay(); // Get the day of the week (0 for Sunday, 1 for Monday, etc.)
@@ -258,7 +242,7 @@ export class SchedulePage implements OnInit, OnDestroy {
     firstDayOfWeek.setDate(this.selectedDay.getDate() - dayOfWeek); // Subtract days to get Sunday (or Monday)
     return firstDayOfWeek;
   }
-  
+
 
   getLastDayOfTheWeek(): string {
     const dayOfWeek = this.selectedDay.getDay(); // Get the day of the week
@@ -292,9 +276,9 @@ export class SchedulePage implements OnInit, OnDestroy {
     return filteredCases.filter(caseItem => caseItem.status === 1).length;
   }
 
-  
+
   getMonthFromDate() {
-    let currntMonth: string[] = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December", ];
+    let currntMonth: string[] = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December",];
     return currntMonth[this.selectedDay.getMonth()];
   }
 
@@ -304,17 +288,15 @@ export class SchedulePage implements OnInit, OnDestroy {
 
   isSameDay(date1: Date, date2: Date): boolean {
     return date1.getFullYear() === date2.getFullYear() &&
-           date1.getMonth() === date2.getMonth() &&
-           date1.getDate() === date2.getDate();
+      date1.getMonth() === date2.getMonth() &&
+      date1.getDate() === date2.getDate();
   }
 
   updateCounts(cases: Case[]) {
     const filteredCases = this.filterCases(cases);
     this.scheduledCount = filteredCases.length;
     this.completedCount = filteredCases.filter(caseItem => caseItem.status === 1).length;
+    this.weeklyCompletedCount = cases.filter(caseItem => caseItem.status == 1).length;
   }
 
-  updateWeeklyCases() {
-
-  }
 }

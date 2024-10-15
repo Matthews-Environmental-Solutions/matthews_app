@@ -45,7 +45,7 @@ export class SignalRCaseApiService {
   public addCaseDataListener = (facilityId: string) => {
     this.hubConnection.on('refreshcaseslist', (data) => {
       //this.appStore.getCases(facilityId);
-      this.caseService.getCases(facilityId).then(cases => this.appStore.updateCases(cases));
+      this.appStore.refreshCaseList();
       console.log(data);
       //this.changeDetectorRef.detectChanges();
     });

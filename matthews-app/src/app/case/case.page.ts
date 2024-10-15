@@ -168,18 +168,18 @@ export class CasePage implements OnInit {
           (fs) => fs.id == this.newCase.facilityStatusId
         );
 
-        if (selectedFacilityStatus?.startProcess) {
-          this.newCase.status = 3; // Ready to cremate
-        }
+        // if (selectedFacilityStatus?.startProcess) {
+        //   this.newCase.status = 3; // Ready to cremate
+        // }
       }
 
       if (this.fromProcess) {
-        this.newCase.status = 3;
-        let fstatus = this.facilityStatuses.find(
-          (fs) => fs.startProcess == true
-        );
+        // this.newCase.status = 3;
+        // let fstatus = this.facilityStatuses.find(
+        //   (fs) => fs.startProcess == true
+        // );
 
-        this.newCase.facilityStatusId = fstatus.id;
+        // this.newCase.facilityStatusId = fstatus.id;
       }
 
       if (this.fromProcess) {
@@ -225,9 +225,9 @@ export class CasePage implements OnInit {
           (fs) => fs.id == this.newCase.facilityStatusId
         );
 
-        if (selectedFacilityStatus?.startProcess) {
-          this.newCase.status = 3; // Ready to cremate
-        }
+        // if (selectedFacilityStatus?.startProcess) {
+        //   this.newCase.status = 3; // Ready to cremate
+        // }
       }
 
       this.caseStore.updateCase(this.newCase);

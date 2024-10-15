@@ -19,11 +19,14 @@ import { LoadingService } from './core/loading.service';
 import { CremationProcessService } from './cremation-process/cremation-process.service';
 import { Alarm, Measurement, SignalRService } from './core/signal-r.service';
 import { Signal } from './device-list/signal';
+import { FacilityStatus } from './case/facility-status.model';
+import { v4 as uuidv4 } from 'uuid';
 
 export interface AppState {
   cases: Case[];
   selectedCase: Case;
   facilities: Facility[];
+  facilityStatuses: FacilityStatus[];
   loading: boolean;
   deviceList: Device[];
   alarmList: Alarm[];
@@ -32,6 +35,7 @@ export interface AppState {
   selectedFacility: Facility;
   deviceCases: Case[];
   weeklyCaseCount: number;
+  refreshCasesList: string;
 }
 
 @Injectable({
@@ -51,6 +55,7 @@ export class AppStoreService extends ComponentStore<AppState> {
       cases: [],
       selectedCase: {} as Case,
       facilities: [],
+      facilityStatuses: [],
       loading: false,
       deviceList: [],
       alarmList: [],
@@ -58,7 +63,8 @@ export class AppStoreService extends ComponentStore<AppState> {
       selectedDevice: {} as Device,
       selectedFacility: {} as Facility,
       deviceCases: [],
-      weeklyCaseCount: 0
+      weeklyCaseCount: 0,
+      refreshCasesList: uuidv4()
     });
   }
 
@@ -95,7 +101,14 @@ export class AppStoreService extends ComponentStore<AppState> {
   readonly weeklyCaseCount$: Observable<number> = this.select(
     (state) => state.weeklyCaseCount
   );
-  
+
+  readonly facilityStatuses$: Observable<FacilityStatus[]> = this.select(
+    (state) => state.facilityStatuses
+  );
+
+  readonly refreshCasesList$: Observable<string> = this.select(
+    (state) => state.refreshCasesList
+  )
 
   readonly scheduleVm$ = this.select(
     this.cases$,
@@ -133,6 +146,21 @@ export class AppStoreService extends ComponentStore<AppState> {
       loading,
     })
   );
+
+  readonly updateRefreshCasesList = this.updater(
+    (state: AppState, refreshCasesList: string) => ({
+      ...state,
+      refreshCasesList
+    })
+  );
+
+  readonly updateFacilityStatuses = this.updater(
+    (state: AppState, facilityStatuses: FacilityStatus[]) => ({
+      ...state,
+      facilityStatuses,
+    })
+  );
+
 
   readonly updateSelectedDevice = this.updater(
     (state: AppState, selectedDeviceId: string) => ({
@@ -247,6 +275,11 @@ export class AppStoreService extends ComponentStore<AppState> {
     }
   );
 
+  getDefaultRefreshCasesList(): string {
+    return uuidv4();
+  }
+
+
 
   readonly updateSignalWithValueFromSingalR = this.updater(
     (state: AppState, measurement: Measurement) => {
@@ -279,6 +312,17 @@ export class AppStoreService extends ComponentStore<AppState> {
       };
     }
   );
+
+  readonly refreshCaseList = this.effect((trigger$) =>
+    trigger$.pipe(
+      tap(() => {
+        this.loadingService.present();
+        this.updateRefreshCasesList(uuidv4());
+        this.loadingService.dismiss();
+      })
+    )
+  );
+  
 
   readonly getFacilities = this.effect((trigger$) =>
     trigger$.pipe(
@@ -388,9 +432,10 @@ export class AppStoreService extends ComponentStore<AppState> {
     cases$.pipe(
       tap(() => this.loadingService.present()),
       switchMap(([facilityId, date]) =>
-        this.caseService.getScheduledCasesByDay(facilityId, date).then((response: Case[]) => {
+        this.caseService.getScheduledCasesByDay(facilityId, date).then((cases) => {
+          // Update cases based on filter criteria
           this.updateCases(
-            response.filter(
+            cases.filter(
               (caseToFilter) =>
                 caseToFilter.scheduledFacility === facilityId &&
                 caseToFilter.isObsolete === false
@@ -401,24 +446,6 @@ export class AppStoreService extends ComponentStore<AppState> {
       )
     )
   );
-
-  // readonly getCasesByWeek = this.effect<[string, Date]>((cases$) =>
-  //   cases$.pipe(
-  //     tap(() => this.loadingService.present()),
-  //     switchMap(([facilityId, date]) =>
-  //       this.caseService.getScheduledCasesByWeek(facilityId, date).then((response: Case[]) => {
-  //         this.updateCases(
-  //           response.filter(
-  //             (caseToFilter) =>
-  //               caseToFilter.scheduledFacility === facilityId &&
-  //               caseToFilter.isObsolete === false
-  //           )
-  //         );
-  //         this.loadingService.dismiss();
-  //       })
-  //     )
-  //   )
-  // );
 
   readonly getCasesByWeek = this.effect<[string, Date]>((cases$) =>
     cases$.pipe(
@@ -437,7 +464,23 @@ export class AppStoreService extends ComponentStore<AppState> {
       )
     )
   );
-  
+
+  readonly getUnscheduledCases = this.effect((cases$) =>
+    cases$.pipe(
+      tap(() => this.loadingService.present()),
+      switchMap(() =>
+        this.caseService.getUnscheduledCases().then((cases) => {
+          this.updateCases(
+            cases.filter(
+              (caseToFilter) =>
+                caseToFilter.isObsolete === false
+            )
+          );
+          this.loadingService.dismiss();
+        })
+      )
+    )
+  );
 
   readonly getCasesForDevice = this.effect<string>((cases$) =>
     cases$.pipe(

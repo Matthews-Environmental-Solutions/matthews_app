@@ -5,6 +5,9 @@ import { environment } from '../../environments/environment';
 import { HttpClient } from '@microsoft/signalr';
 import { Observable } from 'rxjs';
 import { catchError, map, retry } from 'rxjs/operators';
+import { FacilityStatusService } from './facility-status.service';
+import { TranslateService } from '@ngx-translate/core';
+import { FacilityStatus } from './facility-status.model';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +15,10 @@ import { catchError, map, retry } from 'rxjs/operators';
 export class CaseService {
 
 
-  constructor(private httpService: AuthHttpService) {
+  constructor(private httpService: AuthHttpService,
+    private facilityStatusService: FacilityStatusService,
+    private translate: TranslateService
+  ) {
   }
 
   getCases(facilityId: string) {
@@ -55,18 +61,22 @@ export class CaseService {
     return this.httpService.request<boolean>('GET', resetDemoUrl);
   }
 
+
   getScheduledCasesByDay(facilityId: string, date: Date): Promise<Case[]> {
 
     date.setHours(0, 0, 0, 0);
     let utcStartDate = date.toISOString();
 
-    const getCasesByDayUrl = `${environment.apiUrl}/Case/GetScheduledCasesByDay/${facilityId}/${utcStartDate}`; 
-    return this.httpService.request<Case[]>('GET', getCasesByDayUrl);
+    const getCasesByDayUrl = `${environment.apiUrl}/Case/GetScheduledCasesByDay/${facilityId}/${utcStartDate}`;
 
+    return this.httpService.request<Case[]>('GET', getCasesByDayUrl).then(cases => {
+      cases = cases.map(item => this.remapCase(item));
+      return cases;
+    });
   }
 
   getScheduledCasesByWeek(facilityId: string, dateStartDateOfWeek: Date): Promise<Case[]> {
-    
+
     dateStartDateOfWeek.setHours(0, 0, 0, 0);
     let utcStartDateOfWeek = dateStartDateOfWeek.toISOString();
 
@@ -74,5 +84,88 @@ export class CaseService {
     return this.httpService.request<Case[]>('GET', getCasesByWeekUrl);
   }
 
+  getUnscheduledCases(): Promise<Case[]> {
+    const getUnscheduledCases = `${environment.apiUrl}/Case/GetUnscheduledCases`
+    return this.httpService.request<Case[]>('GET', getUnscheduledCases);
+}
+
+  remapCase(item: Case): Case {
+    switch (item.gender) {
+
+      case 0:
+        item.genderText = this.translate.instant('male');
+        break;
+      case 1:
+        item.genderText = this.translate.instant('female');
+        break;
+      case 2:
+        item.genderText = this.translate.instant('other');
+        break;
+    }
+
+    switch (item.containerType) {
+      case 0:
+        item.containerTypeText = this.translate.instant('none');
+        break;
+      case 1:
+        item.containerTypeText = this.translate.instant('cardboard');
+        break;
+      case 2:
+        item.containerTypeText = this.translate.instant('hardwood');
+        break;
+      case 3:
+        item.containerTypeText = this.translate.instant('mdfParticleBoard');
+        break;
+      case 4:
+        item.containerTypeText = this.translate.instant('bagShroud');
+        break;
+      case 5:
+        item.containerTypeText = this.translate.instant('other');
+        break;
+    }
+
+    switch (item.containerSize) {
+      case 0:
+        item.containerSizeText = this.translate.instant('none');
+        break;
+      case 1:
+        item.containerSizeText = this.translate.instant('Standard');
+        break;
+      case 2:
+        item.containerSizeText = this.translate.instant('Infant');
+        break;
+      case 3:
+        item.containerSizeText = this.translate.instant('Bariatric');
+        break;
+    }
+
+    item.scheduledStartTime = item.scheduledStartTime && item.scheduledStartTime?.length > 0 ? this.formatDateAndTime(item.scheduledStartTime) : '';
+
+
+    return item;
+  }
+
+  formatDateAndTime(date: string): string {
+    var d = new Date(date),
+      month = '' + (d.getMonth() + 1),
+      day = '' + d.getDate(),
+      year = d.getFullYear(),
+      hour = '' + d.getHours(),
+      minute = '' + d.getMinutes(),
+      second = '' + d.getSeconds();
+
+    if (month.length < 2)
+      month = '0' + month;
+    if (day.length < 2)
+      day = '0' + day;
+    if (hour.length < 2)
+      hour = '0' + hour;
+    if (minute.length < 2)
+      minute = '0' + minute;
+    if (second.length < 2)
+      second = '0' + second;
+
+    return year + '-' + month + '-' + day + 'T' + hour + ':' + minute + ':' + second;
+  }
 
 }
