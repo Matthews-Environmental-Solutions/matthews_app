@@ -96,7 +96,7 @@ public class Case : BaseEntity
     public CaseStatus Status {
         get
         {
-            return FacilityStatus.Status;
+            return FacilityStatus == null? CaseStatus.UNSCHEDULED : FacilityStatus.Status;
         }
     }
 }
