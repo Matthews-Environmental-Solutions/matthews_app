@@ -129,6 +129,9 @@ export class SchedulePage implements OnInit, OnDestroy {
       if (this.calendarView == 'byWeek') {
         this.caseStore.getCasesByWeek([this.defaultFacilityId, this.getFirstDayOfTheWeekAsDate()]);
       }
+      if (this.calendarView == 'byUnscheduled') {
+        this.caseStore.getUnscheduledCases();
+      }
     });
   }
 
@@ -158,7 +161,6 @@ export class SchedulePage implements OnInit, OnDestroy {
       this.caseStore.getCasesByWeek([this.selectedFacilityId, this.getFirstDayOfTheWeekAsDate()]);
       this.caseStore.weeklyCaseCount$.subscribe(count => {
         this.weeklyScheduledCount = count;
-        // Use this count in the UI or elsewhere
       });
     }
     if (viewDaily == 'byUnscheduled') {
@@ -251,6 +253,13 @@ export class SchedulePage implements OnInit, OnDestroy {
     return this.datePipe.transform(lastDayOfWeek, 'd'); // Return formatted date
   }
 
+  getLastDayOfTheWeekAsDate(): Date {
+    const dayOfWeek = this.selectedDay.getDay(); // Get the day of the week
+    const lastDayOfWeek = new Date(this.selectedDay); // Clone the selected day
+    lastDayOfWeek.setDate(this.selectedDay.getDate() + (6 - dayOfWeek)); // Add days to get Saturday (or Sunday)
+    return lastDayOfWeek; // Return formatted date
+  }
+
   getWeeklyDay(index: number): string {
     const dayOfWeek = this.selectedDay.getDay();
     const day = new Date(this.selectedDay);
@@ -277,9 +286,9 @@ export class SchedulePage implements OnInit, OnDestroy {
   }
 
 
-  getMonthFromDate() {
+  getMonthFromDate(date: Date) {
     let currntMonth: string[] = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December",];
-    return currntMonth[this.selectedDay.getMonth()];
+    return currntMonth[date.getMonth()];
   }
 
   getYearFromDate() {
@@ -291,6 +300,20 @@ export class SchedulePage implements OnInit, OnDestroy {
       date1.getMonth() === date2.getMonth() &&
       date1.getDate() === date2.getDate();
   }
+
+  isToday(index: number): boolean {
+    const today = new Date();
+    const dayOfWeek = this.selectedDay.getDay();
+    const day = new Date(this.selectedDay);
+    day.setDate(this.selectedDay.getDate() - dayOfWeek + index);
+  
+    // Reset hours, minutes, seconds, and milliseconds for an accurate comparison
+    today.setHours(0, 0, 0, 0);
+    day.setHours(0, 0, 0, 0);
+  
+    return day.getTime() === today.getTime();
+  }
+  
 
   updateCounts(cases: Case[]) {
     const filteredCases = this.filterCases(cases);

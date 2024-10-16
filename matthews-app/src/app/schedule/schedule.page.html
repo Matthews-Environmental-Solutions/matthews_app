@@ -54,7 +54,7 @@
       </div>
 
       <div class="text-container" *ngIf="calendarView == 'byWeek'">
-        <p  class="blue-text">{{getMonthFromDate()}} {{getFirstDayOfTheWeek()}} - {{getLastDayOfTheWeek()}}, {{getYearFromDate()}}</p>
+        <p  class="blue-text">{{getMonthFromDate(getFirstDayOfTheWeekAsDate())}} {{getFirstDayOfTheWeek()}} - {{getMonthFromDate(getLastDayOfTheWeekAsDate())}} {{getLastDayOfTheWeek()}}, {{getYearFromDate()}}</p>
         <p class="blue-text">Scheduled: {{weeklyScheduledCount}} Completed: {{weeklyCompletedCount}}</p>
       </div>
 
@@ -76,7 +76,7 @@
         <ion-item detail='true' (click)="presentModal(case)">
           <ion-label>
             <p>{{case.clientCaseId}}</p>
-            <p>
+            <p class="name-text">
               <b>{{case.firstName | titlecase}} {{case.lastName | titlecase}}</b>
             </p>
             <p>{{case.facilityStatusText | titlecase}}</p>
@@ -97,16 +97,16 @@
               <!-- Left column for day information -->
               <ion-col size="6">
                 <ion-label>
-                  <p>{{ day }}</p>
-                  <p>{{ getWeeklyDay(i) }}</p>
+                  <p [ngClass]="{'blue-text': isToday(i)}">{{ day }}</p>
+                  <p [ngClass]="{'blue-text': isToday(i)}">{{ getWeeklyDay(i) }}</p>
                 </ion-label>
               </ion-col>
     
               <!-- Right column for "Scheduled" and "Completed" -->
               <ion-col size="6" class="ion-text-right">
                 <ion-label>
-                  <p>Scheduled: {{getScheduledForDay(scheduleVm.cases, i)}}</p>
-                  <p>Completed: {{getCompletedForDay(scheduleVm.cases, i)}}</p>
+                  <p [ngClass]="{'blue-text': isToday(i)}">Scheduled: {{getScheduledForDay(scheduleVm.cases, i)}}</p>
+                  <p [ngClass]="{'blue-text': isToday(i)}">Completed: {{getCompletedForDay(scheduleVm.cases, i)}}</p>
                 </ion-label>
               </ion-col>
             </ion-row>
@@ -128,7 +128,7 @@
         <ion-item detail='true' (click)="presentModal(case)">
           <ion-label>
             <p>{{case.clientCaseId}}</p>
-            <p>
+            <p class="name-text">
               <b>{{case.firstName | titlecase}} {{case.lastName | titlecase}}</b>
             </p>
             <p>{{case.facilityStatusText| translate | enumFormat | titlecase}}</p>
