@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using MatthewsApp.API.Models;
 using System;
-using Microsoft.AspNetCore.Http;
 
 namespace MatthewsApp.API.Mappers;
 
@@ -47,7 +46,8 @@ public static class CaseMapper
             entity.Weight,
             entity.FacilityStatusId,
             entity.FacilityStatus?.StatusName,
-            entity.PhysicalId
+            entity.PhysicalId,
+            entity.Status
         );
     }
 

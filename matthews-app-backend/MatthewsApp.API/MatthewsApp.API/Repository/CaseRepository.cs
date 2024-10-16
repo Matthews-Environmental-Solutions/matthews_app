@@ -1,17 +1,10 @@
-﻿using Humanizer;
-using MatthewsApp.API.Dtos;
-using MatthewsApp.API.Enums;
-using MatthewsApp.API.Extensions;
-using MatthewsApp.API.Mappers;
+﻿using MatthewsApp.API.Enums;
 using MatthewsApp.API.Models;
 using MatthewsApp.API.Repository.Interfaces;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 
 namespace MatthewsApp.API.Repository;
@@ -27,7 +20,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
 
     public Case GetById (Guid id)
     {
-        return _dataContext.Cases
+        return _dataContext.Cases.Include(c => c.FacilityStatus)
             .AsNoTracking()
             .FirstOrDefault(c => c.Id == id);
     }
@@ -47,7 +40,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
 
     public override async Task<Case> GetOne(Guid id)
     {
-        return await _dataContext.Cases
+        return await _dataContext.Cases.Include(c => c.FacilityStatus)
             //.AsNoTracking()
             .FirstAsync(c => c.Id == id);
     }
@@ -69,7 +62,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
     //ToDo: Ovo treba ukloniti.
     public override async Task<IEnumerable<Case>> GetAll()
     {
-        IEnumerable<Case> cases = await _dataContext.Cases.ToArrayAsync();
+        IEnumerable<Case> cases = await _dataContext.Cases.Include(c => c.FacilityStatus).ToArrayAsync();
         return cases.Where(c => c.ScheduledStartTime > DateTime.MinValue.AddDays(100) &&c.IsObsolete == false);
     }
 
@@ -92,7 +85,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
     public async Task<IEnumerable<Case>> GetScheduledCasesByDay(Guid facilityId, DateTime date)
     {
         DateTime dateEnd = date.AddDays(1);
-        IEnumerable<Case> cases = await _dataContext.Cases.ToArrayAsync();
+        IEnumerable<Case> cases = await _dataContext.Cases.Include(c => c.FacilityStatus).ToArrayAsync();
         return cases.Where(c => 
             c.IsObsolete == false
             && c.ScheduledFacility.Equals(facilityId)
@@ -106,7 +99,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
     public async Task<IEnumerable<Case>> GetScheduledCasesByWeek(Guid facilityId, DateTime dateStartDateOfWeek)
     {
         DateTime dateEnd = dateStartDateOfWeek.AddDays(7);
-        IEnumerable<Case> cases = await _dataContext.Cases.ToArrayAsync();
+        IEnumerable<Case> cases = await _dataContext.Cases.Include(c => c.FacilityStatus).ToArrayAsync();
         return cases.Where(c =>
             c.IsObsolete == false
             && c.ScheduledFacility.Equals(facilityId)
@@ -132,7 +125,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
 
     public async Task<IEnumerable<Case>> GetScheduledCasesByTimePeriod(Guid facilityId, DateTime dateStart, DateTime dateEnd)
     {
-        IEnumerable<Case> cases = await _dataContext.Cases.ToArrayAsync();
+        IEnumerable<Case> cases = await _dataContext.Cases.Include(c => c.FacilityStatus).ToArrayAsync();
         return cases.Where(c =>
             c.IsObsolete == false
             && c.ScheduledFacility.Equals(facilityId)
