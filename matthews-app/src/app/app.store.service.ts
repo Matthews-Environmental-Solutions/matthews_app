@@ -322,7 +322,7 @@ export class AppStoreService extends ComponentStore<AppState> {
       })
     )
   );
-  
+
 
   readonly getFacilities = this.effect((trigger$) =>
     trigger$.pipe(
@@ -450,8 +450,9 @@ export class AppStoreService extends ComponentStore<AppState> {
   readonly getCasesByWeek = this.effect<[string, Date]>((cases$) =>
     cases$.pipe(
       tap(() => this.loadingService.present()),
-      switchMap(([facilityId, date]) =>
-        this.caseService.getScheduledCasesByWeek(facilityId, date).then((response: Case[]) => {
+      switchMap(([facilityId, date]) => {
+        if (!facilityId) return;
+        return this.caseService.getScheduledCasesByWeek(facilityId, date).then((response: Case[]) => {
           const filteredCases = response.filter(
             (caseToFilter) =>
               caseToFilter.scheduledFacility === facilityId &&
@@ -460,8 +461,8 @@ export class AppStoreService extends ComponentStore<AppState> {
           this.updateCases(filteredCases);
           this.patchState({ weeklyCaseCount: filteredCases.length }); // Update the count in state
           this.loadingService.dismiss();
-        })
-      )
+        });
+      })
     )
   );
 
