@@ -99,7 +99,9 @@ export class SchedulePage implements OnInit, OnDestroy {
   selectedFacilityChanged($event) {
     this.selectedFacilityId = $event.target.value;
     //this.caseStore.getCases(this.selectedFacilityId);
-    this.caseStore.getCasesByDay([this.selectedFacilityId, this.selectedDay]);
+    if(this.calendarView == 'byDay') this.caseStore.getCasesByDay([this.selectedFacilityId, this.selectedDay]);
+    if(this.calendarView == 'byWeek') this.caseStore.getCasesByWeek([this.selectedFacilityId, this.getFirstDayOfTheWeekAsDate()]);
+    if(this.calendarView == 'byUnscheduled') this.caseStore.getUnscheduledCases();
     this.signalRCaseApiService.stopConnection();
     this.selectFacility($event.target, $event.target.value);
     this.establishSignalRConnection(this.selectedFacilityId);
