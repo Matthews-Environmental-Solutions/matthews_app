@@ -20,7 +20,7 @@ export class AppComponent implements OnInit{
   navigate: any;
   userInfo$ = this.appStoreService.userInfo$;
   language: string;
-  darkModeSliderValue = false;
+  darkModeSliderValue = true;
 
   constructor(
     private platform: Platform,
