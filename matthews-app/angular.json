@@ -32,7 +32,7 @@
                 "output": "./svg"
               }
             ],
-            "styles": ["src/theme/variables.scss", "src/global.scss"],
+            "styles": ["src/global.scss"],
             "scripts": [
               "node_modules/jquery/dist/jquery.min.js",
               "node_modules/signalr/jquery.signalR.min.js"

@@ -441,9 +441,10 @@ export class AppStoreService extends ComponentStore<AppState> {
                 caseToFilter.isObsolete === false
             )
           );
-          this.loadingService.dismiss();
+          //this.loadingService.dismiss();
         })
-      )
+      ),
+      tap(() => this.loadingService.dismiss())
     )
   );
 

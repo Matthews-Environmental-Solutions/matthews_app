@@ -103,7 +103,8 @@ export class SchedulePage implements OnInit, OnDestroy {
     this.signalRCaseApiService.stopConnection();
     this.selectFacility($event.target, $event.target.value);
     this.establishSignalRConnection(this.selectedFacilityId);
-    this.switchView('byDay');
+    //this.switchView('byDay');
+    //this.selectButton = 
   }
 
   cancelSearch(): void {
@@ -121,21 +122,21 @@ export class SchedulePage implements OnInit, OnDestroy {
     this.caseStore.scheduleVm$.subscribe(result => {
       this.defaultFacilityId = (result.selectedFacility !== null && typeof result.selectedFacility !== 'undefined' && Object.keys(result.selectedFacility).length !== 0) ? result.selectedFacility.id : result.facilities[0].id;
     });
-  
-      this.caseStore.refreshCasesList$.subscribe(() => {
-        if (!this.defaultFacilityId) {
-          return;
-        }
-        if (this.calendarView == 'byDay') {
-          this.caseStore.getCasesByDay([this.defaultFacilityId, this.selectedDay]);
-        }
-        if (this.calendarView == 'byWeek') {
-          this.caseStore.getCasesByWeek([this.defaultFacilityId, this.getFirstDayOfTheWeekAsDate()]);
-        }
-        if (this.calendarView == 'byUnscheduled') {
-          this.caseStore.getUnscheduledCases();
-        }
-      });
+
+    this.caseStore.refreshCasesList$.subscribe(() => {
+      if (!this.defaultFacilityId) {
+        return;
+      }
+      if (this.calendarView == 'byDay') {
+        this.caseStore.getCasesByDay([this.defaultFacilityId, this.selectedDay]);
+      }
+      if (this.calendarView == 'byWeek') {
+        this.caseStore.getCasesByWeek([this.defaultFacilityId, this.getFirstDayOfTheWeekAsDate()]);
+      }
+      if (this.calendarView == 'byUnscheduled') {
+        this.caseStore.getUnscheduledCases();
+      }
+    });
   }
 
   checkScheduledStartTime(date: string): boolean {
@@ -162,9 +163,9 @@ export class SchedulePage implements OnInit, OnDestroy {
     }
     if (viewDaily == 'byWeek' && this.selectedFacilityId != undefined) {
       this.caseStore.getCasesByWeek([this.selectedFacilityId, this.getFirstDayOfTheWeekAsDate()]);
-      this.caseStore.weeklyCaseCount$.subscribe(count => {
-        this.weeklyScheduledCount = count;
-      });
+      // this.caseStore.weeklyCaseCount$.subscribe(count => {
+      //   this.weeklyScheduledCount = count;
+      // });
     }
     if (viewDaily == 'byUnscheduled') {
       this.caseStore.getUnscheduledCases();
@@ -204,8 +205,8 @@ export class SchedulePage implements OnInit, OnDestroy {
       date.setHours(12, 0, 0, 0);
       this.selectedDay = date;
       this.hiddenDayForNavigation = date;
-      if (this.calendarView == 'byDay') this.caseStore.getCasesByDay([this.selectedFacilityId, date]);
-      if (this.calendarView == 'byWeek') this.caseStore.getCasesByWeek([this.selectedFacilityId, this.getFirstDayOfTheWeekAsDate()]);
+      if (this.calendarView == 'byDay' && this.selectedFacilityId != undefined) this.caseStore.getCasesByDay([this.selectedFacilityId, date]);
+      if (this.calendarView == 'byWeek' && this.selectedFacilityId != undefined) this.caseStore.getCasesByWeek([this.selectedFacilityId, this.getFirstDayOfTheWeekAsDate()]);
       //this.getDays(this.selectedDay);
     }
   }
@@ -218,13 +219,6 @@ export class SchedulePage implements OnInit, OnDestroy {
 
     return filteredCases;
   }
-
-  // filterUnscheduledCases(cases: Case[]) : Case [] {
-
-  //   const filteredCases = cases.filter(caseItem => caseItem.status == 0);
-  //   return filteredCases;
-
-  // }
 
   switchToDay(date: string) {
     const day = new Date(date);
@@ -322,7 +316,9 @@ export class SchedulePage implements OnInit, OnDestroy {
     const filteredCases = this.filterCases(cases);
     this.scheduledCount = filteredCases.length;
     this.completedCount = filteredCases.filter(caseItem => caseItem.status === 1).length;
+    this.weeklyScheduledCount = cases.length;
     this.weeklyCompletedCount = cases.filter(caseItem => caseItem.status == 1).length;
+
   }
 
 }
