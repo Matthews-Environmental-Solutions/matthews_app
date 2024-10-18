@@ -461,9 +461,10 @@ export class AppStoreService extends ComponentStore<AppState> {
           );
           this.updateCases(filteredCases);
           this.patchState({ weeklyCaseCount: filteredCases.length }); // Update the count in state
-          this.loadingService.dismiss();
+          //this.loadingService.dismiss();
         });
-      })
+      }),
+      tap(() => this.loadingService.dismiss())
     )
   );
 

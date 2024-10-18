@@ -20,7 +20,7 @@ export class AppComponent implements OnInit{
   navigate: any;
   userInfo$ = this.appStoreService.userInfo$;
   language: string;
-  darkModeSliderValue = true;
+  darkModeSliderValue: boolean;
 
   constructor(
     private platform: Platform,
@@ -42,15 +42,6 @@ export class AppComponent implements OnInit{
 
   ngOnInit() {
     this.initializeTheme();
-    this.addMediaQueryListeners();
-  }
-
-  addMediaQueryListeners() {
-    const darkSchemeQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    darkSchemeQuery.addEventListener('change', (e) => this.updateColorScheme(e));
-
-    const lightSchemeQuery = window.matchMedia('(prefers-color-scheme: light)');
-    lightSchemeQuery.addEventListener('change', (e) => this.updateColorScheme(e));
   }
 
   sideMenu() {
@@ -94,9 +85,6 @@ export class AppComponent implements OnInit{
   }
 
   initializeTheme() {
-    const prefersDark = window.matchMedia('(prefers-color-scheme: light)').matches;
-    this.darkModeSliderValue = prefersDark;
-
     this.applyTheme(this.darkModeSliderValue);
   }
 
