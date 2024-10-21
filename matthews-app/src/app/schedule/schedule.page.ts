@@ -46,9 +46,9 @@ export class SchedulePage implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.showSearchbar = false;
+    this.setDefaultValues();
     this.establishSignalRConnection(this.defaultFacilityId);
     this.selectFacility(this.selectedFacility, this.defaultFacilityId);
-    this.setDefaultValues();
   }
 
   ngOnDestroy(): void {

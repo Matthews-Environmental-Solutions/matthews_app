@@ -18,6 +18,7 @@ export class ExtendCyclePage implements OnInit {
   @Input() selectedDevice: Device;
 
   extraTimeInterval = 5;
+  maxTimeInterval = 480;
 
   constructor(private popoverController: PopoverController, private appStore: AppStoreService, private cremationProcessService: CremationProcessService) { }
 
@@ -25,7 +26,9 @@ export class ExtendCyclePage implements OnInit {
   }
 
   increseTimeInterval() {
+    if(this.extraTimeInterval < this.maxTimeInterval) {
     this.extraTimeInterval++;
+    }
   }
 
   decreseTimeInterval() {
@@ -35,15 +38,27 @@ export class ExtendCyclePage implements OnInit {
   }
 
   increseForTenMinutes() {
-    this.extraTimeInterval += 10;
+    if (this.extraTimeInterval + 10 <= this.maxTimeInterval) {
+      this.extraTimeInterval += 10;
+    } else {
+      this.extraTimeInterval = this.maxTimeInterval;
+    }
   }
 
   increseForFifteenMinutes() {
-    this.extraTimeInterval += 15;
+    if (this.extraTimeInterval + 15 <= this.maxTimeInterval) {
+      this.extraTimeInterval += 15;
+    } else {
+      this.extraTimeInterval = this.maxTimeInterval;
+    }
   }
 
   increseForThirtyMinutes() {
-    this.extraTimeInterval += 30;
+    if (this.extraTimeInterval + 30 <= this.maxTimeInterval) {
+      this.extraTimeInterval += 30;
+    } else {
+      this.extraTimeInterval = this.maxTimeInterval;
+    }
   }
 
   onConfirm() {

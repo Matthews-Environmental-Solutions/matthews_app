@@ -339,7 +339,7 @@ export class CremationProcessPage implements OnInit {
 
     popover.onDidDismiss().then((data) => {
       console.log(data);
-      this.cremationTime += +data.data;
+      //this.cremationTime += +data.data;
     });
   }
 
