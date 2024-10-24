@@ -118,7 +118,7 @@
       *ngIf="signal.name === 'MACHINE_STATUS'"
       [completed]="isRakeOutStarted">
         <ng-template matStepLabel class="blackHeading">
-          <span (click)="moveToThird(parseSignalValue(signal.value))">{{'CompleteCycle' | translate}}<br/>
+          <span [ngClass]="parseSignalValue(signal.value) < 100 ? 'grayHeading' : 'blackHeading'" (click)="moveToThird(parseSignalValue(signal.value))">{{'CompleteCycle' | translate}}<br/>
           </span>
         </ng-template>
       </mat-step>
@@ -171,10 +171,10 @@
                 <span class="footer-text">Preheat in Progress<br /></span>
                 <!-- <ng-container *ngFor="let signal of selectedDevice.signals"> -->
                   <span class="footer-text">
-                    {{'PrimChamber' | translate}}: {{signalTt100}}°F <br
+                    {{'PrimChamber' | translate}}: {{convertToFahrenheit(signalTt100)}}°F <br
                   /></span>
                   <span class="footer-text">
-                    {{'SecChamber' | translate}}: {{signalTt101}}°F <br
+                    {{'SecChamber' | translate}}: {{convertToFahrenheit(signalTt101)}}°F <br
                   /></span>
                 <!-- </ng-container> -->
                 <span class="footer-text"
@@ -206,10 +206,10 @@
                 <span class="footer-text">Preheat Complete<br /></span>
                 <!-- <ng-container *ngFor="let signal of selectedDevice.signals"> -->
                   <span class="footer-text">
-                    {{'PrimChamber' | translate}}: {{signalTt100}}°F <br
+                    {{'PrimChamber' | translate}}: {{convertToFahrenheit(signalTt100)}}°F <br
                   /></span>
                   <span class="footer-text">
-                    {{'SecChamber' | translate}}: {{signalTt101}}°F <br
+                    {{'SecChamber' | translate}}: {{convertToFahrenheit(signalTt101)}}°F <br
                   /></span>
                 <!-- </ng-container> -->
                 <span class="footer-text"
@@ -321,7 +321,8 @@
             >
               <div class="wrapper">
                 <span class="footer-text"><b>Cremation Cycle</b><br /></span>
-                <span class="footer-text">Ready to load<br /></span>
+                <span class="footer-text" *ngIf="parseSignalValue(signal.value) == 50">Preparing to Load<br /></span>
+                <span class="footer-text" *ngIf="parseSignalValue(signal.value) != 50">Ready to load<br /></span>
                 <span class="footer-text"
                   >Selected mode: {{burnMode[selectedBurnMode] ?? "-" |
                   translate}}<br

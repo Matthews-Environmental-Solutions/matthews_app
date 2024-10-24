@@ -56,7 +56,7 @@ export enum ChamberStatus {
   closeValveCheck = 20,
   preheatActive = 30,
   idleMode = 40,
-  awaitingStartConditions = 50,
+  preparingToLoad = 50,
   startConditionsMet = 60,
   loadDoorOpen = 70,
   loadDoorClose = 80,

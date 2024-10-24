@@ -139,6 +139,16 @@ ion-footer{
 }
 
 
+// ::ng-deep .mat-step-icon-content span {
+//   display: none;
+// }
+
+::ng-deep .cdk-visually-hidden {
+  display: none;
+}
+
+
+
 // :host ::ng-deep .mat-vertical-content-container {
 //   pointer-events:none;
 // }
