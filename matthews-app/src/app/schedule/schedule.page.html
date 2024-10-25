@@ -107,6 +107,7 @@
                 <ion-label>
                   <p [ngClass]="{'blue-text': isToday(i)}">Scheduled: {{getScheduledForDay(scheduleVm.cases, i)}}</p>
                   <p [ngClass]="{'blue-text': isToday(i)}">Completed: {{getCompletedForDay(scheduleVm.cases, i)}}</p>
+                  <p *ngIf='isToday(i)' class='blue-text'>In Progress: {{getInProgressForDay(scheduleVm.cases, i)}}</p>
                 </ion-label>
               </ion-col>
             </ion-row>

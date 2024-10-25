@@ -284,6 +284,10 @@ export class SchedulePage implements OnInit, OnDestroy {
     return filteredCases.filter(caseItem => caseItem.status === 1).length;
   }
 
+  getInProgressForDay(cases: Case[], index: number) {
+    const filteredCases = this.filterCasesForDay(cases, index);
+    return filteredCases.filter(caseItem => caseItem.status === 2).length;
+  }
 
   getMonthFromDate(date: Date) {
     let currntMonth: string[] = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December",];
@@ -320,7 +324,6 @@ export class SchedulePage implements OnInit, OnDestroy {
     this.completedCount = filteredCases.filter(caseItem => caseItem.status === 1).length;
     this.weeklyScheduledCount = cases.length;
     this.weeklyCompletedCount = cases.filter(caseItem => caseItem.status == 1).length;
-
   }
 
 }

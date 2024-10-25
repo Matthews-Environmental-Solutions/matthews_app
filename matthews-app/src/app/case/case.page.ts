@@ -237,9 +237,13 @@ export class CasePage implements OnInit {
     this.close();
   }
 
-  close() {
-    this.modalCtrl.dismiss();
+  async close() {
+    const modal = await this.modalCtrl.getTop();
+    if (modal) {
+      await modal.dismiss();
+    }
   }
+  
 
   updateDeviceAlias(newCase: Case) {
     this.deviceList$.subscribe((devices) => {

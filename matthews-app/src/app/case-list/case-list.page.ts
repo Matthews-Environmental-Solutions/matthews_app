@@ -34,7 +34,11 @@ export class CaseListPage implements OnInit {
     this.close();
   }
 
-  close() {
-    this.modalController.dismiss();
+  async close() {
+    const modal = await this.modalController.getTop();
+    if (modal) {
+      await modal.dismiss();
+    }
   }
+  
 }

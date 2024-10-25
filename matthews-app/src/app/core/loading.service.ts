@@ -8,23 +8,28 @@ export class LoadingService {
 
   isLoading = false;
 
-  constructor(public loadingController: LoadingController) { }
+  constructor(public loadingController: LoadingController) {}
 
   async present() {
-    this.isLoading = true;
-    return await this.loadingController.create({
-      message: 'Please wait...'
-    }).then(result => {
-      result.present().then(() => {
-        if (!this.isLoading) {
-          result.dismiss();
-        }
+    if (!this.isLoading) { // Only create if no loading overlay exists
+      this.isLoading = true;
+      const loading = await this.loadingController.create({
+        message: 'Please wait...'
       });
-    });
+      await loading.present();
+      if (!this.isLoading) {
+        await loading.dismiss();
+      }
+    }
   }
 
   async dismiss() {
-    this.isLoading = false;
-    return await this.loadingController.dismiss();
+    if (this.isLoading) {
+      this.isLoading = false;
+      const loading = await this.loadingController.getTop();
+      if (loading) {
+        await loading.dismiss();
+      }
+    }
   }
 }
