@@ -31,8 +31,10 @@ export class LandingPage implements OnInit, OnDestroy {
     }
   }
 
-  public signIn() {
-    this.auth.signIn();
+  public async signIn() {
+    // Show overlay if needed
+    await this.auth.signIn();
   }
+  
 
 }

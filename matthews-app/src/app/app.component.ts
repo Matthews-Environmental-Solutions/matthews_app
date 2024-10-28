@@ -65,12 +65,19 @@ export class AppComponent implements OnInit{
     ];
   }
 
-  initializeApp() {
-    this.platform.ready().then(async () => {
-      await this.auth.init();
-      SplashScreen.hide();
-    });
+  // initializeApp() {
+  //   this.platform.ready().then(async () => {
+  //     await this.auth.init();
+  //     SplashScreen.hide();
+  //   });
+  // }
+
+  async initializeApp() {
+    await this.platform.ready();
+    await this.auth.init();  // Ensure this completes
+    SplashScreen.hide();     // Hide the splash screen after auth is ready
   }
+  
 
   languageChange() {
     this.translateService.use(this.language);

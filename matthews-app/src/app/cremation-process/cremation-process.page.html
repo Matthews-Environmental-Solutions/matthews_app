@@ -171,10 +171,10 @@
                 <span class="footer-text">Preheat in Progress<br /></span>
                 <!-- <ng-container *ngFor="let signal of selectedDevice.signals"> -->
                   <span class="footer-text">
-                    {{'PrimChamber' | translate}}: {{convertToFahrenheit(signalTt100)}}°F <br
+                    {{'PrimChamber' | translate}}: {{signalTt100}}°F <br
                   /></span>
                   <span class="footer-text">
-                    {{'SecChamber' | translate}}: {{convertToFahrenheit(signalTt101)}}°F <br
+                    {{'SecChamber' | translate}}: {{signalTt101}}°F <br
                   /></span>
                 <!-- </ng-container> -->
                 <span class="footer-text"
@@ -206,10 +206,10 @@
                 <span class="footer-text">Preheat Complete<br /></span>
                 <!-- <ng-container *ngFor="let signal of selectedDevice.signals"> -->
                   <span class="footer-text">
-                    {{'PrimChamber' | translate}}: {{convertToFahrenheit(signalTt100)}}°F <br
+                    {{'PrimChamber' | translate}}: {{signalTt100}}°F <br
                   /></span>
                   <span class="footer-text">
-                    {{'SecChamber' | translate}}: {{convertToFahrenheit(signalTt101)}}°F <br
+                    {{'SecChamber' | translate}}: {{signalTt101}}°F <br
                   /></span>
                 <!-- </ng-container> -->
                 <span class="footer-text"
@@ -358,14 +358,14 @@
                 <span class="footer-text"
                   >Elapsed time: {{cremationTime}}min<br
                 /></span>
-                <ng-container *ngFor="let signal of selectedDevice.signals; trackBy:trackItems">
-                  <span class="footer-text" *ngIf="signal.name === 'TT100_PV'">
-                    {{'PrimChamber' | translate}}: {{signal.value | number: '1.0-0' }}°F <br
+                <!-- <ng-container *ngFor="let signal of selectedDevice.signals; trackBy:trackItems"> -->
+                  <span class="footer-text">
+                    {{'PrimChamber' | translate}}: {{signalTt100}}°F<br
                   /></span>
-                  <span class="footer-text" *ngIf="signal.name === 'TT101_PV'">
-                    {{'SecChamber' | translate}}: {{signal.value | number: '1.0-0' }}°F <br
+                  <span class="footer-text">
+                    {{'SecChamber' | translate}}: {{signalTt101}}°F <br
                   /></span>
-                </ng-container>
+                <!-- </ng-container> -->
                 <span class="footer-text"
                   >Selected mode: {{burnMode[selectedBurnMode] ?? "-" |
                   translate}}<br
@@ -417,14 +417,14 @@
             >
               <div class="wrapper">
                 <span class="footer-text"><b>Complete Process</b><br /></span>
-                <ng-container *ngFor="let signal of selectedDevice.signals; trackBy:trackItems">
-                  <span class="footer-text" *ngIf="signal.name === 'TT100_PV'">
-                    {{'PrimChamber' | translate}}: {{signal.value}}°F <br
+                <!-- <ng-container *ngFor="let signal of selectedDevice.signals; trackBy:trackItems"> -->
+                  <span class="footer-text">
+                    {{'PrimChamber' | translate}}: {{signalTt100}}°F <br
                   /></span>
-                  <span class="footer-text" *ngIf="signal.name === 'TT101_PV'">
-                    {{'SecChamber' | translate}}: {{signal.value}}°F <br
+                  <span class="footer-text">
+                    {{'SecChamber' | translate}}: {{signalTt101}}°F <br
                   /></span>
-                </ng-container>
+                <!-- </ng-container> -->
               </div>
               <div class="actions">
                 <ion-button
@@ -449,14 +449,14 @@
                 <span class="footer-text"
                   >{{'CoolingInProgress' | translate}}...<br
                 /></span>
-                <ng-container *ngFor="let signal of selectedDevice.signals; trackBy:trackItems">
-                  <span class="footer-text" *ngIf="signal.name === 'TT100_PV'">
-                    {{'PrimChamber' | translate}}: {{signal.value}}°F <br
+                <!-- <ng-container *ngFor="let signal of selectedDevice.signals; trackBy:trackItems"> -->
+                  <span class="footer-text">
+                    {{'PrimChamber' | translate}}: {{signalTt100}}°F <br
                   /></span>
-                  <span class="footer-text" *ngIf="signal.name === 'TT101_PV'">
-                    {{'SecChamber' | translate}}: {{signal.value}}°F <br
+                  <span class="footer-text">
+                    {{'SecChamber' | translate}}: {{signalTt101}}°F <br
                   /></span>
-                </ng-container>
+                <!-- </ng-container> -->
               </div>
               <div class="actions">
                 <ion-button expand="block" class="btnbackward" (click)="skipCooldown(stepper)">
