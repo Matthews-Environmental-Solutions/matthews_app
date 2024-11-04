@@ -9,7 +9,7 @@ export const environment = {
       server_host: 'https://matthewsenvironmental.i4connected.cloud/identity',
       redirect_url: 'com.matthews.app://authorizationcallback',
       end_session_redirect_url: 'com.matthews.app://endsessioncallback',
-      scopes: 'profile openid email api matthews.api',
+      scopes: 'profile openid email offline_access matthews.api api',
       pkce: true
     }
   };
