@@ -124,7 +124,7 @@ public class CasesService : ICasesService
         {
             entity = MakeNewCaseFromDto(dto);
             entityDoesNotExistInDb = true;
-            entity.FacilityStatus = _facilityStatusRepository.GetReadyToCremateFacilityStatus(dto.FACILITY_ID);//ToDo: Check if this is correct
+            entity.FacilityStatusId = _facilityStatusRepository.GetReadyToCremateFacilityStatus(dto.FACILITY_ID).Id;
         }
         else
         {
@@ -134,7 +134,8 @@ public class CasesService : ICasesService
                 entity = MakeNewCaseFromDto(dto);
                 entityDoesNotExistInDb = true;
             }
-            entity.FacilityStatus = _facilityStatusRepository.GetInProgressFacilityStatus(dto.FACILITY_ID);//ToDo: Check if this is correct
+            entity.FacilityStatusId = _facilityStatusRepository.GetInProgressFacilityStatus(dto.FACILITY_ID).Id;
+            entity.FacilityStatus = _facilityStatusRepository.GetInProgressFacilityStatus(dto.FACILITY_ID);
         }
 
         entity.ActualStartTime = dto.StartTime;
@@ -197,7 +198,7 @@ public class CasesService : ICasesService
         entity.ActualEndTime = dto.EndTime;
         entity.Fuel = dto.FuelUsed.ToString();
         entity.Electricity = dto.ElectricityUsed.ToString();
-        //entity.Status = CaseStatus.CREMATION_COMPLETE;
+        entity.FacilityStatus = _facilityStatusRepository.GetCremationCompleteFacilityStatus((Guid)entity.ScheduledFacility);
         Update(entity);
     }
 
