@@ -5,7 +5,7 @@ using System.Text.Json.Serialization;
 
 namespace MatthewsApp.API.Dtos;
 
-public class StartCaseDto {
+public class CaseFromFlexyDto {
 
     [JsonConverter(typeof(CustomGuidConverter))]
     public Guid? LOADED_ID { get; set; }

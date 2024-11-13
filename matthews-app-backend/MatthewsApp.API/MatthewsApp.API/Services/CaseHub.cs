@@ -12,5 +12,13 @@ namespace MatthewsApp.API.Services
                 await Clients.All.SendAsync("refreshcaseslist", message);
             }
         }
+
+        public async Task SendMessageToSelectCase(string message)
+        {
+            if (Clients != null)
+            {
+                await Clients.All.SendAsync("selectcase", message);
+            }
+        }
     }
 }
