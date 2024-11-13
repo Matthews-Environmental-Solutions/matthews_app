@@ -284,11 +284,39 @@ public class CaseMqttService : IHostedService
                 string receivedMessage = Encoding.UTF8.GetString(e.ApplicationMessage.Payload);
                 receivedMessage = receivedMessage.Replace("\r", "").Replace("\t", "").Replace("\n", "");
 
+                if (receivedMessage.Contains("CaseSelect"))
+                {
+                    _logger.LogInformation($"---------- Case Mqtt Service - Received CaseSelect message");
+                    SelectCasePayloadDto payload = JsonSerializer.Deserialize<SelectCasePayloadDto>(receivedMessage);
+                    CaseFromFlexyDto startCase = JsonSerializer.Deserialize<CaseFromFlexyDto>(payload.CaseSelect);
+
+                    try
+                    {
+                        Tuple<Case, bool> response = await _casesService.UpdateCaseWhenCaseSelect(startCase);
+
+                        // if LOADED_ID was empty, we will create it and will send back to Flexy
+                        if (response.Item2)
+                        {
+                            IMqttClient client = FindClientByClientId(e.ClientId);
+                            string topic = e.ApplicationMessage.Topic;
+                            var topicSegmentsList = topic.Split("/");
+                            SendCaseIdToFlexy(client, response.Item1, $"{topicSegmentsList[0]}/{topicSegmentsList[1]}");
+                        }
+
+                        _caseHub.SendMessageToSelectCase($"CaseId: {response.Item1.Id}");
+                    }
+                    catch (Exception)
+                    {
+
+                        throw;
+                    }
+                }
+
                 if (receivedMessage.Contains("CaseStart"))
                 {
                     _logger.LogInformation($"---------- Case Mqtt Service - Received CaseStart message");
                     StartCasePayloadDto payload = JsonSerializer.Deserialize<StartCasePayloadDto>(receivedMessage);
-                    StartCaseDto startCase = JsonSerializer.Deserialize<StartCaseDto>(payload.CaseStart);
+                    CaseFromFlexyDto startCase = JsonSerializer.Deserialize<CaseFromFlexyDto>(payload.CaseStart);
 
                     try
                     {
@@ -313,7 +341,7 @@ public class CaseMqttService : IHostedService
                     _logger.LogInformation($"---------- Case Mqtt Service - Received CaseEnd message");
 
                     EndCasePayloadDto payload = JsonSerializer.Deserialize<EndCasePayloadDto>(receivedMessage);
-                    EndCaseDto endCase = JsonSerializer.Deserialize<EndCaseDto>(payload.CaseEnd);
+                    EndCaseFromFlexyDto endCase = JsonSerializer.Deserialize<EndCaseFromFlexyDto>(payload.CaseEnd);
 
                     _casesService.UpdateCaseWhenCaseEnd(endCase);
                 }

@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 
 namespace MatthewsApp.API.Dtos;
 
-public class EndCaseDto
+public class EndCaseFromFlexyDto
 {
     public Guid COMPLETED_ID { get; set; }
 

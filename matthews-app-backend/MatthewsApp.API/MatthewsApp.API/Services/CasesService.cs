@@ -26,8 +26,9 @@ public interface ICasesService
     Task<IEnumerable<Case>> GetScheduledCasesByWeek(Guid facilityId, DateTime dateStartDateOfWeek);
     Task<IEnumerable<Case>> GetAllCasesByFacility(Guid facilityId);
     Task<IEnumerable<Case>> GetScheduledCasesByTimePeriod(Guid facilityId, DateTime dateStart, DateTime dateEnd);
-    Task<Tuple<Case, bool>> UpdateCaseWhenCaseStart(StartCaseDto dto);
-    void UpdateCaseWhenCaseEnd(EndCaseDto dto);
+    Task<Tuple<Case, bool>> UpdateCaseWhenCaseStart(CaseFromFlexyDto dto);
+    Task<Tuple<Case, bool>> UpdateCaseWhenCaseSelect(CaseFromFlexyDto dto);
+    void UpdateCaseWhenCaseEnd(EndCaseFromFlexyDto dto);
     Task<Case> GetNextCaseForDevice(Guid deviceId);
     Task<IEnumerable<Case>> GetReadyCasesByDevice(Guid deviceId);
     Task<bool> ResetDemo();
@@ -116,7 +117,7 @@ public class CasesService : ICasesService
         _caseHub.SendMessageToRefreshList($"Update done.");
     }
 
-    public async Task<Tuple<Case, bool>> UpdateCaseWhenCaseStart(StartCaseDto dto)
+    public async Task<Tuple<Case, bool>> UpdateCaseWhenCaseStart(CaseFromFlexyDto dto)
     {
         Case entity;
         bool entityDoesNotExistInDb = false;
@@ -169,7 +170,60 @@ public class CasesService : ICasesService
         }
     }
 
-    private Case MakeNewCaseFromDto(StartCaseDto dto)
+    public async Task<Tuple<Case, bool>> UpdateCaseWhenCaseSelect(CaseFromFlexyDto dto)
+    {
+        Case entity;
+        bool entityDoesNotExistInDb = false;
+        if (dto.LOADED_ID == null || dto.LOADED_ID == Guid.Empty)
+        {
+            entity = MakeNewCaseFromDto(dto);
+            entityDoesNotExistInDb = true;
+            entity.FacilityStatusId = _facilityStatusRepository.GetReadyToCremateFacilityStatus(dto.FACILITY_ID).Id;
+        }
+        else
+        {
+            entity = _caseRepository.GetById(dto.LOADED_ID ?? Guid.Empty);
+            
+            if (entity is null)
+            {
+                entity = MakeNewCaseFromDto(dto);
+                entity.FacilityStatusId = _facilityStatusRepository.GetReadyToCremateFacilityStatus(dto.FACILITY_ID).Id;
+                entityDoesNotExistInDb = true;
+            }
+            else
+            {
+                entity = RemapCaseFromDto(entity, dto);
+            }
+        }
+
+        DeviceDto cremator = null;
+
+        List<DeviceDto> cremators = (await _caseI4CHttpClientService.GetAllDevicesAsync()).ToList();
+        cremator = cremators.FirstOrDefault(c => c.id == dto.CREMATOR_ID);
+
+        entity.ScheduledDeviceAlias = cremator is not null ? cremator.alias : string.Empty;
+        entity.PerformedBy = dto.User;
+
+        try
+        {
+            if (entityDoesNotExistInDb)
+            {
+                Create(entity);
+            }
+            else
+            {
+                Update(entity);
+            }
+
+            return new Tuple<Case, bool>(entity, entityDoesNotExistInDb);
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
+
+    private Case MakeNewCaseFromDto(CaseFromFlexyDto dto)
     {
         Case entity = new Case();
         entity.Id = dto.LOADED_ID ?? Guid.NewGuid();
@@ -191,7 +245,27 @@ public class CasesService : ICasesService
         return entity;
     }
 
-    public async void UpdateCaseWhenCaseEnd(EndCaseDto dto)
+    private Case RemapCaseFromDto(Case oldCase, CaseFromFlexyDto dto)
+    {
+        oldCase.FirstName = dto.LOADED_FIRST_NAME;
+        oldCase.LastName = dto.LOADED_SURNAME;
+        oldCase.Age = dto.LOADED_AGE;
+        oldCase.Gender = dto.LOADED_GENDER;
+        oldCase.ScheduledFacility = dto.FACILITY_ID;
+        oldCase.ScheduledDevice = dto.CREMATOR_ID;
+        oldCase.ContainerType = (ContainerType)dto.LOADED_COFFIN_TYPE;
+        oldCase.ContainerSize = (ContainerSize)dto.LOADED_SIZE;
+        oldCase.Weight = dto.LOADED_WEIGHT;
+        oldCase.Gender = dto.LOADED_GENDER;
+        oldCase.ScheduledStartTime = dto.StartTime;
+        oldCase.ClientId = "1"; //ClientID is missing in CaseStart object from Flexy
+        oldCase.ClientCaseId = dto.LOADED_CLIENT_ID;
+        oldCase.PhysicalId = dto.LOADED_PHYSICAL_ID;
+
+        return oldCase;
+    }
+
+    public async void UpdateCaseWhenCaseEnd(EndCaseFromFlexyDto dto)
     {
         Case entity = _caseRepository.GetById(dto.COMPLETED_ID);
         if (entity == null) return;
