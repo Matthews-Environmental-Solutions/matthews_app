@@ -36,6 +36,7 @@ export interface AppState {
   deviceCases: Case[];
   weeklyCaseCount: number;
   refreshCasesList: string;
+  selectedCaseId: string;
 }
 
 @Injectable({
@@ -64,7 +65,8 @@ export class AppStoreService extends ComponentStore<AppState> {
       selectedFacility: {} as Facility,
       deviceCases: [],
       weeklyCaseCount: 0,
-      refreshCasesList: uuidv4()
+      refreshCasesList: uuidv4(),
+      selectedCaseId: uuidv4(),
     });
   }
 
@@ -110,6 +112,10 @@ export class AppStoreService extends ComponentStore<AppState> {
     (state) => state.refreshCasesList
   )
 
+  readonly selectedCaseId$: Observable<string> = this.select(
+    (state) => state.selectedCaseId
+  )
+
   readonly scheduleVm$ = this.select(
     this.cases$,
     this.selectedCase$,
@@ -153,6 +159,13 @@ export class AppStoreService extends ComponentStore<AppState> {
       refreshCasesList
     })
   );
+
+  readonly updateSelectedCaseId = this.updater(
+    (state: AppState, selectedCaseId: string) => ({
+      ...state,
+      selectedCaseId
+    })
+  );  
 
   readonly updateFacilityStatuses = this.updater(
     (state: AppState, facilityStatuses: FacilityStatus[]) => ({
@@ -279,8 +292,6 @@ export class AppStoreService extends ComponentStore<AppState> {
     return uuidv4();
   }
 
-
-
   readonly updateSignalWithValueFromSingalR = this.updater(
     (state: AppState, measurement: Measurement) => {
       const stateCopy = JSON.parse(JSON.stringify(state)) as AppState;
@@ -322,7 +333,6 @@ export class AppStoreService extends ComponentStore<AppState> {
       })
     )
   );
-
 
   readonly getFacilities = this.effect((trigger$) =>
     trigger$.pipe(
@@ -409,6 +419,16 @@ export class AppStoreService extends ComponentStore<AppState> {
       this.updateAlarmEventFromSignalR(alarm);
     });
   }
+
+  readonly refreshSelectedCaseId = this.effect<string>((trigger$) =>
+    trigger$.pipe(
+      tap((newCaseId: string) => {
+        this.loadingService.present();
+        this.updateSelectedCaseId(newCaseId);
+        this.loadingService.dismiss();
+      })
+    )
+  );  
 
   readonly getCases = this.effect<string>((cases$) =>
     cases$.pipe(

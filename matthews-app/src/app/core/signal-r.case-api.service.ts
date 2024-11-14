@@ -51,6 +51,15 @@ export class SignalRCaseApiService {
     });
   };
 
+  public addSelectedCaseListener = (facilityId: string) => {
+    this.hubConnection.on('selectCase', (data) => {
+      this.appStore.refreshSelectedCaseId(data);
+      console.log(data);
+    });
+};
+
+
+
   public async getAccessToken() {
     const token: TokenResponse = await this.authService.getValidToken();
     return token.accessToken;
