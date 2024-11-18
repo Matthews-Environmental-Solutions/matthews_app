@@ -66,7 +66,7 @@ export class AppStoreService extends ComponentStore<AppState> {
       deviceCases: [],
       weeklyCaseCount: 0,
       refreshCasesList: uuidv4(),
-      selectedCaseId: uuidv4(),
+      selectedCaseId: null,
     });
   }
 

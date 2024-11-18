@@ -23,7 +23,7 @@ export class SignalRCaseApiService {
     private loadingService: LoadingService,
     private appStore: AppStoreService,
     private caseService: CaseService
-  ) {}
+  ) { }
 
   public initializeSignalRCaseApiConnection() {
     this.hubConnection = new signalR.HubConnectionBuilder()
@@ -51,14 +51,16 @@ export class SignalRCaseApiService {
     });
   };
 
-  public addSelectedCaseListener = (facilityId: string) => {
-    this.hubConnection.on('selectCase', (data) => {
-      this.appStore.refreshSelectedCaseId(data);
+  public addSelectedCaseListener() {
+    this.hubConnection.on('selectcase', (data: string) => {
       console.log(data);
+      let dataSplited = data.split(':');
+      if (dataSplited.length == 2) {
+      let caseId = dataSplited[1].trim();
+      this.appStore.refreshSelectedCaseId(caseId);
+      } 
     });
-};
-
-
+  };
 
   public async getAccessToken() {
     const token: TokenResponse = await this.authService.getValidToken();

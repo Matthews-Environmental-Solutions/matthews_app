@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/no-shadow */
 /* eslint-disable max-len */
 /* eslint-disable @angular-eslint/component-selector */
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import {
   AlertController,
   AlertOptions,
@@ -23,16 +23,17 @@ import {
   ContainerTypeSelection,
   GenderSelection,
 } from '../case/selection-option';
-import { filter, find, map, skip, tap } from 'rxjs/operators';
+import { distinctUntilChanged, filter, find, map, skip, switchMap, tap } from 'rxjs/operators';
 import { CaseService } from '../case/case.service';
 import { Signal } from '../device-list/signal';
+import { SignalRCaseApiService } from '../core/signal-r.case-api.service';
 
 @Component({
   selector: 'app-device-details',
   templateUrl: './cremation-process.page.html',
   styleUrls: ['./cremation-process.page.scss'],
 })
-export class CremationProcessPage implements OnInit {
+export class CremationProcessPage implements OnInit, OnDestroy {
   @ViewChild('stepper') stepper!: MatStepper;
 
   selectedCase$ = this.appStore.selectedCase$;
@@ -140,8 +141,13 @@ export class CremationProcessPage implements OnInit {
     private route: ActivatedRoute,
     private cremationProcessService: CremationProcessService,
     public alertController: AlertController,
-    private caseService: CaseService
+    private caseService: CaseService,
+    private signalRCaseApiService: SignalRCaseApiService
   ) { }
+
+  ngOnDestroy(): void {
+    this.signalRCaseApiService.stopConnection();
+  }
 
   ngOnInit() {
     this.matStepperIntl.optionalLabel = '';
@@ -158,6 +164,21 @@ export class CremationProcessPage implements OnInit {
         this.mapCase(res);
       }
     });
+
+    this.establishSignalRConnection();
+
+    this.appStore.selectedCaseId$.pipe(
+      distinctUntilChanged(), // Ensures we only react to changes in the ID
+      filter(caseId => !!caseId), // Ensures caseId is defined
+      switchMap(caseId => this.caseService.getCase(caseId))
+    ).subscribe(caseData => {
+      this.appStore.updateSelectedCase(caseData);
+    });
+  }
+
+  establishSignalRConnection() {
+    this.signalRCaseApiService.initializeSignalRCaseApiConnection();
+    this.signalRCaseApiService.addSelectedCaseListener();
   }
 
   parseSignalValue(value: string): number {
