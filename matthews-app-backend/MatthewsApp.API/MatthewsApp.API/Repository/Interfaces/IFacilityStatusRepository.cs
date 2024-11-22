@@ -12,4 +12,5 @@ public interface IFacilityStatusRepository : IBaseRepository<FacilityStatus, Gui
     FacilityStatus GetFirstAwaitingPermissionFacilityStatus(Guid demoFacilityId);
     FacilityStatus GetInProgressFacilityStatus(Guid facilityId);
     FacilityStatus GetReadyToCremateFacilityStatus(Guid facilityId);
+    FacilityStatus GetSelectedFacilityStatus(Guid facilityId);
 }

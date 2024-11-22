@@ -83,6 +83,46 @@ public class CaseController : Controller
         return Ok(caseDto.Id);
     }
 
+    [HttpPut]
+    [Route("Select")]
+    public ActionResult Select([FromBody] Guid caseId)
+    {
+        _logger.LogInformation("---------- Select");
+        try
+        {
+            service.Select(caseId);
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!service.IsCaseExists(caseId))
+            {
+                return NotFound();
+            }
+            return BadRequest();
+        }
+        return Ok(caseId);
+    }
+
+    [HttpPut]
+    [Route("Deselect")]
+    public ActionResult Deselect([FromBody] Guid caseId)
+    {
+        _logger.LogInformation("---------- Deselect");
+        try
+        {
+            service.Deselect(caseId);
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!service.IsCaseExists(caseId))
+            {
+                return NotFound();
+            }
+            return BadRequest();
+        }
+        return Ok(caseId);
+    }
+
     [HttpGet]
     [Route("GetAllCasesByFacility/{facilityId}")]
     public async Task<ActionResult<IEnumerable<CaseDto>>> GetAllCasesByFacility(Guid facilityId)

@@ -1,6 +1,8 @@
-﻿using MatthewsApp.API.Dtos;
+﻿using IdentityModel;
+using MatthewsApp.API.Dtos;
 using MatthewsApp.API.Enums;
 using MatthewsApp.API.Models;
+using MatthewsApp.API.Mqtt;
 using MatthewsApp.API.PrismEvents;
 using MatthewsApp.API.Repository.Interfaces;
 using Microsoft.Extensions.Logging;
@@ -17,7 +19,10 @@ public interface ICasesService
 {
     void Create(Case caseEntity);
     void Delete(Case caseEntity);
-    void Update(Case caseEntity);
+    Case Update(Case caseEntity);
+    void Select(Guid caseEntity);
+    void Deselect(string loadedId);
+    void Deselect(Guid caseId);
     Task<IEnumerable<Case>> GetAll();
     Task<Case> GetById(Guid id);
     bool IsCaseExists(Guid id);
@@ -94,7 +99,7 @@ public class CasesService : ICasesService
         _caseHub.SendMessageToRefreshList($"Delete done.");
     }
 
-    public void Update(Case entity)
+    public Case Update(Case entity)
     {
         _logger.LogDebug("Update of case id");
         Case previousCase = _caseRepository.GetById(entity.Id);
@@ -115,6 +120,71 @@ public class CasesService : ICasesService
 
         // SignalR
         _caseHub.SendMessageToRefreshList($"Update done.");
+
+        return entity;
+    }
+
+    public void Select(Guid caseId)
+    {
+        _logger.LogDebug("Selection of case");
+        try
+        {
+            var entity = _caseRepository.GetById(caseId);
+            var facilityStatus = _facilityStatusRepository.GetSelectedFacilityStatus((Guid)entity.ScheduledFacility);
+            entity.FacilityStatusId = _facilityStatusRepository.GetSelectedFacilityStatus((Guid)entity.ScheduledFacility).Id;
+            entity.FacilityStatus = _facilityStatusRepository.GetSelectedFacilityStatus((Guid)entity.ScheduledFacility);
+            Update(entity);
+
+            _ea.GetEvent<CaseSelectEvent>().Publish(entity);
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
+
+    public void Deselect(Guid caseId)
+    {
+        _logger.LogDebug("Deselection of case");
+        try
+        {
+            Case updatedCase = UpdateDeselectedCase(caseId);
+            _ea.GetEvent<CaseDeselectEvent>().Publish(updatedCase);
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
+
+    public void Deselect(string loadedId)
+    {
+        try
+        {
+            if (Guid.TryParse(loadedId, out Guid caseId))
+            {
+                Case updatedCase = UpdateDeselectedCase(caseId);
+                _ea.GetEvent<CaseDeselectEvent>().Publish(updatedCase);
+            }
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
+
+    private Case UpdateDeselectedCase(Guid caseId)
+    {
+        var entity = _caseRepository.GetById(caseId);
+        if (entity != null)
+        {
+            var readyToCremateStatus = _facilityStatusRepository.GetReadyToCremateFacilityStatus((Guid)entity.ScheduledFacility);
+            entity.FacilityStatusId = readyToCremateStatus.Id;
+            entity.FacilityStatus = readyToCremateStatus;
+            Update(entity);
+            return entity;
+        }
+        return null;
     }
 
     public async Task<Tuple<Case, bool>> UpdateCaseWhenCaseStart(CaseFromFlexyDto dto)
@@ -222,6 +292,8 @@ public class CasesService : ICasesService
             throw;
         }
     }
+
+    
 
     private Case MakeNewCaseFromDto(CaseFromFlexyDto dto)
     {

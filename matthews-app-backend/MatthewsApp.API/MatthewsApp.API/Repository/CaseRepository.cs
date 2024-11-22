@@ -25,6 +25,13 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             .FirstOrDefault(c => c.Id == id);
     }
 
+    public async Task<Case> GetByIdAsync(Guid id)
+    {
+        return await _dataContext.Cases.Include(c => c.FacilityStatus)
+            .AsNoTracking()
+            .FirstOrDefaultAsync(c => c.Id == id);
+    }
+
     public override void Delete(Guid id)
     {
         var entity = _dataContext.Context.Set<Case>().Find((id));
@@ -143,7 +150,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
         return cases.Where(c =>
             c.IsObsolete == false
             && c.ScheduledFacility.Equals(facilityId)
-            && (c.FacilityStatus.Status == CaseStatus.WAITING_FOR_PERMIT || c.FacilityStatus.Status == CaseStatus.UNSCHEDULED || c.FacilityStatus.Status == CaseStatus.READY_TO_CREMATE)
+            && (c.FacilityStatus.Status == CaseStatus.WAITING_FOR_PERMIT || c.FacilityStatus.Status == CaseStatus.UNSCHEDULED || c.FacilityStatus.Status == CaseStatus.READY_TO_CREMATE || c.FacilityStatus.Status == CaseStatus.SELECTED)
             ).ToList();
     }
 

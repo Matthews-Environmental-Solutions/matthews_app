@@ -11,6 +11,7 @@ public interface ICaseRepository : IBaseRepository<Case, Guid>
     Task CleanDbForDemo(Guid deviceId);
     Task<IEnumerable<Case>> GetAllUnscheduled();
     Case GetById(Guid id);
+    Task<Case> GetByIdAsync(Guid id);
     Task<IEnumerable<Case>> GetCasesByFacility(Guid facilityId);
     Task<IEnumerable<Case>> GetFirst20ScheduledCases(Guid scheduledDeviceId);
     Task<Case> GetNextCaseForDevice(Guid deviceId);
