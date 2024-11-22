@@ -21,6 +21,7 @@ ion-item {
   width: 100%;  /* Make the buttons fill the available width */
   text-align: center;  /* Center text inside the button */
   height: 3em;
+  --color: #29C0F1;
 }
 
 .selected {
@@ -33,6 +34,7 @@ ion-item {
   height: 3em;        /* Change the text color when selected */
   text-decoration: underline;
   font-weight: bold;
+  --color: #29C0F1;
 }
 
 .chevron-button {
@@ -40,7 +42,7 @@ ion-item {
   --border-color: transparent;  /* Remove border */
   --padding-start: 0;
   --padding-end: 0; 
-  color: blue;
+  color: #29C0F1;
   flex-shrink: 0;
 }
 
@@ -63,7 +65,7 @@ ion-item {
 .blue-text {
   margin: 0;  /* Remove default margin for better alignment */
   padding: 0;
-  color: blue;
+  color: #29C0F1;
   font-weight: bold;
 }
 
@@ -72,5 +74,5 @@ ion-item {
 }
 
 .blue-text {
-  color: blue;
+  color: #29C0F1;
 }

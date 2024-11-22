@@ -45,14 +45,24 @@ export class SignalRService {
     return this.connection;
   }
 
-  public startConnection() {
-    this.connection.start().done(() => {
+  // public startConnection() {
+  //   this.connection.start().done(() => {
+  //     console.log('Connection started!');
+  //     this.loadingService.dismiss();
+  //   }).catch((error: any) => {
+  //     console.log(error);
+  //   });
+  // }
+
+  public async startConnection() {
+    await this.connection.start().done(async () => {
       console.log('Connection started!');
-      this.loadingService.dismiss();
+      await this.loadingService.dismiss(); // Only dismiss if loading overlay is active
     }).catch((error: any) => {
       console.log(error);
     });
   }
+  
 
   public addListenerMeasurement( func: (measurement) => void) : void {
     console.log('addMeasurementListener');

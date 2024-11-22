@@ -43,10 +43,10 @@ export class CremationProcessPage implements OnInit {
       }
       selectedDevice.signals.forEach((signal) => {
         if (signal.name === 'TT100_PV') {
-          this.signalTt100 = signal.value;
+          this.signalTt100 = this.convertToFahrenheit(signal.value);
         }
         if (signal.name === 'TT101_PV') {
-          this.signalTt101 = signal.value;
+          this.signalTt101 = this.convertToFahrenheit(signal.value);
         }
         if (signal.name === 'LOADED_ID') {
           this.selectCaseFromId(signal.value);
@@ -162,6 +162,22 @@ export class CremationProcessPage implements OnInit {
 
   parseSignalValue(value: string): number {
     return parseInt(value);
+  }
+
+  convertToFahrenheit(temp: string): string {
+    // Convert the input string to a number
+    const celsius = parseFloat(temp);
+    
+    // Check if the input was a valid number
+    if (isNaN(celsius)) {
+      return "Invalid input";  // Return an error message if not a valid number
+    }
+    
+    // Convert Celsius to Fahrenheit
+    const fahrenheit = (celsius * 9/5) + 32;
+    
+    // Return the result as a string
+    return fahrenheit.toFixed(0);  // Formats the result to 0 decimal places
   }
 
   setStartTime() {
@@ -339,7 +355,7 @@ export class CremationProcessPage implements OnInit {
 
     popover.onDidDismiss().then((data) => {
       console.log(data);
-      this.cremationTime += +data.data;
+      //this.cremationTime += +data.data;
     });
   }
 
