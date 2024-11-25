@@ -469,6 +469,12 @@ export class CremationProcessPage implements OnInit, OnDestroy {
     this.cremationProcessService.writeSignalValue(signal?.id, signalValue);
   }
 
+  selectCaseAPI(caseId: string) {
+    this.caseService.selectCase(caseId)
+      .then((response) => console.log('Case selected successfully:', response))
+      .catch((error) => console.error('Error selecting case:', error));
+  }
+
   rakeOutConfirmation(stepper: MatStepper, selectedDevice: Device) {
     const alertOptions: AlertOptions = {
       header: this.translateService.instant('ConfirmRakeOut'),
@@ -595,6 +601,9 @@ export class CremationProcessPage implements OnInit, OnDestroy {
   clearSelectedCase() {
     //this.appStore.updateSelectedCase(null);
     this.isCaseSelected = false;
+    this.caseService.deselectCase()
+      .then((response) => console.log('Case deselected successfully:', response))
+      .catch((error) => console.error('Error deselecting case:', error));
   }
 
   mapCase(res) {

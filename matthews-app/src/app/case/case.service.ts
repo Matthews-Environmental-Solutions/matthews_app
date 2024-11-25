@@ -21,6 +21,16 @@ export class CaseService {
   ) {
   }
 
+  selectCase(caseId: string) {
+    const selectCaseUrl = `${environment.apiUrl}/Case/Select`;
+    return this.httpService.request('PUT', selectCaseUrl, { caseId });
+  }
+
+  deselectCase() {
+    const deSelectCaseUrl = `${environment.apiUrl}/Case/Select`;
+    return this.httpService.request('PUT', deSelectCaseUrl, { id: "" });
+  }
+
   getCases(facilityId: string) {
     const getScheduleUrl = `${environment.apiUrl}/Case/GetAllCasesByFacility/${facilityId}`;
     return this.httpService.request<Case[]>('GET', getScheduleUrl, facilityId);
@@ -60,6 +70,7 @@ export class CaseService {
     const resetDemoUrl = `${environment.apiUrl}/Case/ResetDemo`;
     return this.httpService.request<boolean>('GET', resetDemoUrl);
   }
+
 
 
   getScheduledCasesByDay(facilityId: string, date: Date): Promise<Case[]> {
