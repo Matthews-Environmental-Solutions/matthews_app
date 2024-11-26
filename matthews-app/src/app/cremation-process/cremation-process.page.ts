@@ -17,7 +17,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { ActivatedRoute } from '@angular/router';
 import { Device } from '../device-list/device';
 import { CremationProcessService } from './cremation-process.service';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { BurnMode, ChamberStatus } from '../core/enums';
 import {
   ContainerTypeSelection,
@@ -116,6 +116,8 @@ export class CremationProcessPage implements OnInit, OnDestroy {
   clientCaseId: any;
   signalTt100: string;
   signalTt101: string;
+  selectedCaseId: string | null = null;
+  private subscription: Subscription;
 
   containerTypes: ContainerTypeSelection[] = [
     { id: 0, name: 'None' },
@@ -147,6 +149,9 @@ export class CremationProcessPage implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.signalRCaseApiService.stopConnection();
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
   }
 
   ngOnInit() {
@@ -167,13 +172,25 @@ export class CremationProcessPage implements OnInit, OnDestroy {
 
     this.establishSignalRConnection();
 
-    this.appStore.selectedCaseId$.pipe(
-      distinctUntilChanged(), // Ensures we only react to changes in the ID
-      filter(caseId => !!caseId), // Ensures caseId is defined
-      switchMap(caseId => this.caseService.getCase(caseId))
-    ).subscribe(caseData => {
-      this.appStore.updateSelectedCase(caseData);
-    });
+    // this.appStore.selectedCaseId$.pipe(
+    //   distinctUntilChanged(), // Ensures we only react to changes in the ID
+    //   filter(caseId => !!caseId), // Ensures caseId is defined
+    //   switchMap(caseId => this.caseService.getCase(caseId))
+    // ).subscribe(caseData => {
+    //   this.appStore.updateSelectedCase(caseData);
+    // });
+    this.subscription = this.appStore.selectedCaseId$
+      .pipe(
+        distinctUntilChanged(), // Ensures we only react to changes in the ID
+        filter(caseId => !!caseId), // Ensures caseId is defined
+        switchMap(caseId => {
+          this.selectedCaseId = caseId!; // Update local variable
+          return this.caseService.getCase(caseId);
+        })
+      )
+      .subscribe(caseData => {
+        this.appStore.updateSelectedCase(caseData); // Update the store with the case data
+      });
   }
 
   establishSignalRConnection() {
@@ -188,15 +205,15 @@ export class CremationProcessPage implements OnInit, OnDestroy {
   convertToFahrenheit(temp: string): string {
     // Convert the input string to a number
     const celsius = parseFloat(temp);
-    
+
     // Check if the input was a valid number
     if (isNaN(celsius)) {
       return "Invalid input";  // Return an error message if not a valid number
     }
-    
+
     // Convert Celsius to Fahrenheit
-    const fahrenheit = (celsius * 9/5) + 32;
-    
+    const fahrenheit = (celsius * 9 / 5) + 32;
+
     // Return the result as a string
     return fahrenheit.toFixed(0);  // Formats the result to 0 decimal places
   }
@@ -469,10 +486,15 @@ export class CremationProcessPage implements OnInit, OnDestroy {
     this.cremationProcessService.writeSignalValue(signal?.id, signalValue);
   }
 
-  selectCaseAPI(caseId: string) {
-    this.caseService.selectCase(caseId)
-      .then((response) => console.log('Case selected successfully:', response))
-      .catch((error) => console.error('Error selecting case:', error));
+  selectCaseAPI(): void {
+    if (this.selectedCaseId) {
+      this.caseService
+        .selectCase(this.selectedCaseId)
+        .then(response => console.log('Case selected successfully:', response))
+        .catch(error => console.error('Error selecting case:', error));
+    } else {
+      console.error('No selected case ID to send');
+    }
   }
 
   rakeOutConfirmation(stepper: MatStepper, selectedDevice: Device) {
@@ -582,7 +604,11 @@ export class CremationProcessPage implements OnInit, OnDestroy {
   autoSelectNextCase(deviceId: string) {
     this.caseService
       .getNextCaseForDevice(deviceId)
-      .then((nextCase) => this.appStore.updateSelectedCase(nextCase));
+      .then((nextCase) => {
+        this.appStore.updateSelectedCase(nextCase);
+        this.appStore.updateSelectedCaseId(nextCase.id);
+      })
+
   }
 
   selectCaseFromId(caseId: string) {
@@ -601,7 +627,7 @@ export class CremationProcessPage implements OnInit, OnDestroy {
   clearSelectedCase() {
     //this.appStore.updateSelectedCase(null);
     this.isCaseSelected = false;
-    this.caseService.deselectCase()
+    this.caseService.deselectCase(this.selectedCaseId)
       .then((response) => console.log('Case deselected successfully:', response))
       .catch((error) => console.error('Error deselecting case:', error));
   }

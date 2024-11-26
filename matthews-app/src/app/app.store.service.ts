@@ -540,6 +540,7 @@ export class AppStoreService extends ComponentStore<AppState> {
         this.caseService.createCase(selectedCase).then((savedCase) => {
           this.getCases(selectedCase.scheduledFacility);
           this.updateSelectedCase(savedCase);
+          this.updateSelectedCaseId(savedCase.id);
           this.loadingService.dismiss();
         })
       ),

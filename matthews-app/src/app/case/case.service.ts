@@ -23,12 +23,12 @@ export class CaseService {
 
   selectCase(caseId: string) {
     const selectCaseUrl = `${environment.apiUrl}/Case/Select`;
-    return this.httpService.request('PUT', selectCaseUrl, { caseId });
+    return this.httpService.request('PUT', selectCaseUrl, caseId );
   }
 
-  deselectCase() {
-    const deSelectCaseUrl = `${environment.apiUrl}/Case/Select`;
-    return this.httpService.request('PUT', deSelectCaseUrl, { id: "" });
+  deselectCase(caseId: string) {
+    const deSelectCaseUrl = `${environment.apiUrl}/Case/Deselect`;
+    return this.httpService.request('PUT', deSelectCaseUrl, caseId);
   }
 
   getCases(facilityId: string) {
