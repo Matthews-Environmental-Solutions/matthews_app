@@ -249,7 +249,8 @@ public class CasesService : ICasesService
         {
             entity = MakeNewCaseFromDto(dto);
             entityDoesNotExistInDb = true;
-            entity.FacilityStatusId = _facilityStatusRepository.GetReadyToCremateFacilityStatus(dto.FACILITY_ID).Id;
+            entity.FacilityStatusId = _facilityStatusRepository.GetSelectedFacilityStatus(dto.FACILITY_ID).Id;
+            entity.FacilityStatus = _facilityStatusRepository.GetSelectedFacilityStatus(dto.FACILITY_ID);
         }
         else
         {
@@ -258,13 +259,14 @@ public class CasesService : ICasesService
             if (entity is null)
             {
                 entity = MakeNewCaseFromDto(dto);
-                entity.FacilityStatusId = _facilityStatusRepository.GetReadyToCremateFacilityStatus(dto.FACILITY_ID).Id;
                 entityDoesNotExistInDb = true;
             }
             else
             {
                 entity = RemapCaseFromDto(entity, dto);
             }
+            entity.FacilityStatusId = _facilityStatusRepository.GetSelectedFacilityStatus(dto.FACILITY_ID).Id;
+            entity.FacilityStatus = _facilityStatusRepository.GetSelectedFacilityStatus(dto.FACILITY_ID);
         }
 
         DeviceDto cremator = null;
@@ -345,6 +347,7 @@ public class CasesService : ICasesService
         entity.ActualEndTime = dto.EndTime;
         entity.Fuel = dto.FuelUsed.ToString();
         entity.Electricity = dto.ElectricityUsed.ToString();
+        entity.FacilityStatusId = _facilityStatusRepository.GetCremationCompleteFacilityStatus((Guid)entity.ScheduledFacility).Id;
         entity.FacilityStatus = _facilityStatusRepository.GetCremationCompleteFacilityStatus((Guid)entity.ScheduledFacility);
         Update(entity);
     }

@@ -102,5 +102,6 @@
     "CREMATION_COMPLETE": "Cremation complete",
     "IN_PROGRESS": "In progress",
     "READY_TO_CREMATE": "Ready to cremate",
-    "WAITING_FOR_PERMIT": "Awaiting permission"
+    "WAITING_FOR_PERMIT": "Awaiting permission",
+    "SELECTED": "Selected"
 }
