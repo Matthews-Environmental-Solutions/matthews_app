@@ -154,6 +154,21 @@ public class CaseController : Controller
     }
 
     [HttpGet]
+    [Route("GetSelectCaseByDevice/{deviceId}")]
+    public async Task<ActionResult<CaseDto>> GetSelectCaseByDevice(Guid deviceId)
+    {
+        _logger.LogInformation("---------- GetReadyCasesByDevice {deviceId}", deviceId);
+        try
+        {
+            return Ok((await service.GetSelectCaseByDevice(deviceId)).ToDTO());
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+    [HttpGet]
     [Route("GetScheduledCasesByDay/{facilityId}/{date}")]
     public async Task<ActionResult<IEnumerable<CaseDto>>> GetScheduledCasesByDay(Guid facilityId, DateTime date)
     {

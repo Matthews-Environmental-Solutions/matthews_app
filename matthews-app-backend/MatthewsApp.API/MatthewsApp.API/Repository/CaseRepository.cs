@@ -164,6 +164,17 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             ).ToList();
     }
 
+    public async Task<Case> GetSelectCaseByDevice(Guid deviceId)
+    {
+        IEnumerable<Case> cases = await _dataContext.Cases.Include(c => c.FacilityStatus).ToArrayAsync();
+
+        return cases.Where(c =>
+            c.IsObsolete == false
+            && c.ScheduledDevice.Equals(deviceId)
+            && c.FacilityStatus.Status == CaseStatus.SELECTED)
+            .ToList().FirstOrDefault();
+    }
+
     public Task CleanDbForDemo(Guid deviceId)
     {
         try

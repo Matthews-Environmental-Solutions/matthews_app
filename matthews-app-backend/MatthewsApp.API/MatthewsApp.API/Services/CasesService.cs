@@ -38,6 +38,7 @@ public interface ICasesService
     Task<IEnumerable<Case>> GetReadyCasesByDevice(Guid deviceId);
     Task<bool> ResetDemo();
     Task<IEnumerable<CaseStatusDto>> GetCaseStatuses();
+    Task<Case> GetSelectCaseByDevice(Guid deviceId);
 }
 
 public class CasesService : ICasesService
@@ -459,6 +460,19 @@ public class CasesService : ICasesService
         {
 
             throw new Exception(ex.Message);
+        }
+    }
+
+    public async Task<Case> GetSelectCaseByDevice(Guid deviceId)
+    {
+        try
+        {
+            return await _caseRepository.GetSelectCaseByDevice(deviceId);
+        }
+        catch (Exception)
+        {
+
+            throw;
         }
     }
 
