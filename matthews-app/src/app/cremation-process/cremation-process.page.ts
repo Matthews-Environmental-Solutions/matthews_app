@@ -17,7 +17,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { ActivatedRoute } from '@angular/router';
 import { Device } from '../device-list/device';
 import { CremationProcessService } from './cremation-process.service';
-import { Observable, Subscription } from 'rxjs';
+import { Observable, of, Subscription } from 'rxjs';
 import { BurnMode, ChamberStatus } from '../core/enums';
 import {
   ContainerTypeSelection,
@@ -152,6 +152,9 @@ export class CremationProcessPage implements OnInit, OnDestroy {
     if (this.subscription) {
       this.subscription.unsubscribe();
     }
+
+    this.appStore.updateSelectedCase(null);
+    this.appStore.updateSelectedCaseId('');
   }
 
   ngOnInit() {
@@ -162,7 +165,7 @@ export class CremationProcessPage implements OnInit, OnDestroy {
     this.stepNumber = 0;
     this.case = new Case();
     this.selectedCase$.pipe(skip(1)).subscribe((res) => {
-      if (res !== undefined) {
+      if (res !== undefined && res!== null) {
         this.matStepperIntl.optionalLabel =
           res.firstName + ' ' + res.lastName + ' - ' + res.clientCaseId;
         this.matStepperIntl.changes.next();
@@ -180,17 +183,36 @@ export class CremationProcessPage implements OnInit, OnDestroy {
     //   this.appStore.updateSelectedCase(caseData);
     // });
     this.subscription = this.appStore.selectedCaseId$
+      .pipe(skip(1))
       .pipe(
-        distinctUntilChanged(), // Ensures we only react to changes in the ID
-        filter(caseId => !!caseId), // Ensures caseId is defined
+        //distinctUntilChanged(), // Ensures we only react to changes in the ID
+        filter(caseId => caseId !== null && caseId !== undefined), // Ensures caseId is defined
         switchMap(caseId => {
-          this.selectedCaseId = caseId!; // Update local variable
+          this.selectedCaseId = caseId!;
+          if(this.selectedCaseId !== "") {
           return this.caseService.getCase(caseId);
+          } else {
+            this.isCaseSelected = false;
+            return of(null);
+          }
         })
       )
       .subscribe(caseData => {
-        this.appStore.updateSelectedCase(caseData); // Update the store with the case data
+        this.appStore.updateSelectedCase(caseData);
       });
+
+
+      this.caseService.getSelectedCaseByDevice(this.deviceId)
+      .then(caseData => {
+        const caseId = caseData?.id;
+
+        if (caseId) {
+          this.appStore.updateSelectedCaseId(caseId);
+          this.appStore.updateSelectedCase(caseData);
+        }
+      });
+
+    
   }
 
   establishSignalRConnection() {
