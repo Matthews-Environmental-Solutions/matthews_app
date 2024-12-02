@@ -10,7 +10,7 @@ import { ContainerType } from 'src/app/models/container-type.model';
 import { ContainerSize } from 'src/app/models/load-size.model';
 import { MtxCalendarView, MtxDatetimepickerMode, MtxDatetimepickerType } from '@ng-matero/extensions/datetimepicker';
 import { CaseService } from 'src/app/services/cases.service';
-import { Subscription } from 'rxjs';
+import { map, Subscription } from 'rxjs';
 import { StateService } from 'src/app/services/states.service';
 import { Device } from 'src/app/models/device.model';
 import { AuthService } from 'src/app/auth/auth.service';
@@ -27,6 +27,7 @@ import { CalendarService } from 'src/app/services/calendar.service';
 import { MatGridTileHeaderCssMatStyler } from '@angular/material/grid-list';
 import { DeleteDialogComponent } from '../../dialogs/delete-dialog/delete-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
+import { FacilityService } from 'src/app/services/facility.service';
 
 @Component({
   selector: 'case-add-edit',
@@ -85,6 +86,7 @@ export class CaseAddEditComponent implements OnInit {
     private facilityStatusService: FacilityStatusService,
     private i4connectedService: I4connectedService,
     private calendarService: CalendarService,
+    private facilityService: FacilityService,
     private _shackBar: WfactorySnackBarService
   ) {
     this.caseForm = new FormGroup({
@@ -105,8 +107,10 @@ export class CaseAddEditComponent implements OnInit {
       physicalId: new FormControl('', { nonNullable: true })
     });
 
-    this.subs.add(this.i4connectedService.getSites().subscribe(data => {
-      this.facilities = data;
+    this.subs.add(this.facilityService.getFacilities()
+      .pipe(map(data => data.filter(f => f.isValid)))
+      .subscribe(data => {
+        this.facilities = data;
     }));
 
     this.subs.add(this.stateService.selectedFacilityId$.subscribe(f => {

@@ -13,10 +13,11 @@ import { DateAdapter, MAT_DATE_LOCALE } from '@angular/material/core';
 import { I4connectedService } from '../services/i4connected.service';
 import { StateService } from '../services/states.service';
 import { MatSelectChange } from '@angular/material/select';
-import { Subscription, skip } from 'rxjs';
+import { Subscription, filter, map, skip } from 'rxjs';
 import { WfactorySnackBarService } from '../components/wfactory-snack-bar/wfactory-snack-bar.service';
 import { SignalrService } from '../services/signalr.service';
 import { UserDetails } from '../models/user-details.model';
+import { FacilityService } from '../services/facility.service';
 
 @Component({
   selector: 'app-case',
@@ -44,6 +45,7 @@ export class CaseComponent implements OnInit {
       private userSettingService: UserSettingService,
       private caseService: CaseService,
       private i4connectedService: I4connectedService,
+      private facilityService: FacilityService,
       private stateService: StateService,
       public dialog: MatDialog,
       private translate: TranslateService,
@@ -58,7 +60,9 @@ export class CaseComponent implements OnInit {
     _adapter.setLocale(this.translate.store.currentLang);
   }
   ngOnInit(): void {
-    this.subs.add(this.i4connectedService.getSites().subscribe(data => {
+    this.subs.add(this.facilityService.getFacilities()
+      .pipe(map(data => data.filter(f => f.isValid)))
+      .subscribe(data => {
       this.facilities = data;
       this.userSetting = this.userSettingService.getUserSettingLastValue();
       this.selectedFacilityId = this.userSetting.lastUsedFacilityId;

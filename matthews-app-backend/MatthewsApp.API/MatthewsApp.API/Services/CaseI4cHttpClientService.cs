@@ -18,6 +18,7 @@ public interface ICaseI4cHttpClientService
 {
     Task<AdapterDto> GetAdapterByDeviceIdAsync(Guid adapterId);
     Task<ICollection<DeviceDto>> GetAllDevicesAsync();
+    Task<ICollection<FacilityDto>> GetAllFacilities();
     Task<DeviceDetailsDto> GetDeviceDetailsAsync(Guid id);
 }
 
@@ -57,7 +58,7 @@ public class CaseI4cHttpClientService : ICaseI4cHttpClientService
         _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _accessToken);
     }
 
-    internal async Task<ICollection<FacilityDto>> GetAllFacilities()
+    public async Task<ICollection<FacilityDto>> GetAllFacilities()
     {
         HttpResponseMessage response;
         try

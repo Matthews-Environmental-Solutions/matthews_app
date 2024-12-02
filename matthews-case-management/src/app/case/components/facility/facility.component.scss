@@ -97,6 +97,10 @@ background-color: aquamarine;
     color: red;
 }
 
+.font-orange {
+    color: orange;
+}
+
 .font-orangered {
     color: #94a72d;
 }
@@ -109,4 +113,23 @@ background-color: aquamarine;
 
 .font-gray {
     color: #41585f;
+}
+
+.material-symbols-outlined {
+  font-variation-settings:
+  'FILL' 0,
+  'wght' 400,
+  'GRAD' 0,
+  'opsz' 24
+}
+
+.status-error-item-selector {
+    ::ng-deep {
+        --mdc-list-list-item-one-line-container-height: 28px;
+   }
+}
+
+.status-missing-item {
+    color: rgb(221, 144, 0);
+    font-size: 12px;
 }

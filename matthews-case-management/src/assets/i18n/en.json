@@ -103,5 +103,10 @@
     "IN_PROGRESS": "In progress",
     "READY_TO_CREMATE": "Ready to cremate",
     "WAITING_FOR_PERMIT": "Awaiting permission",
-    "SELECTED": "Selected"
+    "SELECTED": "Selected",
+    "CREMATION_COMPLETE status is missing": "CREMATION COMPLETE status is missing",
+    "IN_PROGRESS status is missing": "IN PROGRESS status is missing",
+    "READY_TO_CREMATE status is missing": "READY TO CREMATE status is missing",
+    "WAITING_FOR_PERMIT status is missing": "AWAITING FOR PERMIT status is missing",
+    "SELECTED status is missing": "SELECTED status is missing"
 }

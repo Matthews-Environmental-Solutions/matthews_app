@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
-import { Subscription, skip, tap } from 'rxjs';
+import { Subscription, map, skip, tap } from 'rxjs';
 import { FacilityStatus } from 'src/app/models/facility-status.model';
 import { Facility } from 'src/app/models/facility.model';
 import { FacilityStatusService } from 'src/app/services/facility-status.service';
@@ -14,6 +14,7 @@ import { DeleteFacilityStatusDialogComponent } from '../../dialogs/delete-facili
 import { StateService } from 'src/app/services/states.service';
 import { CaseService } from 'src/app/services/cases.service';
 import { CaseStatusDto } from 'src/app/models/case-status-dto.model';
+import { FacilityService } from 'src/app/services/facility.service';
 
 @Component({
   selector: 'app-facility',
@@ -28,7 +29,7 @@ export class FacilityComponent implements OnInit {
   searchTerm = '';
   facilitiesDataSource: MatTableDataSource<any> = new MatTableDataSource<Facility>();
   facilities: Facility[] = [];
-  selectedFacility: Facility = { id: this.GUID_EMPTY, name: '', icon: '' };
+  selectedFacility: Facility = { id: this.GUID_EMPTY, name: '', icon: '', isValid: false, errorMessage: '', errors: [] };
   facilityStatuses!: FacilityStatus[];
   selectedStatusForEdit: FacilityStatus = new FacilityStatus();
   generalCaseStatuses: CaseStatusDto[] = [];
@@ -43,10 +44,16 @@ export class FacilityComponent implements OnInit {
     private translate: TranslateService,
     private stateService: StateService,
     private caseService: CaseService,
+    private facilityService: FacilityService,
     public dialog: MatDialog) {
-    this.subs.add(this.i4connectedService.getSites().subscribe(data => {
+    this.subs.add(this.facilityService.getFacilities().subscribe(data => {
       this.facilitiesDataSource = new MatTableDataSource<Facility>(data);
-      this.facilities = this.facilitiesDataSource.filteredData;
+      this.facilities = this.facilitiesDataSource.filteredData.map(facility => {
+        const errorMessage = facility.errorMessage || ''; // Fallback to an empty string if undefined
+        let errors = errorMessage.split('. '); // Split the error message into sentences
+        errors.pop(); // Extract the last sentence
+        return { ...facility, errors: errors }
+      });
     }));
   }
 
