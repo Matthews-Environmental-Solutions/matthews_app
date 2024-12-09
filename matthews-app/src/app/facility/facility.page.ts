@@ -3,6 +3,7 @@ import { NavController, ToastController } from '@ionic/angular';
 import { AuthService } from 'ionic-appauth';
 import { AppStoreService } from '../app.store.service';
 import { Facility } from './facility';
+import { NotificationService } from '../core/notification.service';
 
 @Component({
   selector: 'app-facility',
@@ -18,7 +19,8 @@ export class FacilityPage implements OnInit {
   constructor(private auth: AuthService,
               public toastController: ToastController,
               private appStoreService: AppStoreService,
-              private navCtrl: NavController) { }
+              private navCtrl: NavController,
+              private notificationService: NotificationService) { }
 
   ngOnInit() {
     this.showSearchbar = false;
@@ -35,6 +37,7 @@ export class FacilityPage implements OnInit {
     this.updateSelectedFacility(facility);
     this.navCtrl.navigateForward(['app/tabs/facility/device-list', facility.id]);
     this.appStoreService.updateSelectedFacility(facility);
+    this.notificationService.scheduleNotification();
   }
 
   public async getUserInfo(): Promise<void> {

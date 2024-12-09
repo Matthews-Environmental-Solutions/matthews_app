@@ -16,9 +16,22 @@ export class CaseService {
 
 
   constructor(private httpService: AuthHttpService,
-    private facilityStatusService: FacilityStatusService,
-    private translate: TranslateService
-  ) {
+    private translate: TranslateService) {
+  }
+
+  getSelectedCaseByDevice(deviceId: string): Promise<Case> {
+    const getSelectCaseUrl = `${environment.apiUrl}/Case/GetSelectCaseByDevice/${deviceId}`;
+    return this.httpService.request('GET', getSelectCaseUrl, deviceId);
+  }
+
+  selectCase(caseId: string) {
+    const selectCaseUrl = `${environment.apiUrl}/Case/Select`;
+    return this.httpService.request('PUT', selectCaseUrl, caseId);
+  }
+
+  deselectCase(caseId: string) {
+    const deSelectCaseUrl = `${environment.apiUrl}/Case/Deselect`;
+    return this.httpService.request('PUT', deSelectCaseUrl, caseId);
   }
 
   getCases(facilityId: string) {
@@ -62,6 +75,7 @@ export class CaseService {
   }
 
 
+
   getScheduledCasesByDay(facilityId: string, date: Date): Promise<Case[]> {
 
     date.setHours(0, 0, 0, 0);
@@ -87,7 +101,7 @@ export class CaseService {
   getUnscheduledCases(): Promise<Case[]> {
     const getUnscheduledCases = `${environment.apiUrl}/Case/GetUnscheduledCases`
     return this.httpService.request<Case[]>('GET', getUnscheduledCases);
-}
+  }
 
   remapCase(item: Case): Case {
     switch (item.gender) {

@@ -174,12 +174,11 @@ export class CasePage implements OnInit {
       }
 
       if (this.fromProcess) {
-        // this.newCase.status = 3;
-        // let fstatus = this.facilityStatuses.find(
-        //   (fs) => fs.startProcess == true
-        // );
+        const selectedFacilityStatus = this.facilityStatuses.find(
+          (fs) => fs.status == 3
+        );
 
-        // this.newCase.facilityStatusId = fstatus.id;
+        this.newCase.facilityStatusId = selectedFacilityStatus.id;
       }
 
       if (this.fromProcess) {
