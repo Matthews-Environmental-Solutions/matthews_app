@@ -39,7 +39,7 @@ export class SignalRService {
     await this.getAccessToken().then((token) => {
       this.connection.qs = { access_token: token };
       this.proxyMeasurement = this.connection.createHubProxy('measurementHub');
-      this.proxyEvent = this.connection.createHubProxy('eventhub');
+      this.proxyEvent = this.connection.createHubProxy('eventHub');
     });
 
     return this.connection;

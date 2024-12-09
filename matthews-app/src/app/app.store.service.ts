@@ -392,6 +392,11 @@ export class AppStoreService extends ComponentStore<AppState> {
                       this.updateDeviceSignals(deviceSignalsMap);
                     });
                 });
+              
+              this.signalRService.proxyEvent
+              .invoke('Subscribe')
+              .done(data => console.log(data));
+
             });
 
             this.loadingService.dismiss();
