@@ -22,9 +22,10 @@
                 <mat-expansion-panel (opened)="getDataOnOpen(facility.id)" (closed)="panelOpenState = false">
                     <mat-expansion-panel-header>
                         <mat-panel-title>
-                            {{facility.name}} 
+                            {{facility.name}}
                             <span class="spacer"></span>
-                            <mat-icon aria-hidden="true" class="font-orange" *ngIf="!facility.isValid">warning</mat-icon>
+                            <mat-icon aria-hidden="true" class="font-orange"
+                                *ngIf="!facility.isValid">warning</mat-icon>
                         </mat-panel-title>
                     </mat-expansion-panel-header>
                     <div class="facility-status-container">
@@ -44,7 +45,8 @@
                                             <div class="facility-status-item">{{fStatus.statusName}}</div>
                                         </div>
                                         <div class="item-3">
-                                            <div class="facility-status-item"><mat-icon>{{fStatus.statusIcon}}</mat-icon></div>
+                                            <div class="facility-status-item">
+                                                <mat-icon>{{fStatus.statusIcon}}</mat-icon></div>
                                         </div>
                                         <div class="item-4">
                                             <div class="facility-status-item">
@@ -60,11 +62,10 @@
                                                         class="font-orangered">edit</mat-icon>
                                                 </button>
                                                 <button mat-icon-button aria-label="delete button"
-                                                    (click)="deleteStatus(fStatus)">
-                                                    <mat-icon class="navigation-button"
-                                                        class="font-red">delete</mat-icon>
+                                                    (click)="deleteStatus(fStatus)"
+                                                    [disabled]="isDeleteDisabled(fStatus.status)">
+                                                    <mat-icon class="navigation-button font-red">delete</mat-icon>
                                                 </button>
-
                                             </div>
                                         </div>
                                     </div>
@@ -78,10 +79,11 @@
                     <mat-action-row>
                         <div *ngIf="!facility.isValid">
                             <mat-list role="list">
-                                <mat-list-item role="listitem" *ngFor="let errorItem of facility.errors" class="status-error-item-selector">
+                                <mat-list-item role="listitem" *ngFor="let errorItem of facility.errors"
+                                    class="status-error-item-selector">
                                     <span class="status-missing-item">{{errorItem | translate}}</span>
                                 </mat-list-item>
-                              </mat-list>
+                            </mat-list>
                         </div>
                         <span class="spacer"></span>
                         <button mat-raised-button class="btn-color-green font-gray" color="primary"
