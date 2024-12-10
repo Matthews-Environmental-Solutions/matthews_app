@@ -2,7 +2,6 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using System;
-using System.Collections.Generic;
 using MatthewsApp.API.Enums;
 
 namespace MatthewsApp.API.Models;
@@ -21,7 +20,7 @@ public class FacilityStatus : BaseEntity
     [Required]
     public string StatusName { get; set; } = string.Empty;
 
-    [Column(TypeName = "nvarchar(16)")]
+    [Column(TypeName = "nvarchar(64)")]
     public string? StatusIcon { get; set; }
 
     [Required]

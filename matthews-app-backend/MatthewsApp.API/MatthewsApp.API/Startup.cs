@@ -79,6 +79,7 @@ public class Startup
         services.AddScoped<ICaseRepository, CaseRepository>();
         services.AddScoped<IFacilityStatusService, FacilityStatusService>();
         services.AddScoped<IFacilityStatusRepository, FacilityStatusRepository>();
+        services.AddHostedService<FacilityStatusChecker>();
 
         services.Configure<FormOptions>(o =>
         {

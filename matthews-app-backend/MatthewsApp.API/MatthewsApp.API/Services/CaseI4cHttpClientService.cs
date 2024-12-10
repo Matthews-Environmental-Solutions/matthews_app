@@ -1,6 +1,7 @@
 ﻿using IdentityModel.Client;
 using MatthewsApp.API.Dtos;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -10,7 +11,6 @@ using System.Security.Authentication;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace MatthewsApp.API.Services;
 
@@ -24,12 +24,17 @@ public interface ICaseI4cHttpClientService
 
 public class CaseI4cHttpClientService : ICaseI4cHttpClientService
 {
+    private readonly ILogger<CaseI4cHttpClientService> _logger;
     private HttpClient _httpClient;
     private IConfiguration _configuration;
     private string _accessToken;
-    
-    public CaseI4cHttpClientService(IConfiguration configuration)
+    private DateTime _tokenIssuedAt;
+    private TimeSpan _tokenLifetime;
+
+    public CaseI4cHttpClientService(IConfiguration configuration, ILogger<CaseI4cHttpClientService> logger)
     {
+        _logger = logger;
+
         HttpClientHandler handler = new HttpClientHandler()
         {
             SslProtocols = SslProtocols.Tls12 | SslProtocols.Tls11 | SslProtocols.Tls13,
@@ -54,12 +59,17 @@ public class CaseI4cHttpClientService : ICaseI4cHttpClientService
         _configuration = configuration;
         _httpClient.BaseAddress = new Uri(_configuration["i4connectedApiUrl"]);
         _httpClient.Timeout = new TimeSpan(0, 0, 30);
-        _accessToken = GetAccessTokenFromIdentityServer().Result;
-        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _accessToken);
+
+        GetAccessTokenAndConnect();
     }
 
     public async Task<ICollection<FacilityDto>> GetAllFacilities()
     {
+        if (IsTokenExpired())
+        {
+            GetAccessTokenAndConnect();
+        }
+
         HttpResponseMessage response;
         try
         {
@@ -77,6 +87,11 @@ public class CaseI4cHttpClientService : ICaseI4cHttpClientService
 
     public async Task<ICollection<DeviceDto>> GetAllDevicesAsync()
     {
+        if (IsTokenExpired())
+        {
+            GetAccessTokenAndConnect();
+        }
+
         HttpResponseMessage response;
         try
         {
@@ -95,6 +110,11 @@ public class CaseI4cHttpClientService : ICaseI4cHttpClientService
 
     public async Task<AdapterDto> GetAdapterByDeviceIdAsync(Guid DeviceId)
     {
+        if (IsTokenExpired())
+        {
+            GetAccessTokenAndConnect();
+        }
+
         HttpResponseMessage response;
         try
         {
@@ -112,6 +132,11 @@ public class CaseI4cHttpClientService : ICaseI4cHttpClientService
 
     public async Task<DeviceDetailsDto> GetDeviceDetailsAsync(Guid DeviceId)
     {
+        if (IsTokenExpired())
+        {
+            GetAccessTokenAndConnect();
+        }
+
         HttpResponseMessage response;
         try
         {
@@ -128,8 +153,9 @@ public class CaseI4cHttpClientService : ICaseI4cHttpClientService
         }
     }
 
-    private async Task<string> GetAccessTokenFromIdentityServer()
+    private async Task<(string, DateTime, TimeSpan)> GetAccessTokenFromIdentityServer()
     {
+        _logger.LogInformation("Getting access token from Identity Server");
         var disco = await _httpClient.GetDiscoveryDocumentAsync(_configuration["OAuth2Introspection:Authority"]);
         if (disco.IsError)
         {
@@ -153,7 +179,29 @@ public class CaseI4cHttpClientService : ICaseI4cHttpClientService
             Debug.WriteLine("Identity server - Unsuccesful token response");
         }
 
-        return tokenResponse.AccessToken;
+        _accessToken = tokenResponse.AccessToken;
+        _tokenIssuedAt = DateTime.UtcNow;
+        _tokenLifetime = TimeSpan.FromSeconds(tokenResponse.ExpiresIn);
+        return (_accessToken, _tokenIssuedAt, _tokenLifetime);
     }
-    
+
+    private bool IsTokenExpired()
+    {
+        // If the token is null, consider it expired
+        if (_accessToken == null) return true;
+
+        // Calculate the expiration time based on the issued time and lifetime
+        var expirationTime = _tokenIssuedAt.Add(_tokenLifetime.Subtract(TimeSpan.FromSeconds(900)));
+
+        // Check if the token is expired
+        return expirationTime < DateTime.UtcNow;
+    }
+
+    private void GetAccessTokenAndConnect()
+    {
+        _ = GetAccessTokenFromIdentityServer().Result;
+        _logger.LogInformation("Connecting to i4connected");
+        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _accessToken);
+    }
+
 }

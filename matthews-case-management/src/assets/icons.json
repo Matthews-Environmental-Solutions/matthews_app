@@ -13,6 +13,7 @@
 
     {"key": "hive", "name": "Hive"},
     {"key": "oil_barrel", "name": "Oil Barrel"},
+    {"key": "local_fire_department", "name": "Fire"},
     {"key": "south_america", "name": "South America"},
     {"key": "sunny_snowing", "name": "Sunny Snowing"},
     {"key": "cyclone", "name": "Cyclone"},
