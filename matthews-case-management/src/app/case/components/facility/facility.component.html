@@ -55,15 +55,13 @@
                                         </div>
                                         <div class="item-5">
                                             <div class="facility-status-item">
-
                                                 <button mat-icon-button aria-label="edit button"
                                                     (click)="editStatus(fStatus)">
                                                     <mat-icon class="navigation-button"
                                                         class="font-orangered">edit</mat-icon>
                                                 </button>
-                                                <button mat-icon-button aria-label="delete button"
-                                                    (click)="deleteStatus(fStatus)"
-                                                    [disabled]="isDeleteDisabled(fStatus.status)">
+                                                <button *ngIf="!isDeleteDisabled(fStatus.status)" mat-icon-button aria-label="delete button"
+                                                    (click)="deleteStatus(fStatus)">
                                                     <mat-icon class="navigation-button font-red">delete</mat-icon>
                                                 </button>
                                             </div>
