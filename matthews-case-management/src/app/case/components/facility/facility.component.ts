@@ -183,4 +183,10 @@ export class FacilityComponent implements OnInit {
       });
   }
 
+  isDeleteDisabled(statusValue: number): boolean {
+    const count = this.facilityStatuses.filter(status => status.status === statusValue).length;
+    return count === 1; // Disable if only one remains
+  }
+  
+
 }
