@@ -47,7 +47,7 @@ export class FacilityStatusDialogComponent implements OnInit {
         statusCode: new FormControl(data.statusCode, [Validators.required, Validators.pattern("^[0-9]*$"), Validators.maxLength(4)]),
         statusName: new FormControl(data.statusName, [Validators.required]),
         statusIcon: new FormControl(data.statusIcon, [Validators.required]),
-        generalCaseStatus: new FormControl(data.status, [Validators.required]),
+        //generalCaseStatus: new FormControl(data.status, [Validators.required]),
       });
 
 
