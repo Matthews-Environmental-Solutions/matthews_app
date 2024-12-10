@@ -59,14 +59,14 @@
             <mat-slide-toggle formControlName="startProcess">{{'startProcess' | translate}}</mat-slide-toggle>
         </div> -->
         
-        <mat-form-field appearance="fill">
+        <!-- <mat-form-field appearance="fill">
             <mat-label>{{"facility" | translate}}</mat-label>
             <mat-select formControlName="generalCaseStatus" (selectionChange)="caseStatusChanged($event)">
                 <mat-option *ngFor="let stat of generalCaseStatuses" [value]="stat.value">
                     {{translateGeneralStatus(stat.name)}}
                 </mat-option>
             </mat-select>
-        </mat-form-field>
+        </mat-form-field> -->
 
     </div>
 </form>

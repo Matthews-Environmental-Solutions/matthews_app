@@ -76,7 +76,7 @@ export class FacilityStatusDialogComponent implements OnInit {
     this.data.statusCode = this.statusForm.get('statusCode')?.value;
     this.data.statusName = this.statusForm.get('statusName')?.value;
     this.data.statusIcon = this.statusForm.get('statusIcon')?.value;
-    this.data.status = this.statusForm.get('generalCaseStatus')?.value;
+    this.data.status = 4;
     this.dialogRef.close(this.data);
   }
 
