@@ -144,7 +144,7 @@
                 <span class="footer-text">Press START to continue</span>
               </div>
               <div class="actions">
-                <ion-segment (ionChange)="segmentChanged($event, selectedDevice)">
+                <ion-segment [(ngModel)]="selectedBurnMode" (ionChange)="segmentChanged($event, selectedDevice)">
                   <ion-segment-button
                     *ngFor="let s of burnModeKeys;"
                     value="{{s}}"
