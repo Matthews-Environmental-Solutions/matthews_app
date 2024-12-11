@@ -26,7 +26,7 @@
             </span>
             <span
               class="font-size"
-              *ngIf="parseSignalValue(signal.value) == 0 ? true : false"
+              *ngIf="parseSignalValue(signal.value) == 0 || parseSignalValue(signal.value) == 10  ? true : false"
               >{{"Ready to Preheat"}}
             </span>
             <span
@@ -136,7 +136,7 @@
           <ng-container *ngIf="signal.name === 'MACHINE_STATUS'">
             <!-- segment -->
             <ng-container
-              *ngIf="parseSignalValue(signal.value) == 0  ? true : false"
+              *ngIf="parseSignalValue(signal.value) == 0  || parseSignalValue(signal.value) == 10 ? true : false"
             >
               <div class="wrapper">
                 <span class="footer-text"><b>Prepare System</b><br /></span>
