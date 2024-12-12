@@ -71,6 +71,7 @@ public class Startup
             o.EnableDetailedErrors = true;
         });
         services.AddSingleton<CaseHub>();
+        services.AddSingleton<FacilityHub>();
 
         services.AddSingleton<IEventAggregator>(new EventAggregator());
         services.AddHostedService<CaseMqttService>();
@@ -144,6 +145,7 @@ public class Startup
         {
             endpoints.MapControllers().RequireAuthorization();
             endpoints.MapHub<CaseHub>("/casehub");
+            endpoints.MapHub<FacilityHub>("/facilityhub");
         });
     }
 

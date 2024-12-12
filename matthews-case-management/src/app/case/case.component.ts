@@ -97,7 +97,7 @@ export class CaseComponent implements OnInit {
       this.isButtonVisible = permission;
     }))
 
-    this.signalRService.startConnection();
+    this.signalRService.startConnectionToCaseHub();
     this.signalRService.addCaseDataListener();
 
     this.i4connectedService.getUserInfoDetails(this.authService.loggedInUser.sub).subscribe(userDetails => {
