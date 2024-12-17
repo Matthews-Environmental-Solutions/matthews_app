@@ -117,6 +117,8 @@ export class CremationProcessPage implements OnInit, OnDestroy {
   selectedCaseId: string | null = null;
   private subscription: Subscription;
 
+  isContinueClicked: boolean = false;
+
   containerTypes: ContainerTypeSelection[] = [
     { id: 0, name: 'None' },
     { id: 1, name: 'Cardboard' },
@@ -216,6 +218,10 @@ export class CremationProcessPage implements OnInit, OnDestroy {
   establishSignalRConnection() {
     this.signalRCaseApiService.initializeSignalRCaseApiConnection();
     this.signalRCaseApiService.addSelectedCaseListener();
+  }
+
+  pressContinue() {
+    this.isContinueClicked = true;
   }
 
   parseSignalValue(value: string): number {
@@ -487,6 +493,13 @@ export class CremationProcessPage implements OnInit, OnDestroy {
     this.cooldownTime = 0;
   }
 
+  handleSelectButtonClick(selectedDevice: Device) {
+    this.pressContinue(); // Ensures button is disabled or hidden immediately
+    this.move(2);
+    this.caseRequest(selectedDevice);
+    this.selectCaseAPI();
+  }
+
   caseRequest(selectedDevice: Device) {
     const signal = selectedDevice.signals.find(
       (signal) => signal.name === 'CASE_REQUEST'
@@ -614,6 +627,7 @@ export class CremationProcessPage implements OnInit, OnDestroy {
   resetProperties() {
     this.isPreheatStarted = false;
     this.isCaseSelected = false;
+    this.isContinueClicked = false;
     this.isCycleStarted = false;
     this.isCoolDownStarted = false;
     this.isRakeOutStarted = false;
@@ -645,8 +659,9 @@ export class CremationProcessPage implements OnInit, OnDestroy {
   }
 
   clearSelectedCase() {
-    //this.appStore.updateSelectedCase(null);
     this.isCaseSelected = false;
+    this.isContinueClicked = false;
+
     this.caseService.deselectCase(this.selectedCaseId)
       .then((response) => console.log('Case deselected successfully:', response))
       .catch((error) => console.error('Error deselecting case:', error));
