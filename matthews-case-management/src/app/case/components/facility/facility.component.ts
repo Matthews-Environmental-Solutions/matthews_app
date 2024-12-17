@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
@@ -15,13 +15,14 @@ import { StateService } from 'src/app/services/states.service';
 import { CaseService } from 'src/app/services/cases.service';
 import { CaseStatusDto } from 'src/app/models/case-status-dto.model';
 import { FacilityService } from 'src/app/services/facility.service';
+import { SignalrService } from 'src/app/services/signalr.service';
 
 @Component({
   selector: 'app-facility',
   templateUrl: './facility.component.html',
   styleUrls: ['./facility.component.scss']
 })
-export class FacilityComponent implements OnInit {
+export class FacilityComponent implements OnInit, OnDestroy {
 
   private GUID_EMPTY: string = '00000000-0000-0000-0000-000000000000';
   panelOpenState = false;
@@ -45,15 +46,11 @@ export class FacilityComponent implements OnInit {
     private stateService: StateService,
     private caseService: CaseService,
     private facilityService: FacilityService,
+    public signalRService: SignalrService,
     public dialog: MatDialog) {
-    this.subs.add(this.facilityService.getFacilities().subscribe(data => {
-      this.facilitiesDataSource = new MatTableDataSource<Facility>(data);
-      this.facilities = this.facilitiesDataSource.filteredData.map(facility => {
-        const errorMessage = facility.errorMessage || ''; // Fallback to an empty string if undefined
-        let errors = errorMessage.split('. '); // Split the error message into sentences
-        errors.pop(); // Extract the last sentence
-        return { ...facility, errors: errors }
-      });
+
+      this.subs.add(this.facilityService.getFacilities().subscribe(data => {
+      this.stateService.setFacilitiesBS(data);
     }));
   }
 
@@ -90,10 +87,26 @@ export class FacilityComponent implements OnInit {
   ngOnInit(): void {
     console.log(this.stateService.getUserDetails());
     this.caseService.getCaseStatuses().subscribe(statuses => this.generalCaseStatuses = statuses);
+
+    this.subs.add(this.stateService.facilities$.subscribe(facilities => { 
+      this.facilitiesDataSource = new MatTableDataSource<Facility>(facilities);
+
+      this.facilities = this.facilitiesDataSource.filteredData.map(facility => {
+        const errorMessage = facility.errorMessage || ''; // Fallback to an empty string if undefined
+        let errors = errorMessage.split('. '); // Split the error message into sentences
+        errors.pop(); // Extract the last sentence
+        return { ...facility, errors: errors }
+      });
+
+    }));
+
+    this.signalRService.startConnectionToFacilityHub();
+    this.signalRService.addFacilityDataListener();
   }
 
   ngOnDestroy(): void {
     this.subs.unsubscribe();
+    this.signalRService.stopConnectionToFacilityHub();
   }
 
   translateCaseStatus(statusValue: number): string {

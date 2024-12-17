@@ -7,6 +7,7 @@ import { I4connectedService } from "./i4connected.service";
 import { Case } from "../models/case.model";
 import { v4 as uuidv4 } from 'uuid';
 import { UserDetails } from "../models/user-details.model";
+import { Facility } from "../models/facility.model";
 
 @Injectable({
     providedIn: 'root'
@@ -49,6 +50,9 @@ export class StateService {
     public canActivateFacilityUrl$: Observable<boolean>;
     public canActivateFacilityUrlBS = new BehaviorSubject<boolean>(this.getDefaultUserPermissionForFacility());
 
+    public facilities$: Observable<Facility[]>;
+    private facilitiesBS = new BehaviorSubject<Facility[]>(this.getDefaultFacility());
+
     constructor(private calendarService: CalendarService, private userSettingService: UserSettingService, private i4connectedService: I4connectedService) {
         this.selectedFacilityId$ = this.selectedFacilityIdBehaviorSubject;
         this.selectedDate$ = this.selectedDateBehaviorSubject;
@@ -63,6 +67,7 @@ export class StateService {
         this.userDetails$ = this.userDetailsBS;
         this.canActivateFacilityUrl$ = this.canActivateFacilityUrlBS;
         this.setCanActivateFacilityUrlBS(this.getCanActivateFacilityUrlBS());
+        this.facilities$ = this.facilitiesBS;
     }
 
     // public canActivateFacilityUrl$ : Observable<boolean> = this.checkUserPermissionForFacility();
@@ -240,10 +245,26 @@ export class StateService {
         return this.checkUserPermissionForFacility();
     }
 
+
+    // facilitiesBS
+    setFacilitiesBS(facilities: Facility[]) : void{
+        this.facilitiesBS.next(facilities);
+    }
+
+    getFacilities(): Facility[] {
+        return this.facilitiesBS.value;
+    }
+
+    getDefaultFacility(): Facility[] {
+        return [];
+    }
+
+
     checkUserPermissionForFacility(): boolean {
         const userDetails = this.getUserDetails();
         const requiredRoles = ['Site Manager', 'Multi-Site Manager', 'MES Support', 'SuperAdministrator'];
         var permission = requiredRoles.some(role => userDetails.roles.includes(role));
         return permission;
     }
+
 }

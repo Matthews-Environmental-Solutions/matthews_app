@@ -15,12 +15,14 @@ public class FacilityStatusChecker : IHostedService, IDisposable
 {
     private readonly ILogger<FacilityStatusChecker> _logger;
     private readonly IServiceProvider _serviceProvider;
+    private readonly FacilityHub _facilityHub;
     private Timer _timer;
 
-    public FacilityStatusChecker(ILogger<FacilityStatusChecker> logger, IServiceProvider serviceProvider)
+    public FacilityStatusChecker(ILogger<FacilityStatusChecker> logger, IServiceProvider serviceProvider, FacilityHub facilityHub)
     {
         _logger = logger;
         _serviceProvider = serviceProvider;
+        _facilityHub = facilityHub;
     }
 
     public Task StartAsync(CancellationToken cancellationToken)
@@ -125,6 +127,13 @@ public class FacilityStatusChecker : IHostedService, IDisposable
                     _logger.LogWarning($"Facility {facility.id} has issues: {facility.errorMessage}");
                 }
             }
+
+            facilities = await facilityService.GetFacilities();
+
+            // Send the updated facility statuses to all clients via SignalR. Serialize the facilities to JSON.
+            
+            string json = System.Text.Json.JsonSerializer.Serialize(facilities);
+            await _facilityHub.SendMessageWithAllFacilities(json);
         }
     }
 
