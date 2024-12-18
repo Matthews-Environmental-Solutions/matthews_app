@@ -39,6 +39,7 @@ public interface ICasesService
     Task<bool> ResetDemo();
     Task<IEnumerable<CaseStatusDto>> GetCaseStatuses();
     Task<Case> GetSelectCaseByDevice(Guid deviceId);
+    Task ClearAllSelectedCasesByDevice(CaseFromFlexyDto startCase);
 }
 
 public class CasesService : ICasesService
@@ -190,32 +191,27 @@ public class CasesService : ICasesService
 
     public async Task<Tuple<Case, bool>> UpdateCaseWhenCaseStart(CaseFromFlexyDto dto)
     {
+        if (dto.LOADED_ID == Guid.Empty)
+        {
+            return new (null, false);
+        }
+
         Case entity;
         bool entityDoesNotExistInDb = false;
-        if (dto.LOADED_ID == null || dto.LOADED_ID == Guid.Empty)
+        
+        entity = _caseRepository.GetById(dto.LOADED_ID);
+        if (entity is null)
         {
             entity = MakeNewCaseFromDto(dto);
             entityDoesNotExistInDb = true;
-            entity.FacilityStatusId = _facilityStatusRepository.GetReadyToCremateFacilityStatus(dto.FACILITY_ID).Id;
         }
-        else
-        {
-            entity = _caseRepository.GetById(dto.LOADED_ID ?? Guid.Empty);
-            if (entity is null)
-            {
-                entity = MakeNewCaseFromDto(dto);
-                entityDoesNotExistInDb = true;
-            }
-            entity.FacilityStatusId = _facilityStatusRepository.GetInProgressFacilityStatus(dto.FACILITY_ID).Id;
-            entity.FacilityStatus = _facilityStatusRepository.GetInProgressFacilityStatus(dto.FACILITY_ID);
-        }
-
+        entity.FacilityStatusId = _facilityStatusRepository.GetInProgressFacilityStatus(dto.FACILITY_ID).Id;
+        entity.FacilityStatus = _facilityStatusRepository.GetInProgressFacilityStatus(dto.FACILITY_ID);
         entity.ActualStartTime = dto.StartTime;
         entity.ActualFacility = dto.FACILITY_ID;
         entity.ActualDevice = dto.CREMATOR_ID;
 
         DeviceDto cremator = null;
-
         List<DeviceDto> cremators = (await _caseI4CHttpClientService.GetAllDevicesAsync()).ToList();
         cremator = cremators.FirstOrDefault(c => c.id == dto.CREMATOR_ID);
 
@@ -243,34 +239,29 @@ public class CasesService : ICasesService
 
     public async Task<Tuple<Case, bool>> UpdateCaseWhenCaseSelect(CaseFromFlexyDto dto)
     {
+        if (dto.LOADED_ID == Guid.Empty)
+        {
+            return new(null, false);
+        }
+
         Case entity;
         bool entityDoesNotExistInDb = false;
-        if (dto.LOADED_ID == null || dto.LOADED_ID == Guid.Empty)
+
+        entity = _caseRepository.GetById(dto.LOADED_ID);
+            
+        if (entity is null)
         {
             entity = MakeNewCaseFromDto(dto);
             entityDoesNotExistInDb = true;
-            entity.FacilityStatusId = _facilityStatusRepository.GetSelectedFacilityStatus(dto.FACILITY_ID).Id;
-            entity.FacilityStatus = _facilityStatusRepository.GetSelectedFacilityStatus(dto.FACILITY_ID);
         }
         else
         {
-            entity = _caseRepository.GetById(dto.LOADED_ID ?? Guid.Empty);
-            
-            if (entity is null)
-            {
-                entity = MakeNewCaseFromDto(dto);
-                entityDoesNotExistInDb = true;
-            }
-            else
-            {
-                entity = RemapCaseFromDto(entity, dto);
-            }
-            entity.FacilityStatusId = _facilityStatusRepository.GetSelectedFacilityStatus(dto.FACILITY_ID).Id;
-            entity.FacilityStatus = _facilityStatusRepository.GetSelectedFacilityStatus(dto.FACILITY_ID);
+            entity = RemapCaseFromDto(entity, dto);
         }
+        entity.FacilityStatusId = _facilityStatusRepository.GetSelectedFacilityStatus(dto.FACILITY_ID).Id;
+        entity.FacilityStatus = _facilityStatusRepository.GetSelectedFacilityStatus(dto.FACILITY_ID);
 
         DeviceDto cremator = null;
-
         List<DeviceDto> cremators = (await _caseI4CHttpClientService.GetAllDevicesAsync()).ToList();
         cremator = cremators.FirstOrDefault(c => c.id == dto.CREMATOR_ID);
 
@@ -301,7 +292,7 @@ public class CasesService : ICasesService
     private Case MakeNewCaseFromDto(CaseFromFlexyDto dto)
     {
         Case entity = new Case();
-        entity.Id = dto.LOADED_ID ?? Guid.NewGuid();
+        entity.Id = dto.LOADED_ID;
         entity.FirstName = dto.LOADED_FIRST_NAME;
         entity.LastName = dto.LOADED_SURNAME;
         entity.Age = dto.LOADED_AGE;
@@ -558,6 +549,17 @@ public class CasesService : ICasesService
                            }).Where(cs => !cs.Name.Equals("UNSCHEDULED"));
         
         return await Task.FromResult(caseStatuses);
+    }
+
+    public async Task ClearAllSelectedCasesByDevice(CaseFromFlexyDto startCase)
+    {
+        var selectedCases = await _caseRepository.GetSelectedCasesByDevice(startCase.CREMATOR_ID);
+        foreach (var selectedCase in selectedCases)
+        {
+            selectedCase.FacilityStatusId = _facilityStatusRepository.GetReadyToCremateFacilityStatus(startCase.FACILITY_ID).Id;
+            selectedCase.FacilityStatus = _facilityStatusRepository.GetReadyToCremateFacilityStatus(startCase.FACILITY_ID);
+            _caseRepository.Update(selectedCase);
+        }
     }
 
     //public static string UTF8toASCII(string text)

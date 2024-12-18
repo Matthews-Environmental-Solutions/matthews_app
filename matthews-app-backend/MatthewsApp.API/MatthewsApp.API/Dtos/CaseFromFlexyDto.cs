@@ -8,7 +8,7 @@ namespace MatthewsApp.API.Dtos;
 public class CaseFromFlexyDto {
 
     [JsonConverter(typeof(CustomGuidConverter))]
-    public Guid? LOADED_ID { get; set; }
+    public Guid LOADED_ID { get; set; }
     public Guid FACILITY_ID { get; set; }
 	public Guid CREMATOR_ID { get; set; }
 

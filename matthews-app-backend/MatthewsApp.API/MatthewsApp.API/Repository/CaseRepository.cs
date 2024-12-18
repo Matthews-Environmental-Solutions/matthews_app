@@ -1558,4 +1558,13 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
 
         return Task.CompletedTask;
     }
+
+    public async Task<IEnumerable<Case>> GetSelectedCasesByDevice(Guid deviceId)
+    {
+        return await _dataContext.Cases
+            .Where(c => c.ScheduledDevice == deviceId)
+            .Include(c => c.FacilityStatus)
+            .Where(c => c.FacilityStatus.Status == CaseStatus.SELECTED)
+            .ToArrayAsync();
+    }
 }

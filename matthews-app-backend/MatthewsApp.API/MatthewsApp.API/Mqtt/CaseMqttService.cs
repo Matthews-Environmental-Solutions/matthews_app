@@ -297,22 +297,12 @@ public class CaseMqttService : IHostedService
 
                     try
                     {
+                        await _casesService.ClearAllSelectedCasesByDevice(startCase);
                         Tuple<Case, bool> response = await _casesService.UpdateCaseWhenCaseSelect(startCase);
-
-                        // if LOADED_ID was empty, we will create it and will send back to Flexy
-                        if (response.Item2)
-                        {
-                            IMqttClient client = FindClientByClientId(e.ClientId);
-                            string topic = e.ApplicationMessage.Topic;
-                            var topicSegmentsList = topic.Split("/");
-                            SendCaseIdToFlexy(client, response.Item1, $"{topicSegmentsList[0]}/{topicSegmentsList[1]}");
-                        }
-
                         _caseHub.SendMessageToSelectCase($"CaseId: {response.Item1.Id}");
                     }
                     catch (Exception)
                     {
-
                         throw;
                     }
                 }
@@ -344,15 +334,6 @@ public class CaseMqttService : IHostedService
                     try
                     {
                         Tuple<Case, bool> response = await _casesService.UpdateCaseWhenCaseStart(startCase);
-
-                        // if LOADED_ID was empty, we will create it and will send back to Flexy
-                        if (response.Item2)
-                        {
-                            IMqttClient client = FindClientByClientId(e.ClientId);
-                            string topic = e.ApplicationMessage.Topic;
-                            var topicSegmentsList = topic.Split("/");
-                            SendCaseIdToFlexy(client, response.Item1, $"{topicSegmentsList[0]}/{topicSegmentsList[1]}");
-                        }
                     }
                     catch (Exception)
                     {                       
