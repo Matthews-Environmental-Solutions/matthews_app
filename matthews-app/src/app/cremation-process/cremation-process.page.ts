@@ -550,7 +550,6 @@ export class CremationProcessPage implements OnInit, OnDestroy {
             this.cremationProcessService.writeSignalValue(signal?.id, 1);
             this.stepNumber = 0;
             this.resetIntervals();
-            this.isCaseSelected = false;
           },
         },
       ],
