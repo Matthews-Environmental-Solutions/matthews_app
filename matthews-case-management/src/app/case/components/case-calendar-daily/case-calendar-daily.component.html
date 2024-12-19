@@ -1,46 +1,4 @@
 <div class="daily-container">
-<!--     <div class="btn-column-1">
-        <button mat-raised-button class="btn-width" [ngClass]="{'selected-button': buttonUsed == 0}"
-            (click)="dayClick(0)">
-            {{getDayForButton(0)}}
-        </button>
-    </div>
-    <div class="btn-column-2">
-        <button mat-raised-button class="btn-width" [ngClass]="{'selected-button': buttonUsed == 1}"
-            (click)="dayClick(1)">
-            {{getDayForButton(1)}}
-        </button>
-    </div>
-    <div class="btn-column-3">
-        <button mat-raised-button class="btn-width" [ngClass]="{'selected-button': buttonUsed == 2}"
-            (click)="dayClick(2)">
-            {{getDayForButton(2)}}
-        </button>
-    </div>
-    <div class="btn-column-4">
-        <button mat-raised-button class="btn-width" [ngClass]="{'selected-button': buttonUsed == 3}"
-            (click)="dayClick(3)">
-            {{getDayForButton(3)}}
-        </button>
-    </div>
-    <div class="btn-column-5">
-        <button mat-raised-button class="btn-width" [ngClass]="{'selected-button': buttonUsed == 4}"
-            (click)="dayClick(4)">
-            {{getDayForButton(4)}}
-        </button>
-    </div>
-    <div class="btn-column-6">
-        <button mat-raised-button class="btn-width" [ngClass]="{'selected-button': buttonUsed == 5}"
-            (click)="dayClick(5)">
-            {{getDayForButton(5)}}
-        </button>
-    </div>
-    <div class="btn-column-7">
-        <button mat-raised-button class="btn-width" [ngClass]="{'selected-button': buttonUsed == 6}"
-            (click)="dayClick(6)">
-            {{getDayForButton(6)}}
-        </button>
-    </div> -->
     <mat-progress-bar *ngIf="loader" mode="indeterminate" class="indeterminate-progress-bar"></mat-progress-bar>
 
     <div class="daily-list">
@@ -56,8 +14,8 @@
                     </div>
                     <div class="item-status cell">
                         <div class="case-status"
-                            [ngClass]="{'case-status-color-green': case.status == 1, 'case-status-color-red': case.status == 2, 'case-status-color-blue': case.status == 3, 'case-status-color-orange': case.status == 4}">
-                            <mat-icon class="material-symbols-outlined ">
+                            [ngClass]="{'case-status-color-green': case.status == 1, 'case-status-color-red': case.status == 2, 'case-status-color-orange': case.status == 3, 'case-status-color-gray': case.status == 4, 'case-status-color-blue': case.status == 5}">
+                            <mat-icon class="material-symbols-outlined">
                                 {{getIcon(case.facilityStatusId)}}
                             </mat-icon>
                             <ng-container *ngIf="case.facilityStatusText as status">

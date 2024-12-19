@@ -194,18 +194,22 @@ $buttons: mat-palette($mat-blue-gray, 700);
     letter-spacing: 1px;
 }
 
-.case-status-color-green {
-    color: #02708e;
+.case-status-color-blue {
+    color: #009dc9;
 }
 
 .case-status-color-red {
     color: #90131a;
 }
 
-.case-status-color-blue {
-    color: #29c0f1;
+.case-status-color-black {
+    color: #0f0f0f;
 }
 
 .case-status-color-orange {
     color: #f15a29;
+}
+
+.case-status-color-green {
+    color: #036600;
 }
