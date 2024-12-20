@@ -36,7 +36,6 @@ export class FacilityPage implements OnInit {
   selectFacility(facility: Facility) {
     this.updateSelectedFacility(facility);
     this.navCtrl.navigateForward(['app/tabs/facility/device-list', facility.id]);
-    this.appStoreService.updateSelectedFacility(facility);
     this.notificationService.scheduleNotification();
   }
 
