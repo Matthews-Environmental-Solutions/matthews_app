@@ -229,7 +229,7 @@
                     'dd/MM/yyyy'}}<br /></span>
                 </div>
                 <div class="actions">
-                  <ion-button expand="block" *ngIf="isCaseSelected && parseSignalValue(signal.value) <= 60"
+                  <ion-button expand="block" *ngIf="isCaseSelected && parseSignalValue(signal.value) < 80"
                     (click)="clearSelectedCase()" class="btnbackward">
                     CLEAR SELECTED CASE
                   </ion-button>
