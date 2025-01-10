@@ -57,8 +57,9 @@ export class CremationProcessPage implements OnInit, OnDestroy {
         }
         if (
           signal.name === 'MACHINE_STATUS' &&
-          parseInt(signal.value) >= 40 &&
-          parseInt(signal.value) < 50
+          (parseInt(signal.value) >= 40 &&
+          parseInt(signal.value) < 50) ||
+          parseInt(signal.value) == 4
         ) {
           this.move(1);
         } else if (
