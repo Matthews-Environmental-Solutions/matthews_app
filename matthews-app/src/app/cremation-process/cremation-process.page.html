@@ -82,22 +82,26 @@
       </ng-container>
 
       <ng-container *ngFor="let signal of selectedDevice.signals">
-        <mat-step *ngIf="signal.name === 'MACHINE_STATUS'" [completed]="parseSignalValue(signal.value) >= 100">
+        <mat-step *ngIf="signal.name === 'MACHINE_STATUS'" [completed]="parseSignalValue(signal.value) >= 110">
           <ng-template matStepLabel>
             <div class="clickable-step" (click)="moveToSecond(parseSignalValue(signal.value))">
               <span
-                [ngClass]="parseSignalValue(signal.value) >= 100 || parseSignalValue(signal.value) < 50 ? 'grayHeading' : 'blackHeading'">
+                [ngClass]="parseSignalValue(signal.value) >= 110 || parseSignalValue(signal.value) < 50 ? 'grayHeading' : 'blackHeading'">
                 {{ 'StartCycle' | translate }}<br />
               </span>
               <span class="font-size" *ngIf="parseSignalValue(signal.value) <= 80">
                 {{ chamberStatus[signal.value] | camelCase }}
               </span>
               <span class="font-size"
-                *ngIf="parseSignalValue(signal.value) > 80 && parseSignalValue(signal.value) <= 90">
-                {{ 'Cremation in progress' }}
+                *ngIf="(parseSignalValue(signal.value) > 80 && parseSignalValue(signal.value) <= 90) || parseSignalValue(signal.value) === 100">
+                {{ 'Cremation in Progress' }}
               </span>
-              <span class="completed" *ngIf="parseSignalValue(signal.value) >= 100">
-                {{ chamberStatus[100] ?? '-' | translate }}
+              <span class="font-size"
+                *ngIf="parseSignalValue(signal.value) === 95">
+                {{ 'Cremation Cycle Paused' }}
+              </span>
+              <span class="completed" *ngIf="parseSignalValue(signal.value) >= 110">
+                {{ 'Cremation Completed'}}
               </span>
             </div>
           </ng-template>
@@ -109,7 +113,16 @@
           <ng-template matStepLabel>
             <div class="clickable-step" (click)="moveToThird(parseSignalValue(signal.value))">
               <span [ngClass]="parseSignalValue(signal.value) < 100 ? 'grayHeading' : 'blackHeading'">
-                {{ 'CompleteCycle' | translate }}<br />
+                {{ 'Complete Process' }}<br />
+              </span>
+              <span class="font-size" *ngIf="parseSignalValue(signal.value) === 110">
+                {{ 'Cooling in Progress' }}
+              </span>
+              <span class="font-size" *ngIf="parseSignalValue(signal.value) === 120">
+                {{ 'Ready to Rake-out' }}
+              </span>
+              <span class="font-size" *ngIf="parseSignalValue(signal.value) === 130">
+                {{ 'Raking in Progress' }}
               </span>
             </div>
           </ng-template>
@@ -309,7 +322,7 @@
             <ng-container *ngIf="parseSignalValue(signal.value) >= 80 && stepNumber == 2">
               <div class="wrapper">
                 <span class="footer-text"><b>Cremation Cycle</b><br /></span>
-                <span *ngIf="parseSignalValue(signal.value) == 90" class="footer-text">Cremation in
+                <span *ngIf="parseSignalValue(signal.value) == 90 || parseSignalValue(signal.value) == 100" class="footer-text">Cremation in
                   Progress<br /></span>
                 <span *ngIf="parseSignalValue(signal.value) == 80" class="footer-text">Waiting for Charge Door to
                   Close<br /></span>
@@ -324,15 +337,15 @@
                   translate}}<br /></span>
               </div>
               <div class="actions">
-                <ion-button class="inline" *ngIf="parseSignalValue(signal.value) == 90"
+                <ion-button class="inline" *ngIf="parseSignalValue(signal.value) == 90 || parseSignalValue(signal.value) == 100"
                   (click)="pauseCycle(selectedDevice)">
                   Pause
                 </ion-button>
-                <ion-button class="inline" *ngIf="parseSignalValue(signal.value) < 85"
+                <ion-button class="inline" *ngIf="parseSignalValue(signal.value) === 95"
                   (click)="resumeCycle(selectedDevice)">
                   Resume
                 </ion-button>
-                <ion-button class="inline" *ngIf="parseSignalValue(signal.value) <= 90" id="trigger-button"
+                <ion-button class="inline" *ngIf="parseSignalValue(signal.value) <= 100 && parseSignalValue(signal.value) >= 90" id="trigger-button"
                   (click)="presentPopover('event$', selectedDevice)">
                   Extend
                 </ion-button>
@@ -350,28 +363,7 @@
       <div class="footer-content">
         <ng-container *ngFor="let signal of selectedDevice.signals; trackBy:trackItems">
           <ng-container *ngIf="signal.name === 'MACHINE_STATUS'">
-            <ng-container *ngIf="!isCoolDownStarted && !isRakeOutStarted && stepNumber == 3">
-              <div class="wrapper">
-                <span class="footer-text"><b>Complete Process</b><br /></span>
-                <!-- <ng-container *ngFor="let signal of selectedDevice.signals; trackBy:trackItems"> -->
-                <span class="footer-text">
-                  {{'PrimChamber' | translate}}: {{signalTt100}}°F <br /></span>
-                <span class="footer-text">
-                  {{'SecChamber' | translate}}: {{signalTt101}}°F <br /></span>
-                <!-- </ng-container> -->
-              </div>
-              <div class="actions">
-                <ion-button expand="block" (click)="coolDown(selectedDevice)" class="btnsuccess">
-                  <ion-icon slot="end" name="arrow-forward"></ion-icon>
-                  {{'CoolDown' | translate}}
-                </ion-button>
-                <ion-button expand="block" (click)="rakeOut(selectedDevice)">
-                  <ion-icon slot="end" name="arrow-forward"></ion-icon>
-                  {{'RakeOut' | translate}}
-                </ion-button>
-              </div>
-            </ng-container>
-            <ng-container *ngIf="isCoolDownStarted && !isRakeOutStarted && stepNumber == 3">
+            <ng-container *ngIf="parseSignalValue(signal.value) >= 110 || parseSignalValue(signal.value) <= 130 && stepNumber == 3">
               <div class="wrapper">
                 <span class="footer-text"><b>Complete Process</b><br /></span>
                 <span class="footer-text">{{'CoolingInProgress' | translate}}...<br /></span>
@@ -383,13 +375,26 @@
                 <!-- </ng-container> -->
               </div>
               <div class="actions">
-                <ion-button expand="block" class="btnbackward" (click)="skipCooldown(stepper)">
-                  <ion-icon slot="end" name="arrow-forward"></ion-icon>
-                  {{'SkipCooldown' | translate}}
+                <ion-button class="inline">
+                  Restart <br/>
+                  Cremation
                 </ion-button>
-                <ion-button expand="block" class="btnsuccess" (click)="rakeOut(selectedDevice)">
+                <ion-button class="inline"
+                  (click)="systemShutdown(stepper, selectedDevice)">
+                  Shutdown
+                </ion-button>
+                <ion-button *ngIf="parseSignalValue(signal.value) === 110" expand="block" class="btnbackward" (click)="skipCooldown(stepper)">
+                  <ion-icon slot="end" name="arrow-forward"></ion-icon>
+                  {{'SKIP COOLING, RAKE NOW'}}
+                </ion-button>
+                <ion-button *ngIf="parseSignalValue(signal.value) === 120" expand="block" class="btnsuccess" (click)="rakeOut(selectedDevice)">
                   <ion-icon slot="end" name="arrow-forward"></ion-icon>
                   {{'RakeOut' | translate}}
+                </ion-button>
+                <ion-button *ngIf="parseSignalValue(signal.value) === 130" expand="block" class="btnsuccess">
+                  <ion-icon slot="end" name="arrow-forward"></ion-icon>
+                  {{'Rake-Out complete'}}<br/>
+                  {{'Start New Process'}}
                 </ion-button>
               </div>
             </ng-container>

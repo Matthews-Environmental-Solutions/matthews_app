@@ -65,13 +65,13 @@ export class CremationProcessPage implements OnInit, OnDestroy {
         } else if (
           signal.name === 'MACHINE_STATUS' &&
           parseInt(signal.value) >= 50 &&
-          parseInt(signal.value) < 100 &&
+          parseInt(signal.value) <= 100 &&
           !this.isCremationStopped
         ) {
           this.move(2);
         } else if (
           signal.name === 'MACHINE_STATUS' &&
-          parseInt(signal.value) >= 100
+          parseInt(signal.value) >= 110
         ) {
           this.move(3);
           //this.isCaseSelected = false;
