@@ -243,7 +243,7 @@
                   <span class="footer-text"><b>Select Case</b><br /></span>
                   <span class="footer-text">{{case.lastName}}, {{case.firstName}}<br /></span>
                   <span class="footer-text">ID: {{clientCaseId}}<br /></span>
-                  <span class="footer-text">Gender: {{case.genderText}} - Weight:{{case.weight}}kg<br /></span>
+                  <span class="footer-text">Gender: {{case.genderText}} - Weight: {{case.weight}}kg<br /></span>
                   <span class="footer-text">Container: {{case.containerTypeText}}<br /></span>
                   <span class="footer-text">Scheduled: {{case.scheduledStartTime | date: 'MM/dd/yyyy - hh:mm a'}}<br /></span>
                 </div>
@@ -253,7 +253,7 @@
                     CLEAR SELECTED CASE
                   </ion-button>
                   <ion-button expand="block" type="button" (click)="handleSelectButtonClick(selectedDevice)"
-                    class="btnsuccess">Select</ion-button>
+                    class="btnsuccess">CONTINUE</ion-button>
                 </div>
               </ng-container>
               <ng-container *ngIf="parseSignalValue(signal.value) === 45">
@@ -371,7 +371,7 @@
               </div>
               <div class="actions">
                 <ion-button class="inline"
-                (click)="systemRestart(stepper, selectedDevice)">
+                (click)="systemRestart(selectedDevice)">
                   Restart <br/>
                   Cremation
                 </ion-button>
@@ -379,30 +379,16 @@
                   (click)="systemShutdown(stepper, selectedDevice)">
                   Shutdown
                 </ion-button>
-                <ion-button *ngIf="parseSignalValue(signal.value) === 110" expand="block" class="btnbackward" (click)="skipCooldown(stepper)">
+                <ion-button *ngIf="parseSignalValue(signal.value) === 110" expand="block" class="btnbackward" (click)="skipCooldown(stepper, selectedDevice)">
                   <ion-icon slot="end" name="arrow-forward"></ion-icon>
                   {{'SKIP COOLING, RAKE NOW'}}
                 </ion-button>
                 <ion-button *ngIf="parseSignalValue(signal.value) === 120" expand="block" class="btnsuccess" (click)="rakeOut(selectedDevice)">
-                  <ion-icon slot="end" name="arrow-forward"></ion-icon>
-                  {{'RakeOut' | translate}}
+                  RAKE NOW
                 </ion-button>
-                <ion-button *ngIf="parseSignalValue(signal.value) === 130" expand="block" class="btnsuccess">
-                  <ion-icon slot="end" name="arrow-forward"></ion-icon>
+                <ion-button *ngIf="parseSignalValue(signal.value) === 130" expand="block" class="btnsuccess" (click)="rakeOutConfirmation(stepper, selectedDevice)">
                   {{'Rake-Out complete'}}<br/>
                   {{'Start New Process'}}
-                </ion-button>
-              </div>
-            </ng-container>
-            <ng-container *ngIf="!isCoolDownStarted && isRakeOutStarted && stepNumber == 3">
-              <div class="wrapper">
-                <span class="footer-text"><b>Complete Process</b><br /></span>
-                <span class="footer-text">{{'RakeOutInProgress' | translate}}...<br /></span>
-              </div>
-              <div class="actions">
-                <ion-button expand="block" (click)="rakeOutConfirmation(stepper, selectedDevice)" class="btnsuccess">
-                  <ion-icon slot="end" name="arrow-forward"></ion-icon>
-                  {{'ConfirmRakeOutIsFinished' | translate}}.
                 </ion-button>
               </div>
             </ng-container>

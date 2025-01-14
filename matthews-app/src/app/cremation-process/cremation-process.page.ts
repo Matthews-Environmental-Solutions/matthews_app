@@ -453,7 +453,7 @@ export class CremationProcessPage implements OnInit, OnDestroy {
     this.presentAlert(alertOptions);
   }
 
-  skipCooldown(stepper: MatStepper) {
+  skipCooldown(stepper: MatStepper, selectedDevice: Device) {
     const alertOptions: AlertOptions = {
       header: this.translateService.instant('SkipCooldown'),
       message: this.translateService.instant('SkipCooldownMessage'),
@@ -466,6 +466,7 @@ export class CremationProcessPage implements OnInit, OnDestroy {
           text: this.translateService.instant('Confirm'),
           role: 'confirm',
           handler: () => {
+            this.coolDown(selectedDevice);
           },
         },
       ],
@@ -568,6 +569,8 @@ export class CremationProcessPage implements OnInit, OnDestroy {
             this.cremationProcessService.writeSignalValue(signal?.id, 1);
             this.stepNumber = 0;
             this.resetIntervals();
+            this.clearSelectedCase(); 
+            this.caseRequestFalse(selectedDevice);
           },
         },
       ],
@@ -609,7 +612,7 @@ export class CremationProcessPage implements OnInit, OnDestroy {
     this.presentAlert(alertOptions);
   }
 
-  systemRestart(stepper: MatStepper, selectedDevice: Device) {
+  systemRestart(selectedDevice: Device) {
     const alertOptions: AlertOptions = {
       header: 'Confirm System Restart',
       message: 'Confirm System Restart',
