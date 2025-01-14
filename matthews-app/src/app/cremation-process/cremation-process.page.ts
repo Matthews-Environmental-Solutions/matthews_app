@@ -501,6 +501,23 @@ export class CremationProcessPage implements OnInit, OnDestroy {
     this.selectCaseAPI();
   }
 
+  caseRequestFalse(selectedDevice: Device) {
+    const signal = selectedDevice.signals.find(
+      (signal) => signal.name === 'CASE_REQUEST'
+    );
+    this.cremationProcessService.writeSignalValue(signal?.id, 0);
+    this.caseRequired(selectedDevice);
+  }
+
+  caseRequiredEmpty(selectedDevice: Device) {
+    const signal = selectedDevice.signals.find(
+      (signal) => signal.name === 'CASE_REQUIRED'
+    );
+
+    let empty: any = '';
+    this.cremationProcessService.writeSignalValue(signal?.id, empty);
+  }
+
   caseRequest(selectedDevice: Device) {
     const signal = selectedDevice.signals.find(
       (signal) => signal.name === 'CASE_REQUEST'
@@ -584,6 +601,33 @@ export class CremationProcessPage implements OnInit, OnDestroy {
             this.stepNumber = 0;
             this.resetIntervals();
             this.isCaseSelected = false;
+          },
+        },
+      ],
+    };
+
+    this.presentAlert(alertOptions);
+  }
+
+  systemRestart(stepper: MatStepper, selectedDevice: Device) {
+    const alertOptions: AlertOptions = {
+      header: 'Confirm System Restart',
+      message: 'Confirm System Restart',
+      buttons: [
+        {
+          text: this.translateService.instant('Cancel'),
+          role: 'cancel',
+        },
+        {
+          text: this.translateService.instant('Confirm'),
+          role: 'confirm',
+          handler: () => {
+            const signal = selectedDevice.signals.find(
+              (signal) => signal.name === 'ADD_TIME'
+            );
+            this.cremationProcessService.writeSignalValue(signal?.id, 5);
+            this.stepNumber = 2;
+            this.resetIntervals();
           },
         },
       ],

@@ -151,15 +151,10 @@
                   <ion-segment-button *ngFor="let s of burnModeKeys;" value="{{s}}">
                     <ion-label>{{burnMode[s]}}</ion-label>
                   </ion-segment-button>
-                </ion-segment>
-                <div class="button-container">
+                </ion-segment>   
                   <ion-button expand="block" (click)="startPreheat(selectedDevice)" class="btnsuccessinline">
                     {{ 'StartPreheat' | translate }}
-                  </ion-button>
-                  <ion-button class="btnbackwardinline" (click)="systemShutdown(stepper, selectedDevice)">
-                    Shutdown
-                  </ion-button>
-                </div>
+                  </ion-button>              
               </div>
             </ng-container>
 
@@ -254,7 +249,7 @@
                 </div>
                 <div class="actions">
                   <ion-button expand="block" *ngIf="isCaseSelected && parseSignalValue(signal.value) < 80"
-                    (click)="clearSelectedCase()" class="btnbackward">
+                    (click)="clearSelectedCase(); caseRequestFalse(selectedDevice)" class="btnbackward">
                     CLEAR SELECTED CASE
                   </ion-button>
                   <ion-button expand="block" type="button" (click)="handleSelectButtonClick(selectedDevice)"
@@ -279,7 +274,7 @@
                     USE CREMATOR CONSOLE TO CONTINUE
                   </ion-button>
                   <ion-button expand="block"
-                      (click)="clearSelectedCase()" class="btnbackward">
+                      (click)="clearSelectedCase(); caseRequestFalse(selectedDevice)" class="btnbackward">
                       CANCEL AND CLEAR SELECTED CASE
                     </ion-button>
                 </div>
@@ -314,7 +309,7 @@
                   USE CREMATOR CONSOLE TO CONTINUE
                 </ion-button>
                 <ion-button expand="block" *ngIf="parseSignalValue(signal.value) == 50"
-                    (click)="clearSelectedCase()" class="btnbackward">
+                    (click)="clearSelectedCase(); caseRequestFalse(selectedDevice)" class="btnbackward">
                     CANCEL AND CLEAR SELECTED CASE
                   </ion-button>
               </div>
@@ -375,7 +370,8 @@
                 <!-- </ng-container> -->
               </div>
               <div class="actions">
-                <ion-button class="inline">
+                <ion-button class="inline"
+                (click)="systemRestart(stepper, selectedDevice)">
                   Restart <br/>
                   Cremation
                 </ion-button>
