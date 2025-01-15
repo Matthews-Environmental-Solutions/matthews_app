@@ -290,7 +290,7 @@ export class CremationProcessPage implements OnInit, OnDestroy {
       if (this.cremationTime >= 0) {
         this.cremationTime++;
       }
-    }, 6000);
+    }, 60000);
   }
 
   startCooldownTimer() {
