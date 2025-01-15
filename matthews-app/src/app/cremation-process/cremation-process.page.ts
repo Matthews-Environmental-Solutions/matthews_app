@@ -58,7 +58,7 @@ export class CremationProcessPage implements OnInit, OnDestroy {
         if (
           signal.name === 'MACHINE_STATUS' &&
           (parseInt(signal.value) >= 40 &&
-          parseInt(signal.value) < 50) ||
+            parseInt(signal.value) < 50) ||
           parseInt(signal.value) == 4
         ) {
           this.move(1);
@@ -81,9 +81,34 @@ export class CremationProcessPage implements OnInit, OnDestroy {
         ) {
           this.move(0);
         }
+
+        //timer handling 
+        if (signal.name === 'MACHINE_STATUS') {
+          const status = parseInt(signal.value, 10);
+          if (status === 90 && !this.isCremationRunning) {
+            // Automatically start the timer if status is 90
+            this.isCremationRunning = true;
+            this.setStartTime();
+          } else if (status === 95 && this.isCremationRunning) {
+            // Automatically pause the timer if status is 95
+            this.isCyclePaused = true;
+            this.pauseTimer();
+          } else if (status === 90 && this.isCyclePaused) {
+            // Automatically resume the timer if status goes back to 90
+            this.isCyclePaused = false;
+            this.startCremationTimer();
+          } else if (status !== 90 && status !== 95 && this.isCremationRunning) {
+            // Stop the timer if status is not 90 or 95
+            this.pauseTimer(); // Stop the timer
+            this.cremationTime = 0; // Reset the timer value
+            this.isCremationRunning = false;
+            this.isCyclePaused = false;
+          }
+        }
       });
     })
-  );
+  );  
+
   selectedFacility$ = this.appStore.selectedFacility$;
   deviceList$ = this.appStore.deviceList$;
   isPreheatStarted = false;
@@ -95,6 +120,7 @@ export class CremationProcessPage implements OnInit, OnDestroy {
   isRakeOutStarted = false;
   isRakeOutCompleted = false;
   isCremationStopped = false;
+  isCremationRunning = false;
   showSearchbar: boolean;
   searchTerm: string;
   deviceId: string;
@@ -264,7 +290,7 @@ export class CremationProcessPage implements OnInit, OnDestroy {
       if (this.cremationTime >= 0) {
         this.cremationTime++;
       }
-    }, 60000);
+    }, 6000);
   }
 
   startCooldownTimer() {
