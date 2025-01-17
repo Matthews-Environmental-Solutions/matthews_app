@@ -1,4 +1,5 @@
 ﻿using MatthewsApp.API.Dtos;
+using MatthewsApp.API.Enums;
 using MatthewsApp.API.Mappers;
 using MatthewsApp.API.Models;
 using MatthewsApp.API.PrismEvents;
@@ -281,78 +282,26 @@ public class CaseMqttService : IHostedService
         {
             using (var scope = _serviceScopeFactory.CreateScope())
             {
-                ICasesService _casesService = scope.ServiceProvider.GetService<ICasesService>();
-                ILogger<CaseMqttService> _logger = scope.ServiceProvider.GetService<ILogger<CaseMqttService>>();
+                ICasesService casesService = scope.ServiceProvider.GetService<ICasesService>();
+                ILogger<CaseMqttService> logger = scope.ServiceProvider.GetService<ILogger<CaseMqttService>>();
 
-                _logger.LogInformation($"---------- Case Mqtt Service - Received application message: client {e.ClientId}, {e.ResponseReasonString}");
+                logger.LogInformation($"---------- Case Mqtt Service - Received application message: client {e.ClientId}");
 
                 string receivedMessage = Encoding.UTF8.GetString(e.ApplicationMessage.Payload);
                 receivedMessage = receivedMessage.Replace("\r", "").Replace("\t", "").Replace("\n", "");
 
-                if (receivedMessage.Contains("CaseSelect"))
+                try
                 {
-                    _logger.LogInformation($"---------- Case Mqtt Service - Received CaseSelect message");
-                    SelectCasePayloadDto payload = JsonSerializer.Deserialize<SelectCasePayloadDto>(receivedMessage);
-                    CaseFromFlexyDto startCase = JsonSerializer.Deserialize<CaseFromFlexyDto>(payload.CaseSelect);
-
-                    try
-                    {
-                        await _casesService.ClearAllSelectedCasesByDevice(startCase);
-                        Tuple<Case, bool> response = await _casesService.UpdateCaseWhenCaseSelect(startCase);
-                        _caseHub.SendMessageToSelectCase($"CaseId: {response.Item1.Id}");
-                    }
-                    catch (Exception)
-                    {
-                        throw;
-                    }
+                    MqttMessageHandler handler = new MqttMessageHandler(receivedMessage, logger, casesService, _caseHub);
+                    await handler.InitializeMessageHandlingAsync();
+                    await handler.Action();
                 }
-
-                if (receivedMessage.Contains("CaseDeselect"))
+                catch (Exception ex)
                 {
-                    _logger.LogInformation($"---------- Case Mqtt Service - Received CaseDeselect message");
-                    DeselectCasePayloadDto payload = JsonSerializer.Deserialize<DeselectCasePayloadDto>(receivedMessage);
-                    DeselectCaseFromFlexyDto deselectCase = JsonSerializer.Deserialize<DeselectCaseFromFlexyDto>(payload.CaseDeselect);
 
-                    try
-                    {
-                        _casesService.Deselect(deselectCase.LOADED_ID);
-                        _caseHub.SendMessageToSelectCase($"CaseId: {string.Empty}");
-                    }
-                    catch (Exception)
-                    {
-
-                        throw;
-                    }
+                    throw;
                 }
-
-                if (receivedMessage.Contains("CaseStart"))
-                {
-                    _logger.LogInformation($"---------- Case Mqtt Service - Received CaseStart message");
-                    StartCasePayloadDto payload = JsonSerializer.Deserialize<StartCasePayloadDto>(receivedMessage);
-                    CaseFromFlexyDto startCase = JsonSerializer.Deserialize<CaseFromFlexyDto>(payload.CaseStart);
-
-                    try
-                    {
-                        Tuple<Case, bool> response = await _casesService.UpdateCaseWhenCaseStart(startCase);
-                    }
-                    catch (Exception)
-                    {                       
-                    }
-                }
-
-                if (receivedMessage.Contains("CaseEnd"))
-                {
-                    _logger.LogInformation($"---------- Case Mqtt Service - Received CaseEnd message");
-
-                    EndCasePayloadDto payload = JsonSerializer.Deserialize<EndCasePayloadDto>(receivedMessage);
-                    EndCaseFromFlexyDto endCase = JsonSerializer.Deserialize<EndCaseFromFlexyDto>(payload.CaseEnd);
-
-                    _casesService.UpdateCaseWhenCaseEnd(endCase);
-                }
-
-                _caseHub.SendMessageToRefreshList($"ClientId: {e.ClientId}");
             }
-            //return Task.CompletedTask;
         };
 
         mqttClient.ConnectedAsync += e =>

@@ -18,6 +18,16 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
         _facilityStatusRepository = facilityStatusRepository;
     }
 
+    public Case GetTrackedEntity(Guid id)
+    {
+        return _dataContext.Cases.Local.FirstOrDefault(e => e.Id == id);
+    }
+
+    public void Detach(Case entity)
+    {
+        _dataContext.Context.Entry(entity).State = EntityState.Detached;
+    }
+
     public Case GetById (Guid id)
     {
         return _dataContext.Cases.Include(c => c.FacilityStatus)
@@ -49,7 +59,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
     {
         return await _dataContext.Cases.Include(c => c.FacilityStatus)
             //.AsNoTracking()
-            .FirstAsync(c => c.Id == id);
+            .FirstOrDefaultAsync(c => c.Id == id);
     }
 
     public async Task<Case> GetNextCaseForDevice(Guid deviceId)
@@ -126,7 +136,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             && c.ScheduledStartTime > DateTime.MinValue.AddDays(100)
             && !c.ScheduledFacility.Equals(Guid.Empty)
             && c.ScheduledDevice.Equals(scheduledDeviceId)
-            && c.FacilityStatus.Status == CaseStatus.READY_TO_CREMATE
+            && (c.FacilityStatus.Status == CaseStatus.READY_TO_CREMATE || c.FacilityStatus.Status == CaseStatus.SELECTED)
             ).ToList().OrderBy(c => c.ScheduledStartTime).Take(20);
     }
 
@@ -1565,6 +1575,53 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             .Where(c => c.ScheduledDevice == deviceId)
             .Include(c => c.FacilityStatus)
             .Where(c => c.FacilityStatus.Status == CaseStatus.SELECTED)
+            .ToArrayAsync();
+    }
+
+    public async Task<bool> CheckIfDeviceHasCaseInProgress(Guid deviceId)
+    {
+         return await _dataContext.Cases
+            .Where(c => c.ScheduledDevice == deviceId)
+            .Include(c => c.FacilityStatus)
+            .Where(c => c.FacilityStatus.Status == CaseStatus.IN_PROGRESS)
+            .AnyAsync();
+    }
+
+    public Task<bool> CheckIfDeviceHasCaseSelected(Guid deviceId)
+    {
+        return _dataContext.Cases
+            .Where(c => c.ScheduledDevice == deviceId)
+            .Include(c => c.FacilityStatus)
+            .Where(c => c.FacilityStatus.Status == CaseStatus.SELECTED)
+            .AnyAsync();
+    }
+
+    public async Task<bool> CheckIfDeviceIsEmpty(Guid deviceId)
+    {
+        // detect if there are any cases in the device that are selected or in progress. Return true if there are no cases.
+        return ! await _dataContext.Cases
+            .Where(c => c.ScheduledDevice == deviceId)
+            .Include(c => c.FacilityStatus)
+            .Where(c => c.FacilityStatus.Status == CaseStatus.SELECTED || c.FacilityStatus.Status == CaseStatus.IN_PROGRESS)
+            .AnyAsync();
+               
+    }
+
+    public async Task<IEnumerable<Case>> GetInProgressCasesByDevice(Guid deviceId)
+    {
+        return await _dataContext.Cases
+            .Where(c => c.ScheduledDevice == deviceId)
+            .Include(c => c.FacilityStatus)
+            .Where(c => c.FacilityStatus.Status == CaseStatus.IN_PROGRESS)
+            .ToArrayAsync();
+    }
+
+    public async Task<IEnumerable<Case>> GetInProgressOrSelectedCasesByDevice(Guid deviceId)
+    {
+        return await _dataContext.Cases
+            .Where(c => c.ScheduledDevice == deviceId)
+            .Include(c => c.FacilityStatus)
+            .Where(c => c.FacilityStatus.Status == CaseStatus.IN_PROGRESS || c.FacilityStatus.Status == CaseStatus.SELECTED)
             .ToArrayAsync();
     }
 }

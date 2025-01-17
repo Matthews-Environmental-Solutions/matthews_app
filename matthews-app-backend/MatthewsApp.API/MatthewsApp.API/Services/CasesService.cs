@@ -1,4 +1,5 @@
-﻿using IdentityModel;
+﻿using Humanizer;
+using IdentityModel;
 using MatthewsApp.API.Dtos;
 using MatthewsApp.API.Enums;
 using MatthewsApp.API.Models;
@@ -40,6 +41,11 @@ public interface ICasesService
     Task<IEnumerable<CaseStatusDto>> GetCaseStatuses();
     Task<Case> GetSelectCaseByDevice(Guid deviceId);
     Task ClearAllSelectedCasesByDevice(CaseFromFlexyDto startCase);
+    Task ClearAllInProgressCasesByDevice(CaseFromFlexyDto startOrSelectCase);
+    Task<bool> CheckIfDeviceHasCaseInProgress(Guid deviceId);
+    Task<DeviceStatusType> GetDeviceStatus(Guid deviceId);
+    Task ClearAllInProgressOrSelectedCasesByDevice(CaseFromFlexyDto startCase);
+    Task UpdateCaseButNotChangeStatus(CaseFromFlexyDto startOrSelectCase);
 }
 
 public class CasesService : ICasesService
@@ -108,6 +114,12 @@ public class CasesService : ICasesService
 
         //entity.FirstName = UTF8toASCII(entity.FirstName);
         //entity.LastName = UTF8toASCII(entity.LastName);
+
+        var trackedEntity = _caseRepository.GetTrackedEntity(entity.Id);
+        if (trackedEntity != null)
+        {
+            _caseRepository.Detach(trackedEntity);
+        }
         _caseRepository.Update(entity);
         List<Guid> ids = new List<Guid>();
 
@@ -276,12 +288,18 @@ public class CasesService : ICasesService
             }
             else
             {
+                // Detach the existing entity if it is being tracked
+                var trackedEntity = _caseRepository.GetTrackedEntity(dto.LOADED_ID);
+                if (trackedEntity != null)
+                {
+                    _caseRepository.Detach(trackedEntity);
+                }
                 Update(entity);
             }
 
             return new Tuple<Case, bool>(entity, entityDoesNotExistInDb);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
             throw;
         }
@@ -475,7 +493,10 @@ public class CasesService : ICasesService
         try
         {
             Case Case = await _caseRepository.GetOne(id);
-            Case.ScheduledStartTime = DateTime.SpecifyKind(Case.ScheduledStartTime is null ? DateTime.MinValue : Case.ScheduledStartTime.Value, DateTimeKind.Utc);
+            if(Case is not null)
+            {
+                Case.ScheduledStartTime = DateTime.SpecifyKind(Case.ScheduledStartTime is null ? DateTime.MinValue : Case.ScheduledStartTime.Value, DateTimeKind.Utc);
+            }
             return Case;
         }
         catch (Exception ex)
@@ -554,11 +575,132 @@ public class CasesService : ICasesService
     public async Task ClearAllSelectedCasesByDevice(CaseFromFlexyDto startCase)
     {
         var selectedCases = await _caseRepository.GetSelectedCasesByDevice(startCase.CREMATOR_ID);
+        var readyToCremateStatus = _facilityStatusRepository.GetReadyToCremateFacilityStatus(startCase.FACILITY_ID);
+
+        var casesToUpdate = selectedCases
+            .Where(selectedCase => selectedCase.Id != startCase.LOADED_ID)
+            .Select(selectedCase =>
+            {
+                selectedCase.FacilityStatusId = readyToCremateStatus.Id;
+                selectedCase.FacilityStatus = readyToCremateStatus;
+                return selectedCase;
+            }).ToList();
+
+        foreach (var selectedCase in casesToUpdate)
+        {
+            _caseRepository.Update(selectedCase);
+        }
+    }
+
+    public async Task ClearAllInProgressOrSelectedCasesByDevice(CaseFromFlexyDto startCase)
+    {
+        var selectedCases = await _caseRepository.GetInProgressOrSelectedCasesByDevice(startCase.CREMATOR_ID);
+        var readyToCremateStatus = _facilityStatusRepository.GetReadyToCremateFacilityStatus(startCase.FACILITY_ID);
+
+        var casesToUpdate = selectedCases
+            .Where(selectedCase => selectedCase.Id != startCase.LOADED_ID)
+            .Select(selectedCase =>
+            {
+                selectedCase.FacilityStatusId = readyToCremateStatus.Id;
+                selectedCase.FacilityStatus = readyToCremateStatus;
+                return selectedCase;
+            }).ToList();
+
         foreach (var selectedCase in selectedCases)
         {
-            selectedCase.FacilityStatusId = _facilityStatusRepository.GetReadyToCremateFacilityStatus(startCase.FACILITY_ID).Id;
-            selectedCase.FacilityStatus = _facilityStatusRepository.GetReadyToCremateFacilityStatus(startCase.FACILITY_ID);
             _caseRepository.Update(selectedCase);
+        }
+    }
+
+    public async Task<bool> CheckIfDeviceHasCaseInProgress(Guid deviceId)
+    {
+        return await _caseRepository.CheckIfDeviceHasCaseInProgress(deviceId);
+    }
+
+    public async Task<DeviceStatusType> GetDeviceStatus(Guid deviceId)
+    {
+        var hasSelectedCase = await _caseRepository.CheckIfDeviceHasCaseSelected(deviceId);
+        var hasInProgressCase = await _caseRepository.CheckIfDeviceHasCaseInProgress(deviceId);
+
+        if (!hasSelectedCase && !hasInProgressCase)
+        {
+            return DeviceStatusType.EMPTY;
+        }
+        else if (!hasSelectedCase && hasInProgressCase)
+        {
+            return DeviceStatusType.HAS_IN_PROGRESS;
+        }
+        else if (hasSelectedCase && !hasInProgressCase)
+        {
+            return DeviceStatusType.HAS_SELECTED;
+        }
+        else
+        {
+            return DeviceStatusType.HAS_IN_PROGRESS_AND_SELECTED;
+        }
+
+    }
+
+    public async Task ClearAllInProgressCasesByDevice(CaseFromFlexyDto startOrSelectCase)
+    {
+        IEnumerable<Case> inProgressCases = await _caseRepository.GetInProgressCasesByDevice(startOrSelectCase.CREMATOR_ID);
+        var readyToCremateStatus = _facilityStatusRepository.GetReadyToCremateFacilityStatus(startOrSelectCase.FACILITY_ID);
+
+        var casesToUpdate = inProgressCases
+            .Where(selectedCase => selectedCase.Id != startOrSelectCase.LOADED_ID)
+            .Select(selectedCase =>
+            {
+                selectedCase.FacilityStatusId = readyToCremateStatus.Id;
+                selectedCase.FacilityStatus = readyToCremateStatus;
+                return selectedCase;
+            }).ToList();
+
+        foreach (var inProgressCase in inProgressCases)
+        {
+            inProgressCase.FacilityStatusId = _facilityStatusRepository.GetReadyToCremateFacilityStatus(startOrSelectCase.FACILITY_ID).Id;
+            inProgressCase.FacilityStatus = _facilityStatusRepository.GetReadyToCremateFacilityStatus(startOrSelectCase.FACILITY_ID);
+            _caseRepository.Update(inProgressCase);
+        }
+    }
+
+    public async Task UpdateCaseButNotChangeStatus(CaseFromFlexyDto dto)
+    {
+        if (dto.LOADED_ID == Guid.Empty)
+        {
+            return;
+        }
+
+        Case entity = _caseRepository.GetById(dto.LOADED_ID);
+
+        if (entity is null)
+        {
+            return;
+        }
+        else
+        {
+            entity = RemapCaseFromDto(entity, dto);
+        }
+
+        DeviceDto cremator = null;
+        List<DeviceDto> cremators = (await _caseI4CHttpClientService.GetAllDevicesAsync()).ToList();
+        cremator = cremators.FirstOrDefault(c => c.id == dto.CREMATOR_ID);
+
+        entity.ScheduledDeviceAlias = cremator is not null ? cremator.alias : string.Empty;
+        entity.PerformedBy = dto.User;
+
+        try
+        {
+            // Detach the existing entity if it is being tracked
+            var trackedEntity = _caseRepository.GetTrackedEntity(dto.LOADED_ID);
+            if (trackedEntity != null)
+            {
+                _caseRepository.Detach(trackedEntity);
+            }
+            Update(entity);
+        }
+        catch (Exception ex)
+        {
+            throw;
         }
     }
 
