@@ -301,75 +301,7 @@ public class CaseMqttService : IHostedService
 
                     throw;
                 }
-
-
-                //if (receivedMessage.Contains("CaseSelect"))
-                //{
-                //    logger.LogInformation($"---------- Case Mqtt Service - Received CaseSelect message");
-                //    SelectCasePayloadDto payload = JsonSerializer.Deserialize<SelectCasePayloadDto>(receivedMessage);
-                //    CaseFromFlexyDto startCase = JsonSerializer.Deserialize<CaseFromFlexyDto>(payload.CaseSelect);
-
-                //    try
-                //    {
-                //        await casesService.ClearAllSelectedCasesByDevice(startCase);
-                //        Tuple<Case, bool> response = await casesService.UpdateCaseWhenCaseSelect(startCase);
-                //        _caseHub.SendMessageToSelectCase($"CaseId: {response.Item1.Id}");
-                //    }
-                //    catch (Exception)
-                //    {
-                //        throw;
-                //    }
-                //}
-
-                //if (receivedMessage.Contains("CaseDeselect"))
-                //{
-                //    _logger.LogInformation($"---------- Case Mqtt Service - Received CaseDeselect message");
-                //    DeselectCasePayloadDto payload = JsonSerializer.Deserialize<DeselectCasePayloadDto>(receivedMessage);
-                //    DeselectCaseFromFlexyDto deselectCase = JsonSerializer.Deserialize<DeselectCaseFromFlexyDto>(payload.CaseDeselect);
-
-                //    try
-                //    {
-                //        _casesService.Deselect(deselectCase.LOADED_ID);
-                //        _caseHub.SendMessageToSelectCase($"CaseId: {string.Empty}");
-                //    }
-                //    catch (Exception)
-                //    {
-
-                //        throw;
-                //    }
-                //}
-
-                //if (receivedMessage.Contains("CaseStart"))
-                //{
-                //    _logger.LogInformation($"---------- Case Mqtt Service - Received CaseStart message");
-                //    StartCasePayloadDto payload = JsonSerializer.Deserialize<StartCasePayloadDto>(receivedMessage);
-                //    CaseFromFlexyDto startCase = JsonSerializer.Deserialize<CaseFromFlexyDto>(payload.CaseStart);
-
-                //    try
-                //    {
-                //        if (!await _casesService.CheckIfDeviceHasCaseInProgress(startCase.CREMATOR_ID))
-                //        {
-                //            Tuple<Case, bool> response = await _casesService.UpdateCaseWhenCaseStart(startCase);
-                //        }
-                //    }
-                //    catch (Exception)
-                //    {
-                //    }
-                //}
-
-                //if (receivedMessage.Contains("CaseEnd"))
-                //{
-                //    _logger.LogInformation($"---------- Case Mqtt Service - Received CaseEnd message");
-
-                //    EndCasePayloadDto payload = JsonSerializer.Deserialize<EndCasePayloadDto>(receivedMessage);
-                //    EndCaseFromFlexyDto endCase = JsonSerializer.Deserialize<EndCaseFromFlexyDto>(payload.CaseEnd);
-
-                //    _casesService.UpdateCaseWhenCaseEnd(endCase);
-                //}
-
-                //_caseHub.SendMessageToRefreshList($"ClientId: {e.ClientId}");
             }
-            //return Task.CompletedTask;
         };
 
         mqttClient.ConnectedAsync += e =>

@@ -20,7 +20,7 @@ public class MqttMessageHandler
 
     private MqttMessageType _mqttMessage;
     private DeviceStatusType _daviceStatus;
-    private bool _isCaseSameAsInPayload;
+    private bool _doesPayloadCaseExistInDB;
     private string _receivedMessage;
 
     private Guid _caseId = Guid.Empty;
@@ -29,6 +29,9 @@ public class MqttMessageHandler
     private CaseFromFlexyDto _startOrSelectCase = null;
     private DeselectCaseFromFlexyDto _deselectCase = null;
     private EndCaseFromFlexyDto _endCase = null;
+
+    private bool _messageIsValid = true;
+    private Case _caseInDb = null;
 
     public MqttMessageHandler(string receivedMessage, ILogger<CaseMqttService> logger, ICasesService casesService, CaseHub caseHub)
     {
@@ -66,12 +69,17 @@ public class MqttMessageHandler
         }
         else
         {
-            throw new ArgumentOutOfRangeException("Unknown message type");
+            _messageIsValid = false;
+            throw new ArgumentOutOfRangeException("Unknown message type");//TODO: bane: to remove this line
         }
     }
 
     private void DeserializePayloadToObject()
     {
+        if (!_messageIsValid)
+        {
+            return;
+        }
         //switch depends of _mqttMessage
         switch (_mqttMessage)
         {
@@ -100,70 +108,122 @@ public class MqttMessageHandler
 
     private async Task SetDeviceStatusAsync()
     {
+        if (!_messageIsValid)
+        {
+            return;
+        }
+
         if (_startOrSelectCase != null)
         {
+            if (_startOrSelectCase.CREMATOR_ID == Guid.Empty)
+            {
+                _messageIsValid = false;
+                return;
+            }
+            _caseId = _startOrSelectCase.LOADED_ID;
+            _deviceId = _startOrSelectCase.CREMATOR_ID;
             _daviceStatus = await _casesService.GetDeviceStatus(_startOrSelectCase.CREMATOR_ID);
         }
         else if (_deselectCase != null)
         {
-            _caseId = Guid.Parse(_deselectCase.LOADED_ID);
+            Guid.TryParse(_deselectCase.LOADED_ID, out _caseId);
+            if(_caseId == Guid.Empty)
+            {
+                _messageIsValid = false;
+                return;
+            }
             _deviceId = (Guid)(await _casesService.GetById(_caseId)).ScheduledDevice;
             _daviceStatus = await _casesService.GetDeviceStatus(_deviceId);
         }
         else if (_endCase != null)
         {
+            if(_endCase.COMPLETED_ID == Guid.Empty)
+            {
+                _messageIsValid = false;
+                return;
+            }
             _caseId = _endCase.COMPLETED_ID;
             _deviceId = (Guid)(await _casesService.GetById(_caseId)).ScheduledDevice;
             _daviceStatus = await _casesService.GetDeviceStatus(_deviceId);
         }
         else
         {
-            throw new ArgumentNullException("Case object is null");
+            _messageIsValid = false;
+            throw new ArgumentNullException("Case object is null");// TODO: bane: to remove this line
         }
     }
 
     private async Task SetPayload()
     {
-        Case caseInDb = null;
+        if (!_messageIsValid)
+        {
+            return;
+        }
+
         if (_startOrSelectCase != null)
         {
-            caseInDb = await _casesService.GetById(_startOrSelectCase.LOADED_ID);
+            _caseInDb = await _casesService.GetById(_startOrSelectCase.LOADED_ID);
         }
         else if (_deselectCase != null)
         {
             Guid CaseId = Guid.Parse(_deselectCase.LOADED_ID);
-            caseInDb = await _casesService.GetById(CaseId);
+            _caseInDb = await _casesService.GetById(CaseId);
         }
         else if (_endCase != null)
         {
             Guid CaseId = _endCase.COMPLETED_ID;
-            caseInDb = await _casesService.GetById(CaseId);
+            _caseInDb = await _casesService.GetById(CaseId);
         }
         else
         {
             throw new ArgumentNullException("Case object is null");
         }
 
-        _isCaseSameAsInPayload = caseInDb != null;
+        _doesPayloadCaseExistInDB = _caseInDb != null;
     }
 
     public async Task Action()
     {
+        if (!_messageIsValid)
+        {
+            return;
+        }
+
         switch (_mqttMessage)
         {
             case MqttMessageType.CaseStart:
-                ActionCaseStart();
+                if (_startOrSelectCase.LOADED_ID == Guid.Empty)
+                {
+                    _messageIsValid = false;
+                    return;
+                }
+                await ActionCaseStart();
                 break;
 
             case MqttMessageType.CaseEnd:
-                ActionCaseEnd();
+                if (_endCase.COMPLETED_ID == Guid.Empty)
+                {
+                    _messageIsValid = false;
+                    return;
+                }
+                await ActionCaseEnd();
                 break;
 
             case MqttMessageType.CaseSelect:
+                if (_startOrSelectCase.LOADED_ID == Guid.Empty)
+                {
+                    _messageIsValid = false;
+                    return;
+                }
                 await ActionCaseSelect();
                 break;
 
             case MqttMessageType.CaseDeselect:
+                if (_caseId == Guid.Empty)
+                {
+                    _messageIsValid = false;
+                    return;
+                }
                 await ActionCaseDeselect();
                 break;
 
@@ -174,36 +234,106 @@ public class MqttMessageHandler
         SendSignalRMessageToRefreshTheList();
     }
 
-    private void ActionCaseStart()
+    private async Task ActionCaseStart()
     {
+        if (!_messageIsValid)
+        {
+            return;
+        }
+
         switch (_daviceStatus)
         {
+            case DeviceStatusType.EMPTY:
+                Tuple<Case, bool> response = await _casesService.UpdateCaseWhenCaseStart(_startOrSelectCase);
+                break;
+            case DeviceStatusType.HAS_IN_PROGRESS:
+                //if (_doesPayloadCaseExistInDB)
+                //{
+                //    // do nothing
+                //}
+                //else
+                //{
+                //    // previous set to READY_TO_CREMATE, new set to IN_PROGRESS
+                //    await _casesService.ClearAllInProgressOrSelectedCasesByDevice(_startOrSelectCase); // Da li treba da se nesto salje na MOB APP?
+                //    await _casesService.UpdateCaseWhenCaseStart(_startOrSelectCase); // Da li treba da se nesto salje na MOB APP?
+                //}
+                //_caseId = _startOrSelectCase.LOADED_ID;
+                break;
+            case DeviceStatusType.HAS_SELECTED:
+                if (_doesPayloadCaseExistInDB)
+                {
+                    if(_caseInDb.Status == CaseStatus.SELECTED)
+                    {
+                        await _casesService.UpdateCaseWhenCaseStart(_startOrSelectCase);
+                        
+                    }
+                    
+                }
+                else
+                {
+                    // do nothing
+                }
+                
+                break;
+            case DeviceStatusType.HAS_IN_PROGRESS_AND_SELECTED:
+                await _casesService.ClearAllInProgressOrSelectedCasesByDevice(_startOrSelectCase);
+                await _casesService.UpdateCaseWhenCaseStart(_startOrSelectCase);
+                _caseHub.SendMessageToSelectCase($"CaseId: {_startOrSelectCase.LOADED_ID}; DeviceId: {_deviceId}");
+                break;
 
         }
     }
 
-    private void ActionCaseEnd()
+    private async Task ActionCaseEnd()
     {
+        if (!_messageIsValid)
+        {
+            return;
+        }
+
         switch (_daviceStatus)
         {
+            case DeviceStatusType.EMPTY:
+                _casesService.UpdateCaseWhenCaseEnd(_endCase);
+                break;
+            case DeviceStatusType.HAS_IN_PROGRESS:
+                _casesService.UpdateCaseWhenCaseEnd(_endCase);
+                break;
+            case DeviceStatusType.HAS_SELECTED:
+                if (_doesPayloadCaseExistInDB && _caseInDb.Status == CaseStatus.SELECTED)
+                {
+                    _casesService.UpdateCaseWhenCaseEnd(_endCase);
+                    _caseHub.SendMessageToSelectCase($"CaseId: {_endCase.COMPLETED_ID}; DeviceId: {_deviceId}");
+                }
+                break;
+            case DeviceStatusType.HAS_IN_PROGRESS_AND_SELECTED:
+                await _casesService.ClearAllInProgressOrSelectedCasesByDevice(_startOrSelectCase);
+                _casesService.UpdateCaseWhenCaseEnd(_endCase);
+                _caseHub.SendMessageToSelectCase($"CaseId: {_endCase.COMPLETED_ID}; DeviceId: {_deviceId}");
+                break;
 
         }
     }
 
     private async Task ActionCaseSelect()
     {
+        if (!_messageIsValid)
+        {
+            return;
+        }
+
         switch (_daviceStatus)
         {
             case DeviceStatusType.EMPTY:
                 Tuple<Case, bool> response = await _casesService.UpdateCaseWhenCaseSelect(_startOrSelectCase);
                 _caseId = response.Item1.Id;
+                _caseHub.SendMessageToSelectCase($"CaseId: {_caseId}; DeviceId: {_deviceId}");
                 break;
 
             case DeviceStatusType.HAS_IN_PROGRESS:
-                if (_isCaseSameAsInPayload)
+                if (_doesPayloadCaseExistInDB)
                 {
                     await _casesService.UpdateCaseButNotChangeStatus(_startOrSelectCase);
-                    _caseId = _startOrSelectCase.LOADED_ID;
                 }
                 else
                 {
@@ -215,29 +345,37 @@ public class MqttMessageHandler
                 await _casesService.ClearAllSelectedCasesByDevice(_startOrSelectCase);
                 response = await _casesService.UpdateCaseWhenCaseSelect(_startOrSelectCase);
                 _caseId = response.Item1.Id;
+                _caseHub.SendMessageToSelectCase($"CaseId: {_caseId}; DeviceId: {_deviceId}");
                 break;
 
             case DeviceStatusType.HAS_IN_PROGRESS_AND_SELECTED:
                 await _casesService.ClearAllInProgressOrSelectedCasesByDevice(_startOrSelectCase);
                 response = await _casesService.UpdateCaseWhenCaseSelect(_startOrSelectCase);
                 _caseId = response.Item1.Id;
+                _caseHub.SendMessageToSelectCase($"CaseId: {_caseId}; DeviceId: {_deviceId}");
                 break;
         }
 
-        _caseHub.SendMessageToSelectCase($"CaseId: {_caseId}");
     }
 
     private async Task ActionCaseDeselect()
     {
+        if (!_messageIsValid)
+        {
+            return;
+        }
+
         switch (_daviceStatus)
         {
             case DeviceStatusType.EMPTY:
                 _casesService.Deselect(_caseId); // set to READY_TO_CREMATE
+                _caseHub.SendMessageToSelectCase($"CaseId: {string.Empty}; DeviceId: {_deviceId}");
                 break;
             case DeviceStatusType.HAS_IN_PROGRESS:
-                if (_isCaseSameAsInPayload)
+                if (_doesPayloadCaseExistInDB)
                 {
                     _casesService.Deselect(_caseId); // set to READY_TO_CREMATE
+                    _caseHub.SendMessageToSelectCase($"CaseId: {string.Empty}; DeviceId: {_deviceId}");
                 }
                 else
                 {
@@ -245,9 +383,10 @@ public class MqttMessageHandler
                 }
                 break;
             case DeviceStatusType.HAS_SELECTED:
-                if (_isCaseSameAsInPayload)
+                if (_doesPayloadCaseExistInDB)
                 {
                     _casesService.Deselect(_caseId); // set to READY_TO_CREMATE
+                    _caseHub.SendMessageToSelectCase($"CaseId: {string.Empty}; DeviceId: {_deviceId}");
                 }
                 else
                 {
@@ -255,11 +394,11 @@ public class MqttMessageHandler
                 }
                 break;
             case DeviceStatusType.HAS_IN_PROGRESS_AND_SELECTED:
-                _casesService.Deselect(_caseId);
+                _casesService.Deselect(_caseId); // set to READY_TO_CREMATE
+                _caseHub.SendMessageToSelectCase($"CaseId: {string.Empty}; DeviceId: {_deviceId}");
                 break;
         }
 
-        _caseHub.SendMessageToSelectCase($"CaseId: {string.Empty}");
     }
 
     private void SendSignalRMessageToRefreshTheList()

@@ -109,7 +109,7 @@ public class Startup
             .ReadFrom.Configuration(Configuration)
             //.WriteTo.File("C:\\mylogs\\log.txt", rollingInterval: RollingInterval.Day)
             .CreateLogger();
-
+       
         app.UseForwardedHeaders();
 
         if (env.IsDevelopment())

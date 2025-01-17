@@ -4,6 +4,10 @@
 - Changed: Description of a change in existing functionality.
 - Removed: Description of deprecated features.
 
+## [1.0.2] - 2025-01-17
+	- Added:
+		MqttMessageHandler is a service that handles incoming MQTT messages. It will cover all incoming messages and will call the appropriate service to handle the message.
+
 ## [1.0.1] - 2024-12-18
 	- CaseService on "CaseSelect" MQTT, will deselect all selected Cases first and then select the new Case.
 
