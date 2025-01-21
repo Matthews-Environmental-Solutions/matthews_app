@@ -144,6 +144,7 @@ public class MqttMessageHandler
             }
             _caseId = _endCase.COMPLETED_ID;
             _deviceId = (Guid)(await _casesService.GetById(_caseId)).ScheduledDevice;
+            _caseInDb = await _casesService.GetById(_caseId);
             _daviceStatus = await _casesService.GetDeviceStatus(_deviceId);
         }
         else
@@ -245,6 +246,7 @@ public class MqttMessageHandler
         {
             case DeviceStatusType.EMPTY:
                 Tuple<Case, bool> response = await _casesService.UpdateCaseWhenCaseStart(_startOrSelectCase);
+                _caseHub.SendMessageToSelectCase($"CaseId: {_startOrSelectCase.LOADED_ID}; DeviceId: {_deviceId}");
                 break;
             case DeviceStatusType.HAS_IN_PROGRESS:
                 //if (_doesPayloadCaseExistInDB)
@@ -303,13 +305,13 @@ public class MqttMessageHandler
                 if (_doesPayloadCaseExistInDB && _caseInDb.Status == CaseStatus.SELECTED)
                 {
                     _casesService.UpdateCaseWhenCaseEnd(_endCase);
-                    _caseHub.SendMessageToSelectCase($"CaseId: {_endCase.COMPLETED_ID}; DeviceId: {_deviceId}");
+                    _caseHub.SendMessageToSelectCase($"CaseId: {string.Empty}; DeviceId: {_deviceId}");
                 }
                 break;
             case DeviceStatusType.HAS_IN_PROGRESS_AND_SELECTED:
-                await _casesService.ClearAllInProgressOrSelectedCasesByDevice(_startOrSelectCase);
+                await _casesService.ClearAllInProgressOrSelectedCasesByDevice(_endCase.COMPLETED_ID, _deviceId, (Guid)_caseInDb.ScheduledFacility);
                 _casesService.UpdateCaseWhenCaseEnd(_endCase);
-                _caseHub.SendMessageToSelectCase($"CaseId: {_endCase.COMPLETED_ID}; DeviceId: {_deviceId}");
+                _caseHub.SendMessageToSelectCase($"CaseId: {string.Empty}; DeviceId: {_deviceId}");
                 break;
 
         }

@@ -46,6 +46,7 @@ public interface ICasesService
     Task<DeviceStatusType> GetDeviceStatus(Guid deviceId);
     Task ClearAllInProgressOrSelectedCasesByDevice(CaseFromFlexyDto startCase);
     Task UpdateCaseButNotChangeStatus(CaseFromFlexyDto startOrSelectCase);
+    Task ClearAllInProgressOrSelectedCasesByDevice(Guid caseId, Guid crematorId, Guid facilityId);
 }
 
 public class CasesService : ICasesService
@@ -599,6 +600,26 @@ public class CasesService : ICasesService
 
         var casesToUpdate = selectedCases
             .Where(selectedCase => selectedCase.Id != startCase.LOADED_ID)
+            .Select(selectedCase =>
+            {
+                selectedCase.FacilityStatusId = readyToCremateStatus.Id;
+                selectedCase.FacilityStatus = readyToCremateStatus;
+                return selectedCase;
+            }).ToList();
+
+        foreach (var selectedCase in selectedCases)
+        {
+            _caseRepository.Update(selectedCase);
+        }
+    }
+
+    public async Task ClearAllInProgressOrSelectedCasesByDevice(Guid caseId, Guid crematorId, Guid facilityId)
+    {
+        var selectedCases = await _caseRepository.GetInProgressOrSelectedCasesByDevice(crematorId);
+        var readyToCremateStatus = _facilityStatusRepository.GetReadyToCremateFacilityStatus(facilityId);
+
+        var casesToUpdate = selectedCases
+            .Where(selectedCase => selectedCase.Id != caseId)
             .Select(selectedCase =>
             {
                 selectedCase.FacilityStatusId = readyToCremateStatus.Id;
