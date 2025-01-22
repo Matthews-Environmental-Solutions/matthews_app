@@ -55,6 +55,19 @@ export class CremationProcessPage implements OnInit, OnDestroy {
         if (signal.name === 'BURN_MODE') {
           this.selectedBurnMode = parseInt(signal.value, 10);
         }
+        if (signal.name === 'END_TIME_ESTIMATE') {
+          const endTimeEstimate = Math.floor(parseFloat(signal.value)); // Ensure it's a valid integer
+          const currentTime = Math.floor(Date.now() / 1000); // Current time in seconds
+          const remainingSeconds = endTimeEstimate - currentTime;
+  
+          // Calculate remaining time in minutes and seconds
+          if (remainingSeconds > 0) {
+            const minutes = Math.floor(remainingSeconds / 60);
+            this.remainingTime = `${minutes}m`;
+          } else {
+            this.remainingTime = '0m'; // Default if time has passed
+          }
+        }
         if (
           signal.name === 'MACHINE_STATUS' &&
           (parseInt(signal.value) >= 40 &&
@@ -130,6 +143,7 @@ export class CremationProcessPage implements OnInit, OnDestroy {
   startMinute: number;
   startTime: string;
   cremationTime: number;
+  remainingTime: string;
   preheatTime: number;
   cooldownTime: number;
   rakeOutTime: number;

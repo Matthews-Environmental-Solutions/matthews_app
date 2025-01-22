@@ -21,6 +21,7 @@ import { Alarm, Measurement, SignalRService } from './core/signal-r.service';
 import { Signal } from './device-list/signal';
 import { FacilityStatus } from './case/facility-status.model';
 import { v4 as uuidv4 } from 'uuid';
+import { trigger } from '@angular/animations';
 
 export interface AppState {
   cases: Case[];
@@ -334,6 +335,8 @@ export class AppStoreService extends ComponentStore<AppState> {
     )
   );
 
+  
+
   readonly getFacilities = this.effect((trigger$) =>
     trigger$.pipe(
       tap(() => this.loadingService.present()),
@@ -434,6 +437,10 @@ export class AppStoreService extends ComponentStore<AppState> {
       })
     )
   );  
+
+  getSelectedDevice(): string {
+    return this.get((state) => state.selectedDevice?.id)
+  }
 
   readonly getCases = this.effect<string>((cases$) =>
     cases$.pipe(
