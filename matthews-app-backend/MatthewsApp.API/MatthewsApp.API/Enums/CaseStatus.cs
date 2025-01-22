@@ -4,9 +4,9 @@ public enum CaseStatus
 
 {
     UNSCHEDULED,
-    CREMATION_COMPLETE,
-    IN_PROGRESS,
-    READY_TO_CREMATE,
-    WAITING_FOR_PERMIT,
-    SELECTED
+    CREMATION_COMPLETE, // green
+    IN_PROGRESS, // red
+    READY_TO_CREMATE, // orange
+    WAITING_FOR_PERMIT, // black
+    SELECTED // blue
 }
