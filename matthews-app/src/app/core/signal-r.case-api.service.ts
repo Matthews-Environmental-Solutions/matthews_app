@@ -6,7 +6,7 @@ import { AuthService } from 'ionic-appauth';
 import { TokenResponse } from '@openid/appauth';
 import { LoadingService } from './loading.service';
 import * as signalR from '@microsoft/signalr';
-import { AppStoreService } from '../app.store.service';
+import { AppState, AppStoreService } from '../app.store.service';
 import { CaseService } from '../case/case.service';
 import { environment } from '../../environments/environment';
 declare let $: any;
@@ -54,11 +54,19 @@ export class SignalRCaseApiService {
   public addSelectedCaseListener() {
     this.hubConnection.on('selectcase', (data: string) => {
       console.log(data);
-      let dataSplited = data.split(':');
+      let dataSplited = data.split(';');
       if (dataSplited.length == 2) {
-      let caseId = dataSplited[1].trim();
-      this.appStore.refreshSelectedCaseId(caseId);
-      } 
+        let splitedCaseId = dataSplited[0].trim().split(':');
+        let caseId = splitedCaseId[1].trim();
+        let splitedDeviceId = dataSplited[1].trim().split(':');
+        let deviceId = splitedDeviceId[1].trim();
+
+        let deviceIdFromStore = this.appStore.getSelectedDevice();
+
+        if (deviceIdFromStore === deviceId) {
+          this.appStore.refreshSelectedCaseId(caseId);
+        }
+      }
     });
   };
 
