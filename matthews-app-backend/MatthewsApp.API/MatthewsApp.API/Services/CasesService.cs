@@ -40,6 +40,7 @@ public interface ICasesService
     Task<bool> ResetDemo();
     Task<IEnumerable<CaseStatusDto>> GetCaseStatuses();
     Task<Case> GetSelectCaseByDevice(Guid deviceId);
+    Task<Case> GetInProgressCaseByDevice(Guid deviceId);
     Task ClearAllSelectedCasesByDevice(CaseFromFlexyDto startCase);
     Task ClearAllInProgressCasesByDevice(CaseFromFlexyDto startOrSelectCase);
     Task<bool> CheckIfDeviceHasCaseInProgress(Guid deviceId);
@@ -481,6 +482,19 @@ public class CasesService : ICasesService
         try
         {
             return await _caseRepository.GetSelectCaseByDevice(deviceId);
+        }
+        catch (Exception)
+        {
+
+            throw;
+        }
+    }
+
+    public async Task<Case> GetInProgressCaseByDevice(Guid deviceId)
+    {
+        try
+        {
+            return await _caseRepository.GetInProgressCaseByDevice(deviceId);
         }
         catch (Exception)
         {

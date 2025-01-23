@@ -134,6 +134,7 @@ public class MqttMessageHandler
             }
             _deviceId = (Guid)(await _casesService.GetById(_caseId)).ScheduledDevice;
             _daviceStatus = await _casesService.GetDeviceStatus(_deviceId);
+            _caseInDb = await _casesService.GetById(_caseId);
         }
         else if (_endCase != null)
         {
@@ -249,17 +250,23 @@ public class MqttMessageHandler
                 _caseHub.SendMessageToSelectCase($"CaseId: {_startOrSelectCase.LOADED_ID}; DeviceId: {_deviceId}");
                 break;
             case DeviceStatusType.HAS_IN_PROGRESS:
-                //if (_doesPayloadCaseExistInDB)
-                //{
-                //    // do nothing
-                //}
-                //else
-                //{
-                //    // previous set to READY_TO_CREMATE, new set to IN_PROGRESS
-                //    await _casesService.ClearAllInProgressOrSelectedCasesByDevice(_startOrSelectCase); // Da li treba da se nesto salje na MOB APP?
-                //    await _casesService.UpdateCaseWhenCaseStart(_startOrSelectCase); // Da li treba da se nesto salje na MOB APP?
-                //}
-                //_caseId = _startOrSelectCase.LOADED_ID;
+                Case caseInProgress = await _casesService.GetInProgressCaseByDevice(_deviceId);
+                if (_doesPayloadCaseExistInDB)
+                {
+                    if(_startOrSelectCase.LOADED_ID != caseInProgress.Id)
+                    {
+                        var dto = new EndCaseFromFlexyDto();
+                        dto.COMPLETED_ID = caseInProgress.Id;
+                        dto.EndTime = DateTime.Now;
+                        dto.FuelUsed = 0;
+                        dto.ElectricityUsed = 0;
+
+                        _casesService.UpdateCaseWhenCaseEnd(dto);
+                        await _casesService.UpdateCaseWhenCaseStart(_startOrSelectCase);
+                        _caseHub.SendMessageToSelectCase($"CaseId: {_startOrSelectCase.LOADED_ID}; DeviceId: {_deviceId}");
+                    }
+                    
+                }
                 break;
             case DeviceStatusType.HAS_SELECTED:
                 if (_doesPayloadCaseExistInDB)
@@ -273,7 +280,13 @@ public class MqttMessageHandler
                 }
                 else
                 {
-                    // do nothing
+                    Case selectedCaseInDb = await _casesService.GetSelectCaseByDevice(_deviceId);
+                    if(selectedCaseInDb != null)
+                    {
+                        _casesService.Deselect(selectedCaseInDb.Id);
+                        await _casesService.UpdateCaseWhenCaseStart(_startOrSelectCase);
+                        _caseHub.SendMessageToSelectCase($"CaseId: {_startOrSelectCase.LOADED_ID}; DeviceId: {_deviceId}");
+                    }
                 }
                 
                 break;
@@ -304,8 +317,14 @@ public class MqttMessageHandler
             case DeviceStatusType.HAS_SELECTED:
                 if (_doesPayloadCaseExistInDB && _caseInDb.Status == CaseStatus.SELECTED)
                 {
+                    // ToDo: ASK BRANDON about deselection of ended Case
                     _casesService.UpdateCaseWhenCaseEnd(_endCase);
                     _caseHub.SendMessageToSelectCase($"CaseId: {string.Empty}; DeviceId: {_deviceId}");
+                }
+                else
+                {
+                    _casesService.UpdateCaseWhenCaseEnd(_endCase);
+                    // DO NOT SEND SignalR message to deselect case!!
                 }
                 break;
             case DeviceStatusType.HAS_IN_PROGRESS_AND_SELECTED:
@@ -385,14 +404,15 @@ public class MqttMessageHandler
                 }
                 break;
             case DeviceStatusType.HAS_SELECTED:
-                if (_doesPayloadCaseExistInDB)
+                if (_doesPayloadCaseExistInDB && _caseInDb.Status == CaseStatus.SELECTED)
                 {
                     _casesService.Deselect(_caseId); // set to READY_TO_CREMATE
                     _caseHub.SendMessageToSelectCase($"CaseId: {string.Empty}; DeviceId: {_deviceId}");
                 }
                 else
                 {
-                    // do nothing
+                    _casesService.Deselect(_deselectCase.LOADED_ID); // set to READY_TO_CREMATE
+                    // DO NOT SEND SignalR message to deselect case!!
                 }
                 break;
             case DeviceStatusType.HAS_IN_PROGRESS_AND_SELECTED:

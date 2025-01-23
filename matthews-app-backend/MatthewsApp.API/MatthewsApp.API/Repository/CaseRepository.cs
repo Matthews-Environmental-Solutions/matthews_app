@@ -185,6 +185,17 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             .ToList().FirstOrDefault();
     }
 
+    public async Task<Case> GetInProgressCaseByDevice(Guid deviceId)
+    {
+        IEnumerable<Case> cases = await _dataContext.Cases.Include(c => c.FacilityStatus).ToArrayAsync();
+
+        return cases.Where(c =>
+            c.IsObsolete == false
+            && c.ScheduledDevice.Equals(deviceId)
+            && c.FacilityStatus.Status == CaseStatus.IN_PROGRESS)
+            .ToList().FirstOrDefault();
+    }
+
     public Task CleanDbForDemo(Guid deviceId)
     {
         try

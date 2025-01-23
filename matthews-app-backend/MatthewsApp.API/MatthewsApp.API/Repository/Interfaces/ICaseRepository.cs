@@ -18,6 +18,7 @@ public interface ICaseRepository : IBaseRepository<Case, Guid>
     Task<Case> GetByIdAsync(Guid id);
     Task<IEnumerable<Case>> GetCasesByFacility(Guid facilityId);
     Task<IEnumerable<Case>> GetFirst20ScheduledCases(Guid scheduledDeviceId);
+    Task<Case> GetInProgressCaseByDevice(Guid deviceId);
     Task<IEnumerable<Case>> GetInProgressCasesByDevice(Guid deviceId);
     Task<IEnumerable<Case>> GetInProgressOrSelectedCasesByDevice(Guid deviceId);
     Task<Case> GetNextCaseForDevice(Guid deviceId);
