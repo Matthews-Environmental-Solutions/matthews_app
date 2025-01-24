@@ -25,17 +25,47 @@ export class SignalRCaseApiService {
     private caseService: CaseService
   ) { }
 
+  // public initializeSignalRCaseApiConnection() {
+  //   this.hubConnection = new signalR.HubConnectionBuilder()
+  //     .withUrl(`${environment.apiUrl}/casehub`)
+  //     .build();
+  //   this.hubConnection
+  //     .start()
+  //     .then(() => console.log('SignalR Case Api connection started'))
+  //     .catch((err) =>
+  //       console.log('Error while starting SignalR connection: ' + err)
+  //     );
+  // }
+
   public initializeSignalRCaseApiConnection() {
     this.hubConnection = new signalR.HubConnectionBuilder()
       .withUrl(`${environment.apiUrl}/casehub`)
+      .withAutomaticReconnect() // Enables automatic reconnect
       .build();
+
+    this.hubConnection.serverTimeoutInMilliseconds = 60000;
+  
     this.hubConnection
       .start()
-      .then(() => console.log('SignalR Case Api connection started'))
+      .then(() => console.log('SignalR Case API connection started'))
       .catch((err) =>
         console.log('Error while starting SignalR connection: ' + err)
       );
+  
+    // Optionally handle reconnect events
+    this.hubConnection.onreconnecting(() => {
+      console.log('SignalR connection lost. Attempting to reconnect...');
+    });
+  
+    this.hubConnection.onreconnected(() => {
+      console.log('SignalR connection reestablished.');
+    });
+  
+    this.hubConnection.onclose((error) => {
+      console.log('SignalR connection closed.', error);
+    });
   }
+  
 
   public stopConnection() {
     this.hubConnection.stop();
