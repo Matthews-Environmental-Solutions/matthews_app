@@ -9,6 +9,7 @@ import { AppStoreService } from './app.store.service';
 import { TranslateService } from '@ngx-translate/core';
 import { CremationProcessService } from './cremation-process/cremation-process.service';
 import { CaseService } from './case/case.service';
+import { AuthEventHandlerService } from './core/auth-event-handler.service';
 
 @Component({
   selector: 'app-root',
@@ -28,7 +29,8 @@ export class AppComponent implements OnInit{
     private appStoreService: AppStoreService,
     public translateService: TranslateService,
     public cremationProcessService: CremationProcessService,
-    public caseService: CaseService
+    public caseService: CaseService,
+    private authEventHandler: AuthEventHandlerService
   ) {
     this.initializeApp();
     this.sideMenu();
@@ -38,6 +40,8 @@ export class AppComponent implements OnInit{
     const browserLang = this.translateService.getBrowserLang();
     this.translateService.use(browserLang.match(/en|de/) ? browserLang : 'en');
     this.language = this.translateService.currentLang;
+
+    
   }
 
   ngOnInit() {
