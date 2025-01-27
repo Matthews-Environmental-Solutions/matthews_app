@@ -56,22 +56,36 @@ export class CremationProcessPage implements OnInit, OnDestroy {
           this.selectedBurnMode = parseInt(signal.value, 10);
         }
         if (signal.name === 'END_TIME_ESTIMATE') {
-          const endTimeEstimate = Math.floor(parseFloat(signal.value)); // Ensure it's a valid integer
-          const currentTime = Math.floor(Date.now() / 1000); // Current time in seconds
-          const remainingSeconds = endTimeEstimate - currentTime;
-  
-          // Calculate remaining time in minutes and seconds
-          if (remainingSeconds > 0) {
-            const minutes = Math.floor(remainingSeconds / 60);
-            this.remainingTime = `${minutes}m`;
+          // Ensure signal.value is not null or undefined
+          if (signal.value) {
+            // Replace commas and parse the value
+            const sanitizedValue = signal.value.replace(/,/g, '');
+            const endTimeEstimate = !isNaN(parseFloat(sanitizedValue))
+              ? Math.floor(parseFloat(sanitizedValue))
+              : null;
+
+            if (endTimeEstimate !== null) {
+              const currentTime = Math.floor(Date.now() / 1000); // Current time in seconds
+              const remainingSeconds = endTimeEstimate - currentTime;
+
+              // Calculate remaining time in minutes
+              if (remainingSeconds > 0) {
+                const minutes = Math.floor(remainingSeconds / 60);
+                this.remainingTime = `${minutes}`;
+              } else {
+                this.remainingTime = '0'; // Default if time has passed
+              }
+            } else {
+              console.error('Invalid endTimeEstimate after parsing:', signal.value);
+            }
           } else {
-            this.remainingTime = '0m'; // Default if time has passed
+            console.warn('Signal value is null or undefined for END_TIME_ESTIMATE');
           }
         }
         if (
           signal.name === 'MACHINE_STATUS' &&
           parseInt(signal.value) >= 40 &&
-            parseInt(signal.value) < 50
+          parseInt(signal.value) < 50
         ) {
           this.move(1);
         } else if (
@@ -119,7 +133,7 @@ export class CremationProcessPage implements OnInit, OnDestroy {
         }
       });
     })
-  );  
+  );
 
   selectedFacility$ = this.appStore.selectedFacility$;
   deviceList$ = this.appStore.deviceList$;
@@ -205,7 +219,7 @@ export class CremationProcessPage implements OnInit, OnDestroy {
     this.stepNumber = 0;
     this.case = new Case();
     this.selectedCase$.pipe(skip(1)).subscribe((res) => {
-      if (res !== undefined && res!== null) {
+      if (res !== undefined && res !== null) {
         this.matStepperIntl.optionalLabel =
           res.firstName + ' ' + res.lastName + ' - ' + res.clientCaseId;
         this.matStepperIntl.changes.next();
@@ -229,8 +243,8 @@ export class CremationProcessPage implements OnInit, OnDestroy {
         filter(caseId => caseId !== null && caseId !== undefined), // Ensures caseId is defined
         switchMap(caseId => {
           this.selectedCaseId = caseId!;
-          if(this.selectedCaseId !== "") {
-          return this.caseService.getCase(caseId);
+          if (this.selectedCaseId !== "") {
+            return this.caseService.getCase(caseId);
           } else {
             this.isCaseSelected = false;
             return of(null);
@@ -242,7 +256,7 @@ export class CremationProcessPage implements OnInit, OnDestroy {
       });
 
 
-      this.caseService.getSelectedCaseByDevice(this.deviceId)
+    this.caseService.getSelectedCaseByDevice(this.deviceId)
       .then(caseData => {
         const caseId = caseData?.id;
 
@@ -252,7 +266,7 @@ export class CremationProcessPage implements OnInit, OnDestroy {
         }
       });
 
-    
+
   }
 
   establishSignalRConnection() {
@@ -608,7 +622,7 @@ export class CremationProcessPage implements OnInit, OnDestroy {
             this.cremationProcessService.writeSignalValue(signal?.id, 1);
             this.stepNumber = 0;
             this.resetIntervals();
-            this.clearSelectedCase(); 
+            this.clearSelectedCase();
             this.caseRequestFalse(selectedDevice);
           },
         },
