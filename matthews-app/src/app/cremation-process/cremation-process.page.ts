@@ -56,25 +56,16 @@ export class CremationProcessPage implements OnInit, OnDestroy {
           this.selectedBurnMode = parseInt(signal.value, 10);
         }
         if (signal.name === 'END_TIME_ESTIMATE') {
-          // Ensure signal.value is not null or undefined
-          if (signal.value) {
-            // Replace commas and parse the value
-            const sanitizedValue = signal.value.replace(/,/g, '');
+          if (signal.value !== null && signal.value !== undefined) {
+            // Ensure the value is a string before using .replace()
+            const sanitizedValue = String(signal.value).replace(/,/g, '');
             const endTimeEstimate = !isNaN(parseFloat(sanitizedValue))
               ? Math.floor(parseFloat(sanitizedValue))
               : null;
 
             if (endTimeEstimate !== null) {
-              const currentTime = Math.floor(Date.now() / 1000); // Current time in seconds
-              const remainingSeconds = endTimeEstimate - currentTime;
-
-              // Calculate remaining time in minutes
-              if (remainingSeconds > 0) {
-                const minutes = Math.floor(remainingSeconds / 60);
-                this.remainingTime = `${minutes}`;
-              } else {
-                this.remainingTime = '0'; // Default if time has passed
-              }
+              // Start the countdown timer
+              this.startCountdown(endTimeEstimate);
             } else {
               console.error('Invalid endTimeEstimate after parsing:', signal.value);
             }
@@ -156,7 +147,8 @@ export class CremationProcessPage implements OnInit, OnDestroy {
   startMinute: number;
   startTime: string;
   cremationTime: number;
-  remainingTime: string;
+  remainingTime: string = '0';
+  private timerInterval: any;
   preheatTime: number;
   cooldownTime: number;
   rakeOutTime: number;
@@ -268,6 +260,25 @@ export class CremationProcessPage implements OnInit, OnDestroy {
 
 
   }
+
+  startCountdown(endTimeEstimate: number) {
+    if (this.timerInterval) {
+      clearInterval(this.timerInterval);
+    }
+  
+    this.timerInterval = setInterval(() => {
+      const currentTime = Math.floor(new Date().getTime() / 1000);
+      const remainingSeconds = endTimeEstimate - currentTime;
+  
+      if (remainingSeconds > 0) {
+        this.remainingTime = Math.floor(remainingSeconds / 60).toString();
+      } else {
+        this.remainingTime = '0';
+        clearInterval(this.timerInterval);
+      }
+    }, 1000);
+  }
+  
 
   establishSignalRConnection() {
     this.signalRCaseApiService.initializeSignalRCaseApiConnection();
