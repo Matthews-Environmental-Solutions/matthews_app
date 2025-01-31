@@ -22,8 +22,21 @@ public interface ICasesService
     void Delete(Case caseEntity);
     Case Update(Case caseEntity);
     void Select(Guid caseEntity);
-    void Deselect(string loadedId);
-    void Deselect(Guid caseId);
+
+    /// <summary>
+    /// Deselects the case with the specified caseId. If publichEvent is true, an event is published to send mqtt message to Flexy.
+    /// </summary>
+    /// <param name="loadedId"></param>
+    /// <param name="publichEvent"></param>
+    void Deselect(string loadedId, bool publichEvent);
+
+    /// <summary>
+    /// Deselects the case with the specified caseId. If publichEvent is true, an event is published to send mqtt message to Flexy.
+    /// </summary>
+    /// <param name="caseId"></param>
+    /// <param name="publichEvent"></param>
+    void Deselect(Guid caseId, bool publichEvent);
+
     Task<IEnumerable<Case>> GetAll();
     Task<Case> GetById(Guid id);
     bool IsCaseExists(Guid id);
@@ -159,13 +172,19 @@ public class CasesService : ICasesService
         }
     }
 
-    public void Deselect(Guid caseId)
+    /// <summary>
+    /// Deselects the case with the specified caseId. If publichEvent is true, an event is published to send mqtt message to Flexy.
+    /// </summary>
+    /// <param name="caseId"></param>
+    /// <param name="publichEvent"></param>
+    public void Deselect(Guid caseId, bool publichEvent)
     {
         _logger.LogDebug("Deselection of case");
         try
         {
             Case updatedCase = UpdateDeselectedCase(caseId);
-            _ea.GetEvent<CaseDeselectEvent>().Publish(updatedCase);
+            if (publichEvent)
+                _ea.GetEvent<CaseDeselectEvent>().Publish(updatedCase);
         }
         catch (Exception)
         {
@@ -173,14 +192,15 @@ public class CasesService : ICasesService
         }
     }
 
-    public void Deselect(string loadedId)
+    public void Deselect(string loadedId, bool publichEvent)
     {
         try
         {
             if (Guid.TryParse(loadedId, out Guid caseId))
             {
                 Case updatedCase = UpdateDeselectedCase(caseId);
-                _ea.GetEvent<CaseDeselectEvent>().Publish(updatedCase);
+                if (publichEvent)
+                    _ea.GetEvent<CaseDeselectEvent>().Publish(updatedCase);
             }
         }
         catch (Exception)

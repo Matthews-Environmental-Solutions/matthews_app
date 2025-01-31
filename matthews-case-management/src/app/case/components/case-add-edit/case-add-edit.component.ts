@@ -338,4 +338,8 @@ export class CaseAddEditComponent implements OnInit {
   getStartProcessTranslate(startProcess: boolean): string {
     return startProcess ? this.translate.instant('startProcess') : '';
   }
+
+  preventFormSubmit(event: Event): void {
+    event.preventDefault();
+  }
 }
