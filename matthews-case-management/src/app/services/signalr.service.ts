@@ -18,10 +18,12 @@ export class SignalrService {
     constructor(private stateService: StateService) {
         this.hubConnectionToCaseHub = new signalR.HubConnectionBuilder()
             .withUrl(`${this.apiURL}/casehub`)
+            .withAutomaticReconnect()
             .build();
 
         this.hubConnectionToFacilityHub = new signalR.HubConnectionBuilder()
             .withUrl(`${this.apiURL}/facilityhub`)
+            .withAutomaticReconnect()
             .build();
     }
 

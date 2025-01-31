@@ -1,5 +1,5 @@
 <mat-card class="add-edit-card">
-    <form [formGroup]="caseForm" (ngSubmit)="save()">
+    <form [formGroup]="caseForm" (keydown.enter)="preventFormSubmit($event)" (ngSubmit)="save()">
         <mat-toolbar class="add-edit-toolbar">
             <span>{{title | translate}}</span>
             <span class="spacer"></span>
