@@ -384,7 +384,6 @@
                 <ion-button *ngIf="parseSignalValue(signal.value) === 120" expand="block" class="btnsuccess" (click)="rakeOut(selectedDevice)">
                   RAKE NOW
                 </ion-button>
-                {{'Rake complete'}}<br/>
                 <ion-button *ngIf="parseSignalValue(signal.value) === 130" expand="block" class="btnsuccess" (click)="rakeOutConfirmation(stepper, selectedDevice)">
                   {{'Start New Process'}}
                 </ion-button>

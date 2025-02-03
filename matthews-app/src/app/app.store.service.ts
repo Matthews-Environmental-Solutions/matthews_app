@@ -424,6 +424,7 @@ export class AppStoreService extends ComponentStore<AppState> {
 
   addEventListener() {
     this.signalRService.addListenerEvent((alarm: Alarm) => {
+      debugger
       this.updateAlarmEventFromSignalR(alarm);
     });
   }

@@ -30,7 +30,7 @@ export class SignalRService {
   public proxyEvent: any;
   private connection: any;
 
-  constructor(private authService: AuthService, private loadingService: LoadingService) { }
+  constructor(private authService: AuthService, private loadingService: LoadingService) {}
 
   public async initializeSignalRConnection(): Promise<any> {
     this.loadingService.present();

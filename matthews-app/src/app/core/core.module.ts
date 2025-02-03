@@ -6,6 +6,7 @@ import { Browser, AuthService } from 'ionic-appauth';
 import { CapacitorBrowser, CapacitorSecureStorage } from 'ionic-appauth/lib/capacitor';
 import { NgHttpService } from './ng-http.service';
 import { authFactory } from './factories';
+import { HttpClient } from '@angular/common/http';
 
 @NgModule({
   imports: [
@@ -27,7 +28,7 @@ import { authFactory } from './factories';
     {
       provide: AuthService,
       useFactory : authFactory,
-      deps: [Platform, NgZone, Requestor, Browser, StorageBackend]
+      deps: [Platform, NgZone, Requestor, Browser, StorageBackend, HttpClient]
     }
   ]
 })

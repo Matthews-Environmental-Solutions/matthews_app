@@ -5,11 +5,14 @@ import { AuthService, Browser } from 'ionic-appauth';
 import { App, URLOpenListenerEvent } from '@capacitor/app';
 import { environment } from 'src/environments/environment';
 import { NgZone } from '@angular/core';
+import { CustomAuthService } from '../custom-auth.service';
+import { HttpClient } from '@angular/common/http';
+
 
 export const authFactory = (platform: Platform, ngZone: NgZone,
-    requestor: Requestor, browser: Browser,  storage: StorageBackend) => {
+    requestor: Requestor, browser: Browser,  storage: StorageBackend, http: HttpClient) => {
 
-    const authService = new AuthService(browser, storage, requestor);
+    const authService = new CustomAuthService(browser, storage, requestor, http);
     authService.authConfig = environment.auth_config;
 
     if (!platform.is('cordova')) {
