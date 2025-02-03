@@ -9,6 +9,9 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 - Bug fixes.
 
+## [2.17] - 2025-01-31
+### Added
+- Case Add/Edit - press Enter event is prevented 
 
 ## [2.16] - 2024-12-19
 ### Added
