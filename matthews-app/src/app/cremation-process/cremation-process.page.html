@@ -359,7 +359,6 @@
             <ng-container *ngIf="parseSignalValue(signal.value) >= 110 || parseSignalValue(signal.value) <= 130 && stepNumber == 3">
               <div class="wrapper">
                 <span class="footer-text"><b>Complete Process</b><br /></span>
-                <span class="footer-text">{{'CoolingInProgress' | translate}}...<br /></span>
                 <!-- <ng-container *ngFor="let signal of selectedDevice.signals; trackBy:trackItems"> -->
                 <span class="footer-text">
                   {{'PrimChamber' | translate}}: {{signalTt100}}°F <br /></span>
@@ -381,12 +380,12 @@
                   <ion-icon slot="end" name="arrow-forward"></ion-icon>
                   {{'SKIP COOLING, RAKE NOW'}}
                 </ion-button>
-                <ion-button *ngIf="parseSignalValue(signal.value) === 120" expand="block" class="btnsuccess" (click)="rakeOut(selectedDevice)">
+                <ion-button *ngIf="parseSignalValue(signal.value) === 135" expand="block" class="btnsuccess" (click)="rakeOut(selectedDevice)">
                   RAKE NOW
                 </ion-button>
-                <ion-button *ngIf="parseSignalValue(signal.value) === 130" expand="block" class="btnsuccess" (click)="rakeOutConfirmation(stepper, selectedDevice)">
+                <!-- <ion-button *ngIf="parseSignalValue(signal.value) === 130" expand="block" class="btnsuccess" (click)="rakeOutConfirmation(stepper, selectedDevice)">
                   {{'Start New Process'}}
-                </ion-button>
+                </ion-button> -->
               </div>
             </ng-container>
           </ng-container>
