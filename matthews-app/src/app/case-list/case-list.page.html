@@ -17,15 +17,36 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<!-- <ion-content>
   <ion-list>
     <ion-item detail='true' *ngFor="let case of (deviceCases$ | async) | filter:searchTerm" (click)="getSelectedCase(case)">
       <ion-label>
         <h3>{{case.caseId}}</h3>
         <p>
-          {{case.firstName}} {{case.lastName}}&mdash; {{'Status' | translate}}: {{caseStatuses[case.status] | enumFormat | titlecase | translate}}
+          <b>{{case.firstName}} {{case.lastName}} </b> : {{case.scheduledStartTime | date:'yyyy-MM-dd HH:mm'}}
+          </p>
+        <p>
+          {{'Status' | translate}}: {{caseStatuses[case.status] | enumFormat | titlecase | translate}}
+          {{'Weight' | translate}}: {{case.weight}} lbs
         </p>
-      </ion-label>
+      </ion-label>               
+    </ion-item>
+  </ion-list>
+</ion-content> -->
+<ion-content>
+  <ion-list>
+    <ion-item detail="true" *ngFor="let case of (deviceCases$ | async) | filter:searchTerm" (click)="getSelectedCase(case)">
+      <ion-label>
+        <h3>{{case.caseId}}</h3>
+        <p class="ion-text-end">
+          <b>{{case.firstName}} {{case.lastName}}:</b>  
+          <span class="ion-text-end">{{ case.scheduledStartTime | date:'yyyy-MM-dd hh:mm a' }}</span>
+        </p>
+        <p>
+          {{'Status' | translate}}: {{caseStatuses[case.status] | enumFormat | titlecase | translate}}
+          <span class="ion-text-end">{{'Weight' | translate}}: {{case.weight}} lbs</span>
+        </p>
+      </ion-label>               
     </ion-item>
   </ion-list>
 </ion-content>

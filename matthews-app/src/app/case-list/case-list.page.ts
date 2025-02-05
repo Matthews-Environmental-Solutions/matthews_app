@@ -4,6 +4,7 @@ import { ModalController, ToastController } from '@ionic/angular';
 import { AppStoreService } from '../app.store.service';
 import { Case } from '../case/case';
 import { CaseStatuses } from '../core/enums';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-case-list',
@@ -15,7 +16,9 @@ export class CaseListPage implements OnInit {
   showSearchbar: boolean;
   searchTerm: string;
   caseStatuses = CaseStatuses;
-  deviceCases$ = this.appStore.deviceCases$;
+  deviceCases$ = this.appStore.deviceCases$.pipe(
+    map(cases => cases.sort((a, b) => new Date(a.scheduledStartTime).getTime() - new Date(b.scheduledStartTime).getTime()))
+  );
 
   constructor(public toastController: ToastController, private appStore: AppStoreService, public modalController: ModalController) { }
 
