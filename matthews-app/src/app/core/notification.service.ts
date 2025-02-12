@@ -18,16 +18,17 @@ export class NotificationService {
     }
   }
 
-  async scheduleNotification() {
+  async scheduleNotification(title: string = "Alarm Alert", body: string = "An event has occurred.") {
     await LocalNotifications.schedule({
       notifications: [
         {
-          title: "You have successfully selected a facility",
-          body: "This is a test notification",
-          id: 1,
-          schedule: { at: new Date(Date.now() + 5000) } // 5 seconds from now
+          title: title,
+          body: body,
+          id: new Date().getTime(),  // unique ID for each notification
+          schedule: { at: new Date(Date.now() + 1000) } // 1 second from now
         }
       ]
     });
   }
 }
+

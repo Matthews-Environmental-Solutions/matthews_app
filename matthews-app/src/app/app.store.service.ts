@@ -22,6 +22,7 @@ import { Signal } from './device-list/signal';
 import { FacilityStatus } from './case/facility-status.model';
 import { v4 as uuidv4 } from 'uuid';
 import { trigger } from '@angular/animations';
+import { NotificationService } from './core/notification.service';
 
 export interface AppState {
   cases: Case[];
@@ -51,7 +52,8 @@ export class AppStoreService extends ComponentStore<AppState> {
     private deviceListService: DeviceListService,
     public modalController: ModalController,
     private loadingService: LoadingService,
-    private signalRService: SignalRService
+    private signalRService: SignalRService,
+    private notificationService: NotificationService
   ) {
     super({
       cases: [],
@@ -426,6 +428,11 @@ export class AppStoreService extends ComponentStore<AppState> {
     this.signalRService.addListenerEventUpdate((alarm: Alarm) => {
       console.log('🚨 OnEventUpdate received:', alarm);
       this.updateAlarmEventFromSignalR(alarm);
+      // Call NotificationService to show the alarm notification
+      this.notificationService.scheduleNotification(
+        'Alarm Alert', 
+        `${alarm.alias}`
+      );
     });
   }
 

@@ -6,6 +6,7 @@ import { AuthService } from 'ionic-appauth';
 import { TokenResponse } from '@openid/appauth';
 import { LoadingService } from './loading.service';
 import { environment } from 'src/environments/environment';
+import { NotificationService } from './notification.service';
 declare let $: any;
 
 export interface Measurement {
@@ -19,6 +20,7 @@ export interface Alarm {
   id: string;
   eventId: string;
   description: string;
+  alias: string
 }
 
 @Injectable({
@@ -30,7 +32,9 @@ export class SignalRService {
   public proxyEvent: any;
   private connection: any;
 
-  constructor(private authService: AuthService, private loadingService: LoadingService) { }
+  constructor(private authService: AuthService, 
+    private loadingService: LoadingService, 
+    private notificationService: NotificationService) { }
 
   public async initializeSignalRConnection(): Promise<any> {
     this.loadingService.present();
@@ -40,19 +44,19 @@ export class SignalRService {
       this.connection.qs = { access_token: token };
       this.proxyMeasurement = this.connection.createHubProxy('measurementHub');
       this.proxyEvent = this.connection.createHubProxy('eventHub');
-
+  
       this.proxyEvent.on('*', (eventName, data) => {
         console.log(`📩 Received event: ${eventName}`, data);
-      
+  
         if (eventName === 'OnEventUpdate') {
-          console.log('✅ Extracted Event Data:', data.A);
+          console.log('✅ Extracted Event Data:', data);
         }
       });
-
     });
-
+  
     return this.connection;
   }
+  
 
   // public startConnection() {
   //   this.connection.start().done(() => {
