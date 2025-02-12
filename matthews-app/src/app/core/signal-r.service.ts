@@ -11,7 +11,7 @@ declare let $: any;
 export interface Measurement {
   signalId: string;
   signalName: string;
- // timestamp: Date
+  // timestamp: Date
   value: string;
 }
 
@@ -30,7 +30,7 @@ export class SignalRService {
   public proxyEvent: any;
   private connection: any;
 
-  constructor(private authService: AuthService, private loadingService: LoadingService) {}
+  constructor(private authService: AuthService, private loadingService: LoadingService) { }
 
   public async initializeSignalRConnection(): Promise<any> {
     this.loadingService.present();
@@ -40,6 +40,15 @@ export class SignalRService {
       this.connection.qs = { access_token: token };
       this.proxyMeasurement = this.connection.createHubProxy('measurementHub');
       this.proxyEvent = this.connection.createHubProxy('eventHub');
+
+      this.proxyEvent.on('*', (eventName, data) => {
+        console.log(`📩 Received event: ${eventName}`, data);
+      
+        if (eventName === 'OnEventUpdate') {
+          console.log('✅ Extracted Event Data:', data.A);
+        }
+      });
+
     });
 
     return this.connection;
@@ -57,37 +66,41 @@ export class SignalRService {
   public async startConnection() {
     await this.connection.start().done(async () => {
       console.log('Connection started!');
-      await this.loadingService.dismiss(); // Only dismiss if loading overlay is active
+      await this.loadingService.dismiss(); // Dismiss the loader
+      this.addListenerEventUpdate((event) => {
+        console.log('Received OnEventUpdate:', event);
+      });
     }).catch((error: any) => {
-      console.log(error);
+      console.log('Connection error:', error);
     });
   }
-  
 
-  public addListenerMeasurement( func: (measurement) => void) : void {
+
+
+  public addListenerMeasurement(func: (measurement) => void): void {
     console.log('addMeasurementListener');
     this.proxyMeasurement.on('onMeasurement', func);
   }
 
-  public addListenerEvent( func: (event) => void) : void {
-    console.log('addEventListener');
-    this.proxyEvent.on('onEvent', func);
+  public addListenerEventUpdate(func: (event) => void): void {
+    console.log('addEventUpdateListener');
+    this.proxyEvent.on('OnEventUpdate', func);
   }
 
   public subscribeToSignalValues(signalId: string[]) {
     console.log('subscribeToSignalValues');
     this.proxyMeasurement.invoke('SubscribeAll', signalId)
-            .done((measurement) => {
-                console.log('SubscribeAll:  =>' + JSON.stringify(measurement));
-              });
+      .done((measurement) => {
+        console.log('SubscribeAll:  =>' + JSON.stringify(measurement));
+      });
   }
 
   public readValueFromSignal(signalId: string) {
     console.log('readValueFromSignal');
     this.proxyMeasurement.invoke('Read', signalId)
-            .done((measurement) => {
-                console.log(measurement);
-              });
+      .done((measurement) => {
+        console.log(measurement);
+      });
   }
 
   public stopConnection() {
