@@ -168,7 +168,7 @@ export class AppStoreService extends ComponentStore<AppState> {
       ...state,
       selectedCaseId
     })
-  );  
+  );
 
   readonly updateFacilityStatuses = this.updater(
     (state: AppState, facilityStatuses: FacilityStatus[]) => ({
@@ -337,7 +337,7 @@ export class AppStoreService extends ComponentStore<AppState> {
     )
   );
 
-  
+
 
   readonly getFacilities = this.effect((trigger$) =>
     trigger$.pipe(
@@ -397,10 +397,10 @@ export class AppStoreService extends ComponentStore<AppState> {
                       this.updateDeviceSignals(deviceSignalsMap);
                     });
                 });
-              
+
               this.signalRService.proxyEvent
-              .invoke('Subscribe')
-              .done(data => console.log(data));
+                .invoke('Subscribe')
+                .done(data => console.log(data));
 
             });
 
@@ -428,10 +428,16 @@ export class AppStoreService extends ComponentStore<AppState> {
     this.signalRService.addListenerEventUpdate((alarm: Alarm) => {
       console.log('🚨 OnEventUpdate received:', alarm);
       this.updateAlarmEventFromSignalR(alarm);
-      // Call NotificationService to show the alarm notification
+      console.log('🚨 Alarm received:', alarm); // Confirm event
+
+      // Check if the alarm has finished (end is not null)
+      const notificationTitle = alarm.end ? 'Alarm resolved' : 'Alarm Alert';
+      const notificationBody = alarm.end ? `${alarm.alias} has been resolved` : `${alarm.alias}`;
+
+      // Schedule the notification with the updated title and body
       this.notificationService.scheduleNotification(
-        'Alarm Alert', 
-        `${alarm.alias}`
+        notificationTitle,
+        notificationBody
       );
     });
   }
@@ -444,7 +450,7 @@ export class AppStoreService extends ComponentStore<AppState> {
         this.loadingService.dismiss();
       })
     )
-  );  
+  );
 
   getSelectedDevice(): string {
     return this.get((state) => state.selectedDevice?.id)

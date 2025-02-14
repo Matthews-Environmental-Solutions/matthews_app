@@ -19,13 +19,13 @@ export class FacilityPage implements OnInit {
   constructor(private auth: AuthService,
               public toastController: ToastController,
               private appStoreService: AppStoreService,
-              private navCtrl: NavController,
-              private notificationService: NotificationService) { }
+              private navCtrl: NavController) { }
 
   ngOnInit() {
     this.showSearchbar = false;
     this.appStoreService.getFacilities();
     this.getUserInfo();
+    
   }
 
   cancelSearch(): void {

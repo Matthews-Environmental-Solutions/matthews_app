@@ -21,6 +21,7 @@ export interface Alarm {
   eventId: string;
   description: string;
   alias: string
+  end: string;
 }
 
 @Injectable({
