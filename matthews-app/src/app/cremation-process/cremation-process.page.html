@@ -224,7 +224,7 @@
                   <ion-button class="inline" (click)="presentModalFromProcess(deviceId)">
                     Enter Case Info
                   </ion-button>
-                  <ion-button class="inline" (click)="presentCasesModal(deviceId)">
+                  <ion-button class="inline" (click)="presentCasesModal(deviceId, selectedDevice)">
                     SELECT CASE
                   </ion-button>
                   <ion-button expand="block" class="btnsuccess" (click)="autoSelectNextCase(deviceId)">
@@ -249,8 +249,8 @@
                     (click)="clearSelectedCase(); caseRequestFalse(selectedDevice)" class="btnbackward">
                     CLEAR SELECTED CASE
                   </ion-button>
-                  <ion-button expand="block" type="button" (click)="handleSelectButtonClick(selectedDevice)"
-                    class="btnsuccess">CONTINUE</ion-button>
+                  <!-- <ion-button expand="block" type="button" (click)="handleSelectButtonClick(selectedDevice)"
+                    class="btnsuccess">CONTINUE</ion-button> -->
                 </div>
               </ng-container>
               <ng-container *ngIf="parseSignalValue(signal.value) === 45">

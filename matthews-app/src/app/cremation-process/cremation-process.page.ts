@@ -7,6 +7,7 @@ import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular
 import {
   AlertController,
   AlertOptions,
+  ModalController,
   PopoverController,
 } from '@ionic/angular';
 import { MatStepper, MatStepperIntl } from '@angular/material/stepper';
@@ -27,6 +28,7 @@ import { distinctUntilChanged, filter, find, map, skip, switchMap, tap } from 'r
 import { CaseService } from '../case/case.service';
 import { Signal } from '../device-list/signal';
 import { SignalRCaseApiService } from '../core/signal-r.case-api.service';
+import { CaseListPage } from '../case-list/case-list.page';
 
 @Component({
   selector: 'app-device-details',
@@ -190,7 +192,8 @@ export class CremationProcessPage implements OnInit, OnDestroy {
     private cremationProcessService: CremationProcessService,
     public alertController: AlertController,
     private caseService: CaseService,
-    private signalRCaseApiService: SignalRCaseApiService
+    private signalRCaseApiService: SignalRCaseApiService,
+    public modalController: ModalController,
   ) { }
 
   ngOnDestroy(): void {
@@ -403,10 +406,6 @@ export class CremationProcessPage implements OnInit, OnDestroy {
 
   selectCase() {
     this.isCaseSelected = true;
-  }
-
-  changeCase(facilityId: string) {
-    this.presentCasesModal(facilityId);
   }
 
   startCycle(selectedDevice: Device) {
@@ -765,8 +764,27 @@ export class CremationProcessPage implements OnInit, OnDestroy {
     }
   }
 
-  presentCasesModal(deviceId: string) {
-    this.appStore.openCasesModal(deviceId);
+  // presentCasesModal(deviceId: string) {
+  //   this.appStore.openCasesModal(deviceId);
+  // }
+
+  async presentCasesModal(selectedDeviceId: string, selectedDevice: Device) {
+    const modal = await this.modalController.create({
+      component: CaseListPage,
+      componentProps: {
+        selectedDeviceId,
+      },
+    });
+  
+    await modal.present();
+
+    const { data } = await modal.onWillDismiss();
+    if (data?.selectedCase) {
+      this.caseRequest(selectedDevice);
+      this.selectCaseAPI();
+    }
+
+    return await modal.present();
   }
 
   clearSelectedCase() {

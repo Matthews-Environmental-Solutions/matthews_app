@@ -33,15 +33,15 @@ export class CaseListPage implements OnInit {
   }
 
   getSelectedCase(selectedCase: Case) {
+    this.close(selectedCase);
     this.appStore.updateSelectedCase(selectedCase);
     this.appStore.updateSelectedCaseId(selectedCase.id);
-    this.close();
   }
 
-  async close() {
+  async close(selectedCase?: Case) {
     const modal = await this.modalController.getTop();
     if (modal) {
-      await modal.dismiss();
+      await modal.dismiss({ selectedCase });
     }
   }
   

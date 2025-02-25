@@ -666,19 +666,27 @@ export class AppStoreService extends ComponentStore<AppState> {
     return await modal.present();
   }
 
-  readonly openCasesModal = this.effect<string>((trigger$) =>
-    trigger$.pipe(mergeMap((deviceId) => this.presentCasesModal(deviceId)))
-  );
+  // readonly openCasesModal = this.effect<string>((trigger$) =>
+  //   trigger$.pipe(mergeMap((deviceId) => this.presentCasesModal(deviceId)))
+  // );
 
-  async presentCasesModal(selectedDeviceId: string) {
-    const modal = await this.modalController.create({
-      component: CaseListPage,
-      componentProps: {
-        selectedDeviceId,
-      },
-    });
-    return await modal.present();
-  }
+  // async presentCasesModal(selectedDeviceId: string) {
+  //   const modal = await this.modalController.create({
+  //     component: CaseListPage,
+  //     componentProps: {
+  //       selectedDeviceId,
+  //     },
+  //   });
+  
+  //   await modal.present();
+
+  //   const { data } = await modal.onWillDismiss();
+  //   if (data?.selectedCase) {
+  //     debugger
+  //   }
+  
+  //   return await modal.present();
+  // }
 
   getUpdatedSignalsForDevice(
     deviceList: Device[],

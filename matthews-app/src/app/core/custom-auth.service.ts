@@ -18,7 +18,7 @@ export class CustomAuthService extends AuthService {
   }
 
   protected override async requestTokenRefresh(): Promise<void> {
-    debugger
+    //debugger
     if(!this['_tokenSubject'].value){
       throw new Error("No Token Defined!");
     }

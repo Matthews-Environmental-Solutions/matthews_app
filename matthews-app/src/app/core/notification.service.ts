@@ -23,9 +23,9 @@ export class NotificationService {
   }
 
   async scheduleNotification(title: string = "Alarm Alert", body: string = "An event has occurred.") {
-    console.log('Waiting for notification channel...');
+    const platform = Capacitor.getPlatform();
     await this.createNotificationChannel(); // Ensure channel is ready
-    console.log('Channel ready, scheduling notification.');
+    if (platform === 'ios' || platform === 'android') {
     await LocalNotifications.schedule({
       notifications: [
         {
@@ -36,7 +36,9 @@ export class NotificationService {
           channelId: 'alerts'
         }
       ]
-    });
+    });} else {
+      console.warn('Local notifications are not supported on the web.');
+    }
   }
 
   async createNotificationChannel() {
