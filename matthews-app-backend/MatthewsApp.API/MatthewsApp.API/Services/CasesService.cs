@@ -546,6 +546,15 @@ public class CasesService : ICasesService
         {
             Case Case = await _caseRepository.GetNextCaseForDevice(deviceId);
             Case.ScheduledStartTime = DateTime.SpecifyKind(Case.ScheduledStartTime is null ? DateTime.MinValue : Case.ScheduledStartTime.Value, DateTimeKind.Utc);
+            Case.FacilityStatus.Status = CaseStatus.SELECTED;
+            _caseRepository.Update(Case);
+            
+            // Send event
+            SendEventToHostedService(Case, new List<Guid> { deviceId });
+
+            // SignalR
+            _caseHub.SendMessageToRefreshList($"Update status to SELECTED done.");
+
             return Case;
         }
         catch (Exception ex)
