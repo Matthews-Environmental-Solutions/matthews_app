@@ -546,11 +546,17 @@ public class CasesService : ICasesService
         {
             Case Case = await _caseRepository.GetNextCaseForDevice(deviceId);
             Case.ScheduledStartTime = DateTime.SpecifyKind(Case.ScheduledStartTime is null ? DateTime.MinValue : Case.ScheduledStartTime.Value, DateTimeKind.Utc);
-            Case.FacilityStatus.Status = CaseStatus.SELECTED;
+
+            var selectedStatus = _facilityStatusRepository.GetSelectedFacilityStatus((Guid)Case.ScheduledFacility);
+            Case.FacilityStatusId = selectedStatus.Id;
+            Case.FacilityStatus = selectedStatus;
             _caseRepository.Update(Case);
             
             // Send event
             SendEventToHostedService(Case, new List<Guid> { deviceId });
+
+            // Send to Flexy
+            _ea.GetEvent<CaseSelectEvent>().Publish(Case);
 
             // SignalR
             _caseHub.SendMessageToRefreshList($"Update status to SELECTED done.");

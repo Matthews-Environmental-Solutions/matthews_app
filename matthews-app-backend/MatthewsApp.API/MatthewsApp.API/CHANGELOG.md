@@ -4,6 +4,10 @@
 - Changed: Description of a change in existing functionality.
 - Removed: Description of deprecated features.
 
+## [1.0.4] - 2025-02-25
+	- Fixed:
+		When get NEXT Case for device, the Case will be set to SELECTED status.
+
 ## [1.0.3] - 2025-01-31
 	- Fixed:
 		When CaseDeselect arrive from Flexy, the Flexy will not be notified about deselection.
