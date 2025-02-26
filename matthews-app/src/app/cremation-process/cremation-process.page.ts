@@ -268,11 +268,11 @@ export class CremationProcessPage implements OnInit, OnDestroy {
     if (this.timerInterval) {
       clearInterval(this.timerInterval);
     }
-  
+
     this.timerInterval = setInterval(() => {
       const currentTime = Math.floor(new Date().getTime() / 1000);
       const remainingSeconds = endTimeEstimate - currentTime;
-  
+
       if (remainingSeconds > 0) {
         this.remainingTime = Math.floor(remainingSeconds / 60).toString();
       } else {
@@ -281,15 +281,11 @@ export class CremationProcessPage implements OnInit, OnDestroy {
       }
     }, 1000);
   }
-  
+
 
   establishSignalRConnection() {
     this.signalRCaseApiService.initializeSignalRCaseApiConnection();
     this.signalRCaseApiService.addSelectedCaseListener();
-  }
-
-  pressContinue() {
-    this.isContinueClicked = true;
   }
 
   parseSignalValue(value: string): number {
@@ -558,13 +554,6 @@ export class CremationProcessPage implements OnInit, OnDestroy {
     this.cooldownTime = 0;
   }
 
-  handleSelectButtonClick(selectedDevice: Device) {
-    this.pressContinue(); // Ensures button is disabled or hidden immediately
-    this.move(2);
-    this.caseRequest(selectedDevice);
-    this.selectCaseAPI();
-  }
-
   caseRequestFalse(selectedDevice: Device) {
     const signal = selectedDevice.signals.find(
       (signal) => signal.name === 'CASE_REQUEST'
@@ -745,14 +734,20 @@ export class CremationProcessPage implements OnInit, OnDestroy {
     this.matStepperIntl.optionalLabel = '';
   }
 
-  autoSelectNextCase(deviceId: string) {
+  autoSelectNextCase(deviceId: string, selectedDevice: Device) {
     this.caseService
       .getNextCaseForDevice(deviceId)
       .then((nextCase) => {
-        this.appStore.updateSelectedCase(nextCase);
-        this.appStore.updateSelectedCaseId(nextCase.id);
+        if (nextCase) {
+          this.appStore.updateSelectedCase(nextCase);
+          this.appStore.updateSelectedCaseId(nextCase.id);
+        }
       })
+      .catch((error) => {
+        console.error("Error fetching next case:", error);
+      });
 
+    this.caseRequest(selectedDevice);
   }
 
   selectCaseFromId(caseId: string) {
@@ -775,7 +770,7 @@ export class CremationProcessPage implements OnInit, OnDestroy {
         selectedDeviceId,
       },
     });
-  
+
     await modal.present();
 
     const { data } = await modal.onWillDismiss();
@@ -870,9 +865,11 @@ export class CremationProcessPage implements OnInit, OnDestroy {
     );
   }
 
-  presentModalFromProcess(deviceId: string) {
+  presentModalFromProcess(deviceId: string, selectedDevice: Device) {
     this.appStore.openCaseModalFromProcess(
       { scheduledDevice: deviceId } as Case
     );
+    this.selectCaseAPI();
+    this.caseRequest(selectedDevice);
   }
 }

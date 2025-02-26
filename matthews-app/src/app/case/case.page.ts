@@ -175,7 +175,7 @@ export class CasePage implements OnInit {
 
       if (this.fromProcess) {
         const selectedFacilityStatus = this.facilityStatuses.find(
-          (fs) => fs.status == 3
+          (fs) => fs.status == 5
         );
 
         this.newCase.facilityStatusId = selectedFacilityStatus.id;

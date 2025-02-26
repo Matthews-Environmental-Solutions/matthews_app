@@ -400,7 +400,7 @@ export class AppStoreService extends ComponentStore<AppState> {
 
               this.signalRService.proxyEvent
                 .invoke('Subscribe')
-                .done(data => console.log(data));
+                .done(data => (data));
 
             });
 
