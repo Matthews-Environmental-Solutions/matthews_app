@@ -734,7 +734,7 @@ export class CremationProcessPage implements OnInit, OnDestroy {
     this.matStepperIntl.optionalLabel = '';
   }
 
-  autoSelectNextCase(deviceId: string, selectedDevice: Device) {
+  autoSelectNextCase(deviceId: string) {
     this.caseService
       .getNextCaseForDevice(deviceId)
       .then((nextCase) => {
@@ -746,8 +746,6 @@ export class CremationProcessPage implements OnInit, OnDestroy {
       .catch((error) => {
         console.error("Error fetching next case:", error);
       });
-
-    //this.caseRequest(selectedDevice);
   }
 
   selectCaseFromId(caseId: string) {
@@ -763,7 +761,7 @@ export class CremationProcessPage implements OnInit, OnDestroy {
   //   this.appStore.openCasesModal(deviceId);
   // }
 
-  async presentCasesModal(selectedDeviceId: string, selectedDevice: Device) {
+  async presentCasesModal(selectedDeviceId: string) {
     const modal = await this.modalController.create({
       component: CaseListPage,
       componentProps: {
@@ -775,7 +773,6 @@ export class CremationProcessPage implements OnInit, OnDestroy {
 
     const { data } = await modal.onWillDismiss();
     if (data?.selectedCase) {
-      //this.caseRequest(selectedDevice);
       this.selectCaseAPI();
     }
 
@@ -865,11 +862,10 @@ export class CremationProcessPage implements OnInit, OnDestroy {
     );
   }
 
-  presentModalFromProcess(deviceId: string, selectedDevice: Device) {
+  presentModalFromProcess(deviceId: string) {
     this.appStore.openCaseModalFromProcess(
       { scheduledDevice: deviceId } as Case
     );
     this.selectCaseAPI();
-    //this.caseRequest(selectedDevice);
   }
 }

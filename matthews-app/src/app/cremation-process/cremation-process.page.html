@@ -221,13 +221,13 @@
         </ion-button>
       </div> -->
                 <div class="actions">
-                  <ion-button class="inline" (click)="presentModalFromProcess(deviceId, selectedDevice)">
+                  <ion-button class="inline" (click)="presentModalFromProcess(deviceId)">
                     Enter Case Info
                   </ion-button>
-                  <ion-button class="inline" (click)="presentCasesModal(deviceId, selectedDevice)">
+                  <ion-button class="inline" (click)="presentCasesModal(deviceId)">
                     SELECT CASE
                   </ion-button>
-                  <ion-button expand="block" class="btnsuccess" (click)="autoSelectNextCase(deviceId, selectedDevice)">
+                  <ion-button expand="block" class="btnsuccess" (click)="autoSelectNextCase(deviceId)">
                     AUTO SELECT NEXT IN SCHEDULE
                   </ion-button>
                   <ion-button expand="block" class="btnbackward" (click)="systemShutdown(stepper, selectedDevice)">
