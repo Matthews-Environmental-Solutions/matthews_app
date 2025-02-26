@@ -456,6 +456,10 @@ export class AppStoreService extends ComponentStore<AppState> {
     return this.get((state) => state.selectedDevice?.id)
   }
 
+  getSelectedCaseId(): string {
+    return this.get((state) => state.selectedCaseId);
+  }
+
   readonly getCases = this.effect<string>((cases$) =>
     cases$.pipe(
       tap(() => this.loadingService.present()),
@@ -567,6 +571,7 @@ export class AppStoreService extends ComponentStore<AppState> {
           this.getCases(selectedCase.scheduledFacility);
           this.updateSelectedCase(savedCase);
           this.updateSelectedCaseId(savedCase.id);
+          this.caseService.selectCase(savedCase.id);
           this.loadingService.dismiss();
         })
       ),
@@ -663,7 +668,7 @@ export class AppStoreService extends ComponentStore<AppState> {
         fromProcess: true,
       },
     });
-    return await modal.present();
+    await modal.present();
   }
 
   // readonly openCasesModal = this.effect<string>((trigger$) =>

@@ -866,6 +866,5 @@ export class CremationProcessPage implements OnInit, OnDestroy {
     this.appStore.openCaseModalFromProcess(
       { scheduledDevice: deviceId } as Case
     );
-    this.selectCaseAPI();
   }
 }
