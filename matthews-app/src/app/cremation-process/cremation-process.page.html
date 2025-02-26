@@ -246,7 +246,7 @@
                 </div>
                 <div class="actions">
                   <ion-button expand="block" *ngIf="isCaseSelected && parseSignalValue(signal.value) < 80"
-                    (click)="clearSelectedCase(); caseRequestFalse(selectedDevice)" class="btnbackward">
+                    (click)="clearSelectedCase();" class="btnbackward">
                     CLEAR SELECTED CASE
                   </ion-button>
                 </div>
@@ -269,7 +269,7 @@
                     USE CREMATOR CONSOLE TO CONTINUE
                   </ion-button>
                   <ion-button expand="block"
-                      (click)="clearSelectedCase(); caseRequestFalse(selectedDevice)" class="btnbackward">
+                      (click)="clearSelectedCase();" class="btnbackward">
                       CANCEL AND CLEAR SELECTED CASE
                     </ion-button>
                 </div>
@@ -304,7 +304,7 @@
                   USE CREMATOR CONSOLE TO CONTINUE
                 </ion-button>
                 <ion-button expand="block" *ngIf="parseSignalValue(signal.value) == 50"
-                    (click)="clearSelectedCase(); caseRequestFalse(selectedDevice)" class="btnbackward">
+                    (click)="clearSelectedCase();" class="btnbackward">
                     CANCEL AND CLEAR SELECTED CASE
                   </ion-button>
               </div>

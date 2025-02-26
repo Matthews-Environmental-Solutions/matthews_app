@@ -558,8 +558,8 @@ export class CremationProcessPage implements OnInit, OnDestroy {
     const signal = selectedDevice.signals.find(
       (signal) => signal.name === 'CASE_REQUEST'
     );
-    this.cremationProcessService.writeSignalValue(signal?.id, 0);
-    this.caseRequired(selectedDevice);
+    this.cremationProcessService.writeSignalValue(signal?.id, 1);
+    this.caseRequiredEmpty(selectedDevice);
   }
 
   caseRequiredEmpty(selectedDevice: Device) {
@@ -747,7 +747,7 @@ export class CremationProcessPage implements OnInit, OnDestroy {
         console.error("Error fetching next case:", error);
       });
 
-    this.caseRequest(selectedDevice);
+    //this.caseRequest(selectedDevice);
   }
 
   selectCaseFromId(caseId: string) {
@@ -775,7 +775,7 @@ export class CremationProcessPage implements OnInit, OnDestroy {
 
     const { data } = await modal.onWillDismiss();
     if (data?.selectedCase) {
-      this.caseRequest(selectedDevice);
+      //this.caseRequest(selectedDevice);
       this.selectCaseAPI();
     }
 
@@ -870,6 +870,6 @@ export class CremationProcessPage implements OnInit, OnDestroy {
       { scheduledDevice: deviceId } as Case
     );
     this.selectCaseAPI();
-    this.caseRequest(selectedDevice);
+    //this.caseRequest(selectedDevice);
   }
 }
