@@ -6,7 +6,7 @@ namespace MatthewsApp.API.Dtos;
 
 public class EndCaseFromFlexyDto
 {
-    public Guid COMPLETED_ID { get; set; }
+    public Guid LOADED_ID { get; set; }
 
     [JsonConverter(typeof(CustomDateTimeConverter))]
     public DateTime EndTime { get; set; }

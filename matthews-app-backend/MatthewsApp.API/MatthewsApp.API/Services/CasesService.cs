@@ -373,7 +373,7 @@ public class CasesService : ICasesService
 
     public async void UpdateCaseWhenCaseEnd(EndCaseFromFlexyDto dto)
     {
-        Case entity = _caseRepository.GetById(dto.COMPLETED_ID);
+        Case entity = _caseRepository.GetById(dto.LOADED_ID);
         if (entity == null) return;
         entity.ActualEndTime = dto.EndTime;
         entity.Fuel = dto.FuelUsed.ToString();

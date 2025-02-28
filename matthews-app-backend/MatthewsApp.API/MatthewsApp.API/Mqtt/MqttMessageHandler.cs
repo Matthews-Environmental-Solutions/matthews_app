@@ -138,12 +138,12 @@ public class MqttMessageHandler
         }
         else if (_endCase != null)
         {
-            if(_endCase.COMPLETED_ID == Guid.Empty)
+            if(_endCase.LOADED_ID == Guid.Empty)
             {
                 _messageIsValid = false;
                 return;
             }
-            _caseId = _endCase.COMPLETED_ID;
+            _caseId = _endCase.LOADED_ID;
             _deviceId = (Guid)(await _casesService.GetById(_caseId)).ScheduledDevice;
             _caseInDb = await _casesService.GetById(_caseId);
             _daviceStatus = await _casesService.GetDeviceStatus(_deviceId);
@@ -173,7 +173,7 @@ public class MqttMessageHandler
         }
         else if (_endCase != null)
         {
-            Guid CaseId = _endCase.COMPLETED_ID;
+            Guid CaseId = _endCase.LOADED_ID;
             _caseInDb = await _casesService.GetById(CaseId);
         }
         else
@@ -203,7 +203,7 @@ public class MqttMessageHandler
                 break;
 
             case MqttMessageType.CaseEnd:
-                if (_endCase.COMPLETED_ID == Guid.Empty)
+                if (_endCase.LOADED_ID == Guid.Empty)
                 {
                     _messageIsValid = false;
                     return;
@@ -256,7 +256,7 @@ public class MqttMessageHandler
                     if(_startOrSelectCase.LOADED_ID != caseInProgress.Id)
                     {
                         var dto = new EndCaseFromFlexyDto();
-                        dto.COMPLETED_ID = caseInProgress.Id;
+                        dto.LOADED_ID = caseInProgress.Id;
                         dto.EndTime = DateTime.Now;
                         dto.FuelUsed = 0;
                         dto.ElectricityUsed = 0;
@@ -328,7 +328,7 @@ public class MqttMessageHandler
                 }
                 break;
             case DeviceStatusType.HAS_IN_PROGRESS_AND_SELECTED:
-                await _casesService.ClearAllInProgressOrSelectedCasesByDevice(_endCase.COMPLETED_ID, _deviceId, (Guid)_caseInDb.ScheduledFacility);
+                await _casesService.ClearAllInProgressOrSelectedCasesByDevice(_endCase.LOADED_ID, _deviceId, (Guid)_caseInDb.ScheduledFacility);
                 _casesService.UpdateCaseWhenCaseEnd(_endCase);
                 _caseHub.SendMessageToSelectCase($"CaseId: {string.Empty}; DeviceId: {_deviceId}");
                 break;
