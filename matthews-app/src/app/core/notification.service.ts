@@ -42,6 +42,11 @@ export class NotificationService {
   }
 
   async createNotificationChannel() {
+    if (!Capacitor.isNativePlatform()) {
+      console.warn('Skipping createNotificationChannel: Not supported on web.');
+      return;
+    }
+  
     console.log('Creating notification channel');
     await LocalNotifications.createChannel({
       id: 'alerts',
@@ -50,7 +55,7 @@ export class NotificationService {
       visibility: 1, // Public visibility
       sound: 'default',
     });
-  }
+  }  
 
   async testNotification() {
     if (Capacitor.isNativePlatform()) {
