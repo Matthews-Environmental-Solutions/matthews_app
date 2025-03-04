@@ -1,9 +1,6 @@
-﻿using Humanizer;
-using IdentityModel;
-using MatthewsApp.API.Dtos;
+﻿using MatthewsApp.API.Dtos;
 using MatthewsApp.API.Enums;
 using MatthewsApp.API.Models;
-using MatthewsApp.API.Mqtt;
 using MatthewsApp.API.PrismEvents;
 using MatthewsApp.API.Repository.Interfaces;
 using Microsoft.Extensions.Logging;
@@ -11,7 +8,6 @@ using Prism.Events;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace MatthewsApp.API.Services;
@@ -47,7 +43,7 @@ public interface ICasesService
     Task<IEnumerable<Case>> GetScheduledCasesByTimePeriod(Guid facilityId, DateTime dateStart, DateTime dateEnd);
     Task<Tuple<Case, bool>> UpdateCaseWhenCaseStart(CaseFromFlexyDto dto);
     Task<Tuple<Case, bool>> UpdateCaseWhenCaseSelect(CaseFromFlexyDto dto);
-    void UpdateCaseWhenCaseEnd(EndCaseFromFlexyDto dto);
+    Task<Case> UpdateCaseWhenCaseEnd(EndCaseFromFlexyDto dto);
     Task<Case> GetNextCaseForDevice(Guid deviceId);
     Task<IEnumerable<Case>> GetReadyCasesByDevice(Guid deviceId);
     Task<bool> ResetDemo();
@@ -371,16 +367,17 @@ public class CasesService : ICasesService
         return oldCase;
     }
 
-    public async void UpdateCaseWhenCaseEnd(EndCaseFromFlexyDto dto)
+    public async Task<Case> UpdateCaseWhenCaseEnd(EndCaseFromFlexyDto dto)
     {
         Case entity = _caseRepository.GetById(dto.LOADED_ID);
-        if (entity == null) return;
+        if (entity == null) return null;
         entity.ActualEndTime = dto.EndTime;
         entity.Fuel = dto.FuelUsed.ToString();
         entity.Electricity = dto.ElectricityUsed.ToString();
         entity.FacilityStatusId = _facilityStatusRepository.GetCremationCompleteFacilityStatus((Guid)entity.ScheduledFacility).Id;
         entity.FacilityStatus = _facilityStatusRepository.GetCremationCompleteFacilityStatus((Guid)entity.ScheduledFacility);
-        Update(entity);
+        var updatedCase = Update(entity);
+        return updatedCase;
     }
 
     public async Task<IEnumerable<Case>> GetAll()
