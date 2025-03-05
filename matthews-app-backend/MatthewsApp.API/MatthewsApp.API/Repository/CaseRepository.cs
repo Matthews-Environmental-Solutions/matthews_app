@@ -1635,4 +1635,15 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             .Where(c => c.FacilityStatus.Status == CaseStatus.IN_PROGRESS || c.FacilityStatus.Status == CaseStatus.SELECTED)
             .ToArrayAsync();
     }
+
+    public async Task<Case> GetSelectOrInProgressCaseByDevice(Guid deviceId)
+    {
+        IEnumerable<Case> cases = await _dataContext.Cases.Include(c => c.FacilityStatus).ToArrayAsync();
+
+        return cases.Where(c =>
+            c.IsObsolete == false
+            && c.ScheduledDevice == deviceId
+            && (c.FacilityStatus.Status == CaseStatus.SELECTED || c.FacilityStatus.Status == CaseStatus.IN_PROGRESS))
+            .ToList().FirstOrDefault();
+    }
 }
