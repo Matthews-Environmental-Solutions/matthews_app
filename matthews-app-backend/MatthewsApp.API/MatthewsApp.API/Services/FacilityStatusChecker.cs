@@ -77,15 +77,15 @@ public class FacilityStatusChecker : IHostedService, IDisposable
                         facilityStatusService.Create(facilityStatus);
                     }
 
-                    if (facility.errorMessage.Contains("SELECTED"))
+                    if (facility.errorMessage.Contains("CYCLE_COMPLETE"))
                     {
                         var facilityStatus = new FacilityStatus
                         {
                             Id = Guid.NewGuid(),
                             FacilityId = facility.id,
-                            Status = CaseStatus.SELECTED,
+                            Status = CaseStatus.CYCLE_COMPLETE,
                             StatusCode = 1020,
-                            StatusName = "Selected",
+                            StatusName = "Cycle complete",
                             StatusIcon = "star"
 
                         };

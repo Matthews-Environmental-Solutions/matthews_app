@@ -16,11 +16,9 @@ public interface ICaseRepository : IBaseRepository<Case, Guid>
     Task<IEnumerable<Case>> GetAllUnscheduled();
     Case GetById(Guid id);
     Task<Case> GetByIdAsync(Guid id);
-    Task<IEnumerable<Case>> GetCasesByFacility(Guid facilityId);
     Task<IEnumerable<Case>> GetFirst20ScheduledCases(Guid scheduledDeviceId);
     Task<Case> GetInProgressCaseByDevice(Guid deviceId);
     Task<IEnumerable<Case>> GetInProgressCasesByDevice(Guid deviceId);
-    Task<IEnumerable<Case>> GetInProgressOrSelectedCasesByDevice(Guid deviceId);
     Task<Case> GetNextCaseForDevice(Guid deviceId);
     Task<IEnumerable<Case>> GetReadyCasesByDevice(Guid deviceId);
     Task<IEnumerable<Case>> GetScheduledCasesByDay(Guid facilityId, DateTime date);
@@ -28,7 +26,6 @@ public interface ICaseRepository : IBaseRepository<Case, Guid>
     Task<IEnumerable<Case>> GetScheduledCasesByWeek(Guid facilityId, DateTime dateStartDateOfWeek);
     Task<Case> GetSelectCaseByDevice(Guid deviceId);
     Task<IEnumerable<Case>> GetSelectedCasesByDevice(Guid deviceId);
-    Task<Case> GetSelectOrInProgressCaseByDevice(Guid deviceId);
     Case GetTrackedEntity(Guid id);
     Task SeedDbForDemo(Guid deviceId);
 }

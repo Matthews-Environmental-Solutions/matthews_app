@@ -92,6 +92,9 @@ public class Case : BaseEntity
     [Column(TypeName = "nvarchar(256)")]
     public string? PhysicalId { get; set; }
 
+    [Required]
+    public bool Selected { get; set; } = false;
+
     [NotMapped]
     public CaseStatus Status {
         get

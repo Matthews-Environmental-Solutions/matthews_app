@@ -47,7 +47,8 @@ public static class CaseMapper
             entity.FacilityStatusId,
             entity.FacilityStatus?.StatusName,
             entity.PhysicalId,
-            entity.Status
+            entity.Status,
+            entity.Selected
         );
     }
 
@@ -88,7 +89,8 @@ public static class CaseMapper
             ScheduledStartTime = dto.ScheduledStartTime is null ? DateTime.MinValue : dto.ScheduledStartTime,
             Weight = dto.Weight,
             FacilityStatusId = dto.FacilityStatusId,
-            PhysicalId = dto.PhysicalId
+            PhysicalId = dto.PhysicalId,
+            Selected = dto.Selected
         };
     }
 

@@ -273,7 +273,7 @@ public class MqttMessageHandler
             case DeviceStatusType.HAS_SELECTED:
                 if (_doesPayloadCaseExistInDB)
                 {
-                    if(_caseInDb.Status == CaseStatus.SELECTED)
+                    if(_caseInDb.Selected)
                     {
                         responseOnCaseStart = await _casesService.UpdateCaseWhenCaseStart(_startOrSelectCase);
                         _caseHub.SendMessageToSelectCase($"CaseId: {_startOrSelectCase.LOADED_ID}; DeviceId: {_deviceId}; ActualStartTime: {responseOnCaseStart.Item1.ActualStartTime}; ActualEndTime: {string.Empty}");
@@ -293,7 +293,7 @@ public class MqttMessageHandler
                 
                 break;
             case DeviceStatusType.HAS_IN_PROGRESS_AND_SELECTED:
-                await _casesService.ClearAllInProgressOrSelectedCasesByDevice(_startOrSelectCase);
+                await _casesService.ClearAllInProgressCasesByDevice(_startOrSelectCase);
                 responseOnCaseStart = await _casesService.UpdateCaseWhenCaseStart(_startOrSelectCase);
                 _caseHub.SendMessageToSelectCase($"CaseId: {_startOrSelectCase.LOADED_ID}; DeviceId: {_deviceId}; ActualStartTime: {responseOnCaseStart.Item1.ActualStartTime}; ActualEndTime: {string.Empty}");
                 break;
@@ -320,7 +320,7 @@ public class MqttMessageHandler
                 _caseHub.SendMessageToSelectCase($"CaseId: {string.Empty}; DeviceId: {_deviceId}; ActualStartTime: {endedCase.ActualStartTime}; ActualEndTime: {endedCase.ActualEndTime}");
                 break;
             case DeviceStatusType.HAS_SELECTED:
-                if (_doesPayloadCaseExistInDB && _caseInDb.Status == CaseStatus.SELECTED)
+                if (_doesPayloadCaseExistInDB && _caseInDb.Selected)
                 {
                     // ToDo: ASK BRANDON about deselection of ended Case
                     endedCase = await _casesService.UpdateCaseWhenCaseEnd(_endCase);
@@ -375,7 +375,7 @@ public class MqttMessageHandler
                 break;
 
             case DeviceStatusType.HAS_IN_PROGRESS_AND_SELECTED:
-                await _casesService.ClearAllInProgressOrSelectedCasesByDevice(_startOrSelectCase);
+                await _casesService.ClearAllInProgressCasesByDevice(_startOrSelectCase);
                 response = await _casesService.UpdateCaseWhenCaseSelect(_startOrSelectCase);
                 _caseId = response.Item1.Id;
                 _caseHub.SendMessageToSelectCase($"CaseId: {_caseId}; DeviceId: {_deviceId}; ActualStartTime: {string.Empty}; ActualEndTime: {string.Empty}");
@@ -409,7 +409,7 @@ public class MqttMessageHandler
                 }
                 break;
             case DeviceStatusType.HAS_SELECTED:
-                if (_doesPayloadCaseExistInDB && _caseInDb.Status == CaseStatus.SELECTED)
+                if (_doesPayloadCaseExistInDB && _caseInDb.Selected)
                 {
                     _casesService.Deselect(_caseId, false); // set to READY_TO_CREMATE
                     _caseHub.SendMessageToSelectCase($"CaseId: {string.Empty}; DeviceId: {_deviceId}; ActualStartTime: {string.Empty}; ActualEndTime: {string.Empty}");

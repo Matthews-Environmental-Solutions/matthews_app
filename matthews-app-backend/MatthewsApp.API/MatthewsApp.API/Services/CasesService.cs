@@ -39,7 +39,6 @@ public interface ICasesService
     Task<IEnumerable<Case>> GetUnscheduledCases();
     Task<IEnumerable<Case>> GetScheduledCasesByDay(Guid facilityId, DateTime date);
     Task<IEnumerable<Case>> GetScheduledCasesByWeek(Guid facilityId, DateTime dateStartDateOfWeek);
-    Task<IEnumerable<Case>> GetAllCasesByFacility(Guid facilityId);
     Task<IEnumerable<Case>> GetScheduledCasesByTimePeriod(Guid facilityId, DateTime dateStart, DateTime dateEnd);
     Task<Tuple<Case, bool>> UpdateCaseWhenCaseStart(CaseFromFlexyDto dto);
     Task<Tuple<Case, bool>> UpdateCaseWhenCaseSelect(CaseFromFlexyDto dto);
@@ -50,12 +49,10 @@ public interface ICasesService
     Task<IEnumerable<CaseStatusDto>> GetCaseStatuses();
     Task<Case> GetSelectCaseByDevice(Guid deviceId);
     Task<Case> GetInProgressCaseByDevice(Guid deviceId);
-    Task<Case> GetSelectOrInProgressCaseByDevice(Guid deviceId);
     Task ClearAllSelectedCasesByDevice(CaseFromFlexyDto startCase);
     Task ClearAllInProgressCasesByDevice(CaseFromFlexyDto startOrSelectCase);
     Task<bool> CheckIfDeviceHasCaseInProgress(Guid deviceId);
     Task<DeviceStatusType> GetDeviceStatus(Guid deviceId);
-    Task ClearAllInProgressOrSelectedCasesByDevice(CaseFromFlexyDto startCase);
     Task UpdateCaseButNotChangeStatus(CaseFromFlexyDto startOrSelectCase);
     Task ClearAllInProgressOrSelectedCasesByDevice(Guid caseId, Guid crematorId, Guid facilityId);
     
@@ -157,9 +154,7 @@ public class CasesService : ICasesService
         try
         {
             var entity = _caseRepository.GetById(caseId);
-            var facilityStatus = _facilityStatusRepository.GetSelectedFacilityStatus((Guid)entity.ScheduledFacility);
-            entity.FacilityStatusId = _facilityStatusRepository.GetSelectedFacilityStatus((Guid)entity.ScheduledFacility).Id;
-            entity.FacilityStatus = _facilityStatusRepository.GetSelectedFacilityStatus((Guid)entity.ScheduledFacility);
+            entity.Selected = true;
             Update(entity);
 
             _ea.GetEvent<CaseSelectEvent>().Publish(entity);
@@ -212,9 +207,7 @@ public class CasesService : ICasesService
         var entity = _caseRepository.GetById(caseId);
         if (entity != null)
         {
-            var readyToCremateStatus = _facilityStatusRepository.GetReadyToCremateFacilityStatus((Guid)entity.ScheduledFacility);
-            entity.FacilityStatusId = readyToCremateStatus.Id;
-            entity.FacilityStatus = readyToCremateStatus;
+            entity.Selected = false;
             Update(entity);
             return entity;
         }
@@ -290,8 +283,7 @@ public class CasesService : ICasesService
         {
             entity = RemapCaseFromDto(entity, dto);
         }
-        entity.FacilityStatusId = _facilityStatusRepository.GetSelectedFacilityStatus(dto.FACILITY_ID).Id;
-        entity.FacilityStatus = _facilityStatusRepository.GetSelectedFacilityStatus(dto.FACILITY_ID);
+        entity.Selected = true;
 
         DeviceDto cremator = null;
         List<DeviceDto> cremators = (await _caseI4CHttpClientService.GetAllDevicesAsync()).ToList();
@@ -376,8 +368,8 @@ public class CasesService : ICasesService
         entity.ActualEndTime = dto.EndTime;
         entity.Fuel = dto.FuelUsed.ToString();
         entity.Electricity = dto.ElectricityUsed.ToString();
-        entity.FacilityStatusId = _facilityStatusRepository.GetCremationCompleteFacilityStatus((Guid)entity.ScheduledFacility).Id;
-        entity.FacilityStatus = _facilityStatusRepository.GetCremationCompleteFacilityStatus((Guid)entity.ScheduledFacility);
+        entity.FacilityStatusId = _facilityStatusRepository.GetCycleCompleteFacilityStatus((Guid)entity.ScheduledFacility).Id;
+        entity.FacilityStatus = _facilityStatusRepository.GetCycleCompleteFacilityStatus((Guid)entity.ScheduledFacility);
         var updatedCase = Update(entity);
         return updatedCase;
     }
@@ -461,23 +453,6 @@ public class CasesService : ICasesService
         }
     }
 
-    public async Task<IEnumerable<Case>> GetAllCasesByFacility(Guid facilityId)
-    {
-        try
-        {
-            IEnumerable<Case> cases = await _caseRepository.GetCasesByFacility(facilityId);
-            return cases.Select(i =>
-            {
-                i.ScheduledStartTime = DateTime.SpecifyKind(i.ScheduledStartTime is null ? DateTime.MinValue : i.ScheduledStartTime.Value, DateTimeKind.Utc);
-                return i;
-            });
-        }
-        catch (Exception ex)
-        {
-            throw new Exception(ex.Message);
-        }
-    }
-
     public async Task<IEnumerable<Case>> GetReadyCasesByDevice(Guid deviceId)
     {
         try
@@ -522,19 +497,6 @@ public class CasesService : ICasesService
         }
     }
 
-    public async Task<Case> GetSelectOrInProgressCaseByDevice(Guid deviceId)
-    {
-        try
-        {
-            return await _caseRepository.GetSelectOrInProgressCaseByDevice(deviceId);
-        }
-        catch (Exception)
-        {
-
-            throw;
-        }
-    }
-
     public async Task<Case> GetById(Guid id)
     {
         try
@@ -559,9 +521,7 @@ public class CasesService : ICasesService
             Case Case = await _caseRepository.GetNextCaseForDevice(deviceId);
             Case.ScheduledStartTime = DateTime.SpecifyKind(Case.ScheduledStartTime is null ? DateTime.MinValue : Case.ScheduledStartTime.Value, DateTimeKind.Utc);
 
-            var selectedStatus = _facilityStatusRepository.GetSelectedFacilityStatus((Guid)Case.ScheduledFacility);
-            Case.FacilityStatusId = selectedStatus.Id;
-            Case.FacilityStatus = selectedStatus;
+            Case.Selected = true;
             _caseRepository.Update(Case);
             
             // Send event
@@ -654,29 +614,29 @@ public class CasesService : ICasesService
         }
     }
 
-    public async Task ClearAllInProgressOrSelectedCasesByDevice(CaseFromFlexyDto startCase)
+    public async Task ClearAllInProgressCasesByDevice(CaseFromFlexyDto startCase)
     {
-        var selectedCases = await _caseRepository.GetInProgressOrSelectedCasesByDevice(startCase.CREMATOR_ID);
-        var readyToCremateStatus = _facilityStatusRepository.GetReadyToCremateFacilityStatus(startCase.FACILITY_ID);
+        var inProgressCases = await _caseRepository.GetInProgressCasesByDevice(startCase.CREMATOR_ID);
+        var cremateCompleteStatus = _facilityStatusRepository.GetCremationCompleteFacilityStatus(startCase.FACILITY_ID);
 
-        var casesToUpdate = selectedCases
-            .Where(selectedCase => selectedCase.Id != startCase.LOADED_ID)
-            .Select(selectedCase =>
+        var casesToUpdate = inProgressCases
+            .Where(inProgressCase => inProgressCase.Id != startCase.LOADED_ID)
+            .Select(inProgressCase =>
             {
-                selectedCase.FacilityStatusId = readyToCremateStatus.Id;
-                selectedCase.FacilityStatus = readyToCremateStatus;
-                return selectedCase;
+                inProgressCase.FacilityStatusId = cremateCompleteStatus.Id;
+                inProgressCase.FacilityStatus = cremateCompleteStatus;
+                return inProgressCase;
             }).ToList();
 
-        foreach (var selectedCase in selectedCases)
+        foreach (var inProgressCase in inProgressCases)
         {
-            _caseRepository.Update(selectedCase);
+            _caseRepository.Update(inProgressCase);
         }
     }
 
     public async Task ClearAllInProgressOrSelectedCasesByDevice(Guid caseId, Guid crematorId, Guid facilityId)
     {
-        var selectedCases = await _caseRepository.GetInProgressOrSelectedCasesByDevice(crematorId);
+        var selectedCases = await _caseRepository.GetInProgressCasesByDevice(crematorId);
         var readyToCremateStatus = _facilityStatusRepository.GetReadyToCremateFacilityStatus(facilityId);
 
         var casesToUpdate = selectedCases
@@ -721,28 +681,6 @@ public class CasesService : ICasesService
             return DeviceStatusType.HAS_IN_PROGRESS_AND_SELECTED;
         }
 
-    }
-
-    public async Task ClearAllInProgressCasesByDevice(CaseFromFlexyDto startOrSelectCase)
-    {
-        IEnumerable<Case> inProgressCases = await _caseRepository.GetInProgressCasesByDevice(startOrSelectCase.CREMATOR_ID);
-        var readyToCremateStatus = _facilityStatusRepository.GetReadyToCremateFacilityStatus(startOrSelectCase.FACILITY_ID);
-
-        var casesToUpdate = inProgressCases
-            .Where(selectedCase => selectedCase.Id != startOrSelectCase.LOADED_ID)
-            .Select(selectedCase =>
-            {
-                selectedCase.FacilityStatusId = readyToCremateStatus.Id;
-                selectedCase.FacilityStatus = readyToCremateStatus;
-                return selectedCase;
-            }).ToList();
-
-        foreach (var inProgressCase in inProgressCases)
-        {
-            inProgressCase.FacilityStatusId = _facilityStatusRepository.GetReadyToCremateFacilityStatus(startOrSelectCase.FACILITY_ID).Id;
-            inProgressCase.FacilityStatus = _facilityStatusRepository.GetReadyToCremateFacilityStatus(startOrSelectCase.FACILITY_ID);
-            _caseRepository.Update(inProgressCase);
-        }
     }
 
     public async Task UpdateCaseButNotChangeStatus(CaseFromFlexyDto dto)

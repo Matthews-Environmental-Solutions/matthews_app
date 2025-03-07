@@ -124,21 +124,6 @@ public class CaseController : Controller
     }
 
     [HttpGet]
-    [Route("GetAllCasesByFacility/{facilityId}")]
-    public async Task<ActionResult<IEnumerable<CaseDto>>> GetAllCasesByFacility(Guid facilityId)
-    {
-        _logger.LogInformation("---------- GetAllCasesByFacility {facilityId}", facilityId);
-        try
-        {
-            return Ok((await service.GetAllCasesByFacility(facilityId)).ToDTOs());
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
-    }
-
-    [HttpGet]
     [Route("GetReadyCasesByDevice/{deviceId}")]
     public async Task<ActionResult<IEnumerable<CaseDto>>> GetReadyCasesByDevice(Guid deviceId)
     {
@@ -161,21 +146,6 @@ public class CaseController : Controller
         try
         {
             return Ok((await service.GetSelectCaseByDevice(deviceId)).ToDTO());
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
-    }
-
-    [HttpGet]
-    [Route("GetSelectOrInProgressCaseByDevice/{deviceId}")]
-    public async Task<ActionResult<CaseDto>> GetSelectOrInProgressCaseByDevice(Guid deviceId)
-    {
-        _logger.LogInformation("---------- GetSelectOrInProgressCaseByDevice {deviceId}", deviceId);
-        try
-        {
-            return Ok((await service.GetSelectOrInProgressCaseByDevice(deviceId)).ToDTO());
         }
         catch (Exception ex)
         {

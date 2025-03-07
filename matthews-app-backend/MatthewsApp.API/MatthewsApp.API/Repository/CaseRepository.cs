@@ -136,7 +136,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             && c.ScheduledStartTime > DateTime.MinValue.AddDays(100)
             && !c.ScheduledFacility.Equals(Guid.Empty)
             && c.ScheduledDevice.Equals(scheduledDeviceId)
-            && (c.FacilityStatus.Status == CaseStatus.READY_TO_CREMATE || c.FacilityStatus.Status == CaseStatus.SELECTED)
+            && (c.FacilityStatus.Status == CaseStatus.READY_TO_CREMATE)
             ).ToList().OrderBy(c => c.ScheduledStartTime).Take(20);
     }
 
@@ -150,17 +150,6 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             && c.ScheduledStartTime.HasValue
             && c.ScheduledStartTime.Value >= dateStart
             && c.ScheduledStartTime.Value < dateEnd
-            ).ToList();
-    }
-
-
-    public async Task<IEnumerable<Case>> GetCasesByFacility(Guid facilityId)
-    {
-        IEnumerable<Case> cases = await _dataContext.Cases.Include(c => c.FacilityStatus).ToArrayAsync();
-        return cases.Where(c =>
-            c.IsObsolete == false
-            && c.ScheduledFacility.Equals(facilityId)
-            && (c.FacilityStatus.Status == CaseStatus.WAITING_FOR_PERMIT || c.FacilityStatus.Status == CaseStatus.UNSCHEDULED || c.FacilityStatus.Status == CaseStatus.READY_TO_CREMATE || c.FacilityStatus.Status == CaseStatus.SELECTED)
             ).ToList();
     }
 
@@ -181,7 +170,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
         return cases.Where(c =>
             c.IsObsolete == false
             && c.ScheduledDevice.Equals(deviceId)
-            && c.FacilityStatus.Status == CaseStatus.SELECTED)
+            && c.Selected)
             .ToList().FirstOrDefault();
     }
 
@@ -1585,7 +1574,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
         return await _dataContext.Cases
             .Where(c => c.ScheduledDevice == deviceId)
             .Include(c => c.FacilityStatus)
-            .Where(c => c.FacilityStatus.Status == CaseStatus.SELECTED)
+            .Where(c => c.Selected)
             .ToArrayAsync();
     }
 
@@ -1603,7 +1592,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
         return _dataContext.Cases
             .Where(c => c.ScheduledDevice == deviceId)
             .Include(c => c.FacilityStatus)
-            .Where(c => c.FacilityStatus.Status == CaseStatus.SELECTED)
+            .Where(c => c.Selected)
             .AnyAsync();
     }
 
@@ -1613,7 +1602,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
         return ! await _dataContext.Cases
             .Where(c => c.ScheduledDevice == deviceId)
             .Include(c => c.FacilityStatus)
-            .Where(c => c.FacilityStatus.Status == CaseStatus.SELECTED || c.FacilityStatus.Status == CaseStatus.IN_PROGRESS)
+            .Where(c => c.FacilityStatus.Status == CaseStatus.IN_PROGRESS || c.FacilityStatus.Status == CaseStatus.CYCLE_COMPLETE)
             .AnyAsync();
                
     }
@@ -1627,23 +1616,4 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             .ToArrayAsync();
     }
 
-    public async Task<IEnumerable<Case>> GetInProgressOrSelectedCasesByDevice(Guid deviceId)
-    {
-        return await _dataContext.Cases
-            .Where(c => c.ScheduledDevice == deviceId)
-            .Include(c => c.FacilityStatus)
-            .Where(c => c.FacilityStatus.Status == CaseStatus.IN_PROGRESS || c.FacilityStatus.Status == CaseStatus.SELECTED)
-            .ToArrayAsync();
-    }
-
-    public async Task<Case> GetSelectOrInProgressCaseByDevice(Guid deviceId)
-    {
-        IEnumerable<Case> cases = await _dataContext.Cases.Include(c => c.FacilityStatus).ToArrayAsync();
-
-        return cases.Where(c =>
-            c.IsObsolete == false
-            && c.ScheduledDevice == deviceId
-            && (c.FacilityStatus.Status == CaseStatus.SELECTED || c.FacilityStatus.Status == CaseStatus.IN_PROGRESS))
-            .ToList().FirstOrDefault();
-    }
 }
