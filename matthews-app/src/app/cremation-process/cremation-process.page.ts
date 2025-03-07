@@ -24,7 +24,7 @@ import {
   ContainerTypeSelection,
   GenderSelection,
 } from '../case/selection-option';
-import { distinctUntilChanged, filter, find, map, skip, switchMap, tap } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, filter, find, map, skip, switchMap, tap } from 'rxjs/operators';
 import { CaseService } from '../case/case.service';
 import { Signal } from '../device-list/signal';
 import { SignalRCaseApiService } from '../core/signal-r.case-api.service';
@@ -115,11 +115,10 @@ export class CremationProcessPage implements OnInit, OnDestroy {
           } else if (status === 90 && this.isCyclePaused) {
             // Automatically resume the timer if status goes back to 90
             this.isCyclePaused = false;
-            this.startCremationTimer();
           } else if (status !== 90 && status !== 95 && this.isCremationRunning) {
             // Stop the timer if status is not 90 or 95
             this.pauseTimer(); // Stop the timer
-            this.cremationTime = 0; // Reset the timer value
+            //this.cremationTime = 0; // Reset the timer value
             this.isCremationRunning = false;
             this.isCyclePaused = false;
           }
@@ -164,7 +163,7 @@ export class CremationProcessPage implements OnInit, OnDestroy {
   signalTt101: string;
   selectedCaseId: string | null = null;
   private subscription: Subscription;
-
+  private isUpdatingElapsedTime = false;
   isContinueClicked: boolean = false;
 
   containerTypes: ContainerTypeSelection[] = [
@@ -182,6 +181,8 @@ export class CremationProcessPage implements OnInit, OnDestroy {
   ];
   burnMode = BurnMode;
   burnModeKeys = Object.keys(BurnMode).filter((x) => parseInt(x, 10) >= 0);
+  actualStartTimeSubscription: Subscription;
+  selectedCaseSubcription: Subscription;
 
   constructor(
     private appStore: AppStoreService,
@@ -201,26 +202,51 @@ export class CremationProcessPage implements OnInit, OnDestroy {
     if (this.subscription) {
       this.subscription.unsubscribe();
     }
+    if (this.actualStartTimeSubscription) {
+      this.actualStartTimeSubscription.unsubscribe();
+    }
 
+    if (this.selectedCaseSubcription) {
+      this.actualStartTimeSubscription.unsubscribe();
+    }
     this.appStore.updateSelectedCase(null);
     this.appStore.updateSelectedCaseId('');
+    clearInterval(this.interval);
   }
 
   ngOnInit() {
-    this.matStepperIntl.optionalLabel = '';
+    console.log('CremationProcessPage ngOnInit called!');
+
     this.matStepperIntl.changes.next();
     this.deviceId = this.route.snapshot.paramMap.get('id');
-    this.cremationTime = 0;
+    //this.cremationTime = 0;
     this.stepNumber = 0;
     this.case = new Case();
-    this.selectedCase$.pipe(skip(1)).subscribe((res) => {
-      if (res !== undefined && res !== null) {
-        this.matStepperIntl.optionalLabel =
-          res.firstName + ' ' + res.lastName + ' - ' + res.clientCaseId;
-        this.matStepperIntl.changes.next();
-        this.mapCase(res);
-      }
-    });
+
+    this.selectedCaseSubcription = this.selectedCase$
+      .pipe(
+        skip(1), // Skip the initial emission (if any)
+        distinctUntilChanged((prev, curr) => {
+          // Compare based on a unique identifier (e.g., `id`)
+          return prev?.id === curr?.id;
+        }),
+        tap((res) => console.log('selectedCase$ emitted:', res)) // Log each emission
+      )
+      .subscribe((res) => {
+        if (res !== undefined && res !== null) {
+          this.matStepperIntl.optionalLabel =
+            res.firstName + ' ' + res.lastName + ' - ' + res.clientCaseId;
+          this.matStepperIntl.changes.next();
+          this.mapCase(res);
+
+          if (res.actualStartTime) {
+            debugger
+            this.updateElapsedTime(res.actualStartTime);
+          } else {
+            this.subscribeToActualStartTime();
+          }
+        }
+      });
 
     this.establishSignalRConnection();
 
@@ -251,7 +277,7 @@ export class CremationProcessPage implements OnInit, OnDestroy {
       });
 
 
-    this.caseService.getSelectedCaseByDevice(this.deviceId)
+    this.caseService.GetSelectOrInProgressCaseByDevice(this.deviceId)
       .then(caseData => {
         const caseId = caseData?.id;
 
@@ -261,8 +287,62 @@ export class CremationProcessPage implements OnInit, OnDestroy {
         }
       });
 
-
   }
+
+  private subscribeToActualStartTime() {
+    this.actualStartTimeSubscription = this.appStore.actualStartTime$
+      .pipe(
+        distinctUntilChanged(),
+        debounceTime(100) // Prevents redundant calls when actualStartTime doesn't change
+      )
+      .subscribe((actualStartTime) => {
+        if (actualStartTime) {
+          this.updateElapsedTime(actualStartTime);
+        }
+      });
+  }
+
+  private updateElapsedTime(actualStartTimeStr: string) {
+   
+  const actualStartTime = new Date(actualStartTimeStr + "Z");
+
+  if (isNaN(actualStartTime.getTime())) {
+    console.error("Invalid actualStartTime:", actualStartTimeStr);
+    return;
+  }
+
+  const now = new Date();
+  const elapsedMs = now.getTime() - actualStartTime.getTime();
+  const elapsedMinutes = Math.floor(elapsedMs / 60000); // Whole minutes
+  const elapsedSeconds = Math.floor((elapsedMs % 60000) / 1000); // Remaining seconds
+
+  // Update cremationTime immediately with minute and fraction for seconds
+  this.cremationTime = elapsedMinutes + (elapsedSeconds / 60); 
+
+  console.log(actualStartTime);
+  console.log(elapsedMs);
+  console.log(elapsedMinutes);
+  console.log(elapsedSeconds);
+  console.log(this.cremationTime);
+
+  if (this.isCremationRunning) {
+    this.startElapsedTimer(elapsedSeconds);
+  }
+}
+
+private startElapsedTimer(initialElapsedMs: number) {
+  // Calculate time until the next full minute
+  const remainingMs = 60000 - (initialElapsedMs % 60000);
+
+  // Wait until the next full minute to start the interval
+  setTimeout(() => {
+    this.cremationTime = Math.ceil(this.cremationTime); // Round up to full minute
+    this.interval = setInterval(() => {
+      this.cremationTime++;
+    }, 60000);
+  }, remainingMs);
+}
+  
 
   startCountdown(endTimeEstimate: number) {
     if (this.timerInterval) {
@@ -319,16 +399,16 @@ export class CremationProcessPage implements OnInit, OnDestroy {
       this.startTime =
         this.startHour.toString() + ':' + '0' + this.startMinute.toString();
     }
-    this.startCremationTimer();
+    // this.startCremationTimer();
   }
 
-  startCremationTimer() {
-    this.interval = setInterval(() => {
-      if (this.cremationTime >= 0) {
-        this.cremationTime++;
-      }
-    }, 60000);
-  }
+  // startCremationTimer() {
+  //   this.interval = setInterval(() => {
+  //     if (this.cremationTime >= 0) {
+  //       this.cremationTime++;
+  //     }
+  //   }, 60000);
+  // }
 
   startCooldownTimer() {
     this.cooldownTime = 100;
@@ -459,7 +539,7 @@ export class CremationProcessPage implements OnInit, OnDestroy {
               (signal) => signal.name === 'PAUSE_CREMATION'
             );
             this.cremationProcessService.writeSignalValue(signal?.id, 0);
-            this.startCremationTimer();
+            //this.startCremationTimer();
           },
         },
       ],
@@ -500,7 +580,7 @@ export class CremationProcessPage implements OnInit, OnDestroy {
               (signal) => signal.name === 'STOP_CREMATION'
             );
             this.cremationProcessService.writeSignalValue(signal?.id, 1);
-            this.cremationTime = 0;
+            //this.cremationTime = 0;
             this.isCremationStopped = true;
             this.coolDown(selectedDevice);
             this.move(3);

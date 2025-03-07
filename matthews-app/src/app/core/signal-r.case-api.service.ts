@@ -83,18 +83,31 @@ export class SignalRCaseApiService {
 
   public addSelectedCaseListener() {
     this.hubConnection.on('selectcase', (data: string) => {
-      console.log(data);
       let dataSplited = data.split(';');
-      if (dataSplited.length == 2) {
+      //debugger
+      if (dataSplited.length == 4) {
+        //debugger
         let splitedCaseId = dataSplited[0].trim().split(':');
         let caseId = splitedCaseId[1].trim();
         let splitedDeviceId = dataSplited[1].trim().split(':');
         let deviceId = splitedDeviceId[1].trim();
 
+        let splitedActualStartTime = dataSplited[2].trim().split(':');
+        let actualStartTimeStr = splitedActualStartTime.slice(1).join(':').trim();
+
+        let splitedEndTime = dataSplited[3].trim().split(':');
+        let endTime = splitedEndTime[1].trim();
+
         let deviceIdFromStore = this.appStore.getSelectedDevice();
 
         if (deviceIdFromStore === deviceId) {
           this.appStore.refreshSelectedCaseId(caseId);
+        }
+
+        if (actualStartTimeStr != null && actualStartTimeStr != '') {
+          //debugger
+          const actualStartTime = new Date(actualStartTimeStr);
+          this.appStore.updateActualStartTime(actualStartTime.toISOString());
         }
       }
     });

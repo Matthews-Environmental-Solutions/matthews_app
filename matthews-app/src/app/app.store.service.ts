@@ -39,6 +39,7 @@ export interface AppState {
   weeklyCaseCount: number;
   refreshCasesList: string;
   selectedCaseId: string;
+  actualStartTime: string | null;
 }
 
 @Injectable({
@@ -70,6 +71,7 @@ export class AppStoreService extends ComponentStore<AppState> {
       weeklyCaseCount: 0,
       refreshCasesList: uuidv4(),
       selectedCaseId: null,
+      actualStartTime: null
     });
   }
 
@@ -118,6 +120,10 @@ export class AppStoreService extends ComponentStore<AppState> {
   readonly selectedCaseId$: Observable<string> = this.select(
     (state) => state.selectedCaseId
   )
+
+  readonly actualStartTime$: Observable<string | null> = this.select(
+    (state) => state.actualStartTime
+  );
 
   readonly scheduleVm$ = this.select(
     this.cases$,
@@ -289,6 +295,13 @@ export class AppStoreService extends ComponentStore<AppState> {
         alarmList: stateCopy.alarmList
       };
     }
+  );
+
+  readonly updateActualStartTime = this.updater(
+    (state: AppState, actualStartTime: string | null) => ({
+      ...state,
+      actualStartTime,
+    })
   );
 
   getDefaultRefreshCasesList(): string {
