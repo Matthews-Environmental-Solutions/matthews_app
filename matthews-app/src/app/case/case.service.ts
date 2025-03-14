@@ -24,8 +24,8 @@ export class CaseService {
     return this.httpService.request('GET', getSelectCaseUrl, deviceId);
   }
 
-  GetSelectOrInProgressCaseByDevice(deviceId: string): Promise<Case> {
-    const getSelectCaseUrl = `${environment.apiUrl}/Case/GetSelectOrInProgressCaseByDevice/${deviceId}`;
+  GetSelectCaseByDevice(deviceId: string): Promise<Case> {
+    const getSelectCaseUrl = `${environment.apiUrl}/Case/GetSelectCaseByDevice/${deviceId}`;
     return this.httpService.request('GET', getSelectCaseUrl, deviceId);
   }
 

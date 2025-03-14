@@ -116,6 +116,7 @@ export class CasePage implements OnInit {
     this.newCase.scheduledStartTime = this.selectedCase.scheduledStartTime;
     this.newCase.facilityStatusId = this.selectedCase.facilityStatusId;
     this.newCase.physicalId = this.selectedCase.physicalId;
+    this.newCase.selected = this.selectedCase.selected;
     //console.log(this.newCase.gender + ':' + this.newCase.genderText);
   }
 
@@ -174,11 +175,7 @@ export class CasePage implements OnInit {
       }
 
       if (this.fromProcess) {
-        const selectedFacilityStatus = this.facilityStatuses.find(
-          (fs) => fs.status == 5
-        );
-
-        this.newCase.facilityStatusId = selectedFacilityStatus.id;
+        this.newCase.selected = true;
       }
 
       if (this.fromProcess) {

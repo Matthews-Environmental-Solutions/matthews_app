@@ -240,7 +240,7 @@ export class CremationProcessPage implements OnInit, OnDestroy {
           this.mapCase(res);
 
           if (res.actualStartTime) {
-            debugger
+            //debugger
             this.updateElapsedTime(res.actualStartTime);
           } else {
             this.subscribeToActualStartTime();
@@ -277,7 +277,7 @@ export class CremationProcessPage implements OnInit, OnDestroy {
       });
 
 
-    this.caseService.GetSelectOrInProgressCaseByDevice(this.deviceId)
+    this.caseService.GetSelectCaseByDevice(this.deviceId)
       .then(caseData => {
         const caseId = caseData?.id;
 

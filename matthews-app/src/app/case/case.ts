@@ -138,5 +138,7 @@ export class Case {
 
   status: number = -1; 
 
+  selected: boolean = false;
+
   //caseToFacilityStatuses: CaseToFacilityStatus[] = [];
 }
