@@ -4,6 +4,10 @@
 - Changed: Description of a change in existing functionality.
 - Removed: Description of deprecated features.
 
+## [1.0.5] - 2025-03-13
+	- Fixed:
+		MqttMessageHandler has better handling of incoming messages. It will trust to Flexy messages. Code is refactored.
+
 ## [1.0.4] - 2025-02-25
 	- Fixed:
 		When get NEXT Case for device, the Case will be set to SELECTED status.

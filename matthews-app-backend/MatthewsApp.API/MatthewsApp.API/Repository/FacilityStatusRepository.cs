@@ -51,4 +51,14 @@ public class FacilityStatusRepository : BaseRepository<FacilityStatus, Guid>, IF
     {
         return _dataContext.FacilityStatuses.FirstOrDefault(f => f.FacilityId == facilityId && f.Status == CaseStatus.WAITING_FOR_PERMIT);
     }
+
+    public FacilityStatus GetTrackedEntity(Guid facilityId)
+    {
+        return _dataContext.FacilityStatuses.Local.FirstOrDefault(e => e.Id == facilityId);
+    }
+
+    public void Detach(FacilityStatus entity)
+    {
+        _dataContext.FacilityStatuses.Entry(entity).State = EntityState.Detached;
+    }
 }

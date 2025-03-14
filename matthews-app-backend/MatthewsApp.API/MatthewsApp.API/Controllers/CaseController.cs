@@ -110,7 +110,7 @@ public class CaseController : Controller
         _logger.LogInformation("---------- Deselect");
         try
         {
-            service.Deselect(caseId, true);
+            service.UpdateCaseWhenCaseDeselect(caseId, true);
         }
         catch (DbUpdateConcurrencyException)
         {
