@@ -95,9 +95,9 @@
             <ng-container *ngFor="let case of casesForDay4">
                 <div class="weekly-item" (click)="openCaseInfo(case)">
                     <div class="weekly-item-row-1">
-                        <div class="weekly-item-row-1-cell-1 font-color-orange"
+                        <div class="weekly-item-row-1-cell-1"
                         [ngClass]="{'case-status-color-green': case.status == 1, 'case-status-color-red': case.status == 2, 'case-status-color-orange': case.status == 3, 'case-status-color-black': case.status == 4, 'case-status-color-blue': case.status == 5}">ID {{case.clientCaseId}}</div>
-                        <div class="weekly-item-row-1-cell-2 font-color-orange"
+                        <div class="weekly-item-row-1-cell-2"
                         [ngClass]="{'case-status-color-green': case.status == 1, 'case-status-color-red': case.status == 2, 'case-status-color-orange': case.status == 3, 'case-status-color-black': case.status == 4, 'case-status-color-blue': case.status == 5}">
                             <mat-icon>{{getIcon(case.facilityStatusId)}}</mat-icon>
                         </div>
@@ -115,9 +115,9 @@
             <ng-container *ngFor="let case of casesForDay5">
                 <div class="weekly-item" (click)="openCaseInfo(case)">
                     <div class="weekly-item-row-1">
-                        <div class="weekly-item-row-1-cell-1 font-color-blue"
+                        <div class="weekly-item-row-1-cell-1"
                         [ngClass]="{'case-status-color-green': case.status == 1, 'case-status-color-red': case.status == 2, 'case-status-color-orange': case.status == 3, 'case-status-color-black': case.status == 4, 'case-status-color-blue': case.status == 5}">ID {{case.clientCaseId}}</div>
-                        <div class="weekly-item-row-1-cell-2 font-color-blue"
+                        <div class="weekly-item-row-1-cell-2"
                         [ngClass]="{'case-status-color-green': case.status == 1, 'case-status-color-red': case.status == 2, 'case-status-color-orange': case.status == 3, 'case-status-color-black': case.status == 4, 'case-status-color-blue': case.status == 5}">
                             <mat-icon>{{getIcon(case.facilityStatusId)}}</mat-icon>
                         </div>
