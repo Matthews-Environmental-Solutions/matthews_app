@@ -11,19 +11,19 @@
     <div class="dialog-content-field">
         <mat-label for="">{{'scheduledStartTime' | translate}}</mat-label>:
         <div class="field-value">
-            {{data.scheduledStartTime | timepipe: false}}
+            {{data.scheduledStartTime | date:"dd-mm-yy hh:mm a"}}
         </div>
     </div>
     <div class="dialog-content-field">
         <mat-label for="">{{'actualStartTime' | translate}}</mat-label>:
         <div class="field-value">
-            {{data.actualStartTime | timepipe: false}}
+            {{data.actualStartTime | date:"dd-mm-yy hh:mm a"}}
         </div>
     </div>
     <div class="dialog-content-field">
         <mat-label for="">{{'actualEndTime' | translate}}</mat-label>:
         <div class="field-value">
-            {{data.actualEndTime | timepipe: false}}
+            {{data.actualEndTime | date:"dd-mm-yy hh:mm a"}}
         </div>
     </div>
 </div>

@@ -10,6 +10,7 @@ import { UserSettingService } from 'src/app/services/user-setting.service';
 import { CaseDetailsDialogComponent } from '../../dialogs/case-details/case-details.dialog.component';
 import { FacilityStatusService } from 'src/app/services/facility-status.service';
 import { FacilityStatus } from 'src/app/models/facility-status.model';
+import { CaseInfoDialogComponent } from '../../dialogs/case-info.dialog/case-info.dialog.component';
 
 
 @Component({
@@ -164,19 +165,16 @@ export class CaseCalendarDailyComponent implements OnInit {
 
   isEmptyString = (data: string): boolean => typeof data === "string" && data.trim().length == 0;
 
-  openCaseDetails(c: Case): void {
-    const dialogRef = this.dialog.open(CaseDetailsDialogComponent, {
-      data: c,
-      width: '40%'
-    });
+  openCaseDetails(caseSent: Case): void {
+    const dialogRef = this.dialog.open(CaseInfoDialogComponent, {
+          data: caseSent,
+          height: '400px',
+          width: '300px',
+          autoFocus: false
+        });
 
-    dialogRef.afterClosed().subscribe(
-      {
-        next: result => {
-          if (result) {
-            console.log('The dialog was closed', result);
-          }
-        }
+      dialogRef.afterClosed().subscribe(result => {
+        console.log(`Dialog result: ${result}`);
       });
   }
 

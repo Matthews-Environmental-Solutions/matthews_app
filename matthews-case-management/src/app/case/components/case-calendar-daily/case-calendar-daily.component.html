@@ -23,7 +23,7 @@
                                 <span>{{status}}</span>
                             </ng-container>
                         </div>
-                        <div class="case-status case-status-time">{{case.scheduledStartTime | timepipe: false}}</div>
+                        <div class="case-status case-status-time">{{case.scheduledStartTime | date:"hh:mm a"}}</div>
                     </div>
                 </div>
 
