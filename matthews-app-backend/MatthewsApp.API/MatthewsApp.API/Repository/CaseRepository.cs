@@ -104,7 +104,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             && c.ScheduledStartTime.HasValue
             && c.ScheduledStartTime.Value >= date
             && c.ScheduledStartTime.Value < dateEnd
-            ).ToList();
+            ).ToList().OrderBy(c => c.ScheduledStartTime);
     }
 
     public async Task<IEnumerable<Case>> GetScheduledCasesByWeek(Guid facilityId, DateTime dateStartDateOfWeek)
@@ -118,7 +118,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             && c.ScheduledStartTime.HasValue
             && c.ScheduledStartTime.Value >= dateStartDateOfWeek
             && c.ScheduledStartTime.Value < dateEnd
-            ).ToList();
+            ).ToList().OrderBy(c => c.ScheduledStartTime);
     }
 
     public async Task<IEnumerable<Case>> GetFirst20ScheduledCases(Guid scheduledDeviceId)
@@ -144,7 +144,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             && c.ScheduledStartTime.HasValue
             && c.ScheduledStartTime.Value >= dateStart
             && c.ScheduledStartTime.Value < dateEnd
-            ).ToList();
+            ).ToList().OrderBy(c => c.ScheduledStartTime);
     }
 
     public async Task<IEnumerable<Case>> GetReadyCasesByDevice(Guid deviceId)
@@ -154,7 +154,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             c.IsObsolete == false
             && c.ScheduledDevice.Equals(deviceId)
             && c.FacilityStatus.Status == CaseStatus.READY_TO_CREMATE
-            ).ToList();
+            ).ToList().OrderBy(c => c.ScheduledStartTime);
     }
 
     public async Task<Case> GetSelectCaseByDevice(Guid deviceId)
