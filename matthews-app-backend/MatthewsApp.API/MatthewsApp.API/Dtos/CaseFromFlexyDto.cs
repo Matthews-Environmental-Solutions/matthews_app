@@ -19,7 +19,10 @@ public class CaseFromFlexyDto {
 	[JsonConverter(typeof(CustomDateTimeConverter))]
 	public DateTime StartTime { get; set; }
 
-	public string User { get; set; }
+    [JsonConverter(typeof(CustomDateTimeConverter))]
+    public DateTime EndTime { get; set; }
+
+    public string User { get; set; }
 	public string LOADED_FIRST_NAME { get; set; }
 	public string LOADED_SURNAME { get; set; }
     public string LOADED_CLIENT_ID { get; set; }

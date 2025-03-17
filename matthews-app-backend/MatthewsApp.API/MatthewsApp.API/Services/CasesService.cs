@@ -210,6 +210,7 @@ public class CasesService : ICasesService
         await SetDeviceAliasForCase(dto.CREMATOR_ID, entity);
         entity.Selected = true;
         entity.ActualStartTime = dto.StartTime;
+        entity.ActualEndTime = null;
         entity.ActualFacility = dto.FACILITY_ID;
         entity.ActualDevice = dto.CREMATOR_ID;
         entity.ActualDeviceAlias = entity.ScheduledDeviceAlias;
@@ -249,7 +250,7 @@ public class CasesService : ICasesService
         SetStatusCycleComplete(entity);
         await SetDeviceAliasForCase(dto.CREMATOR_ID, entity);
         entity.Selected = true;
-        entity.ActualEndTime = DateTime.UtcNow;
+        entity.ActualEndTime = dto.EndTime;
         entity.ActualStartTime = dto.StartTime;
         entity.ActualFacility = dto.FACILITY_ID;
         entity.ActualDevice = dto.CREMATOR_ID;
@@ -296,7 +297,7 @@ public class CasesService : ICasesService
         entity.ActualStartTime = dto.StartTime;
         entity.ActualFacility = dto.FACILITY_ID;
         entity.ActualDevice = dto.CREMATOR_ID;
-        entity.ActualEndTime ??= DateTime.UtcNow;
+        entity.ActualEndTime = dto.EndTime;
         entity.ActualDeviceAlias = entity.ScheduledDeviceAlias;
 
         return UptadeOrCreateCase(dto, entity, entityDoesNotExistInDb);
