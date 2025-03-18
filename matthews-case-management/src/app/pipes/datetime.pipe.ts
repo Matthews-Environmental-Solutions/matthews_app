@@ -21,13 +21,8 @@ export class DatetimePipe implements PipeTransform {
     let dateShift = date;
     let setting: UserSettingData = this.userSettingService.getUserSettingLastValue();
     
-    // let format: string = justDate ? 'dd-MM-yyyy' : 'dd-MM-yy | hh:mm a';
     let format = '';
     if (setting) {
-      // format = setting.timeformat == '12' ? 
-      // (justDate ? 'dd-MM-yyyy' : 'dd-MM-yy | hh:mm a') 
-      // : 
-      // (justDate ? 'dd-MM-yyyy' : 'dd-MM-yy | HH:mm');
 
       format += showDate ? 'dd-MM-yyyy' : '';
 
