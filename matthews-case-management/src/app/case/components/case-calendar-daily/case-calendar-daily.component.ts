@@ -7,7 +7,6 @@ import { Case } from 'src/app/models/case.model';
 import { CaseService } from 'src/app/services/cases.service';
 import { StateService } from 'src/app/services/states.service';
 import { UserSettingService } from 'src/app/services/user-setting.service';
-import { CaseDetailsDialogComponent } from '../../dialogs/case-details/case-details.dialog.component';
 import { FacilityStatusService } from 'src/app/services/facility-status.service';
 import { FacilityStatus } from 'src/app/models/facility-status.model';
 import { CaseInfoDialogComponent } from '../../dialogs/case-info.dialog/case-info.dialog.component';

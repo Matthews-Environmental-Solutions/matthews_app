@@ -60,7 +60,6 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { FacilityComponent } from './components/facility/facility.component';
 import { FacilityStatusDialogComponent } from './dialogs/facility-status/facility-status.dialog.component';
 import { DeleteFacilityStatusDialogComponent } from './dialogs/delete-facility-status/delete-facility-status.dialog.component';
-import { CaseDetailsDialogComponent } from './dialogs/case-details/case-details.dialog.component';
 import { CaseInfoDialogComponent } from './dialogs/case-info.dialog/case-info.dialog.component';
 import { DeleteDialogComponent } from './dialogs/delete-dialog/delete-dialog.component';
 
@@ -78,7 +77,6 @@ import { DeleteDialogComponent } from './dialogs/delete-dialog/delete-dialog.com
     FacilityComponent,
     FacilityStatusDialogComponent,
     DeleteFacilityStatusDialogComponent,
-    CaseDetailsDialogComponent,
     CaseInfoDialogComponent,
     DeleteDialogComponent
   ],

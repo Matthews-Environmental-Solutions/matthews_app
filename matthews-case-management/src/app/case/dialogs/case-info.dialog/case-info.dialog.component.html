@@ -22,7 +22,7 @@
     <p class="dialog-header">{{'weight' | translate}}:</p>
     <p class="dialog-content">{{data.weight}}kg</p>
     <p class="dialog-header">{{'scheduledStartTime' | translate}}:</p>
-    <p class="dialog-content">{{data.scheduledStartTime | date:"dd-mm-yy hh:mm a"}}</p>
+    <p class="dialog-content">{{data.scheduledStartTime | timepipe: true : true}}</p>
     <p class="dialog-header">{{'device' | translate}}:</p>
     <p class="dialog-content">{{data.scheduledDeviceAlias ? data.scheduledDeviceAlias : 'No device found'}}</p>
 </mat-dialog-content>
