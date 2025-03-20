@@ -46,6 +46,7 @@ public interface ICasesService
     Task<Case> GetSelectCaseByDevice(Guid deviceId);
     Task FixAllPreviousCasesInProgressOrCycleCompleteByDevice(Guid caseId, Guid deviceId, Guid facilityId);
     Task FixAllPreviousSelectedCasesByDevice(Guid caseId, Guid deviceId, Guid fACILITY_ID);
+    Task FixSelectedCasesesInReadyToCreateByDevice(Guid caseId, Guid deviceId, Guid fACILITY_ID);
 }
 
 public class CasesService : ICasesService
@@ -206,6 +207,10 @@ public class CasesService : ICasesService
         bool entityDoesNotExistInDb = false;
 
         Case entity = GetOrCreateCaseFromDto(dto, ref entityDoesNotExistInDb);
+        if (entityDoesNotExistInDb)
+        {
+            entity.ScheduledStartTime = DateTime.UtcNow;
+        }
         SetStatusInProgress(entity);
         await SetDeviceAliasForCase(dto.CREMATOR_ID, entity);
         entity.Selected = true;
@@ -229,6 +234,10 @@ public class CasesService : ICasesService
         bool entityDoesNotExistInDb = false;
 
         Case entity = GetOrCreateCaseFromDto(dto, ref entityDoesNotExistInDb);
+        if (entityDoesNotExistInDb)
+        {
+            entity.ScheduledStartTime = DateTime.UtcNow;
+        }
         SetStatusReadyToCremate(entity);
         await SetDeviceAliasForCase(dto.CREMATOR_ID, entity);
         entity.Selected = true;
@@ -508,6 +517,25 @@ public class CasesService : ICasesService
         }
     }
 
+    public async Task FixSelectedCasesesInReadyToCreateByDevice(Guid caseId, Guid deviceId, Guid fACILITY_ID)
+    {
+        var casesInDevice = await _caseRepository.GetSelectedCasesReadyToCremateByDevice(deviceId);
+
+        var casesToUpdate = casesInDevice
+           .Where(item => item.Id != caseId)
+           .Select(async item =>
+           {
+               await SetDeviceAliasForCase((Guid)item.ScheduledDevice, item);
+               item.Selected = false;
+               return item;
+           }).ToList();
+
+        foreach (var itemCase in casesToUpdate)
+        {
+            _caseRepository.Update(await itemCase);
+        }
+    }
+
     public async Task FixAllPreviousSelectedCasesByDevice(Guid caseId, Guid deviceId, Guid fACILITY_ID)
     {
         var casesInDevice = await _caseRepository.GetSelectedCasesByDevice(deviceId);
@@ -541,7 +569,7 @@ public class CasesService : ICasesService
         entity.ContainerSize = (ContainerSize)dto.LOADED_SIZE;
         entity.Weight = dto.LOADED_WEIGHT;
         entity.Gender = dto.LOADED_GENDER;
-        entity.ScheduledStartTime = dto.StartTime;
+        //entity.ScheduledStartTime = dto.StartTime;
         entity.ClientId = "1"; //ClientID is missing in CaseStart object from Flexy
         entity.ClientCaseId = dto.LOADED_CLIENT_ID;
         entity.PhysicalId = dto.LOADED_PHYSICAL_ID;
@@ -561,7 +589,6 @@ public class CasesService : ICasesService
         oldCase.ContainerSize = (ContainerSize)dto.LOADED_SIZE;
         oldCase.Weight = dto.LOADED_WEIGHT;
         oldCase.Gender = dto.LOADED_GENDER;
-        oldCase.ScheduledStartTime = dto.StartTime;
         oldCase.ClientId = "1"; //ClientID is missing in CaseStart object from Flexy
         oldCase.ClientCaseId = dto.LOADED_CLIENT_ID;
         oldCase.PhysicalId = dto.LOADED_PHYSICAL_ID;
@@ -656,4 +683,5 @@ public class CasesService : ICasesService
         entity.FacilityStatusId = entity.FacilityStatus.Id;
     }
 
+    
 }

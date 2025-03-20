@@ -1570,4 +1570,13 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             .Include(c => c.FacilityStatus)
             .ToArrayAsync();
     }
+
+    public async Task<IEnumerable<Case>> GetSelectedCasesReadyToCremateByDevice(Guid deviceId)
+    {
+        return await _dataContext.Cases
+            .Where(c => c.IsObsolete == false && c.ScheduledDevice == deviceId && c.Selected)
+            .Include(c => c.FacilityStatus)
+            .Where(c => c.FacilityStatus.Status == CaseStatus.READY_TO_CREMATE)
+            .ToArrayAsync();
+    }
 }

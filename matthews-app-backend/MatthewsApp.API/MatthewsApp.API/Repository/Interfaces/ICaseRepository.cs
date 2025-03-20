@@ -20,6 +20,7 @@ public interface ICaseRepository : IBaseRepository<Case, Guid>
     Task<IEnumerable<Case>> GetScheduledCasesByWeek(Guid facilityId, DateTime dateStartDateOfWeek);
     Task<Case> GetSelectCaseByDevice(Guid deviceId);
     Task<IEnumerable<Case>> GetSelectedCasesByDevice(Guid deviceId);
+    Task<IEnumerable<Case>> GetSelectedCasesReadyToCremateByDevice(Guid deviceId);
     Case GetTrackedEntity(Guid id);
     Task SeedDbForDemo(Guid deviceId);
 }

@@ -14,6 +14,11 @@ namespace MatthewsApp.API.Dtos.CustomJsonConverters
 
         public override DateTime Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
+            DateTime probaDatuma;
+            if(!DateTime.TryParse(reader.GetString(), out probaDatuma))
+            {
+                return DateTime.MinValue;
+            }
 
             return DateTime.ParseExact(reader.GetString(), Format, null);
 

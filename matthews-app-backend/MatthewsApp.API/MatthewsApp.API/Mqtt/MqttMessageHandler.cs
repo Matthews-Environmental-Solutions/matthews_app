@@ -1,13 +1,9 @@
-﻿using Azure;
-using MatthewsApp.API.Dtos;
+﻿using MatthewsApp.API.Dtos;
 using MatthewsApp.API.Enums;
 using MatthewsApp.API.Models;
 using MatthewsApp.API.Services;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -171,7 +167,7 @@ public class MqttMessageHandler
             return;
         }
 
-        await CheckIfDeviceHasAnyPreviousCase();
+        await FixIfDeviceHasAnyPreviousCase();
 
         switch (_mqttMessage)
         {
@@ -217,7 +213,7 @@ public class MqttMessageHandler
         await _casesService.FixAllPreviousSelectedCasesByDevice(_caseId, _deviceId, _caseFromFlexy.FACILITY_ID);
     }
 
-    private async Task CheckIfDeviceHasAnyPreviousCase()
+    private async Task FixIfDeviceHasAnyPreviousCase()
     {
         if (!_messageIsValid)
         {
@@ -225,6 +221,7 @@ public class MqttMessageHandler
         }
 
         await _casesService.FixAllPreviousCasesInProgressOrCycleCompleteByDevice(_caseId, _deviceId, _caseFromFlexy.FACILITY_ID);
+        await _casesService.FixSelectedCasesesInReadyToCreateByDevice(_caseId, _deviceId, _caseFromFlexy.FACILITY_ID);
     }
 
     private async Task ActionCaseStart()
@@ -236,7 +233,6 @@ public class MqttMessageHandler
 
         Case response = await _casesService.UpdateCaseWhenCaseStart(_caseFromFlexy);
         _caseHub.SendMessageToSelectCase($"CaseId: {_caseFromFlexy.LOADED_ID}; DeviceId: {_deviceId}; ActualStartTime: {response.ActualStartTime}; ActualEndTime: {string.Empty}");
-      
     }
 
     private async Task ActionCaseEnd()
