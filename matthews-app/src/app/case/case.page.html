@@ -65,7 +65,7 @@
     <ion-item *ngIf="!fromProcess"lines="full">
       <ion-label position="floating">Facility Status</ion-label>
       <ion-select interface="popover" name="facilityStatus" [(ngModel)]="newCase.facilityStatusId"  placeholder="Select One">
-        <ion-select-option *ngFor="let f of facilityStatuses;" [value]="f.id">{{ f.statusName | titlecase}}</ion-select-option>
+        <ion-select-option *ngFor="let f of filteredFacilityStatuses;" [value]="f.id">{{ f.statusName | titlecase}}</ion-select-option>
       </ion-select>
     </ion-item>
     

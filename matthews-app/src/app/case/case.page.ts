@@ -50,7 +50,7 @@ export class CasePage implements OnInit {
     { id: 2, name: 'Hardwood' },
     { id: 3, name: 'MDF Particle board' },
     { id: 4, name: 'Bag/Shroud' },
-    { id: 4, name: 'Other' },
+    { id: 5, name: 'Other' },
   ];
   containerSizes: ContainerSizeSelection[] = [
     { id: 0, name: 'None' },
@@ -65,6 +65,7 @@ export class CasePage implements OnInit {
   deviceList$ = this.caseStore.deviceList$;
   selectedDevice: Device;
   facilityStatuses: FacilityStatus[] = [];
+  filteredFacilityStatuses: FacilityStatus[] = [];
 
   private guidEmpty = '00000000-0000-0000-0000-000000000000';
   private dateTimeMin = '0001-01-01T00:00:00';
@@ -81,7 +82,12 @@ export class CasePage implements OnInit {
       this.selectedFacility = sf.id;
       this.facilityStatusService
         .getAllStatusesByFacility(this.selectedFacility)
-        .then((data) => (this.facilityStatuses = data));
+        .then((data) => {
+          this.facilityStatuses = data;
+          this.filteredFacilityStatuses = this.facilityStatuses.filter(
+            (f) => f.status === 4 || f.status === 3
+          );
+        });
     });
     this.newCase.scheduledStartTime = this.formatDateAndTime(
       new Date().toString()
@@ -163,11 +169,12 @@ export class CasePage implements OnInit {
         this.newCase.scheduledFacility != this.guidEmpty &&
         this.newCase.scheduledStartTime != null
       ) {
-        this.newCase.status = 4; // waiting for permit
 
         const selectedFacilityStatus = this.facilityStatuses.find(
-          (fs) => fs.id == this.newCase.facilityStatusId
+          (fs) => fs.status == 3
         );
+
+        this.newCase.facilityStatusId = selectedFacilityStatus.id;
 
         // if (selectedFacilityStatus?.startProcess) {
         //   this.newCase.status = 3; // Ready to cremate
