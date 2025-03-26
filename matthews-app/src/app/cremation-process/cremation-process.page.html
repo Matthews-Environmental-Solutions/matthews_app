@@ -316,7 +316,7 @@
                   Progress<br /></span>
                 <span *ngIf="parseSignalValue(signal.value) == 80" class="footer-text">Waiting for Charge Door to
                   Close<br /></span>
-                <!-- <span *ngIf="parseSignalValue(signal.value) != 80" class="footer-text">Elapsed time: {{cremationTime}} min<br /></span> -->
+                <span *ngIf="parseSignalValue(signal.value) != 80" class="footer-text">Elapsed time: {{cremationTime}} min<br /></span>
                 <span class="footer-text">Remaining time: {{remainingTime}} min<br /></span>
                 <!-- <ng-container *ngFor="let signal of selectedDevice.signals; trackBy:trackItems"> -->
                 <span class="footer-text">

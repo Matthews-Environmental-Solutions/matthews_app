@@ -154,6 +154,7 @@ export class CremationProcessPage implements OnInit, OnDestroy {
   cooldownTime: number;
   rakeOutTime: number;
   interval;
+  cremationInterval;
   preheatInterval;
   cooldownInterval;
   stepNumber: number;
@@ -212,6 +213,7 @@ export class CremationProcessPage implements OnInit, OnDestroy {
     this.appStore.updateSelectedCase(null);
     this.appStore.updateSelectedCaseId('');
     clearInterval(this.interval);
+    clearInterval(this.cremationInterval);
   }
 
   ngOnInit() {
@@ -303,45 +305,42 @@ export class CremationProcessPage implements OnInit, OnDestroy {
   }
 
   private updateElapsedTime(actualStartTimeStr: string) {
-   
-  const actualStartTime = new Date(actualStartTimeStr + "Z");
 
-  if (isNaN(actualStartTime.getTime())) {
-    console.error("Invalid actualStartTime:", actualStartTimeStr);
-    return;
+    const actualStartTime = new Date(actualStartTimeStr + "Z");
+
+    if (isNaN(actualStartTime.getTime())) {
+      console.error("Invalid actualStartTime:", actualStartTimeStr);
+      return;
+    }
+
+    const now = new Date();
+    const elapsedMs = now.getTime() - actualStartTime.getTime();
+    const elapsedMinutes = Math.floor(elapsedMs / 60000); // Whole minutes
+    const elapsedSeconds = Math.floor((elapsedMs % 60000) / 1000); // Remaining seconds
+
+    // Update cremationTime immediately with minute and fraction for seconds
+    this.cremationTime = elapsedMinutes;
+
+    if (this.isCremationRunning) {
+      this.startElapsedTimer(elapsedSeconds);
+    }
   }
 
-  const now = new Date();
-  const elapsedMs = now.getTime() - actualStartTime.getTime();
-  const elapsedMinutes = Math.floor(elapsedMs / 60000); // Whole minutes
-  const elapsedSeconds = Math.floor((elapsedMs % 60000) / 1000); // Remaining seconds
+  private startElapsedTimer(initialElapsedSec: number) {
 
-  // Update cremationTime immediately with minute and fraction for seconds
-  this.cremationTime = elapsedMinutes + (elapsedSeconds / 60); 
-
-  console.log(actualStartTime);
-  console.log(elapsedMs);
-  console.log(elapsedMinutes);
-  console.log(elapsedSeconds);
-  console.log(this.cremationTime);
-
-  if (this.isCremationRunning) {
-    this.startElapsedTimer(elapsedSeconds);
+    if (this.cremationInterval) {
+      clearInterval(this.cremationInterval);
+    }
+    
+    const remainingSec = 60 - initialElapsedSec;
+    console.log("remainingMs: ", remainingSec);
+    
+    setTimeout(() => {
+      this.cremationInterval = setInterval(() => {
+        this.cremationTime++;
+      }, 60000);
+    }, remainingSec);
   }
-}
-
-private startElapsedTimer(initialElapsedMs: number) {
-  // Calculate time until the next full minute
-  const remainingMs = 60000 - (initialElapsedMs % 60000);
-
-  // Wait until the next full minute to start the interval
-  setTimeout(() => {
-    this.cremationTime = Math.ceil(this.cremationTime); // Round up to full minute
-    this.interval = setInterval(() => {
-      this.cremationTime++;
-    }, 60000);
-  }, remainingMs);
-}
   
 
   startCountdown(endTimeEstimate: number) {
