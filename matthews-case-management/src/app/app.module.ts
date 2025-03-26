@@ -49,6 +49,7 @@ import { TranslateModule, TranslateLoader, TranslateCompiler } from '@ngx-transl
 import { TranslateMessageFormatCompiler } from 'ngx-translate-messageformat-compiler';
 import { WfactorySnackBarComponent } from './components/wfactory-snack-bar/wfactory-snack-bar.component';
 
+
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http,
     './assets/i18n/',

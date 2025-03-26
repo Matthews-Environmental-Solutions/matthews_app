@@ -3,8 +3,8 @@ using System.Text.Json.Serialization;
 
 namespace MatthewsApp.API.Dtos;
 
-public class SelectCasePayloadDto
+public class CaseSelectPayloadDto
 {
-    [JsonConverter(typeof(CaseStartToStringConverter))]
+    [JsonConverter(typeof(CaseToStringConverter))]
     public string CaseSelect { get; set; }
 }

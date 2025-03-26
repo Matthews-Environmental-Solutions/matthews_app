@@ -4,7 +4,7 @@ using System;
 
 namespace MatthewsApp.API.Dtos;
 
-public class DeselectCaseFromFlexyDto
+public class RemoveCaseFromFlexyDto
 {
     [JsonConverter(typeof(CustomGuidConverter))]
     public Guid LOADED_ID { get; set; }

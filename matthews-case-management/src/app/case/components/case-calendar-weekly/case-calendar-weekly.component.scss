@@ -213,3 +213,9 @@ $buttons: mat-palette($mat-blue-gray, 700);
 .case-status-color-green {
     color: #036600;
 }
+
+.weekly-item-row-3 {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-between;
+}

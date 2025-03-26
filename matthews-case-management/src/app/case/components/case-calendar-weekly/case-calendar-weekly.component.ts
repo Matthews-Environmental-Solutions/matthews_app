@@ -9,6 +9,7 @@ import { CaseInfoDialogComponent } from '../../dialogs/case-info.dialog/case-inf
 import { MatDialog } from '@angular/material/dialog';
 import { FacilityStatus } from 'src/app/models/facility-status.model';
 import { FacilityStatusService } from 'src/app/services/facility-status.service';
+import { TruncatePipe } from 'src/app/pipes/truncate.pipe';
 
 @Component({
   selector: 'case-calendar-weekly',

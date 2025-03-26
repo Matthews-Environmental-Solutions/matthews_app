@@ -20,6 +20,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
 
     public Case GetTrackedEntity(Guid id)
     {
+        //return _dataContext.Context.Set<Case>().Local.FirstOrDefault(e => e.Id == id);
         return _dataContext.Cases.Local.FirstOrDefault(e => e.Id == id);
     }
 
@@ -33,13 +34,6 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
         return _dataContext.Cases.Include(c => c.FacilityStatus)
             .AsNoTracking()
             .FirstOrDefault(c => c.Id == id);
-    }
-
-    public async Task<Case> GetByIdAsync(Guid id)
-    {
-        return await _dataContext.Cases.Include(c => c.FacilityStatus)
-            .AsNoTracking()
-            .FirstOrDefaultAsync(c => c.Id == id);
     }
 
     public override void Delete(Guid id)
@@ -110,7 +104,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             && c.ScheduledStartTime.HasValue
             && c.ScheduledStartTime.Value >= date
             && c.ScheduledStartTime.Value < dateEnd
-            ).ToList();
+            ).ToList().OrderBy(c => c.ScheduledStartTime);
     }
 
     public async Task<IEnumerable<Case>> GetScheduledCasesByWeek(Guid facilityId, DateTime dateStartDateOfWeek)
@@ -124,7 +118,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             && c.ScheduledStartTime.HasValue
             && c.ScheduledStartTime.Value >= dateStartDateOfWeek
             && c.ScheduledStartTime.Value < dateEnd
-            ).ToList();
+            ).ToList().OrderBy(c => c.ScheduledStartTime);
     }
 
     public async Task<IEnumerable<Case>> GetFirst20ScheduledCases(Guid scheduledDeviceId)
@@ -136,7 +130,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             && c.ScheduledStartTime > DateTime.MinValue.AddDays(100)
             && !c.ScheduledFacility.Equals(Guid.Empty)
             && c.ScheduledDevice.Equals(scheduledDeviceId)
-            && (c.FacilityStatus.Status == CaseStatus.READY_TO_CREMATE || c.FacilityStatus.Status == CaseStatus.SELECTED)
+            && (c.FacilityStatus.Status == CaseStatus.READY_TO_CREMATE)
             ).ToList().OrderBy(c => c.ScheduledStartTime).Take(20);
     }
 
@@ -150,18 +144,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             && c.ScheduledStartTime.HasValue
             && c.ScheduledStartTime.Value >= dateStart
             && c.ScheduledStartTime.Value < dateEnd
-            ).ToList();
-    }
-
-
-    public async Task<IEnumerable<Case>> GetCasesByFacility(Guid facilityId)
-    {
-        IEnumerable<Case> cases = await _dataContext.Cases.Include(c => c.FacilityStatus).ToArrayAsync();
-        return cases.Where(c =>
-            c.IsObsolete == false
-            && c.ScheduledFacility.Equals(facilityId)
-            && (c.FacilityStatus.Status == CaseStatus.WAITING_FOR_PERMIT || c.FacilityStatus.Status == CaseStatus.UNSCHEDULED || c.FacilityStatus.Status == CaseStatus.READY_TO_CREMATE || c.FacilityStatus.Status == CaseStatus.SELECTED)
-            ).ToList();
+            ).ToList().OrderBy(c => c.ScheduledStartTime);
     }
 
     public async Task<IEnumerable<Case>> GetReadyCasesByDevice(Guid deviceId)
@@ -171,7 +154,7 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             c.IsObsolete == false
             && c.ScheduledDevice.Equals(deviceId)
             && c.FacilityStatus.Status == CaseStatus.READY_TO_CREMATE
-            ).ToList();
+            ).ToList().OrderBy(c => c.ScheduledStartTime);
     }
 
     public async Task<Case> GetSelectCaseByDevice(Guid deviceId)
@@ -181,20 +164,11 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
         return cases.Where(c =>
             c.IsObsolete == false
             && c.ScheduledDevice.Equals(deviceId)
-            && c.FacilityStatus.Status == CaseStatus.SELECTED)
+            && c.Selected)
             .ToList().FirstOrDefault();
     }
 
-    public async Task<Case> GetInProgressCaseByDevice(Guid deviceId)
-    {
-        IEnumerable<Case> cases = await _dataContext.Cases.Include(c => c.FacilityStatus).ToArrayAsync();
 
-        return cases.Where(c =>
-            c.IsObsolete == false
-            && c.ScheduledDevice.Equals(deviceId)
-            && c.FacilityStatus.Status == CaseStatus.IN_PROGRESS)
-            .ToList().FirstOrDefault();
-    }
 
     public Task CleanDbForDemo(Guid deviceId)
     {
@@ -1580,59 +1554,29 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
         return Task.CompletedTask;
     }
 
+    public async Task<IEnumerable<Case>> GetCaseInProgressOrCycleCompleteByDevice(Guid deviceId)
+    {
+        return await _dataContext.Cases
+            .Where(c => c.ScheduledDevice == deviceId && c.Selected)
+            .Include(c => c.FacilityStatus)
+            .Where(c => c.FacilityStatus.Status == CaseStatus.IN_PROGRESS || c.FacilityStatus.Status == CaseStatus.CYCLE_COMPLETE)
+            .ToArrayAsync();
+    }
+
     public async Task<IEnumerable<Case>> GetSelectedCasesByDevice(Guid deviceId)
     {
         return await _dataContext.Cases
-            .Where(c => c.ScheduledDevice == deviceId)
+            .Where(c => c.IsObsolete == false && c.ScheduledDevice == deviceId && c.Selected)
             .Include(c => c.FacilityStatus)
-            .Where(c => c.FacilityStatus.Status == CaseStatus.SELECTED)
             .ToArrayAsync();
     }
 
-    public async Task<bool> CheckIfDeviceHasCaseInProgress(Guid deviceId)
-    {
-         return await _dataContext.Cases
-            .Where(c => c.ScheduledDevice == deviceId)
-            .Include(c => c.FacilityStatus)
-            .Where(c => c.FacilityStatus.Status == CaseStatus.IN_PROGRESS)
-            .AnyAsync();
-    }
-
-    public Task<bool> CheckIfDeviceHasCaseSelected(Guid deviceId)
-    {
-        return _dataContext.Cases
-            .Where(c => c.ScheduledDevice == deviceId)
-            .Include(c => c.FacilityStatus)
-            .Where(c => c.FacilityStatus.Status == CaseStatus.SELECTED)
-            .AnyAsync();
-    }
-
-    public async Task<bool> CheckIfDeviceIsEmpty(Guid deviceId)
-    {
-        // detect if there are any cases in the device that are selected or in progress. Return true if there are no cases.
-        return ! await _dataContext.Cases
-            .Where(c => c.ScheduledDevice == deviceId)
-            .Include(c => c.FacilityStatus)
-            .Where(c => c.FacilityStatus.Status == CaseStatus.SELECTED || c.FacilityStatus.Status == CaseStatus.IN_PROGRESS)
-            .AnyAsync();
-               
-    }
-
-    public async Task<IEnumerable<Case>> GetInProgressCasesByDevice(Guid deviceId)
+    public async Task<IEnumerable<Case>> GetSelectedCasesReadyToCremateByDevice(Guid deviceId)
     {
         return await _dataContext.Cases
-            .Where(c => c.ScheduledDevice == deviceId)
+            .Where(c => c.IsObsolete == false && c.ScheduledDevice == deviceId && c.Selected)
             .Include(c => c.FacilityStatus)
-            .Where(c => c.FacilityStatus.Status == CaseStatus.IN_PROGRESS)
-            .ToArrayAsync();
-    }
-
-    public async Task<IEnumerable<Case>> GetInProgressOrSelectedCasesByDevice(Guid deviceId)
-    {
-        return await _dataContext.Cases
-            .Where(c => c.ScheduledDevice == deviceId)
-            .Include(c => c.FacilityStatus)
-            .Where(c => c.FacilityStatus.Status == CaseStatus.IN_PROGRESS || c.FacilityStatus.Status == CaseStatus.SELECTED)
+            .Where(c => c.FacilityStatus.Status == CaseStatus.READY_TO_CREMATE)
             .ToArrayAsync();
     }
 }

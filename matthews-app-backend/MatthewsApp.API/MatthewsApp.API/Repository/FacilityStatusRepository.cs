@@ -32,6 +32,11 @@ public class FacilityStatusRepository : BaseRepository<FacilityStatus, Guid>, IF
         return _dataContext.FacilityStatuses.FirstOrDefault(f => f.FacilityId == facilityId && f.Status == CaseStatus.READY_TO_CREMATE);
     }
 
+    public FacilityStatus GetCycleCompleteFacilityStatus(Guid facilityId)
+    {
+        return _dataContext.FacilityStatuses.FirstOrDefault(f => f.FacilityId == facilityId && f.Status == CaseStatus.CYCLE_COMPLETE);
+    }
+
     public FacilityStatus GetInProgressFacilityStatus(Guid facilityId)
     {
         return _dataContext.FacilityStatuses.FirstOrDefault(f => f.FacilityId == facilityId && f.Status == CaseStatus.IN_PROGRESS);
@@ -47,8 +52,13 @@ public class FacilityStatusRepository : BaseRepository<FacilityStatus, Guid>, IF
         return _dataContext.FacilityStatuses.FirstOrDefault(f => f.FacilityId == facilityId && f.Status == CaseStatus.WAITING_FOR_PERMIT);
     }
 
-    public FacilityStatus GetSelectedFacilityStatus(Guid facilityId)
+    public FacilityStatus GetTrackedEntity(Guid facilityId)
     {
-        return _dataContext.FacilityStatuses.FirstOrDefault(f => f.FacilityId == facilityId && f.Status == CaseStatus.SELECTED);
+        return _dataContext.FacilityStatuses.Local.FirstOrDefault(e => e.Id == facilityId);
+    }
+
+    public void Detach(FacilityStatus entity)
+    {
+        _dataContext.FacilityStatuses.Entry(entity).State = EntityState.Detached;
     }
 }

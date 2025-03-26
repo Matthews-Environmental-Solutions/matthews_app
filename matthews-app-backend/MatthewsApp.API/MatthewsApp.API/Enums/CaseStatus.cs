@@ -8,5 +8,5 @@ public enum CaseStatus
     IN_PROGRESS, // red
     READY_TO_CREMATE, // orange
     WAITING_FOR_PERMIT, // black
-    SELECTED // blue
+    CYCLE_COMPLETE
 }

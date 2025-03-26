@@ -110,7 +110,7 @@ public class CaseController : Controller
         _logger.LogInformation("---------- Deselect");
         try
         {
-            service.Deselect(caseId, true);
+            service.UpdateCaseWhenCaseDeselect(caseId, true);
         }
         catch (DbUpdateConcurrencyException)
         {
@@ -121,21 +121,6 @@ public class CaseController : Controller
             return BadRequest();
         }
         return Ok(caseId);
-    }
-
-    [HttpGet]
-    [Route("GetAllCasesByFacility/{facilityId}")]
-    public async Task<ActionResult<IEnumerable<CaseDto>>> GetAllCasesByFacility(Guid facilityId)
-    {
-        _logger.LogInformation("---------- GetAllCasesByFacility {facilityId}", facilityId);
-        try
-        {
-            return Ok((await service.GetAllCasesByFacility(facilityId)).ToDTOs());
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
     }
 
     [HttpGet]

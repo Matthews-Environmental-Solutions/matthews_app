@@ -34,7 +34,8 @@ public record CaseDto(
     Guid FacilityStatusId, // Guid
     string facilityStatusText,
     string? PhysicalId,
-    CaseStatus Status
+    CaseStatus Status,
+    bool Selected
     )
 {
 }

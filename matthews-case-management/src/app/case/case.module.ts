@@ -52,6 +52,7 @@ import { MtxDatetimepickerModule } from '@ng-matero/extensions/datetimepicker';
 import { MtxNativeDatetimeModule } from '@ng-matero/extensions/core';
 import { ProfileSettingDialogComponent } from './dialogs/profile-setting/profile-setting.dialog.component';
 import { DatetimePipe } from '../pipes/datetime.pipe';
+import { TruncatePipe } from '../pipes/truncate.pipe';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { MAT_DATE_LOCALE } from '@angular/material/core';
@@ -59,7 +60,6 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { FacilityComponent } from './components/facility/facility.component';
 import { FacilityStatusDialogComponent } from './dialogs/facility-status/facility-status.dialog.component';
 import { DeleteFacilityStatusDialogComponent } from './dialogs/delete-facility-status/delete-facility-status.dialog.component';
-import { CaseDetailsDialogComponent } from './dialogs/case-details/case-details.dialog.component';
 import { CaseInfoDialogComponent } from './dialogs/case-info.dialog/case-info.dialog.component';
 import { DeleteDialogComponent } from './dialogs/delete-dialog/delete-dialog.component';
 
@@ -73,10 +73,10 @@ import { DeleteDialogComponent } from './dialogs/delete-dialog/delete-dialog.com
     CaseAddEditComponent,
     ProfileSettingDialogComponent,
     DatetimePipe,
+    TruncatePipe,
     FacilityComponent,
     FacilityStatusDialogComponent,
     DeleteFacilityStatusDialogComponent,
-    CaseDetailsDialogComponent,
     CaseInfoDialogComponent,
     DeleteDialogComponent
   ],

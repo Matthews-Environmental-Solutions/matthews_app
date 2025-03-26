@@ -49,7 +49,7 @@ public class FacilityService : IFacilityService
                 { CaseStatus.CREMATION_COMPLETE, "CREMATION_COMPLETE status is missing. " },
                 { CaseStatus.IN_PROGRESS, "IN_PROGRESS status is missing. " },
                 { CaseStatus.READY_TO_CREMATE, "READY_TO_CREMATE status is missing. " },
-                { CaseStatus.SELECTED, "SELECTED status is missing. " },
+                { CaseStatus.CYCLE_COMPLETE, "CYCLE_COMPLETE status is missing. " },
                 { CaseStatus.WAITING_FOR_PERMIT, "WAITING_FOR_PERMIT status is missing. " }
             };
 

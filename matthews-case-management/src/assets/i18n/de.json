@@ -104,6 +104,7 @@
     "READY_TO_CREMATE": "Bereit zur Einäscherung",
     "WAITING_FOR_PERMIT": "Warte auf Erlaubnis",
     "SELECTED": "Ausgewählt",
+    "CYCLE_COMPLETE": "Zyklus abgeschlossen",
     "CREMATION_COMPLETE status is missing": "Der Status „KREMATION ABGESCHLOSSEN“ fehlt",
     "IN_PROGRESS status is missing": "Der Status „IN PROGRESS“ fehlt",
     "READY_TO_CREMATE status is missing": "Der Status „BEREIT ZUR EINKREMATION“ fehlt",

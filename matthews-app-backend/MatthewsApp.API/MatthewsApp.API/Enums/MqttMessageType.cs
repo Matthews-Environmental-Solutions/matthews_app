@@ -5,5 +5,7 @@ public enum MqttMessageType
     CaseStart,
     CaseEnd,
     CaseSelect,
-    CaseDeselect
+    CaseDeselect,
+    CaseRestart,
+    CaseRemove
 }
