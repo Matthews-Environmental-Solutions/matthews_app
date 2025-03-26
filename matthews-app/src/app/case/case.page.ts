@@ -65,7 +65,6 @@ export class CasePage implements OnInit {
   deviceList$ = this.caseStore.deviceList$;
   selectedDevice: Device;
   facilityStatuses: FacilityStatus[] = [];
-  filteredFacilityStatuses: FacilityStatus[] = [];
 
   private guidEmpty = '00000000-0000-0000-0000-000000000000';
   private dateTimeMin = '0001-01-01T00:00:00';
@@ -84,9 +83,6 @@ export class CasePage implements OnInit {
         .getAllStatusesByFacility(this.selectedFacility)
         .then((data) => {
           this.facilityStatuses = data;
-          this.filteredFacilityStatuses = this.facilityStatuses.filter(
-            (f) => f.status === 4 || f.status === 3
-          );
         });
     });
     this.newCase.scheduledStartTime = this.formatDateAndTime(

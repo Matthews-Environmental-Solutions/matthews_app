@@ -473,23 +473,23 @@ export class AppStoreService extends ComponentStore<AppState> {
     return this.get((state) => state.selectedCaseId);
   }
 
-  readonly getCases = this.effect<string>((cases$) =>
-    cases$.pipe(
-      tap(() => this.loadingService.present()),
-      switchMap((facilityId) =>
-        this.caseService.getCases(facilityId).then((response: Case[]) => {
-          this.updateCases(
-            response.filter(
-              (caseToFilter) =>
-                caseToFilter.scheduledFacility === facilityId &&
-                caseToFilter.isObsolete === false
-            )
-          );
-          this.loadingService.dismiss();
-        })
-      )
-    )
-  );
+  // readonly getCases = this.effect<string>((cases$) =>
+  //   cases$.pipe(
+  //     tap(() => this.loadingService.present()),
+  //     switchMap((facilityId) =>
+  //       this.caseService.getCases(facilityId).then((response: Case[]) => {
+  //         this.updateCases(
+  //           response.filter(
+  //             (caseToFilter) =>
+  //               caseToFilter.scheduledFacility === facilityId &&
+  //               caseToFilter.isObsolete === false
+  //           )
+  //         );
+  //         this.loadingService.dismiss();
+  //       })
+  //     )
+  //   )
+  // );
 
   readonly getCasesByDay = this.effect<[string, Date]>((cases$) =>
     cases$.pipe(
@@ -568,7 +568,7 @@ export class AppStoreService extends ComponentStore<AppState> {
       tap(() => this.loadingService.present()),
       switchMap((selectedCase) =>
         this.caseService.createCase(selectedCase).then((savedCase) => {
-          this.getCases(selectedCase.scheduledFacility);
+          //this.getCases(selectedCase.scheduledFacility);
           this.loadingService.dismiss();
         })
       ),
@@ -581,7 +581,7 @@ export class AppStoreService extends ComponentStore<AppState> {
       tap(() => this.loadingService.present()),
       switchMap((selectedCase) =>
         this.caseService.createCase(selectedCase).then((savedCase) => {
-          this.getCases(selectedCase.scheduledFacility);
+          //this.getCases(selectedCase.scheduledFacility);
           this.updateSelectedCase(savedCase);
           this.updateSelectedCaseId(savedCase.id);
           this.caseService.selectCase(savedCase.id);
@@ -597,7 +597,7 @@ export class AppStoreService extends ComponentStore<AppState> {
       tap(() => this.loadingService.present()),
       switchMap((selectedCase) =>
         this.caseService.updateCase(selectedCase.id, selectedCase).then(() => {
-          this.getCases(selectedCase.scheduledFacility);
+          //this.getCases(selectedCase.scheduledFacility);
           this.loadingService.dismiss();
         })
       )
@@ -609,7 +609,7 @@ export class AppStoreService extends ComponentStore<AppState> {
       tap(() => this.loadingService.present()),
       switchMap((selectedCase) =>
         this.caseService.deleteCase(selectedCase.id.toString()).then(() => {
-          this.getCases(selectedCase.scheduledFacility);
+          //this.getCases(selectedCase.scheduledFacility);
           this.loadingService.dismiss();
         })
       )

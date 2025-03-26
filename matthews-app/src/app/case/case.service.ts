@@ -39,11 +39,6 @@ export class CaseService {
     return this.httpService.request('PUT', deSelectCaseUrl, caseId);
   }
 
-  getCases(facilityId: string) {
-    const getScheduleUrl = `${environment.apiUrl}/Case/GetAllCasesByFacility/${facilityId}`;
-    return this.httpService.request<Case[]>('GET', getScheduleUrl, facilityId);
-  }
-
   getReadyCasesByDevice(deviceId: string) {
     const getReadyCases = `${environment.apiUrl}/Case/GetReadyCasesByDevice/${deviceId}`;
     return this.httpService.request<Case[]>('GET', getReadyCases, deviceId);
