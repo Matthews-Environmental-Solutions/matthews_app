@@ -28,6 +28,7 @@ import { MatGridTileHeaderCssMatStyler } from '@angular/material/grid-list';
 import { DeleteDialogComponent } from '../../dialogs/delete-dialog/delete-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { FacilityService } from 'src/app/services/facility.service';
+import { MatButtonToggle } from '@angular/material/button-toggle';
 
 @Component({
   selector: 'case-add-edit',
@@ -111,7 +112,7 @@ export class CaseAddEditComponent implements OnInit {
       .pipe(map(data => data.filter(f => f.isValid)))
       .subscribe(data => {
         this.facilities = data;
-    }));
+      }));
 
     this.subs.add(this.stateService.selectedFacilityId$.subscribe(f => {
       this.caseForm.get('facility')?.setValue(f);
@@ -287,14 +288,14 @@ export class CaseAddEditComponent implements OnInit {
 
   openDeleteCaseDialog(enterAnimationDuration: string, exitAnimationDuration: string): void {
     const dialogRef = this.dialog.open(DeleteDialogComponent, {
-        width: '250px',
-        height: '200px',
-        enterAnimationDuration,
-        exitAnimationDuration,
-        data: {
-          deleteCase: () => this.deleteCase(),
-          name: this.case?.firstName,
-          surname: this.case?.lastName
+      width: '250px',
+      height: '200px',
+      enterAnimationDuration,
+      exitAnimationDuration,
+      data: {
+        deleteCase: () => this.deleteCase(),
+        name: this.case?.firstName,
+        surname: this.case?.lastName
       }
     });
   }
@@ -341,5 +342,13 @@ export class CaseAddEditComponent implements OnInit {
 
   preventFormSubmit(event: Event): void {
     event.preventDefault();
+  }
+
+  handleKeyPress(event: any, toggle: MatButtonToggle) {
+    if (event.key === 'Enter') {
+      toggle.checked = !toggle.checked;
+      // If you need to update the form control value
+      this.caseForm?.get('gender')?.setValue(toggle.value);
+    }
   }
 }

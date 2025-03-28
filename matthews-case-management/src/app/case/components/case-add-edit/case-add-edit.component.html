@@ -86,9 +86,15 @@
                 <section class="toggle-button-container">
                     <mat-label class="toggle-button-label">{{"gender" | translate}}</mat-label>
                     <mat-button-toggle-group formControlName="gender" aria-label="Font Style">
-                        <mat-button-toggle value=0>{{"male" | translate}}</mat-button-toggle>
-                        <mat-button-toggle value=1>{{"female" | translate}}</mat-button-toggle>
-                        <mat-button-toggle value=2>{{"other" | translate}}</mat-button-toggle>
+                        <mat-button-toggle value="0" (keyup.enter)="handleKeyPress($event, toggle)" #toggle>
+                            {{"male" | translate}}
+                        </mat-button-toggle>
+                        <mat-button-toggle value="1" (keyup.enter)="handleKeyPress($event, toggle2)" #toggle2>
+                            {{"female" | translate}}
+                        </mat-button-toggle>
+                        <mat-button-toggle value="2" (keyup.enter)="handleKeyPress($event, toggle3)" #toggle3>
+                            {{"other" | translate}}
+                        </mat-button-toggle>
                     </mat-button-toggle-group>
                 </section>
 
