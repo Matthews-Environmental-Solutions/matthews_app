@@ -4,6 +4,11 @@
 - Changed: Description of a change in existing functionality.
 - Removed: Description of deprecated features.
 
+## [1.0.5] - 2025-04-07
+	- Fixed:
+		CaseI4cHttpClientService to prevent Case API IIS pool to break down when the i4connected is not working.
+		CasesService is handing exceptions on Create.
+
 ## [1.0.5] - 2025-03-13
 	- Fixed:
 		MqttMessageHandler has better handling of incoming messages. It will trust to Flexy messages. Code is refactored.

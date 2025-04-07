@@ -4,7 +4,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Security.Authentication;
@@ -25,183 +24,135 @@ public interface ICaseI4cHttpClientService
 public class CaseI4cHttpClientService : ICaseI4cHttpClientService
 {
     private readonly ILogger<CaseI4cHttpClientService> _logger;
-    private HttpClient _httpClient;
-    private IConfiguration _configuration;
+    private readonly HttpClient _httpClient;
+    private readonly IConfiguration _configuration;
+
     private string _accessToken;
     private DateTime _tokenIssuedAt;
     private TimeSpan _tokenLifetime;
 
     public CaseI4cHttpClientService(IConfiguration configuration, ILogger<CaseI4cHttpClientService> logger)
     {
+        _configuration = configuration;
         _logger = logger;
 
-        HttpClientHandler handler = new HttpClientHandler()
+        var handler = new HttpClientHandler
         {
-            SslProtocols = SslProtocols.Tls12 | SslProtocols.Tls11 | SslProtocols.Tls13,
-
-            // You can enable this if you need to bypass SSL certificate validation
-            // This is generally not recommended for production code
+            SslProtocols = SslProtocols.Tls12 | SslProtocols.Tls13,
             ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
-
-            //ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) =>
-            //{
-            //    string knownThumbprint = "6F1432136873ADFDF4F68D6B9B1ED20944327600";
-
-            //    if (cert.GetCertHashString() == knownThumbprint)
-            //    {
-            //        return true; // Bypass validation for this specific certificate
-            //    }
-
-            //    return sslPolicyErrors == System.Net.Security.SslPolicyErrors.None; // Perform standard validation otherwise
-            //}
         };
-        _httpClient = new HttpClient(handler);
-        _configuration = configuration;
-        _httpClient.BaseAddress = new Uri(_configuration["i4connectedApiUrl"]);
-        _httpClient.Timeout = new TimeSpan(0, 0, 30);
 
-        GetAccessTokenAndConnect();
+        _httpClient = new HttpClient(handler)
+        {
+            BaseAddress = new Uri(_configuration["i4connectedApiUrl"]),
+            Timeout = TimeSpan.FromSeconds(30)
+        };
     }
 
     public async Task<ICollection<FacilityDto>> GetAllFacilities()
-    {
-        if (IsTokenExpired())
-        {
-            GetAccessTokenAndConnect();
-        }
-
-        HttpResponseMessage response;
-        try
-        {
-            response = await _httpClient.GetAsync("/api/api/sites/list");
-            response.EnsureSuccessStatusCode();
-
-            var res = await response.Content.ReadAsStringAsync();
-            return JsonSerializer.Deserialize<ICollection<FacilityDto>>(res);
-        }
-        catch (Exception ex)
-        {
-            throw;
-        }
-    }
+        => await GetWithTokenAsync<ICollection<FacilityDto>>("/api/api/sites/list");
 
     public async Task<ICollection<DeviceDto>> GetAllDevicesAsync()
-    {
-        if (IsTokenExpired())
-        {
-            GetAccessTokenAndConnect();
-        }
+        => await PostWithTokenAsync<ICollection<DeviceDto>>("/api/api/devices/list?pageSize=1000000&pageNumber=1&sortFields=0", "{}");
 
-        HttpResponseMessage response;
+    public async Task<AdapterDto> GetAdapterByDeviceIdAsync(Guid deviceId)
+        => await GetWithTokenAsync<AdapterDto>($"/api/api/adapters/{deviceId}/details");
+
+    public async Task<DeviceDetailsDto> GetDeviceDetailsAsync(Guid deviceId)
+        => await GetWithTokenAsync<DeviceDetailsDto>($"/api/api/devices/{deviceId}/details");
+
+    private async Task<T> GetWithTokenAsync<T>(string endpoint)
+    {
+        await EnsureValidTokenAsync();
+
         try
         {
-            HttpContent content = new StringContent("{}", UnicodeEncoding.UTF8, "application/json");
-            response = await _httpClient.PostAsync("/api/api/devices/list?pageSize=1000000&pageNumber=1&sortFields=0", content);
+            var response = await _httpClient.GetAsync(endpoint);
             response.EnsureSuccessStatusCode();
 
-            var res = await response.Content.ReadAsStringAsync();
-            return JsonSerializer.Deserialize<ICollection<DeviceDto>>(res);
-        }
-        catch (Exception)
-        {
-            throw;
-        }
-    }
-
-    public async Task<AdapterDto> GetAdapterByDeviceIdAsync(Guid DeviceId)
-    {
-        if (IsTokenExpired())
-        {
-            GetAccessTokenAndConnect();
-        }
-
-        HttpResponseMessage response;
-        try
-        {
-            response = await _httpClient.GetAsync($"/api/api/adapters/{DeviceId}/details");
-            response.EnsureSuccessStatusCode();
-
-            var res = await response.Content.ReadAsStringAsync();
-            return JsonSerializer.Deserialize<AdapterDto>(res);
-        }
-        catch (Exception)
-        {
-            throw;
-        }
-    }
-
-    public async Task<DeviceDetailsDto> GetDeviceDetailsAsync(Guid DeviceId)
-    {
-        if (IsTokenExpired())
-        {
-            GetAccessTokenAndConnect();
-        }
-
-        HttpResponseMessage response;
-        try
-        {
-            response = await _httpClient.GetAsync($"/api/api/devices/{DeviceId}/details");
-            response.EnsureSuccessStatusCode();
-
-            var res = await response.Content.ReadAsStringAsync();
-            DeviceDetailsDto _ = JsonSerializer.Deserialize<DeviceDetailsDto>(res);
-            return JsonSerializer.Deserialize<DeviceDetailsDto>(res);
+            var content = await response.Content.ReadAsStringAsync();
+            return JsonSerializer.Deserialize<T>(content);
         }
         catch (Exception ex)
         {
-            throw;
+            _logger.LogError(ex, "Error during GET to {Endpoint}", endpoint);
+            return default;
         }
     }
 
-    private async Task<(string, DateTime, TimeSpan)> GetAccessTokenFromIdentityServer()
+    private async Task<T> PostWithTokenAsync<T>(string endpoint, string body)
     {
-        _logger.LogInformation("Getting access token from Identity Server");
-        var disco = await _httpClient.GetDiscoveryDocumentAsync(_configuration["OAuth2Introspection:Authority"]);
-        if (disco.IsError)
+        await EnsureValidTokenAsync();
+
+        try
         {
-            Debug.WriteLine("Identity server - Unsuccesful discovery");
+            var content = new StringContent(body, Encoding.UTF8, "application/json");
+            var response = await _httpClient.PostAsync(endpoint, content);
+            response.EnsureSuccessStatusCode();
+
+            var res = await response.Content.ReadAsStringAsync();
+            return JsonSerializer.Deserialize<T>(res);
         }
-
-        var apiClientCredentials = new PasswordTokenRequest
+        catch (Exception ex)
         {
-            Address = disco.TokenEndpoint,
-            GrantType = "password",
-            Scope = _configuration["OAuth2Introspection:Scope"],
-            UserName = _configuration["OAuth2Introspection:UserName"],
-            Password = _configuration["OAuth2Introspection:Password"],
-            ClientId = _configuration["OAuth2Introspection:ClientId"],            
-        };
-
-        // 2. Authenticates and get an access token from Identity Server
-        var tokenResponse = await _httpClient.RequestPasswordTokenAsync(apiClientCredentials);
-        if (tokenResponse.IsError)
-        {
-            Debug.WriteLine("Identity server - Unsuccesful token response");
+            _logger.LogError(ex, "Error during POST to {Endpoint}", endpoint);
+            return default;
         }
-
-        _accessToken = tokenResponse.AccessToken;
-        _tokenIssuedAt = DateTime.UtcNow;
-        _tokenLifetime = TimeSpan.FromSeconds(tokenResponse.ExpiresIn);
-        return (_accessToken, _tokenIssuedAt, _tokenLifetime);
     }
 
-    private bool IsTokenExpired()
+    private async Task EnsureValidTokenAsync()
     {
-        // If the token is null, consider it expired
-        if (_accessToken == null) return true;
+        if (!IsTokenValid())
+        {
+            await RefreshTokenAsync();
+        }
 
-        // Calculate the expiration time based on the issued time and lifetime
-        var expirationTime = _tokenIssuedAt.Add(_tokenLifetime.Subtract(TimeSpan.FromSeconds(900)));
-
-        // Check if the token is expired
-        return expirationTime < DateTime.UtcNow;
-    }
-
-    private void GetAccessTokenAndConnect()
-    {
-        _ = GetAccessTokenFromIdentityServer().Result;
-        _logger.LogInformation("Connecting to i4connected");
         _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _accessToken);
     }
 
+    private bool IsTokenValid()
+    {
+        if (string.IsNullOrEmpty(_accessToken)) return false;
+        return DateTime.UtcNow < _tokenIssuedAt.Add(_tokenLifetime).Subtract(TimeSpan.FromMinutes(5));
+    }
+
+    private async Task RefreshTokenAsync()
+    {
+        _logger.LogInformation("Fetching new access token...");
+
+        try
+        {
+            var disco = await _httpClient.GetDiscoveryDocumentAsync(_configuration["OAuth2Introspection:Authority"]);
+            if (disco.IsError)
+            {
+                _logger.LogError("Discovery failed: {Error}", disco.Error);
+                return;
+            }
+
+            var request = new PasswordTokenRequest
+            {
+                Address = disco.TokenEndpoint,
+                ClientId = _configuration["OAuth2Introspection:ClientId"],
+                UserName = _configuration["OAuth2Introspection:UserName"],
+                Password = _configuration["OAuth2Introspection:Password"],
+                Scope = _configuration["OAuth2Introspection:Scope"]
+            };
+
+            var tokenResponse = await _httpClient.RequestPasswordTokenAsync(request);
+
+            if (tokenResponse.IsError)
+            {
+                _logger.LogError("Token request failed: {Error}", tokenResponse.Error);
+                return;
+            }
+
+            _accessToken = tokenResponse.AccessToken;
+            _tokenIssuedAt = DateTime.UtcNow;
+            _tokenLifetime = TimeSpan.FromSeconds(tokenResponse.ExpiresIn);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error refreshing access token");
+        }
+    }
 }

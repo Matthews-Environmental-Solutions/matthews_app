@@ -351,4 +351,11 @@ export class CaseAddEditComponent implements OnInit {
       this.caseForm?.get('gender')?.setValue(toggle.value);
     }
   }
+
+  trimInput(controlName: string): void {
+    const control = this.caseForm.get(controlName);
+    if (control && typeof control.value === 'string') {
+      control.setValue(control.value.trim());
+    }
+  }
 }

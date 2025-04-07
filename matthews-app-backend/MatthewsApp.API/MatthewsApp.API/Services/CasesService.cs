@@ -77,18 +77,26 @@ public class CasesService : ICasesService
         //entity.FirstName = UTF8toASCII(entity.FirstName);
         //entity.LastName = UTF8toASCII(entity.LastName);
 
-        var createdEntity = _caseRepository.Create(entity);
-        List<Guid> ids = new List<Guid>();
-
-        if(createdEntity.ScheduledDevice != null && !createdEntity.ScheduledDevice.Equals(Guid.Empty))
+        try
         {
-            ids.Add((Guid)createdEntity.ScheduledDevice);
-            // Send event
-            SendEventToHostedService(createdEntity, ids);
-        }
+            var createdEntity = _caseRepository.Create(entity);
+            List<Guid> ids = new List<Guid>();
 
-        // SignalR
-        _caseHub.SendMessageToRefreshList($"Create done.");
+            if (createdEntity.ScheduledDevice != null && !createdEntity.ScheduledDevice.Equals(Guid.Empty))
+            {
+                ids.Add((Guid)createdEntity.ScheduledDevice);
+                // Send event
+                SendEventToHostedService(createdEntity, ids);
+            }
+
+            // SignalR
+            _caseHub.SendMessageToRefreshList($"Create done.");
+        }
+        catch (Exception)
+        {
+
+            throw;
+        }
     }
 
     public void Delete(Case entity)
