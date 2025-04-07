@@ -342,4 +342,11 @@ export class CaseAddEditComponent implements OnInit {
   preventFormSubmit(event: Event): void {
     event.preventDefault();
   }
+
+  trimInput(controlName: string): void {
+    const control = this.caseForm.get(controlName);
+    if (control && typeof control.value === 'string') {
+      control.setValue(control.value.trim());
+    }
+  }
 }

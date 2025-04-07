@@ -31,7 +31,7 @@
                 </mat-error>
                 <mat-form-field class="example-full-width">
                     <mat-label>{{"caseId" | translate}}</mat-label>
-                    <input formControlName="clientCaseId" matInput placeholder="Enter case id" value="">
+                    <input formControlName="clientCaseId" matInput placeholder="Enter case id" value="" (blur)="trimInput('clientCaseId')">
                 </mat-form-field>
 
 
@@ -49,7 +49,7 @@
                 </mat-error>
                 <mat-form-field class="example-full-width">
                     <mat-label>{{"firstName" | translate}}</mat-label>
-                    <input formControlName="firstName" matInput placeholder="Enter first name" value="" id="firstName">
+                    <input formControlName="firstName" matInput placeholder="Enter first name" value="" id="firstName" maxlength="16" (blur)="trimInput('firstName')">
                 </mat-form-field>
 
 
@@ -61,7 +61,7 @@
                 </mat-error>
                 <mat-form-field class="example-full-width">
                     <mat-label>{{"lastName" | translate}}</mat-label>
-                    <input formControlName="lastName" matInput placeholder="Enter last name" value="">
+                    <input formControlName="lastName" matInput placeholder="Enter last name" value="" maxlength="16" (blur)="trimInput('lastName')">
                 </mat-form-field>
 
 

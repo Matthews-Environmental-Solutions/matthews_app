@@ -1,4 +1,4 @@
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable, catchError, concat, concatMap, map, of, retry, throwError } from "rxjs";
 import { Case } from "../models/case.model";
@@ -6,6 +6,7 @@ import { TranslateService } from "@ngx-translate/core";
 import { environment } from "src/environments/environment";
 import { CalendarService } from "./calendar.service";
 import { CaseStatusDto } from "../models/case-status-dto.model";
+
 
 @Injectable({
     providedIn: 'root'
@@ -148,6 +149,8 @@ export class CaseService {
         if (error.error instanceof ErrorEvent) {
             // Get client-side error
             errorMessage = error.error.message;
+        } else if(error instanceof HttpErrorResponse){
+            errorMessage = error.error;
         } else {
             // Get server-side error
             errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;

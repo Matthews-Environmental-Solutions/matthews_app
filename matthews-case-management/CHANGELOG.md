@@ -9,6 +9,11 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 - Bug fixes.
 
+## [2.20] - 2025-04-07
+### Fixed
+- case-add-edit.component to trim text input fields. FirstName and LastName have limitation of 167 characters.
+- CasesService: HttpErrorResponse is introduced in handleError
+
 ## [2.19] - 2025-03-18
 ### Fixed
 - datetime pipe is changed to show date or time or both. In order to show date/time, the app is using this pipe only.
