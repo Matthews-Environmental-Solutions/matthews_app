@@ -12,22 +12,22 @@
   </ion-toolbar>
 </ion-header>
 <ion-content >
-  <form (ngSubmit)="onSubmit()" >
+  <form #caseForm="ngForm" (ngSubmit)="onSubmit()" >
     <ion-item lines="full">
       <ion-label position="floating">{{'CaseID' | translate}}</ion-label>
-      <ion-input [(ngModel)]="newCase.clientCaseId" name="caseId" type="text" required></ion-input>
+      <ion-input [(ngModel)]="newCase.clientCaseId" name="caseId" type="text" required (ionBlur)="trimClientCaseId()"></ion-input>
     </ion-item>
     <ion-item lines="full">
       <ion-label position="floating">{{'First Name' | translate}}</ion-label>
-      <ion-input type="text" [(ngModel)]="newCase.firstName" name="firstname" required></ion-input>
+      <ion-input type="text" [(ngModel)]="newCase.firstName" name="firstname" required maxlength="16" (ionBlur)="trimFirstName()"></ion-input>
     </ion-item>
     <ion-item lines="full">
       <ion-label position="floating">{{'Last Name' | translate}}</ion-label>
-      <ion-input type="text" [(ngModel)]="newCase.lastName" name="lastname" required></ion-input>
+      <ion-input type="text" [(ngModel)]="newCase.lastName" name="lastname" required maxlength="16" (ionBlur)="trimLastName()"></ion-input>
     </ion-item>
     <ion-item lines="full">
       <ion-label position="floating">Physical ID</ion-label>
-      <ion-input type="text" [(ngModel)]="newCase.physicalId" name="physicalId" required></ion-input>
+      <ion-input type="text" [(ngModel)]="newCase.physicalId" name="physicalId" required (ionBlur)="trimPhysicalId()"></ion-input>
     </ion-item>
     <ion-row>
       <ion-col>
@@ -93,6 +93,8 @@
 
       </ion-item> -->
     <!-- </ng-container> -->
-    <ion-button type="submit" color="primary" expand="block">{{'Submit' | translate}}</ion-button>
+    <ion-button type="submit" color="primary" expand="block" [disabled]="!caseForm.valid">
+      {{'Submit' | translate}}
+    </ion-button>
   </form>
 </ion-content>

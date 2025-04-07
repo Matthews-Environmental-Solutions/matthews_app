@@ -273,4 +273,28 @@ export class CasePage implements OnInit {
     );
   }
 
+  trimLastName() {
+    if (this.newCase.lastName) {
+      this.newCase.lastName = this.newCase.lastName.trim();
+    }
+  }
+  
+  trimFirstName() {
+    if (this.newCase.firstName) {
+      this.newCase.firstName = this.newCase.firstName.trim();
+    }
+  }
+
+  trimClientCaseId() {
+    if (this.newCase.clientCaseId) {
+      this.newCase.clientCaseId = this.newCase.clientCaseId.trim();
+    }
+  }
+  
+  trimPhysicalId() {
+    if (this.newCase.physicalId) {
+      this.newCase.physicalId = this.newCase.physicalId.trim();
+    }
+  }
+
 }
