@@ -94,7 +94,7 @@ export class CaseCalendarComponent implements OnInit, OnDestroy {
 
     if (this.calendarView == 'byDay') {
       let datePrevious: Date = new Date(this.selectedDay);
-      datePrevious.setDate(this.selectedDay.getDate() - 1);
+      datePrevious.setDate(datePrevious.getDate() - 1);
       this.daySelectedEvent(datePrevious);
     }
   }
@@ -105,7 +105,7 @@ export class CaseCalendarComponent implements OnInit, OnDestroy {
 
     if (this.calendarView == 'byDay') {
       let dateNext: Date = new Date(this.selectedDay);
-      dateNext.setDate(this.selectedDay.getDate() + 1);
+      dateNext.setDate(dateNext.getDate() + 1);
       this.daySelectedEvent(dateNext);
     }
   }
