@@ -84,7 +84,9 @@
                     </span>
                 </mat-error>
                 <section class="toggle-button-container">
-                    <mat-label class="toggle-button-label">{{"gender" | translate}}</mat-label>
+                    <mat-label class="toggle-button-label">
+                        {{"gender" | translate}} <span class="required-asterisk">*</span>
+                      </mat-label>
                     <mat-button-toggle-group formControlName="gender" aria-label="Font Style">
                         <mat-button-toggle value="0" (keyup.enter)="handleKeyPress($event, toggle)" #toggle>
                             {{"male" | translate}}
@@ -97,8 +99,12 @@
                         </mat-button-toggle>
                     </mat-button-toggle-group>
                 </section>
+            </div>
 
 
+
+            <div class="middle-column">
+                
                 <mat-error
                     *ngIf="caseForm.get('age')?.invalid && (caseForm.get('age')?.dirty || caseForm.get('age')?.touched)">
                     <span *ngIf="caseForm.get('age')?.errors?.['required']">
@@ -109,11 +115,7 @@
                     <mat-label>{{"age" | translate}}</mat-label>
                     <input formControlName="age" matInput placeholder="Enter case age" value="" type="number">
                 </mat-form-field>
-            </div>
 
-
-
-            <div class="middle-column">
                 <mat-error
                     *ngIf="caseForm.get('facility')?.invalid && (caseForm.get('facility')?.dirty || caseForm.get('facility')?.touched)">
                     <span *ngIf="caseForm.get('facility')?.errors?.['required']">
@@ -153,20 +155,20 @@
                     </mat-select>
                 </mat-form-field>
 
-                <mat-error
+                <!-- <mat-error
                     *ngIf="caseForm.get('containerSize')?.invalid && (caseForm.get('containerSize')?.dirty || caseForm.get('containerSize')?.touched)">
                     <span *ngIf="caseForm.get('containerSize')?.errors?.['required']">
                         Container size is required.
                     </span>
-                </mat-error>
-                <mat-form-field appearance="fill">
+                </mat-error> -->
+                <!-- <mat-form-field appearance="fill">
                     <mat-label>{{"loadSize" | translate}}</mat-label>
                     <mat-select formControlName="containerSize">
                         <mat-option *ngFor="let loadSize of containerSizes" [value]="loadSize.id">
                             {{loadSize.name}}
                         </mat-option>
                     </mat-select>
-                </mat-form-field>
+                </mat-form-field> -->
 
                 <section class="schedule-start-time-container">
                     <mat-label class="toggle-button-label">{{"scheduledStartTime" | translate}}</mat-label>

@@ -96,12 +96,11 @@ export class CaseAddEditComponent implements OnInit {
       lastName: new FormControl('', [Validators.required]),
       weight: new FormControl('', [Validators.required]),
       gender: new FormControl('', [Validators.required]),
-      age: new FormControl('', [Validators.required, Validators.pattern("^[0-9]*$"), Validators.maxLength(3)]),
-
+      age: new FormControl('', [Validators.pattern("^[0-9]*$"), Validators.maxLength(3)]),
       facility: new FormControl('', [Validators.required]),
       scheduledDevice: new FormControl('', { nonNullable: false }),
       containerType: new FormControl('', [Validators.required]),
-      containerSize: new FormControl('', [Validators.required]),
+      containerSize: new FormControl(''),
       scheduledStartDateTime: new FormControl(null),
 
       facilityStatus: new FormControl('', { nonNullable: true }),
