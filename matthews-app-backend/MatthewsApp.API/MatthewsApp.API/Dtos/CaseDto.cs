@@ -9,10 +9,10 @@ public record CaseDto(
     DateTime? ActualEndTime, // DateTime
     Guid? ActualFacility, // Guid
     DateTime? ActualStartTime, // DateTime
-    int Age,    // int
+    int? Age,    // int
     string ClientCaseId,
     string ClientId,
-    ContainerSize ContainerSize, // ContainerSize
+    ContainerSize? ContainerSize, // ContainerSize
     ContainerType ContainerType, // ContainerType
     Guid CreatedBy, // Guid
     DateTime CreatedTime, // DateTime
