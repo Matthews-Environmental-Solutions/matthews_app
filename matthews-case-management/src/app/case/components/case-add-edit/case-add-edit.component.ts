@@ -160,7 +160,7 @@ export class CaseAddEditComponent implements OnInit {
         this.caseForm.get('lastName')?.setValue(response.lastName);
         this.caseForm.get('weight')?.setValue(response.weight);
         this.caseForm.get('gender')?.setValue(response.gender.toString());
-        this.caseForm.get('age')?.setValue(response.age);
+        this.caseForm.get('age')?.setValue(response.age == 0 ? '' : response.age);
 
         this.caseForm.get('facility')?.setValue(response.scheduledFacility);
         this.caseForm.get('scheduledDevice')?.setValue(response.scheduledDevice);
@@ -225,7 +225,7 @@ export class CaseAddEditComponent implements OnInit {
     this.case.age = +this.caseForm.get('age')?.value;
 
     this.case.containerType = this.caseForm.get('containerType')?.value;
-    this.case.containerSize = +this.caseForm.get('containerSize')?.value;
+    this.case.containerSize = this.caseForm.get('containerSize')?.value;
 
     if (this.caseForm.get('scheduledDevice')?.value != '') {
       this.case.scheduledDevice = this.cremators.map(c => c.id).includes(this.caseForm.get('scheduledDevice')?.value) ? this.caseForm.get('scheduledDevice')?.value : this.GUID_EMPTY;
