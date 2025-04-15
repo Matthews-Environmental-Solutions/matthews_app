@@ -225,7 +225,7 @@ export class CaseAddEditComponent implements OnInit {
     this.case.age = +this.caseForm.get('age')?.value;
 
     this.case.containerType = this.caseForm.get('containerType')?.value;
-    this.case.containerSize = this.caseForm.get('containerSize')?.value;
+    this.case.containerSize = +this.caseForm.get('containerSize')?.value;
 
     if (this.caseForm.get('scheduledDevice')?.value != '') {
       this.case.scheduledDevice = this.cremators.map(c => c.id).includes(this.caseForm.get('scheduledDevice')?.value) ? this.caseForm.get('scheduledDevice')?.value : this.GUID_EMPTY;
