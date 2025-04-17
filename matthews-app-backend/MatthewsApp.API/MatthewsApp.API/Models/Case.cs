@@ -35,8 +35,6 @@ public class Case : BaseEntity
 
     public ContainerType ContainerType { get; set; }
 
-    public ContainerSize? ContainerSize { get; set; }
-
     [Required]
     public bool IsObsolete { get; set; } = false;
 

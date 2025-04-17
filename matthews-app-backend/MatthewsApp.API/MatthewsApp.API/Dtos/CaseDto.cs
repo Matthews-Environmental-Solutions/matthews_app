@@ -12,7 +12,6 @@ public record CaseDto(
     int? Age,    // int
     string ClientCaseId,
     string ClientId,
-    ContainerSize? ContainerSize, // ContainerSize
     ContainerType ContainerType, // ContainerType
     Guid CreatedBy, // Guid
     DateTime CreatedTime, // DateTime

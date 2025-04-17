@@ -574,7 +574,6 @@ public class CasesService : ICasesService
         entity.ScheduledFacility = dto.FACILITY_ID;
         entity.ScheduledDevice = dto.CREMATOR_ID;
         entity.ContainerType = (ContainerType)dto.LOADED_COFFIN_TYPE;
-        entity.ContainerSize = (ContainerSize)dto.LOADED_SIZE;
         entity.Weight = dto.LOADED_WEIGHT;
         entity.Gender = dto.LOADED_GENDER;
         //entity.ScheduledStartTime = dto.StartTime;
@@ -594,7 +593,6 @@ public class CasesService : ICasesService
         oldCase.ScheduledFacility = dto.FACILITY_ID;
         oldCase.ScheduledDevice = dto.CREMATOR_ID;
         oldCase.ContainerType = (ContainerType)dto.LOADED_COFFIN_TYPE;
-        oldCase.ContainerSize = (ContainerSize)dto.LOADED_SIZE;
         oldCase.Weight = dto.LOADED_WEIGHT;
         oldCase.Gender = dto.LOADED_GENDER;
         oldCase.ClientId = "1"; //ClientID is missing in CaseStart object from Flexy

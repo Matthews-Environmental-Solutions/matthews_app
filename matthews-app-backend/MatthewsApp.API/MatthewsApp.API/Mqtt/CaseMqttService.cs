@@ -578,7 +578,6 @@ public class CaseMqttService : IHostedService
             jsonDict.Add($"CASE_{counter}_CLIENT_ID", caseFor20.Client_ID);
             jsonDict.Add($"CASE_{counter}_FIRST_NAME", caseFor20.FIRST_NAME);
             jsonDict.Add($"CASE_{counter}_SURNAME", caseFor20.SURNAME);
-            jsonDict.Add($"CASE_{counter}_SIZE", caseFor20.SIZE);
             jsonDict.Add($"CASE_{counter}_WEIGHT", caseFor20.WEIGHT);
             jsonDict.Add($"CASE_{counter}_COFFIN_TYPE", caseFor20.COFFIN_TYPE);
             jsonDict.Add($"CASE_{counter}_GENDER", caseFor20.GENDER);

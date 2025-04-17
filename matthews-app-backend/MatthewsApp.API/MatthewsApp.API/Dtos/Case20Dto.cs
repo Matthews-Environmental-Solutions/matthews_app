@@ -7,7 +7,6 @@ public record Case20Dto (
     string Client_ID,
     string FIRST_NAME,
     string SURNAME,
-    string SIZE,
     string WEIGHT,
     string COFFIN_TYPE,
     string GENDER,

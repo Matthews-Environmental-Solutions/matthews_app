@@ -27,9 +27,6 @@ public class CaseFromFlexyDto {
 	public string LOADED_SURNAME { get; set; }
     public string LOADED_CLIENT_ID { get; set; }
 
-    [JsonConverter(typeof(ContainerSizeConverter))]
-    public ContainerSize LOADED_SIZE { get; set; }
-
     [JsonConverter(typeof(StringToIntConverter))]
     public int LOADED_WEIGHT { get; set; }
 
