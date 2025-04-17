@@ -122,21 +122,6 @@ export class CaseService {
                 break;
         }
 
-        switch (item.containerSize) {
-            case 0:
-                item.containerSizeText = this.translate.instant('none');
-                break;
-            case 1:
-                item.containerSizeText = this.translate.instant('Standard');
-                break;
-            case 2:
-                item.containerSizeText = this.translate.instant('Infant');
-                break;
-            case 3:
-                item.containerSizeText = this.translate.instant('Bariatric');
-                break;
-        }
-
         item.scheduledStartTime = item.scheduledStartTime && item.scheduledStartTime?.length > 0 ? this.formatDateAndTime(item.scheduledStartTime) : '';
 
 

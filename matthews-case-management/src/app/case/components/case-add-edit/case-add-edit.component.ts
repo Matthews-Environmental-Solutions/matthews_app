@@ -7,7 +7,6 @@ import { isValid } from 'date-fns'
 import { CaseStatusDto } from 'src/app/models/case-status-dto.model';
 import { Case } from 'src/app/models/case.model';
 import { ContainerType } from 'src/app/models/container-type.model';
-import { ContainerSize } from 'src/app/models/load-size.model';
 import { MtxCalendarView, MtxDatetimepickerMode, MtxDatetimepickerType } from '@ng-matero/extensions/datetimepicker';
 import { CaseService } from 'src/app/services/cases.service';
 import { map, Subscription } from 'rxjs';
@@ -51,7 +50,7 @@ export class CaseAddEditComponent implements OnInit {
   title: string = 'addNewCase';
 
   containerTypes: ContainerType[] = [{ id: 0, name: 'None' }, { id: 1, name: 'Cardboard' }, { id: 2, name: 'Hardwood' }, { id: 3, name: 'MDF Particle board' }, { id: 4, name: 'Bag/Shroud' }, { id: 4, name: 'Other' }];
-  containerSizes: ContainerSize[] = [{ id: 0, name: 'None' }, { id: 1, name: 'Standard' }, { id: 2, name: 'Infant' }, { id: 3, name: 'Bariatric' }];
+
   cremators: Device[] = [];
   facilities: Facility[] = [];
   selectedFacilityId: string = this.GUID_EMPTY;
@@ -100,7 +99,6 @@ export class CaseAddEditComponent implements OnInit {
       facility: new FormControl('', [Validators.required]),
       scheduledDevice: new FormControl('', { nonNullable: false }),
       containerType: new FormControl('', [Validators.required]),
-      containerSize: new FormControl(''),
       scheduledStartDateTime: new FormControl(null),
 
       facilityStatus: new FormControl('', { nonNullable: true }),
@@ -165,7 +163,6 @@ export class CaseAddEditComponent implements OnInit {
         this.caseForm.get('facility')?.setValue(response.scheduledFacility);
         this.caseForm.get('scheduledDevice')?.setValue(response.scheduledDevice);
         this.caseForm.get('containerType')?.setValue(response.containerType);
-        this.caseForm.get('containerSize')?.setValue(response.containerSize);
 
         this.caseForm.get('facilityStatus')?.setValue(response.facilityStatusId);
         this.caseForm.get('physicalId')?.setValue(response.physicalId);
@@ -225,7 +222,6 @@ export class CaseAddEditComponent implements OnInit {
     this.case.age = +this.caseForm.get('age')?.value;
 
     this.case.containerType = this.caseForm.get('containerType')?.value;
-    this.case.containerSize = this.caseForm.get('containerSize')?.value;
 
     if (this.caseForm.get('scheduledDevice')?.value != '') {
       this.case.scheduledDevice = this.cremators.map(c => c.id).includes(this.caseForm.get('scheduledDevice')?.value) ? this.caseForm.get('scheduledDevice')?.value : this.GUID_EMPTY;

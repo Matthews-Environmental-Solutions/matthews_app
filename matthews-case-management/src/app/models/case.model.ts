@@ -10,8 +10,6 @@ export interface ICase {
     genderText: string;
     containerType: number;
     containerTypeText: string;
-    containerSize: number;
-    containerSizeText: string;
     isObsolete: boolean;
     age: number;
 
@@ -51,8 +49,6 @@ export class Case implements ICase{
     genderText: string = '';
     containerType: number = 0; // enum to be used instead
     containerTypeText: string = '';
-    containerSize: number = 0; // enum to be used instead
-    containerSizeText: string = '';
     isObsolete: boolean = false;
     age: number = 100;
     

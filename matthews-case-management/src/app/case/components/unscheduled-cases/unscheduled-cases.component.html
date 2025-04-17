@@ -3,7 +3,7 @@
         <span class="unscheduled-item-id">ID {{case.clientCaseId}}</span>
         <span class="unscheduled-item-name">{{case.firstName}} {{case.lastName}}</span>
         <span>{{case.weight}} kg | {{case.genderText.toLowerCase() | translate}} | {{case.containerTypeText}}</span>
-        <span>{{case.containerSizeText}} {{case.scheduledDeviceAlias ? '| ' + case.scheduledDeviceAlias : ''}} | {{case.facilityStatusText ? case.facilityStatusText : ''}}</span>
+        <span>{{case.scheduledDeviceAlias ? '| ' + case.scheduledDeviceAlias : ''}} | {{case.facilityStatusText ? case.facilityStatusText : ''}}</span>
     </div>
     <div class="unscheduled-item-right">
         <button mat-icon-button aria-label="edit icon" (click)="gotoCaseEdit()">
