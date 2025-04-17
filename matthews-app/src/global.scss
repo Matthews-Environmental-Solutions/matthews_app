@@ -93,10 +93,9 @@
 /* Define your dark and light theme styles here */
 [data-theme="dark"] {
   /* Dark theme styles */
-  --ion-background-color: #121212;
-    --ion-background-color-rgb: 18,18,18;
-
-    --ion-text-color: #ffffff;
+  --ion-background-color: #121212 !important;
+    --ion-background-color-rgb: 18,18,18;  
+    --ion-text-color: #ffffff !important;
     --ion-text-color-rgb: 255,255,255;
 
     --ion-border-color: #222222;
@@ -134,7 +133,6 @@
   /* Light theme styles */
   --ion-background-color: #FFFFFF !important;;
     --ion-background-color-rgb: 255,255,255 !important;;
-
     --ion-text-color: #121212 !important;;
     --ion-text-color-rgb: 18,18,18 !important;;
 
@@ -167,4 +165,10 @@
     --ion-tab-bar-background: #f3f3f3 !important;;
 
     --ion-card-background: #f3f3f3 !important;;
+}
+
+[data-theme="dark"] ion-content,
+[data-theme="light"] ion-content {
+  --background: var(--ion-background-color) !important;
+  background: var(--ion-background-color) !important;
 }

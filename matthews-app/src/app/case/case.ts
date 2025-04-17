@@ -3,72 +3,6 @@ import { GenderType } from "../core/enums";
 import { GenderSelection } from "./selection-option";
 
 /* eslint-disable @typescript-eslint/no-inferrable-types */
-// export interface Case {
-//   id: string;
-
-//   clientId: string;
-
-//   clientCaseId: string;
-
-//   firstName: string;
-
-//   lastName: string;
-
-//   weight: number;
-
-//   gender: number;
-
-//   genderText: string;
-
-//   containerType: number;
-
-//   containerTypeText: string;
-
-//   containerSize: number;
-
-//   containerSizeText: string;
-
-//   isObsolete: boolean;
-
-//   age: number;
-
-//   status: number;
-
-//   scheduledFacility?: string;
-
-//   scheduledDevice?: string;
-
-//   scheduledDeviceAlias: string;
-
-//   scheduledStartTime?: string;
-
-//   actualFacility?: string;
-
-//   actualDevice?: string;
-
-//   actualDeviceAlias: string;
-
-//   actualStartTime?: string;
-
-//   actualEndTime?: string;
-
-//   createdBy: string;
-
-//   createdTime: string;
-
-//   modifiedBy?: string;
-
-//   modifiedTime?: string;
-
-//   performedBy?: string;
-
-//   fuel: string;
-
-//   electricity: string;
-
-//   //caseToFacilityStatuses: CaseToFacilityStatus[];
-// }
-
 export class Case {
   id: string;
 
@@ -89,10 +23,6 @@ export class Case {
   containerType: number; // enum to be used instead
 
   containerTypeText: string = '';
-
-  containerSize: number; // enum to be used instead
-
-  containerSizeText: string = '';
 
   isObsolete: boolean = false;
 

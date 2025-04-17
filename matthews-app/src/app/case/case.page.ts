@@ -14,13 +14,11 @@ import { ModalController } from '@ionic/angular';
 import { DatePipe } from '@angular/common';
 import {
   CaseStatuses,
-  ContainerSize,
   ContainerType,
   GenderType,
 } from '../core/enums';
 import { Device } from '../device-list/device';
 import {
-  ContainerSizeSelection,
   ContainerTypeSelection,
   GenderSelection,
 } from './selection-option';
@@ -51,12 +49,6 @@ export class CasePage implements OnInit {
     { id: 3, name: 'MDF Particle board' },
     { id: 4, name: 'Bag/Shroud' },
     { id: 5, name: 'Other' },
-  ];
-  containerSizes: ContainerSizeSelection[] = [
-    { id: 0, name: 'None' },
-    { id: 1, name: 'Standard' },
-    { id: 2, name: 'Infant' },
-    { id: 3, name: 'Bariatric' },
   ];
   caseStatuses = CaseStatuses;
   selectedFacility: string;
@@ -110,9 +102,6 @@ export class CasePage implements OnInit {
     this.newCase.containerType = this.selectedCase.containerType;
     this.newCase.containerTypeText =
       this.containerTypes[this.selectedCase.containerType].name;
-    this.newCase.containerSize = this.selectedCase.containerSize;
-    this.newCase.containerSizeText =
-      this.containerSizes[this.selectedCase.containerSize].name;
     this.newCase.status = this.selectedCase.status;
     this.newCase.scheduledDevice = this.selectedCase.scheduledDevice;
     this.newCase.scheduledStartTime = this.selectedCase.scheduledStartTime;
@@ -130,11 +119,8 @@ export class CasePage implements OnInit {
     if (!this.newCase.id || this.newCase.id.length < 1) {
       //this.updateDeviceAlias(this.newCase);
       this.newCase.gender = +this.newCase.gender;
-      this.newCase.containerSize = +this.newCase.containerSize;
       this.newCase.containerType = +this.newCase.containerType;
       this.newCase.genderText = this.genders[this.newCase.gender].name;
-      this.newCase.containerSizeText =
-        this.containerSizes[this.newCase.containerSize].name;
       this.newCase.containerTypeText =
         this.containerTypes[this.newCase.containerType].name;
       if (!this.fromProcess) {
@@ -191,11 +177,8 @@ export class CasePage implements OnInit {
     } else {
       this.updateDeviceAlias(this.newCase);
       this.newCase.gender = +this.newCase.gender;
-      this.newCase.containerSize = +this.newCase.containerSize;
       this.newCase.containerType = +this.newCase.containerType;
       this.newCase.genderText = this.genders[this.newCase.gender].name;
-      this.newCase.containerSizeText =
-        this.containerSizes[this.newCase.containerSize].name;
       this.newCase.containerTypeText =
         this.containerTypes[this.newCase.containerType].name;
       this.newCase.status = +this.newCase.status;

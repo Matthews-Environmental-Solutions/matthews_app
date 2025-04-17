@@ -8,13 +8,6 @@ export enum ContainerType {
   OTHER,
 }
 
-export enum ContainerSize {
-  NONE,
-  INFANT,
-  STANDARD,
-  BARIATRIC,
-}
-
 export enum GenderType {
   OTHER,
   MALE,

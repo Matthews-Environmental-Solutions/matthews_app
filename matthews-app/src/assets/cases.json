@@ -5,7 +5,6 @@
         "weight": "92kg",
         "gender": "Male",
         "containerType": "3",
-        "containerSize": "1",
         "status": "Cremation complete"
     },
     {
@@ -14,7 +13,6 @@
         "weight": "84kg",
         "gender": "Male",
         "containerType": "2",
-        "containerSize": "1",
         "status": "Cremation in progress"
     },
     {
@@ -23,7 +21,6 @@
         "weight": "88kg",
         "gender": "Male",
         "containerType": "3",
-        "containerSize": "2",
         "status": "Ready to cremate"
     },
     {
@@ -32,7 +29,6 @@
         "weight": "102kg",
         "gender": "Male",
         "containerType": "3",
-        "containerSize": "2",
         "status": "Ready to cremate"
     },
     {
@@ -41,7 +37,6 @@
         "weight": "74kg",
         "gender": "Female",
         "containerType": "3",
-        "containerSize": "0",
         "status": "Ready to cremate"
     },
     {
@@ -50,7 +45,6 @@
         "weight": "66kg",
         "gender": "Female",
         "containerType": "1",
-        "containerSize": "0",
         "status": "Cremation complete"
     },
     {
@@ -59,7 +53,6 @@
         "weight": "70kg",
         "gender": "Female",
         "containerType": "1",
-        "containerSize": "1",
         "status": "Ready to cremate"
     },
 
@@ -69,7 +62,6 @@
         "weight": "92kg",
         "gender": "Male",
         "containerType": "3",
-        "containerSize": "2",
         "status": "Cremation complete"
     },
     {
@@ -78,7 +70,6 @@
         "weight": "84kg",
         "gender": "Male",
         "containerType": "2",
-        "containerSize": "2",
         "status": "Cremation in progress"
     },
     {
@@ -87,7 +78,6 @@
         "weight": "88kg",
         "gender": "Male",
         "containerType": "3",
-        "containerSize": "2",
         "status": "Ready to cremate"
     },
     {
@@ -96,7 +86,6 @@
         "weight": "102kg",
         "gender": "Male",
         "containerType": "3",
-        "containerSize": "2",
         "status": "Ready to cremate"
     },
     {
@@ -105,7 +94,6 @@
         "weight": "74kg",
         "gender": "Female",
         "containerType": "3",
-        "containerSize": "1",
         "status": "Ready to cremate"
     },
     {
@@ -114,7 +102,6 @@
         "weight": "66kg",
         "gender": "Female",
         "containerType": "1",
-        "containerSize": "2",
         "status": "Cremation complete"
     },
     {
@@ -123,7 +110,6 @@
         "weight": "70kg",
         "gender": "Female",
         "containerType": "1",
-        "containerSize": "2",
         "status": "Ready to cremate"
     }
 ]

@@ -56,12 +56,6 @@
         <ion-select-option *ngFor="let t of containerTypes;" [value]="t.id">{{ t.name | titlecase}}</ion-select-option>
       </ion-select>
     </ion-item> 
-     <ion-item lines="full">
-      <ion-label position="floating">{{'ContainerSize' | translate}}</ion-label>
-      <ion-select interface="popover" name="containerSize" [(ngModel)]="newCase.containerSize"  placeholder="Select One">
-        <ion-select-option *ngFor="let s of containerSizes;" [value]="s.id">{{ s.name | titlecase}}</ion-select-option>
-      </ion-select>
-    </ion-item>
     <ion-item *ngIf="!fromProcess"lines="full">
       <ion-label position="floating">Facility Status</ion-label>
       <ion-select interface="popover" name="facilityStatus" [(ngModel)]="newCase.facilityStatusId"  placeholder="Select One">

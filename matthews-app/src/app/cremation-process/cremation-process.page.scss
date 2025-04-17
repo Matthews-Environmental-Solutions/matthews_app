@@ -68,11 +68,11 @@ ion-segment-button.ios {
 }
 
 .container {
-  background-color: #e4eff1;
+  background-color: var(--ion-background-color);
 }
 
 ion-footer{
-  background-color: #e4eff1;
+  background-color: var(--ion-card-background);
 }
 
 .action-buttons {
@@ -82,7 +82,7 @@ ion-footer{
 }
 
 .footer-text {
-  color: black;
+  color: var(--ion-text-color);
 }
 
 .footer-content{
@@ -122,12 +122,12 @@ ion-footer{
 }
 
 .grayHeading {
-  color: gray;
+  color: var(--ion-color-medium);
   font-size: 18px !important;
 }
 
 .blackHeading {
-  color: black;
+  color: var(--ion-text-color);
   font-size: 18px !important;
 }
 
@@ -153,6 +153,15 @@ ion-footer{
   width: 100%;
   height: 100%;
 }
+
+ion-menu {
+  --ion-background-color: #121212;
+  --background: var(--ion-background-color);
+  background: var(--ion-background-color);
+  color: var(--ion-text-color);
+}
+
+
 
 
 
