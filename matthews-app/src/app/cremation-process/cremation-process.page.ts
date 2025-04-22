@@ -331,17 +331,17 @@ export class CremationProcessPage implements OnInit, OnDestroy {
     if (this.cremationInterval) {
       clearInterval(this.cremationInterval);
     }
-    
+
     const remainingSec = 60 - initialElapsedSec;
     console.log("remainingMs: ", remainingSec);
-    
+
     setTimeout(() => {
       this.cremationInterval = setInterval(() => {
         this.cremationTime++;
       }, 60000);
     }, remainingSec);
   }
-  
+
 
   startCountdown(endTimeEstimate: number) {
     if (this.timerInterval) {
@@ -743,31 +743,27 @@ export class CremationProcessPage implements OnInit, OnDestroy {
     this.presentAlert(alertOptions);
   }
 
-  systemRestart(selectedDevice: Device) {
-    const alertOptions: AlertOptions = {
-      header: 'Confirm System Restart',
-      message: 'Confirm System Restart',
-      buttons: [
-        {
-          text: this.translateService.instant('Cancel'),
-          role: 'cancel',
-        },
-        {
-          text: this.translateService.instant('Confirm'),
-          role: 'confirm',
-          handler: () => {
-            const signal = selectedDevice.signals.find(
-              (signal) => signal.name === 'ADD_TIME'
-            );
-            this.cremationProcessService.writeSignalValue(signal?.id, 5);
-            this.stepNumber = 2;
-            this.resetIntervals();
-          },
-        },
-      ],
-    };
+  async systemRestart(ev: Event, selectedDevice: Device) {
+    const popover = await this.popoverController.create({
+      component: ExtendCyclePage,
+      componentProps: { selectedDevice },
+      cssClass: 'my-custom-class',
+      event: ev,
+      translucent: true,
+    });
 
-    this.presentAlert(alertOptions);
+    await popover.present();
+
+    const { data } = await popover.onDidDismiss();
+
+    if (data && data > 0) {
+      const signal = selectedDevice.signals.find(
+        (signal) => signal.name === 'ADD_TIME'
+      );
+      this.cremationProcessService.writeSignalValue(signal?.id, data);
+      this.stepNumber = 2;
+      this.resetIntervals();
+    }
   }
 
   cancelSearch(): void {
