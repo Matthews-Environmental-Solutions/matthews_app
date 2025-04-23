@@ -293,6 +293,6 @@ public class MqttMessageHandler
 
     private void SendSignalRMessageToRefreshTheList()
     {
-        _caseHub.SendMessageToRefreshList($"ClientId: {_caseId}");
+        _caseHub.SendMessageToRefreshList($"ClientId: {_caseId}", _caseFromFlexy.FACILITY_ID.ToString());
     }
 }

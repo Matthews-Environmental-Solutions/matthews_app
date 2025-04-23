@@ -90,7 +90,7 @@ public class CasesService : ICasesService
             }
 
             // SignalR
-            _caseHub.SendMessageToRefreshList($"Create done.");
+            _caseHub.SendMessageToRefreshList($"Create done.", createdEntity.ScheduledFacility.ToString());
         }
         catch (Exception)
         {
@@ -113,7 +113,7 @@ public class CasesService : ICasesService
         }
         
         // SignalR
-        _caseHub.SendMessageToRefreshList($"Delete done.");
+        _caseHub.SendMessageToRefreshList($"Delete done.", entity.ScheduledFacility.ToString());
     }
 
     public Case Update(Case entity)
@@ -151,7 +151,7 @@ public class CasesService : ICasesService
         SendEventToHostedService(entity, ids);
 
         // SignalR
-        _caseHub.SendMessageToRefreshList($"Update done.");
+        _caseHub.SendMessageToRefreshList($"Update done.", entity.ScheduledFacility.ToString());
 
         return entity;
     }
@@ -446,7 +446,7 @@ public class CasesService : ICasesService
             _ea.GetEvent<CaseSelectEvent>().Publish(Case);
 
             // SignalR
-            _caseHub.SendMessageToRefreshList($"Update status to SELECTED done.");
+            _caseHub.SendMessageToRefreshList($"Update status to SELECTED done.", Case.ScheduledFacility.ToString());
 
             return Case;
         }
@@ -469,6 +469,7 @@ public class CasesService : ICasesService
     {
         try
         {
+            Guid facilityId = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494");
             Guid deviceId = Guid.Parse("f2f5eccc-0c98-4579-941f-a9d81e3817a5");
             var scheduledDeviceAlias = await SetDeviceAliasForCase(deviceId);
             await _caseRepository.CleanDbForDemo(deviceId);
@@ -478,7 +479,7 @@ public class CasesService : ICasesService
             ids.Add(deviceId);
             _ea.GetEvent<EventCaseAnyChange>().Publish(ids);
             // SignalR
-            _caseHub.SendMessageToRefreshList($"Create 20 cases done.");
+            _caseHub.SendMessageToRefreshList($"Create 50 cases done.", facilityId.ToString());
             return true;
         }
         catch (Exception)
