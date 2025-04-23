@@ -22,5 +22,5 @@ public interface ICaseRepository : IBaseRepository<Case, Guid>
     Task<IEnumerable<Case>> GetSelectedCasesByDevice(Guid deviceId);
     Task<IEnumerable<Case>> GetSelectedCasesReadyToCremateByDevice(Guid deviceId);
     Case GetTrackedEntity(Guid id);
-    Task SeedDbForDemo(Guid deviceId);
+    Task SeedDbForDemo(Guid deviceId, string scheduledDeviceAlias);
 }

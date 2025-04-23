@@ -4,7 +4,11 @@
 - Changed: Description of a change in existing functionality.
 - Removed: Description of deprecated features.
 
-## [1.0.5] - 2025-04-07
+## [1.0.7] - 2025-04-23
+	- Fixed:
+		CasesService.SeedDbForDemo is fixed. Two unscheduled cases are added. ScheduledDeviceAlias is populated from DB.
+
+## [1.0.6] - 2025-04-07
 	- Fixed:
 		CaseI4cHttpClientService to prevent Case API IIS pool to break down when the i4connected is not working.
 		CasesService is handing exceptions on Create.

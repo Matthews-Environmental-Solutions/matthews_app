@@ -220,7 +220,7 @@ public class CasesService : ICasesService
             entity.ScheduledStartTime = DateTime.UtcNow;
         }
         SetStatusInProgress(entity);
-        await SetDeviceAliasForCase(dto.CREMATOR_ID, entity);
+        entity.ScheduledDeviceAlias =  await SetDeviceAliasForCase(dto.CREMATOR_ID);
         entity.Selected = true;
         entity.ActualStartTime = dto.StartTime;
         entity.ActualEndTime = null;
@@ -247,7 +247,7 @@ public class CasesService : ICasesService
             entity.ScheduledStartTime = DateTime.UtcNow;
         }
         SetStatusReadyToCremate(entity);
-        await SetDeviceAliasForCase(dto.CREMATOR_ID, entity);
+        entity.ScheduledDeviceAlias = await SetDeviceAliasForCase(dto.CREMATOR_ID);
         entity.Selected = true;
         entity.PerformedBy = dto.User;
 
@@ -265,7 +265,7 @@ public class CasesService : ICasesService
 
         Case entity = GetOrCreateCaseFromDto(dto, ref entityDoesNotExistInDb);
         SetStatusCycleComplete(entity);
-        await SetDeviceAliasForCase(dto.CREMATOR_ID, entity);
+        entity.ScheduledDeviceAlias = await SetDeviceAliasForCase(dto.CREMATOR_ID);
         entity.Selected = true;
         entity.ActualEndTime = dto.EndTime;
         entity.ActualStartTime = dto.StartTime;
@@ -286,7 +286,7 @@ public class CasesService : ICasesService
         bool entityDoesNotExistInDb = false;
 
         Case entity = GetOrCreateCaseFromDto(dto, ref entityDoesNotExistInDb);
-        await SetDeviceAliasForCase(dto.CREMATOR_ID, entity);
+        entity.ScheduledDeviceAlias = await SetDeviceAliasForCase(dto.CREMATOR_ID);
         SetStatusInProgress(entity);
         entity.ActualStartTime = dto.StartTime;
         entity.ActualFacility = dto.FACILITY_ID;
@@ -309,7 +309,7 @@ public class CasesService : ICasesService
 
         Case entity = GetOrCreateCaseFromDto(dto, ref entityDoesNotExistInDb);
         SetStatusCremationComplete(entity);
-        await SetDeviceAliasForCase(dto.CREMATOR_ID, entity);
+        entity.ScheduledDeviceAlias = await SetDeviceAliasForCase(dto.CREMATOR_ID);
         entity.Selected = false;
         entity.ActualStartTime = dto.StartTime;
         entity.ActualFacility = dto.FACILITY_ID;
@@ -470,9 +470,9 @@ public class CasesService : ICasesService
         try
         {
             Guid deviceId = Guid.Parse("f2f5eccc-0c98-4579-941f-a9d81e3817a5");
-
+            var scheduledDeviceAlias = await SetDeviceAliasForCase(deviceId);
             await _caseRepository.CleanDbForDemo(deviceId);
-            await _caseRepository.SeedDbForDemo(deviceId);
+            await _caseRepository.SeedDbForDemo(deviceId, scheduledDeviceAlias);
 
             List<Guid> ids = new List<Guid>();
             ids.Add(deviceId);
@@ -509,7 +509,7 @@ public class CasesService : ICasesService
            .Select(async item =>
            {
                SetStatusCremationComplete(item);
-               await SetDeviceAliasForCase((Guid)item.ScheduledDevice, item);
+               item.ScheduledDeviceAlias = await SetDeviceAliasForCase((Guid)item.ScheduledDevice);
                item.Selected = false;
                item.ActualEndTime = DateTime.UtcNow;
                item.ActualStartTime = item.ScheduledStartTime;
@@ -533,7 +533,7 @@ public class CasesService : ICasesService
            .Where(item => item.Id != caseId)
            .Select(async item =>
            {
-               await SetDeviceAliasForCase((Guid)item.ScheduledDevice, item);
+               item.ScheduledDeviceAlias = await SetDeviceAliasForCase((Guid)item.ScheduledDevice);
                item.Selected = false;
                return item;
            }).ToList();
@@ -552,7 +552,7 @@ public class CasesService : ICasesService
            .Where(item => item.Id != caseId)
            .Select(async item =>
            {
-               await SetDeviceAliasForCase((Guid)item.ScheduledDevice, item);
+               item.ScheduledDeviceAlias = await SetDeviceAliasForCase((Guid)item.ScheduledDevice);
                item.Selected = false;
                return item;
            }).ToList();
@@ -638,15 +638,12 @@ public class CasesService : ICasesService
         }
     }
 
-    private async Task SetDeviceAliasForCase(Guid deviceId, Case entity)
+    private async Task<string> SetDeviceAliasForCase(Guid deviceId)
     {
-        if (string.IsNullOrEmpty(entity.ScheduledDeviceAlias))
-        {
-            DeviceDto cremator = null;
-            List<DeviceDto> cremators = (await _caseI4CHttpClientService.GetAllDevicesAsync()).ToList();
-            cremator = cremators.FirstOrDefault(c => c.id == deviceId);
-            entity.ScheduledDeviceAlias = cremator is not null ? cremator.alias : string.Empty;
-        }
+        DeviceDto cremator = null;
+        List<DeviceDto> cremators = (await _caseI4CHttpClientService.GetAllDevicesAsync()).ToList();
+        cremator = cremators.FirstOrDefault(c => c.id == deviceId);
+        return cremator is not null ? cremator.alias : string.Empty;
     }
 
     private Case GetOrCreateCaseFromDto(CaseFromFlexyDto dto, ref bool entityDoesNotExistInDb)
