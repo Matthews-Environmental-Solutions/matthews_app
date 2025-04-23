@@ -60,7 +60,7 @@ export class Case {
 
   electricity: string = '';
 
-  facilityStatusId: string = '00000000-0000-0000-0000-000000000000';
+  facilityStatusId: string | null = null;
 
   facilityStatusText?: string = '';
 
