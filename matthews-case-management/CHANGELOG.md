@@ -9,6 +9,10 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 - Bug fixes.
 
+## [2.30] - 2025-04-23
+### Fixed
+- SignalR - once facility is changed it will unsubscribe to previous facility and subscribe to new one.
+
 ## [2.20] - 2025-04-07
 ### Fixed
 - case-add-edit.component to trim text input fields. FirstName and LastName have limitation of 167 characters.

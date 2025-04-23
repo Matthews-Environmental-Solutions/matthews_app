@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { BehaviorSubject, Observable, of } from "rxjs";
+import { BehaviorSubject, concatMap, Observable, of } from "rxjs";
 import { CalendarService } from "./calendar.service";
 import { UserSettingService } from "./user-setting.service";
 import { Device } from "../models/device.model";
@@ -8,11 +8,14 @@ import { Case } from "../models/case.model";
 import { v4 as uuidv4 } from 'uuid';
 import { UserDetails } from "../models/user-details.model";
 import { Facility } from "../models/facility.model";
+import { FacilityService } from "./facility.service";
 
 @Injectable({
     providedIn: 'root'
 })
 export class StateService {
+
+    private GUID_EMPTY: string = '00000000-0000-0000-0000-000000000000';
 
     public selectedFacilityId$: Observable<string>;
     private selectedFacilityIdBehaviorSubject = new BehaviorSubject<string>(this.getDefaultFacilityId());
@@ -53,7 +56,8 @@ export class StateService {
     public facilities$: Observable<Facility[]>;
     private facilitiesBS = new BehaviorSubject<Facility[]>(this.getDefaultFacility());
 
-    constructor(private calendarService: CalendarService, private userSettingService: UserSettingService, private i4connectedService: I4connectedService) {
+    constructor(private calendarService: CalendarService, private userSettingService: UserSettingService, private i4connectedService: I4connectedService, private facilityService: FacilityService) {
+        // Initialize the BehaviorSubjects with default values
         this.selectedFacilityId$ = this.selectedFacilityIdBehaviorSubject;
         this.selectedDate$ = this.selectedDateBehaviorSubject;
         this.firstDateInWeek$ = this.firstDateInWeekBehaviorSubject;
@@ -74,6 +78,22 @@ export class StateService {
 
     // selectedFacilityIdBehaviorSubject
     setSelectedFacility(facility: string): void {
+        //previously selected facility id
+        let previousFacilityId = this.selectedFacilityIdBehaviorSubject.value;
+
+        if (previousFacilityId.trim().length === 0){
+            previousFacilityId = this.GUID_EMPTY;
+        }
+        
+        this.facilityService.unsubscribeFromGroup(previousFacilityId)
+        .pipe(
+            concatMap(firstResponse => { 
+                console.log('First response:', firstResponse);
+                return this.facilityService.subscribeToGroup(facility); 
+            })
+        )
+        .subscribe((response) => { console.log(response); });
+        
         this.selectedFacilityIdBehaviorSubject.next(facility);
         this.i4connectedService.getDevicesByFacility2(facility).subscribe(devices => {
             this.devicesFromSiteBehaviorSubject.next(devices);

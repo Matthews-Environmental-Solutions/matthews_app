@@ -4,6 +4,7 @@ import { TranslateService } from "@ngx-translate/core";
 import { catchError, map, Observable, retry, throwError } from "rxjs";
 import { environment } from "src/environments/environment";
 import { Facility } from "../models/facility.model";
+import { ResponseCommunicationDto } from "../models/communication-response-dto.model";
 
 @Injectable({
     providedIn: 'root'
@@ -18,6 +19,22 @@ export class FacilityService {
             .pipe(retry(1), catchError(this.handleError))
             .pipe(map((facilities: Facility[]) => {
                 return facilities;
+            }));
+    }
+
+    subscribeToGroup(facilityId: string): Observable<ResponseCommunicationDto> {
+        return this.httpClient.get<ResponseCommunicationDto>(`${this.apiURL}/Facility/SubscribeToGroup/${facilityId}`)
+            .pipe(retry(1), catchError(this.handleError))
+            .pipe(map((response: ResponseCommunicationDto) => {
+                return response;
+            }));
+    }
+
+    unsubscribeFromGroup(facilityId: string): Observable<ResponseCommunicationDto> {
+        return this.httpClient.get<ResponseCommunicationDto>(`${this.apiURL}/Facility/UnsubscribeFromGroup/${facilityId}`)
+            .pipe(retry(1), catchError(this.handleError))
+            .pipe(map((response: ResponseCommunicationDto) => {
+                return response;
             }));
     }
 

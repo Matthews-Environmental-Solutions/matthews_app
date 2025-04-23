@@ -14,11 +14,29 @@ public class FacilityController : Controller
 {
     private readonly ILogger<CaseController> _logger;
     private readonly IFacilityService _facilityService;
+    private readonly ICommunicationService _communicationService;
 
-    public FacilityController(ILogger<CaseController> logger, IFacilityService service)
+    public FacilityController(ILogger<CaseController> logger, IFacilityService service, ICommunicationService communicationService)
     {
         _logger = logger;
         _facilityService = service;
+        _communicationService = communicationService;
+    }
+
+    //"gruop name is the guid of the facility"
+    [HttpGet]
+    [Route("SubscribeToGroup/{group}")]
+    public Task<ResponseCommunicationDto> SubscribeToGroup(string group)
+    {
+        return _communicationService.SubscribeToGroup(group);
+    }
+
+    //"gruop name is the guid of the facility"
+    [HttpGet]
+    [Route("UnsubscribeFromGroup/{group}")]
+    public async Task<ResponseCommunicationDto> UnsubscribeFromGroup(string group)
+    {
+        return await _communicationService.UnsubscribeFromGroup(group);
     }
 
     [HttpGet]

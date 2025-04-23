@@ -75,6 +75,7 @@ public class Startup
 
         services.AddSingleton<IEventAggregator>(new EventAggregator());
         services.AddHostedService<CaseMqttService>();
+        services.AddScoped<ICommunicationService, CommunicationService>();
         services.AddScoped<ICasesService, CasesService>();
         services.AddScoped<IFacilityService, FacilityService>();
         services.AddScoped<ICaseRepository, CaseRepository>();
