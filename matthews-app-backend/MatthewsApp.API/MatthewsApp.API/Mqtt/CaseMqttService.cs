@@ -348,12 +348,14 @@ public class CaseMqttService : IHostedService
     {
         SendCaseRequiredToFlexy(entityCase, entityCase.Id.ToString());
         SendCaseRequestToFlexy(entityCase);
+        _caseHub.SendMessageToSelectCase($"CaseId: {entityCase.Id}; DeviceId: {entityCase.ScheduledDevice}; ActualStartTime: {string.Empty}; ActualEndTime: {string.Empty}");
     }
 
     private void DeselectCase(Case entityCase)
     {
         SendCaseRequiredToFlexy(entityCase, string.Empty);
         SendCaseRequestToFlexy(entityCase);
+        _caseHub.SendMessageToSelectCase($"CaseId: {string.Empty}; DeviceId: {entityCase.ScheduledDevice}; ActualStartTime: {string.Empty}; ActualEndTime: {string.Empty}");
     }
 
     private async void SendCaseRequiredToFlexy(Case entityCase, string caseId)
