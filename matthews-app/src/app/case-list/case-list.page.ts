@@ -33,9 +33,9 @@ export class CaseListPage implements OnInit {
   }
 
   getSelectedCase(selectedCase: Case) {
-    this.close(selectedCase);
     this.appStore.updateSelectedCase(selectedCase);
     this.appStore.updateSelectedCaseId(selectedCase.id);
+    this.close(selectedCase);
   }
 
   async close(selectedCase?: Case) {

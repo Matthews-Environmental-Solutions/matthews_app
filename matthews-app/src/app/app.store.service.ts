@@ -584,9 +584,10 @@ export class AppStoreService extends ComponentStore<AppState> {
       switchMap((selectedCase) =>
         this.caseService.updateCase(selectedCase.id, selectedCase).then(() => {
           //this.getCases(selectedCase.scheduledFacility);
-          this.loadingService.dismiss();
+          
         })
-      )
+      ),
+      tap(() => this.loadingService.dismiss())
     )
   );
 
@@ -596,9 +597,9 @@ export class AppStoreService extends ComponentStore<AppState> {
       switchMap((selectedCase) =>
         this.caseService.deleteCase(selectedCase.id.toString()).then(() => {
           //this.getCases(selectedCase.scheduledFacility);
-          this.loadingService.dismiss();
         })
-      )
+      ),
+      tap(() => this.loadingService.dismiss())
     )
   );
 

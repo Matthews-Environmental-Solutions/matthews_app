@@ -38,7 +38,6 @@ export class SignalRService {
     private notificationService: NotificationService) { }
 
   public async initializeSignalRConnection(): Promise<any> {
-    this.loadingService.present();
     const signalRServerEndPoint = `${environment.i4connectedApiUrl}/signalr`;
     this.connection = $.hubConnection(signalRServerEndPoint);
     await this.getAccessToken().then((token) => {

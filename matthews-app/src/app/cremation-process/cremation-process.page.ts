@@ -850,8 +850,6 @@ export class CremationProcessPage implements OnInit, OnDestroy {
     if (data?.selectedCase) {
       this.selectCaseAPI();
     }
-
-    return await modal.present();
   }
 
   clearSelectedCase() {
