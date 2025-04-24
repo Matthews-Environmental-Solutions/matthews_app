@@ -12,11 +12,11 @@ public class CaseHub : Hub
         try
         {
             await Groups.AddToGroupAsync(Context.ConnectionId, group);
-            return new ResponseCommunicationDto("joined", group);
+            return new ResponseCommunicationDto("joined", group, Context.ConnectionId);
         }
         catch (Exception)
         {
-            return new ResponseCommunicationDto("not subscribed", group);
+            return new ResponseCommunicationDto("not subscribed", group, Context.ConnectionId);
         }
     }
 
@@ -25,11 +25,11 @@ public class CaseHub : Hub
         try
         {
             await Groups.RemoveFromGroupAsync(Context.ConnectionId, group);
-            return new ResponseCommunicationDto("removed", group);
+            return new ResponseCommunicationDto("removed", group, Context.ConnectionId);
         }
         catch (Exception)
         {
-            return new ResponseCommunicationDto("not removed", group);
+            return new ResponseCommunicationDto("not removed", group, Context.ConnectionId);
         }
     }
 
@@ -41,11 +41,11 @@ public class CaseHub : Hub
         }
     }
 
-    public async Task SendMessageToSelectCase(string message)
+    public async Task SendMessageToSelectCase(string message, string groupName)
     {
         if (Clients != null)
         {
-            await Clients.All.SendAsync("selectcase", message);
+            await Clients.Group(groupName).SendAsync("selectcase", message);
         }
     }
 }

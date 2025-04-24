@@ -232,7 +232,7 @@ public class MqttMessageHandler
         }
 
         Case response = await _casesService.UpdateCaseWhenCaseStart(_caseFromFlexy);
-        _caseHub.SendMessageToSelectCase($"CaseId: {_caseFromFlexy.LOADED_ID}; DeviceId: {_deviceId}; ActualStartTime: {response.ActualStartTime}; ActualEndTime: {string.Empty}");
+        _caseHub.SendMessageToSelectCase($"CaseId: {_caseFromFlexy.LOADED_ID}; DeviceId: {_deviceId}; ActualStartTime: {response.ActualStartTime}; ActualEndTime: {string.Empty}", _caseFromFlexy.FACILITY_ID.ToString());
     }
 
     private async Task ActionCaseEnd()
@@ -243,7 +243,7 @@ public class MqttMessageHandler
         }
 
         Case response = await _casesService.UpdateCaseWhenCaseEnd(_caseFromFlexy);
-        _caseHub.SendMessageToSelectCase($"CaseId: {_caseFromFlexy.LOADED_ID}; DeviceId: {_deviceId}; ActualStartTime: {response.ActualStartTime}; ActualEndTime: {response.ActualEndTime}");
+        _caseHub.SendMessageToSelectCase($"CaseId: {_caseFromFlexy.LOADED_ID}; DeviceId: {_deviceId}; ActualStartTime: {response.ActualStartTime}; ActualEndTime: {response.ActualEndTime}", _caseFromFlexy.FACILITY_ID.ToString());
     }
 
     private async Task ActionCaseSelect()
@@ -255,7 +255,7 @@ public class MqttMessageHandler
 
         Case response = await _casesService.UpdateCaseWhenCaseSelect(_caseFromFlexy);
         _caseId = response.Id;
-        _caseHub.SendMessageToSelectCase($"CaseId: {_caseId}; DeviceId: {_deviceId}; ActualStartTime: {string.Empty}; ActualEndTime: {string.Empty}");
+        _caseHub.SendMessageToSelectCase($"CaseId: {_caseId}; DeviceId: {_deviceId}; ActualStartTime: {string.Empty}; ActualEndTime: {string.Empty}", _caseFromFlexy.FACILITY_ID.ToString());
     }
 
     private async Task ActionCaseDeselect()
@@ -266,7 +266,7 @@ public class MqttMessageHandler
         }
 
         _casesService.UpdateCaseWhenCaseDeselect(_caseId, false);
-        _caseHub.SendMessageToSelectCase($"CaseId: {string.Empty}; DeviceId: {_deviceId}; ActualStartTime: {string.Empty}; ActualEndTime: {string.Empty}");
+        _caseHub.SendMessageToSelectCase($"CaseId: {string.Empty}; DeviceId: {_deviceId}; ActualStartTime: {string.Empty}; ActualEndTime: {string.Empty}", _caseFromFlexy.FACILITY_ID.ToString());
     }
 
     private async Task ActionCaseRestart()
@@ -277,7 +277,7 @@ public class MqttMessageHandler
         }
 
         Case response = await _casesService.UpdateCaseWhenCaseRestart(_caseFromFlexy);
-        _caseHub.SendMessageToSelectCase($"CaseId: {_caseFromFlexy.LOADED_ID}; DeviceId: {_deviceId}; ActualStartTime: {response.ActualStartTime}; ActualEndTime: {string.Empty}");
+        _caseHub.SendMessageToSelectCase($"CaseId: {_caseFromFlexy.LOADED_ID}; DeviceId: {_deviceId}; ActualStartTime: {response.ActualStartTime}; ActualEndTime: {string.Empty}", _caseFromFlexy.FACILITY_ID.ToString());
     }
 
     private async Task ActionCaseRemove()
@@ -288,7 +288,7 @@ public class MqttMessageHandler
         }
 
         Case response = await _casesService.UpdateCaseWhenCaseRemove(_caseFromFlexy);
-        _caseHub.SendMessageToSelectCase($"CaseId: {string.Empty}; DeviceId: {_deviceId}; ActualStartTime: {response.ActualStartTime}; ActualEndTime: {response.ActualEndTime}");
+        _caseHub.SendMessageToSelectCase($"CaseId: {string.Empty}; DeviceId: {_deviceId}; ActualStartTime: {response.ActualStartTime}; ActualEndTime: {response.ActualEndTime}", _caseFromFlexy.FACILITY_ID.ToString());
     }
 
     private void SendSignalRMessageToRefreshTheList()
