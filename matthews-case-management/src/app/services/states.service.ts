@@ -82,17 +82,19 @@ export class StateService {
         let previousFacilityId = this.selectedFacilityIdBehaviorSubject.value;
 
         if (previousFacilityId.trim().length === 0){
-            previousFacilityId = this.GUID_EMPTY;
+            this.facilityService.subscribeToGroup(facility).subscribe((response) => {
+                console.log(response);
+            });
+        } else {
+            this.facilityService.unsubscribeFromGroup(previousFacilityId)
+            .pipe(
+                concatMap(firstResponse => { 
+                    console.log('First response:', firstResponse);
+                    return this.facilityService.subscribeToGroup(facility); 
+                })
+            )
+            .subscribe((response) => { console.log(response); });
         }
-        
-        this.facilityService.unsubscribeFromGroup(previousFacilityId)
-        .pipe(
-            concatMap(firstResponse => { 
-                console.log('First response:', firstResponse);
-                return this.facilityService.subscribeToGroup(facility); 
-            })
-        )
-        .subscribe((response) => { console.log(response); });
         
         this.selectedFacilityIdBehaviorSubject.next(facility);
         this.i4connectedService.getDevicesByFacility2(facility).subscribe(devices => {
