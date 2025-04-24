@@ -41,11 +41,11 @@ public class CaseHub : Hub
         }
     }
 
-    public async Task SendMessageToSelectCase(string message, string groupName)
+    public async Task SendMessageToSelectCase(string message)
     {
         if (Clients != null)
         {
-            await Clients.Group(groupName).SendAsync("selectcase", message);
+            await Clients.All.SendAsync("selectcase", message);
         }
     }
 }
