@@ -57,6 +57,6 @@ export class FacilityPage implements OnInit {
   }
 
   updateSelectedFacility(facility: Facility) {
-    this.appStoreService.updateSelectedFacility(facility);
+    this.appStoreService.setSelectedFacility(facility);
    }
 }

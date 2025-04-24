@@ -63,7 +63,7 @@ export class SchedulePage implements OnInit, OnDestroy {
   selectFacility(facility: Facility, id: string) {
     this.selectedFacility.name = facility.name;
     this.selectedFacility.id = id;
-    this.appStore.updateSelectedFacility(this.selectedFacility);
+    this.appStore.setSelectedFacility(this.selectedFacility);
   }
 
   deleteCase(selectedCase: Case) {

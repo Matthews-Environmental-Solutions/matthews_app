@@ -473,23 +473,9 @@ export class AppStoreService extends ComponentStore<AppState> {
     return this.get((state) => state.selectedCaseId);
   }
 
-  // readonly getCases = this.effect<string>((cases$) =>
-  //   cases$.pipe(
-  //     tap(() => this.loadingService.present()),
-  //     switchMap((facilityId) =>
-  //       this.caseService.getCases(facilityId).then((response: Case[]) => {
-  //         this.updateCases(
-  //           response.filter(
-  //             (caseToFilter) =>
-  //               caseToFilter.scheduledFacility === facilityId &&
-  //               caseToFilter.isObsolete === false
-  //           )
-  //         );
-  //         this.loadingService.dismiss();
-  //       })
-  //     )
-  //   )
-  // );
+  getSelectedFacility(): Facility {
+    return this.get((state) => state.selectedFacility);
+  }
 
   readonly getCasesByDay = this.effect<[string, Date]>((cases$) =>
     cases$.pipe(
@@ -713,5 +699,9 @@ export class AppStoreService extends ComponentStore<AppState> {
     deviceList.find((x) => x.id === deviceSignalsMap[0]).signals =
       deviceSignalsMap[1];
     return deviceList;
+  }
+
+  setSelectedFacility(facility: Facility) {
+    this.updateSelectedFacility(facility);
   }
 }
