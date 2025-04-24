@@ -4,7 +4,7 @@ import { Injectable } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { ComponentStore } from '@ngrx/component-store';
 import { Observable } from 'rxjs';
-import { catchError, mergeMap, switchMap, tap } from 'rxjs/operators';
+import { catchError, concatMap, mergeMap, switchMap, tap } from 'rxjs/operators';
 import { CaseListPage } from './case-list/case-list.page';
 import { Case } from './case/case';
 import { CasePage } from './case/case.page';
@@ -702,6 +702,27 @@ export class AppStoreService extends ComponentStore<AppState> {
   }
 
   setSelectedFacility(facility: Facility) {
+
+    //previously selected facility id
+    let previousFacilityId = this.getSelectedFacility().id;
+
+    previousFacilityId = previousFacilityId ? previousFacilityId : '';
+
+    if (previousFacilityId.trim().length === 0){
+        this.facilitiesService.subscribeToGroup(facility.id).then((response) => {
+            console.log(response);
+        });
+    } else {
+        this.facilitiesService.unsubscribeFromGroup(previousFacilityId)
+        .then(
+            firstResponse => { 
+                console.log('First response:', firstResponse);
+                return this.facilitiesService.subscribeToGroup(facility.id); 
+            }
+        )
+        .then((response) => { console.log(response); });
+    }
+
     this.updateSelectedFacility(facility);
   }
 }

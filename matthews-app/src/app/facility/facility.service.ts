@@ -6,6 +6,7 @@ import { AuthHttpService } from '../core/auth-http.service';
 import { UserInfo } from '../core/userInfo';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from '../../environments/environment';
+import { ResponseCommunicationDto } from '../core/response-communication-dto.model';
 
 @Injectable({
   providedIn: 'root'
@@ -29,4 +30,15 @@ export class FacilityService {
     const headers = new HttpHeaders().set('Authorization', `Bearer ${accessToken}`);
     return this.http.get(environment.i4connectedApiUrl + "/api/attachments/" + photoId, { headers: headers, responseType: 'blob' });
   }
+
+  subscribeToGroup(facilityId: string): Promise<ResponseCommunicationDto> {
+    const subscribeToGroupUrl = `${environment.apiUrl}/Facility/SubscribeToGroup/${facilityId}`;
+    return this.httpService.request('GET', subscribeToGroupUrl, facilityId);
+  }
+
+  unsubscribeFromGroup(facilityId: string): Promise<ResponseCommunicationDto> {
+    const unsubscribeToGroupUrl = `${environment.apiUrl}/Facility/UnsubscribeFromGroup/${facilityId}`;
+    return this.httpService.request('GET', unsubscribeToGroupUrl, facilityId);
+  }
+
 }
