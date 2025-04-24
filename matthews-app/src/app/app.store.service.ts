@@ -702,27 +702,6 @@ export class AppStoreService extends ComponentStore<AppState> {
   }
 
   setSelectedFacility(facility: Facility) {
-
-    //previously selected facility id
-    let previousFacilityId = this.getSelectedFacility().id;
-
-    previousFacilityId = previousFacilityId ? previousFacilityId : '';
-
-    if (previousFacilityId.trim().length === 0){
-        this.facilitiesService.subscribeToGroup(facility.id).then((response) => {
-            console.log(response);
-        });
-    } else {
-        this.facilitiesService.unsubscribeFromGroup(previousFacilityId)
-        .then(
-            firstResponse => { 
-                console.log('First response:', firstResponse);
-                return this.facilitiesService.subscribeToGroup(facility.id); 
-            }
-        )
-        .then((response) => { console.log(response); });
-    }
-
     this.updateSelectedFacility(facility);
   }
 }
