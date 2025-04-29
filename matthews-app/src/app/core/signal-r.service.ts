@@ -20,7 +20,7 @@ export interface Alarm {
   id: string;
   eventId: string;
   description: string;
-  alias: string
+  name: string
   end: string;
 }
 

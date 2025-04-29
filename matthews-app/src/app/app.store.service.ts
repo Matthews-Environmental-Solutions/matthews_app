@@ -445,7 +445,7 @@ export class AppStoreService extends ComponentStore<AppState> {
 
       // Check if the alarm has finished (end is not null)
       const notificationTitle = alarm.end ? 'Alarm resolved' : 'Alarm Alert';
-      const notificationBody = alarm.end ? `${alarm.alias} has been resolved` : `${alarm.alias}`;
+      const notificationBody = alarm.end ? `${alarm.name} has been resolved` : `${alarm.name}`;
 
       // Schedule the notification with the updated title and body
       this.notificationService.scheduleNotification(
