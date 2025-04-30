@@ -22,6 +22,11 @@ export interface Alarm {
   description: string;
   name: string
   end: string;
+  source: AlarmSource;
+}
+export interface AlarmSource {
+  id: string;
+  name: string;
 }
 
 @Injectable({

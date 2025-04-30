@@ -443,11 +443,16 @@ export class AppStoreService extends ComponentStore<AppState> {
       this.updateAlarmEventFromSignalR(alarm);
       console.log('🚨 Alarm received:', alarm); // Confirm event
 
-      // Check if the alarm has finished (end is not null)
-      const notificationTitle = alarm.end ? 'Alarm resolved' : 'Alarm Alert';
-      const notificationBody = alarm.end ? `${alarm.name} has been resolved` : `${alarm.name}`;
+      // 🔒 Skip notification if alarm is resolved
+      if (alarm.end) {
+        console.log('✅ Alarm is resolved, no notification scheduled.');
+        return;
+      }
 
-      // Schedule the notification with the updated title and body
+      // 🔔 Alarm is active, proceed to schedule notification
+      const notificationTitle = alarm.source?.name ?? 'Alarm Alert';
+      const notificationBody = alarm.name ?? 'An event has occurred';
+
       this.notificationService.scheduleNotification(
         notificationTitle,
         notificationBody
@@ -584,7 +589,7 @@ export class AppStoreService extends ComponentStore<AppState> {
       switchMap((selectedCase) =>
         this.caseService.updateCase(selectedCase.id, selectedCase).then(() => {
           //this.getCases(selectedCase.scheduledFacility);
-          
+
         })
       ),
       tap(() => this.loadingService.dismiss())
@@ -682,14 +687,14 @@ export class AppStoreService extends ComponentStore<AppState> {
   //       selectedDeviceId,
   //     },
   //   });
-  
+
   //   await modal.present();
 
   //   const { data } = await modal.onWillDismiss();
   //   if (data?.selectedCase) {
   //     debugger
   //   }
-  
+
   //   return await modal.present();
   // }
 

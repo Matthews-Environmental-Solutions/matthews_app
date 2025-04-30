@@ -22,7 +22,7 @@ export class NotificationService {
     }
   }
 
-  async scheduleNotification(title: string = "Alarm Alert", body: string = "An event has occurred.") {
+  async scheduleNotification(title: string, body: string) {
     const platform = Capacitor.getPlatform();
     await this.createNotificationChannel(); // Ensure channel is ready
     if (platform === 'ios' || platform === 'android') {
