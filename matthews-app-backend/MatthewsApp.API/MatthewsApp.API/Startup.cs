@@ -73,6 +73,8 @@ public class Startup
         services.AddSingleton<CaseHub>();
         services.AddSingleton<FacilityHub>();
 
+        services.AddScoped<IDemoSeedCasesService, DemoSeedCasesService>();
+
         services.AddSingleton<IEventAggregator>(new EventAggregator());
         services.AddHostedService<CaseMqttService>();
         services.AddScoped<ICommunicationService, CommunicationService>();

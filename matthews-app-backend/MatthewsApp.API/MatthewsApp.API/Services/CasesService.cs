@@ -57,8 +57,9 @@ public class CasesService : ICasesService
     private readonly ILogger<CasesService> _logger;
     private readonly CaseHub _caseHub;
     private IEventAggregator _ea;
+    private readonly IDemoSeedCasesService _demoSeedCasesService;
 
-    public CasesService(ICaseRepository repository, IFacilityStatusRepository facilityStatusRepository, IEventAggregator ea, CaseHub caseHub, ICaseI4cHttpClientService caseI4CHttpClientService, ILogger<CasesService> logger)
+    public CasesService(ICaseRepository repository, IFacilityStatusRepository facilityStatusRepository, IEventAggregator ea, CaseHub caseHub, ICaseI4cHttpClientService caseI4CHttpClientService, ILogger<CasesService> logger, IDemoSeedCasesService demoSeedCasesService)
     {
         _caseI4CHttpClientService = caseI4CHttpClientService;
         _facilityStatusRepository = facilityStatusRepository;
@@ -66,6 +67,7 @@ public class CasesService : ICasesService
         _caseHub = caseHub;
         _logger = logger;
         _ea = ea;
+        _demoSeedCasesService = demoSeedCasesService;
     }
 
     public void Create(Case entity)
@@ -462,29 +464,43 @@ public class CasesService : ICasesService
     }
 
     /// <summary>
-    /// This method is used to reset the demo data only on specific device.
+    /// Resets the demo environment by reinitializing and seeding cases.
+    /// This method performs the following actions:
+    /// 1. Calls the Initialize method of the DemoSeedCasesService to reset and prepare the demo data.
+    /// 2. Saves the newly initialized cases to the database.
+    /// 3. Publishes an event to notify about changes in the cases for all devices.
+    /// 4. Sends SignalR messages to refresh the case list for all facilities.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>
+    /// A boolean value indicating whether the reset operation was successful.
+    /// Returns true if the operation completes without exceptions.
+    /// </returns>
+    /// <exception cref="Exception">
+    /// Throws an exception if any error occurs during the reset process.
+    /// </exception>
     public async Task<bool> ResetDemo()
     {
         try
         {
-            Guid facilityId = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494");
-            Guid deviceId = Guid.Parse("f2f5eccc-0c98-4579-941f-a9d81e3817a5");
-            var scheduledDeviceAlias = await SetDeviceAliasForCase(deviceId);
-            await _caseRepository.CleanDbForDemo(deviceId);
-            await _caseRepository.SeedDbForDemo(deviceId, scheduledDeviceAlias);
+            await _demoSeedCasesService.Initialize();
+            _demoSeedCasesService.SaveCasesToDatabase();
 
-            List<Guid> ids = new List<Guid>();
-            ids.Add(deviceId);
-            _ea.GetEvent<EventCaseAnyChange>().Publish(ids);
+            //var scheduledDeviceAlias = await SetDeviceAliasForCase(deviceId);
+
+            List<Guid> deviceIds = _demoSeedCasesService.GetDevices();
+            _ea.GetEvent<EventCaseAnyChange>().Publish(deviceIds);
+            
             // SignalR
-            _caseHub.SendMessageToRefreshList($"Create 50 cases done.", facilityId.ToString());
+            List<Guid> facilityIds = _demoSeedCasesService.GetFacilities();
+            foreach (var facilityId in facilityIds)
+            {
+                _caseHub.SendMessageToRefreshList($"Reset demo done.", facilityId.ToString());
+            }
             return true;
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            throw;
+            throw ex;
         }
     }
 
