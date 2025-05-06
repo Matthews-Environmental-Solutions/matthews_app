@@ -4,6 +4,10 @@
 - Changed: Description of a change in existing functionality.
 - Removed: Description of deprecated features.
 
+## [1.1.0] - 2025-05-06
+	- Added:
+		DemoSeedCasesService is added. It reads CSV file with Cases data and update database.
+
 ## [1.0.7] - 2025-04-23
 	- Fixed:
 		CasesService.SeedDbForDemo is fixed. Two unscheduled cases are added. ScheduledDeviceAlias is populated from DB.
