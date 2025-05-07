@@ -7,6 +7,8 @@
 ## [1.1.0] - 2025-05-06
 	- Added:
 		DemoSeedCasesService is added. It reads CSV file with Cases data and update database.
+	- Fixed:
+		"Matthews Demo Sample Cases v4.csv" is added to the project. It contains 150 Cases. The CSV file is encoded to UTF-8. Empty lines are removed. The first line is a header. The file is used for demo purposes only. In numbers, decimal delimiter is dot.
 
 ## [1.0.7] - 2025-04-23
 	- Fixed:
