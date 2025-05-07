@@ -279,7 +279,7 @@ export class SchedulePage implements OnInit, OnDestroy {
 
   getCompletedForDay(cases: Case[], index: number) {
     const filteredCases = this.filterCasesForDay(cases, index);
-    return filteredCases.filter(caseItem => caseItem.status === 1).length;
+    return filteredCases.filter(caseItem => caseItem.status === 5).length;
   }
 
   getInProgressForDay(cases: Case[], index: number) {
@@ -321,7 +321,7 @@ export class SchedulePage implements OnInit, OnDestroy {
     this.scheduledCount = filteredCases.length;
     this.completedCount = filteredCases.filter(caseItem => caseItem.status === 1).length;
     this.weeklyScheduledCount = cases.length;
-    this.weeklyCompletedCount = cases.filter(caseItem => caseItem.status == 1).length;
+    this.weeklyCompletedCount = cases.filter(caseItem => caseItem.status == 5).length;
   }
 
 }
