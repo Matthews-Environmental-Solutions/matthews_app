@@ -134,6 +134,7 @@
                 <mat-form-field appearance="fill">
                     <mat-label>{{"cremator" | translate}}</mat-label>
                     <mat-select formControlName="scheduledDevice">
+                        <mat-option value="00000000-0000-0000-0000-000000000000">None selected</mat-option>
                         <mat-option *ngFor="let cremator of cremators" [value]="cremator.id">
                             {{cremator.alias}}
                         </mat-option>
