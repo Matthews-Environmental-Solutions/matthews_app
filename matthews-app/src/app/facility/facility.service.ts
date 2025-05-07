@@ -16,7 +16,7 @@ export class FacilityService {
   constructor(
     private httpService: AuthHttpService,
     private http: HttpClient
-    ) { }
+  ) { }
 
   getFacilities() {
     return this.httpService.request<Facility[]>("GET", environment.i4connectedApiUrl + "/api/sites/details/list");
@@ -29,6 +29,30 @@ export class FacilityService {
   getAttachment(accessToken: string, photoId: string) {
     const headers = new HttpHeaders().set('Authorization', `Bearer ${accessToken}`);
     return this.http.get(environment.i4connectedApiUrl + "/api/attachments/" + photoId, { headers: headers, responseType: 'blob' });
+  }
+
+  subscribeToGroup(facilityId: string): Promise<ResponseCommunicationDto> {
+    const url = `${environment.apiUrl}/Facility/SubscribeToGroup/${facilityId}`;
+    return this.httpService.request<ResponseCommunicationDto>('GET', url);
+/*
+    return this.httpClient.get<ResponseCommunicationDto>(`${environment.apiUrl}/Facility/SubscribeToGroup/${facilityId}`)
+      .pipe(retry(1), catchError(this.handleError))
+      .pipe(map((response: ResponseCommunicationDto) => {
+        return response;
+      }));
+      */
+  }
+
+  unsubscribeFromGroup(facilityId: string): Promise<ResponseCommunicationDto> {
+    const url = `${environment.apiUrl}/Facility/UnsubscribeFromGroup/${facilityId}`;
+    return this.httpService.request<ResponseCommunicationDto>('GET', url);
+    /*
+    return this.httpClient.get<ResponseCommunicationDto>(`${environment.apiUrl}/Facility/UnsubscribeFromGroup/${facilityId}`)
+      .pipe(retry(1), catchError(this.handleError))
+      .pipe(map((response: ResponseCommunicationDto) => {
+        return response;
+      }));
+      */
   }
 
 }
