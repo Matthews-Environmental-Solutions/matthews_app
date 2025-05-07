@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.IO;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace MatthewsApp.API.Services;
 
@@ -48,6 +49,7 @@ public class DemoSeedCasesService : IDemoSeedCasesService
 
     public List<Guid> GetDevices()
     {
+        _logger.LogInformation($"--- --- GetDevices");
         //get all devices from cases
         foreach (var item in _cases)
         {
@@ -93,6 +95,7 @@ public class DemoSeedCasesService : IDemoSeedCasesService
 
     public async Task<List<Case>> ReadCsv(string relativePath)
     {
+        _logger.LogInformation($"--- --- ReadCsv");
         var dataList = new List<Case>();
 
         // Get the absolute path based on the relative path
@@ -101,7 +104,7 @@ public class DemoSeedCasesService : IDemoSeedCasesService
         // Check if the file exists
         if (!File.Exists(absolutePath))
         {
-            Console.WriteLine("The file does not exist at the specified path.");
+            _logger.LogInformation("--- --- --- Error: The file does not exist at the specified path.");
             return dataList;
         }
 
@@ -121,39 +124,55 @@ public class DemoSeedCasesService : IDemoSeedCasesService
                 }
 
                 _logger.LogInformation($"{index}: {values[3]}");
-                index++;
+                
 
+                _logger.LogInformation($"values8: {values[8]}");
                 if (!Enum.TryParse(values[8].ToUpper(), out GenderType gender))
                 {
                     gender = GenderType.OTHER; // Default value if parsing fails
                 }
 
+                _logger.LogInformation($"values6: {values[6]}");
                 if (!Enum.TryParse(values[6].ToUpper(), out ContainerType containerType))
                 {
                     containerType = ContainerType.CARDBOARD; // Default value if parsing fails
                 }
 
+                _logger.LogInformation($"values1: {values[1]}");
                 if (!Enum.TryParse(values[1].ToUpper(), out CaseStatus caseStatus))
                 {
                     caseStatus = CaseStatus.WAITING_FOR_PERMIT;
                 }
 
+                _logger.LogInformation($"values11: {values[11]}");
                 if (!Guid.TryParse(values[11], out Guid scheduledFacilityId))
                 {
                     caseStatus = CaseStatus.WAITING_FOR_PERMIT;
                     scheduledFacilityId = Guid.Empty;
                 }
 
+                _logger.LogInformation($"values13: {values[13]}");
                 if (!Guid.TryParse(values[13], out Guid scheduledDeviceId))
                 {
                     caseStatus = CaseStatus.WAITING_FOR_PERMIT;
                     scheduledDeviceId = Guid.Empty;
                 }
 
-                DateTime? scheduledStartTime = values[16].IsNullOrEmpty() ? null : todayAtMidnight.AddDays(double.Parse(values[16]));
+                _logger.LogInformation($"values16: {values[16]}");
+                if (!double.TryParse(values[16], out double scheduledStartTimeOffset))
+                {
+                    scheduledStartTimeOffset = 0;
+                    _logger.LogInformation($"values16 cant be parsed and we set value zero: {scheduledStartTimeOffset}");
+                }
 
+                _logger.LogInformation($"Add days of offset to calculate scheduledStartTime");
+                _logger.LogInformation($"todayAtMidnight: {todayAtMidnight}");
+                DateTime? scheduledStartTime = values[16].IsNullOrEmpty() ? null : todayAtMidnight.AddDays(scheduledStartTimeOffset);
+
+                _logger.LogInformation($"GetFacilityStatusIdByCaseStatus");
                 Guid facilityStatusId = await GetFacilityStatusIdByCaseStatus(scheduledFacilityId, caseStatus);
 
+                _logger.LogInformation($"new Case");
                 var myObject = new Case
                 {
                     Id = Guid.NewGuid(),
@@ -178,7 +197,9 @@ public class DemoSeedCasesService : IDemoSeedCasesService
                     FacilityStatusId = facilityStatusId // use column Case Status
                 };
 
+                _logger.LogInformation($"before add object to list");
                 dataList.Add(myObject);
+                index++;
             }
         }
 
@@ -204,6 +225,7 @@ public class DemoSeedCasesService : IDemoSeedCasesService
 
     private async Task CleanByDevice()
     {
+        _logger.LogInformation($"--- --- CleanByDevice");
         var tasks = _devices
             .Select(async deviceId =>
             {

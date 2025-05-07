@@ -500,7 +500,8 @@ public class CasesService : ICasesService
         }
         catch (Exception ex)
         {
-            throw ex;
+            _logger.LogDebug($"--- --- ResetDemo Error: {ex.InnerException}");
+            throw;
         }
     }
 
