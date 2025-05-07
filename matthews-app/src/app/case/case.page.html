@@ -67,6 +67,7 @@
     <ion-item *ngIf="!fromProcess" lines="full">
       <ion-label position="floating">Scheduled Machine</ion-label>
       <ion-select name="selectDevice"  placeholder="Select Device" [(ngModel)]="newCase.scheduledDevice" >
+              <ion-select-option value="00000000-0000-0000-0000-000000000000">None selected</ion-select-option>
               <ion-select-option *ngFor="let device of deviceList;" value={{device.id}}>{{ device.alias }}</ion-select-option>
       </ion-select>
     </ion-item>
