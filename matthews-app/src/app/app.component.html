@@ -1,8 +1,8 @@
-<ion-app >
-  <ion-menu side="end" menuId="main-menu" contentId="main">
-    <ion-content *ngIf="userInfo$ | async as userInfo">
+<ion-app>
+  <ion-menu side="end" menuId="main-menu" contentId="main-content">
+    <ion-content class="menu-content" *ngIf="userInfo$ | async as userInfo">
       <div class="header-content">
-        <img src="assets/images/matthews-full.png" alt=""/>
+        <img src="assets/images/matthews-full.png" alt="" />
         <ion-label>
           <h2>{{userInfo.firstName}} {{userInfo.lastName}}</h2>
           <p>{{userInfo.email}}</p>
@@ -13,32 +13,37 @@
         <ion-menu-toggle auto-hide="true">
           <ion-item [routerLink]="pages.url" routerDirection="forward">
             <ion-icon [name]="pages.icon" slot="start"></ion-icon>
-              {{pages.title | translate}}
+            {{ pages.title | translate }}
           </ion-item>
         </ion-menu-toggle>
       </ion-list>
-      <ion-item button (click)="resetDemo()">
-        <ion-icon name="sync-outline" slot="start"></ion-icon>
+
+      <div class="settings">
+        <!-- Reset demo button pinned at bottom -->
+      <div class="reset-demo" *ngIf="demoFacilityExists$ | async">
+        <ion-item button (click)="resetDemo()">
+          <ion-icon name="sync-outline" slot="start"></ion-icon>
           Reset demo
-      </ion-item>
-    </ion-content>
-    <ion-content>
-      <div>
+        </ion-item>
+      </div>
         <ion-item>
           <ion-label translate>Language</ion-label>
-          <ion-select [(ngModel)]='language' (ionChange)='languageChange()'>
-            <ion-select-option value='en'>English</ion-select-option>
-            <ion-select-option value='de'>German</ion-select-option>
+          <ion-select [(ngModel)]="language" (ionChange)="languageChange()">
+            <ion-select-option value="en">English</ion-select-option>
+            <ion-select-option value="de">German</ion-select-option>
           </ion-select>
         </ion-item>
-      </div>
-      <div>
+
         <ion-item>
           <ion-label translate>Dark Theme</ion-label>
-            <ion-toggle class="toggle" [(ngModel)]="darkModeSliderValue" (ionChange)="toggleTheme($event)"></ion-toggle>
+          <ion-toggle class="toggle" [(ngModel)]="darkModeSliderValue" (ionChange)="toggleTheme($event)">
+          </ion-toggle>
         </ion-item>
       </div>
+
+      
     </ion-content>
   </ion-menu>
-  <ion-router-outlet Id="main"></ion-router-outlet>
+
+  <ion-router-outlet id="main-content"></ion-router-outlet>
 </ion-app>
