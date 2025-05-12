@@ -39,14 +39,14 @@ public class FacilityController : Controller
         return await _communicationService.UnsubscribeFromGroup(group);
     }
 
-    [HttpGet]
+    [HttpPost]
     [Route("GetFacilities")]
-    public async Task<ActionResult<IEnumerable<FacilityUsabilityDto>>> GetFacilities()
+    public async Task<ActionResult<IEnumerable<FacilityUsabilityDto>>> GetFacilities([FromBody] List<FacilityDto> Facilities)
     {
         _logger.LogInformation("---------- GetFacilities ");
         try
         {
-            return Ok((await _facilityService.GetFacilities()));
+            return Ok((await _facilityService.GetFacilities(Facilities)));
         }
         catch (Exception ex)
         {
