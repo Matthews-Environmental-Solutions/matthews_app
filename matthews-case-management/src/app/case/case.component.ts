@@ -56,7 +56,6 @@ export class CaseComponent implements OnInit {
     ) {
     this.loggedInUser = authService.loggedInUser;
     this.userSetting = userSettingService.getUserSettingLastValue();
-    this.caseService.getUnscheduledCases().subscribe(cases => this.filterCases(cases));
     _adapter.setLocale(this.translate.store.currentLang);
   }
   ngOnInit(): void {
@@ -67,30 +66,32 @@ export class CaseComponent implements OnInit {
       this.userSetting = this.userSettingService.getUserSettingLastValue();
       this.selectedFacilityId = this.userSetting.lastUsedFacilityId;
       this.stateService.setSelectedFacility( this.selectedFacilityId);
+      this.caseService.getUnscheduledCases(this.facilities).subscribe(cases => this.filterCases(cases));
       // this.userDetails = this.stateService.getUserDetails();
       // console.log(this.userDetails);
+
     }));
 
     this.subs.add(this.stateService.selectedFacilityId$.pipe(skip(1)).subscribe(fId => {
       this.selectedFacilityId = fId;
       this.loader = true;
-      this.caseService.getUnscheduledCases().subscribe(cases => {this.filterCases(cases); this.loader = false;});
+      this.caseService.getUnscheduledCases(this.facilities).subscribe(cases => {this.filterCases(cases); this.loader = false;});
     }));
 
     this.subs.add(this.stateService.caseSaved$.pipe(skip(1)).subscribe(c => {
       this.loader = true;
-      this.caseService.getUnscheduledCases().subscribe(cases => {this.filterCases(cases); this.loader = false;});
+      this.caseService.getUnscheduledCases(this.facilities).subscribe(cases => {this.filterCases(cases); this.loader = false;});
     }));
 
     this.subs.add(this.stateService.filterUnscheduledCasesByFacilityId$.subscribe(c => {
       this.loader = true;
-      this.caseService.getUnscheduledCases().subscribe(cases => {this.filterCases(cases); this.loader = false;});
+      this.caseService.getUnscheduledCases(this.facilities).subscribe(cases => {this.filterCases(cases); this.loader = false;});
     }));
 
     // Refresh unscheduled cases list when SignalR sends message
     this.subs.add(this.stateService.refreshCasesList$.pipe(skip(1)).subscribe(data => {
       this.loader = true;
-      this.caseService.getUnscheduledCases().subscribe(cases => {this.filterCases(cases); this.loader = false;});
+      this.caseService.getUnscheduledCases(this.facilities).subscribe(cases => {this.filterCases(cases); this.loader = false;});
     }));
 
     this.subs.add(this.stateService.canActivateFacilityUrl$.pipe(skip(1)).subscribe(permission => {
