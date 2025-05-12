@@ -9,6 +9,7 @@ import * as signalR from '@microsoft/signalr';
 import { AppState, AppStoreService } from '../app.store.service';
 import { CaseService } from '../case/case.service';
 import { environment } from '../../environments/environment';
+import { FacilityService } from '../facility/facility.service';
 declare let $: any;
 
 @Injectable({
@@ -22,7 +23,8 @@ export class SignalRCaseApiService {
     private authService: AuthService,
     private loadingService: LoadingService,
     private appStore: AppStoreService,
-    private caseService: CaseService
+    private caseService: CaseService,
+    private facilityService: FacilityService
   ) { }
 
   // public initializeSignalRCaseApiConnection() {
@@ -44,28 +46,47 @@ export class SignalRCaseApiService {
       .build();
 
     this.hubConnection.serverTimeoutInMilliseconds = 60000;
-  
+
     this.hubConnection
       .start()
       .then(() => console.log('SignalR Case API connection started'))
       .catch((err) =>
         console.log('Error while starting SignalR connection: ' + err)
       );
-  
+
     // Optionally handle reconnect events
     this.hubConnection.onreconnecting(() => {
       console.log('SignalR connection lost. Attempting to reconnect...');
     });
-  
+
     this.hubConnection.onreconnected(() => {
       console.log('SignalR connection reestablished.');
     });
-  
+
     this.hubConnection.onclose((error) => {
       console.log('SignalR connection closed.', error);
     });
   }
-  
+
+  setSelectedFacilityFromSchedulePage(facility: string, previousFacilityId?: string): void {
+    //previously selected facility id
+    
+    if (!previousFacilityId || (previousFacilityId && previousFacilityId.trim().length === 0)) {
+      this.facilityService.subscribeToGroup(facility).then((response) => {
+        console.log(response);
+      });
+    } else {
+      this.facilityService.unsubscribeFromGroup(previousFacilityId)
+        .then(
+          firstResponse => {
+            console.log('First response:', firstResponse);
+            return this.facilityService.subscribeToGroup(facility);
+          }
+        )
+        .then((response) => { console.log(response); });
+    }
+  }
+
 
   public stopConnection() {
     this.hubConnection.stop();

@@ -55,8 +55,9 @@ export class SchedulePage implements OnInit, OnDestroy {
     this.signalRCaseApiService.stopConnection();
   }
 
-  establishSignalRConnection(facilityId: string) {
+  establishSignalRConnection(facilityId: string, previousFacilityId?: string) {
     this.signalRCaseApiService.initializeSignalRCaseApiConnection();
+    this.signalRCaseApiService.setSelectedFacilityFromSchedulePage(facilityId, previousFacilityId);
     this.signalRCaseApiService.addCaseDataListener(facilityId);
   }
 
@@ -97,13 +98,14 @@ export class SchedulePage implements OnInit, OnDestroy {
   }
 
   selectedFacilityChanged($event) {
+    const previousFacilityId = this.selectedFacilityId;
     this.selectedFacilityId = $event.target.value;
     if(this.calendarView == 'byDay') this.caseStore.getCasesByDay([this.selectedFacilityId, this.selectedDay]);
     if(this.calendarView == 'byWeek') this.caseStore.getCasesByWeek([this.selectedFacilityId, this.getFirstDayOfTheWeekAsDate()]);
     if(this.calendarView == 'byUnscheduled') this.caseStore.getUnscheduledCases();
     this.signalRCaseApiService.stopConnection();
     this.selectFacility($event.target, $event.target.value);
-    this.establishSignalRConnection(this.selectedFacilityId);
+    this.establishSignalRConnection(this.selectedFacilityId, previousFacilityId);
   }
 
   cancelSearch(): void {

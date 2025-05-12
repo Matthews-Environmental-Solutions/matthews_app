@@ -1,4 +1,4 @@
-<ion-header >
+<ion-header>
   <ion-toolbar color="primary">
     <ion-title>{{'Case' | translate}}</ion-title>
     <ion-buttons slot="start">
@@ -11,71 +11,80 @@
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
-<ion-content >
-  <form #caseForm="ngForm" (ngSubmit)="onSubmit()" >
+<ion-content>
+  <form #caseForm="ngForm" (ngSubmit)="onSubmit()">
     <ion-item lines="full">
-      <ion-label position="floating">{{'CaseID' | translate}}</ion-label>
-      <ion-input [(ngModel)]="newCase.clientCaseId" name="caseId" type="text" required (ionBlur)="trimClientCaseId()"></ion-input>
+      <ion-label position="floating">{{'CaseID' | translate}} <span class="required-star"> *</span></ion-label>
+      <ion-input [(ngModel)]="newCase.clientCaseId" name="caseId" type="text" required
+        (ionBlur)="trimClientCaseId()"></ion-input>
     </ion-item>
     <ion-item lines="full">
-      <ion-label position="floating">{{'First Name' | translate}}</ion-label>
-      <ion-input type="text" [(ngModel)]="newCase.firstName" name="firstname" required maxlength="16" (ionBlur)="trimFirstName()"></ion-input>
+      <ion-label position="floating">{{'First Name' | translate}} <span class="required-star"> *</span></ion-label>
+      <ion-input type="text" [(ngModel)]="newCase.firstName" name="firstname" required maxlength="16"
+        (ionBlur)="trimFirstName()"></ion-input>
     </ion-item>
     <ion-item lines="full">
-      <ion-label position="floating">{{'Last Name' | translate}}</ion-label>
-      <ion-input type="text" [(ngModel)]="newCase.lastName" name="lastname" required maxlength="16" (ionBlur)="trimLastName()"></ion-input>
+      <ion-label position="floating">{{'Last Name' | translate}} <span class="required-star"> *</span></ion-label>
+      <ion-input type="text" [(ngModel)]="newCase.lastName" name="lastname" required maxlength="16"
+        (ionBlur)="trimLastName()"></ion-input>
     </ion-item>
     <ion-item lines="full">
       <ion-label position="floating">Physical ID</ion-label>
-      <ion-input type="text" [(ngModel)]="newCase.physicalId" name="physicalId" (ionBlur)="trimPhysicalId()"></ion-input>
+      <ion-input type="text" [(ngModel)]="newCase.physicalId" name="physicalId"
+        (ionBlur)="trimPhysicalId()"></ion-input>
     </ion-item>
     <ion-row>
       <ion-col>
         <ion-item lines="full">
-          <ion-label position="floating">{{'Weight' | translate}}</ion-label>
+          <ion-label position="floating">{{'Weight' | translate}} <span class="required-star"> *</span></ion-label>
           <ion-input type="number" [(ngModel)]="newCase.weight" name="weight" required></ion-input>
         </ion-item>
       </ion-col>
       <ion-col>
         <ion-item lines="full">
-          <ion-label position="floating">{{'Age' | translate}}</ion-label>
+          <ion-label position="floating">{{'Age' | translate}} <span class="required-star"> *</span></ion-label>
           <ion-input background-color="#C6D92D" type="number" [(ngModel)]=newCase.age name="age" required></ion-input>
         </ion-item>
       </ion-col>
     </ion-row>
 
     <ion-item lines="full">
-      <ion-label position="floating">{{'Gender' | translate}}</ion-label>
+      <ion-label position="floating">{{'Gender' | translate}} <span class="required-star"> *</span></ion-label>
       <ion-select interface="popover" placeholder="Select One" name="gender" required [(ngModel)]="newCase.gender">
         <ion-select-option *ngFor="let g of genders;" [value]="g.id">{{g.name | titlecase}}</ion-select-option>
       </ion-select>
-    </ion-item> 
-   <ion-item lines="full">
-      <ion-label position="floating">{{'ContainerType' | translate}}</ion-label>
-      <ion-select interface="popover" placeholder="Select One" name="containerType" required [(ngModel)]="newCase.containerType">
+    </ion-item>
+    <ion-item lines="full">
+      <ion-label position="floating">{{'ContainerType' | translate}} <span class="required-star"> *</span></ion-label>
+      <ion-select interface="popover" placeholder="Select One" name="containerType" required
+        [(ngModel)]="newCase.containerType">
         <ion-select-option *ngFor="let t of containerTypes;" [value]="t.id">{{ t.name | titlecase}}</ion-select-option>
       </ion-select>
-    </ion-item> 
+    </ion-item>
     <ion-item *ngIf="!fromProcess" lines="full">
-      <ion-label position="floating">Case Status</ion-label>
-      <ion-select interface="popover" placeholder="Select One" name="facilityStatusId" required [(ngModel)]="newCase.facilityStatusId">
-        <ion-select-option *ngFor="let f of facilityStatuses;" [value]="f.id">{{ f.statusName | titlecase}}</ion-select-option>
+      <ion-label position="floating">Case Status <span class="required-star"> *</span></ion-label>
+      <ion-select interface="popover" placeholder="Select One" name="facilityStatusId" required
+        [(ngModel)]="newCase.facilityStatusId">
+        <ion-select-option *ngFor="let f of facilityStatuses;" [value]="f.id">{{ f.statusName |
+          titlecase}}</ion-select-option>
       </ion-select>
     </ion-item>
-    
-  <ng-container *ngIf="deviceList$ | async as deviceList">
-    <ion-item *ngIf="!fromProcess" lines="full">
-      <ion-label position="floating">Scheduled Machine</ion-label>
-      <ion-select name="selectDevice"  placeholder="Select Device" [(ngModel)]="newCase.scheduledDevice" >
-              <ion-select-option value="00000000-0000-0000-0000-000000000000">None selected</ion-select-option>
-              <ion-select-option *ngFor="let device of deviceList;" value={{device.id}}>{{ device.alias }}</ion-select-option>
-      </ion-select>
+
+    <ng-container *ngIf="deviceList$ | async as deviceList">
+      <ion-item *ngIf="!fromProcess" lines="full">
+        <ion-label position="floating">Scheduled Machine</ion-label>
+        <ion-select name="selectDevice" placeholder="Select Device" [(ngModel)]="newCase.scheduledDevice">
+          <ion-select-option value="00000000-0000-0000-0000-000000000000">None selected</ion-select-option>
+          <ion-select-option *ngFor="let device of deviceList;" value={{device.id}}>{{ device.alias
+            }}</ion-select-option>
+        </ion-select>
+      </ion-item>
+    </ng-container>
+    <ion-item lines="full">
+      <ion-label position="floating">{{'scheduleDate' | translate}}</ion-label>
+      <ion-datetime [disabled]="fromProcess" placeholder="Select Date" name="scheduledTime"
+        [(ngModel)]="newCase.scheduledStartTime"></ion-datetime>
     </ion-item>
-  </ng-container>
-  <ion-item lines="full">
-    <ion-label position="floating">{{'scheduleDate' | translate}}</ion-label>
-    <ion-datetime [disabled]="fromProcess" placeholder="Select Date" name="scheduledTime" [(ngModel)]="newCase.scheduledStartTime"></ion-datetime>
-  </ion-item>
     <ion-button type="submit" color="primary" expand="block" [disabled]="!caseForm.valid">
       {{'Submit' | translate}}
     </ion-button>
