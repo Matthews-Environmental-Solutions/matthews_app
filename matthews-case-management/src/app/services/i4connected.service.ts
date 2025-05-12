@@ -1,10 +1,11 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { Observable, catchError, forkJoin, map, retry, switchMap, throwError } from "rxjs";
+import { Observable, catchError, concatMap, forkJoin, map, retry, switchMap, throwError } from "rxjs";
 import { Facility } from "../models/facility.model";
 import { Device } from "../models/device.model";
 import { environment } from "src/environments/environment";
 import { UserDetails } from "../models/user-details.model";
+import { FacilityService } from "./facility.service";
 
 @Injectable({
     providedIn: 'root'
@@ -13,12 +14,21 @@ export class I4connectedService {
 
     apiUrl: string = environment.i4connectedApiUrl;
 
-    constructor(public httpClient: HttpClient) { }
+    constructor(public httpClient: HttpClient, private facilityService: FacilityService) { }
 
     getSites(): Observable<Facility[]> {
         return this.httpClient.get<Facility[]>(`${this.apiUrl}/api/sites/list`)
+            .pipe(
+                concatMap((firstResponse: Facility[]) => 
+                    {
+                        return this.facilityService.getFacilities(firstResponse);
+                    }
+                )
+            )
             .pipe(retry(1), catchError(this.handleError));
     }
+
+     
 
     getSite(id: string): Observable<Facility> {
         return this.httpClient.get<Facility>(`${this.apiUrl}/api/sites/${id}/details`)

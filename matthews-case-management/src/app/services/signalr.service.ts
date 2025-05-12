@@ -64,7 +64,14 @@ export class SignalrService {
     public addFacilityDataListener = () => {
         this.hubConnectionToFacilityHub.on('facilitylist', (data) => {
             const facilities: Facility[] = JSON.parse(data);
-            this.stateService.setFacilitiesBS(facilities);
+            
+            //filter out const facilities with facilities that are already in the state
+            const filteredFacilities = facilities.filter(facility => {
+                return this.stateService.getFacilities().some(existingFacility => existingFacility.id === facility.id);
+            });
+            
+
+            this.stateService.setFacilitiesBS(filteredFacilities);
         });
     }
 }

@@ -14,8 +14,8 @@ export class FacilityService {
     
     constructor(public httpClient: HttpClient, private translate: TranslateService) { }
 
-    getFacilities(): Observable<Facility[]> {
-        return this.httpClient.get<Facility[]>(this.apiURL + '/Facility/GetFacilities')
+    getFacilities(facilities: Facility[]): Observable<Facility[]> {
+        return this.httpClient.post<Facility[]>(this.apiURL + '/Facility/GetFacilities', facilities)
             .pipe(retry(1), catchError(this.handleError))
             .pipe(map((facilities: Facility[]) => {
                 return facilities;

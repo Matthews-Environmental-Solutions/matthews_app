@@ -60,7 +60,7 @@ export class CaseComponent implements OnInit {
     _adapter.setLocale(this.translate.store.currentLang);
   }
   ngOnInit(): void {
-    this.subs.add(this.facilityService.getFacilities()
+    this.subs.add(this.i4connectedService.getSites()
       .pipe(map(data => data.filter(f => f.isValid)))
       .subscribe(data => {
       this.facilities = data;

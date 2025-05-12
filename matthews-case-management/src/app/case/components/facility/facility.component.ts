@@ -49,7 +49,7 @@ export class FacilityComponent implements OnInit, OnDestroy {
     public signalRService: SignalrService,
     public dialog: MatDialog) {
 
-      this.subs.add(this.facilityService.getFacilities().subscribe(data => {
+      this.subs.add(this.i4connectedService.getSites().subscribe(data => {
       this.stateService.setFacilitiesBS(data);
     }));
   }

@@ -105,7 +105,7 @@ export class CaseAddEditComponent implements OnInit {
       physicalId: new FormControl('', { nonNullable: true })
     });
 
-    this.subs.add(this.facilityService.getFacilities()
+    this.subs.add(this.i4connectedService.getSites()
       .pipe(map(data => data.filter(f => f.isValid)))
       .subscribe(data => {
         this.facilities = data;
