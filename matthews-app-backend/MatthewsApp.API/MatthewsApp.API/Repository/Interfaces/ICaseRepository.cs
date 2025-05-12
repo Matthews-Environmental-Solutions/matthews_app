@@ -1,4 +1,5 @@
-﻿using MatthewsApp.API.Models;
+﻿using MatthewsApp.API.Dtos;
+using MatthewsApp.API.Models;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -9,7 +10,7 @@ public interface ICaseRepository : IBaseRepository<Case, Guid>
 {
     Task CleanDbForDemo(Guid deviceId);
     void Detach(Case entity);
-    Task<IEnumerable<Case>> GetAllUnscheduled();
+    Task<IEnumerable<Case>> GetUnscheduledCasesByFacilities(List<Guid> Facilities);
     Case GetById(Guid id);
     Task<IEnumerable<Case>> GetCaseInProgressOrCycleCompleteByDevice(Guid deviceId);
     Task<IEnumerable<Case>> GetFirst20ScheduledCases(Guid scheduledDeviceId);

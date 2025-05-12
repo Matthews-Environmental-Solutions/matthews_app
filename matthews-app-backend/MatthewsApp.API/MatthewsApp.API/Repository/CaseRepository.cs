@@ -1,4 +1,5 @@
-﻿using MatthewsApp.API.Enums;
+﻿using MatthewsApp.API.Dtos;
+using MatthewsApp.API.Enums;
 using MatthewsApp.API.Models;
 using MatthewsApp.API.Repository.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -77,20 +78,20 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
         return cases.Where(c => c.ScheduledStartTime > DateTime.MinValue.AddDays(100) &&c.IsObsolete == false);
     }
 
-    public async Task<IEnumerable<Case>> GetAllUnscheduled()
+    public async Task<IEnumerable<Case>> GetUnscheduledCasesByFacilities(List<Guid> Facilities)
     {
-        IEnumerable<Case> cases = await _dataContext.Cases.Include(c => c.FacilityStatus).ToArrayAsync();
-
-        return cases.Where(c => 
-             (
-                c.ScheduledStartTime < DateTime.MinValue.AddDays(100) 
+        IEnumerable<Case> cases = await _dataContext.Cases.Include(c => c.FacilityStatus)
+            .Where(c => Facilities.Contains((Guid)c.ScheduledFacility))
+            .Where(c =>
+                (c.ScheduledStartTime < DateTime.MinValue.AddDays(100)
                 || c.ScheduledFacility == Guid.Empty
-                || c.ScheduledDevice == Guid.Empty
-             )
+                || c.ScheduledDevice == Guid.Empty)
 
-            && c.IsObsolete == false
-            )
-            .ToList();
+                && c.IsObsolete == false
+                )
+            .ToArrayAsync();
+
+        return cases.ToList();
     }
 
     public async Task<IEnumerable<Case>> GetScheduledCasesByDay(Guid facilityId, DateTime date)
