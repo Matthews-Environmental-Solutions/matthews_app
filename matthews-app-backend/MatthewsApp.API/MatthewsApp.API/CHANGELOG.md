@@ -4,6 +4,10 @@
 - Changed: Description of a change in existing functionality.
 - Removed: Description of deprecated features.
 
+## [1.1.1] - 2025-05-12
+	- Fixed:
+	    Improvement of getting the unscheduled Cases. We do filtering cases by facility. (not simply get all of them)
+
 ## [1.1.0] - 2025-05-06
 	- Added:
 		DemoSeedCasesService is added. It reads CSV file with Cases data and update database.
