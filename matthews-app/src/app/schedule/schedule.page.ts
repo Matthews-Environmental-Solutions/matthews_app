@@ -102,7 +102,7 @@ export class SchedulePage implements OnInit, OnDestroy {
     this.selectedFacilityId = $event.target.value;
     if(this.calendarView == 'byDay') this.caseStore.getCasesByDay([this.selectedFacilityId, this.selectedDay]);
     if(this.calendarView == 'byWeek') this.caseStore.getCasesByWeek([this.selectedFacilityId, this.getFirstDayOfTheWeekAsDate()]);
-    if(this.calendarView == 'byUnscheduled') this.caseStore.getUnscheduledCases();
+    if(this.calendarView == 'byUnscheduled') this.caseStore.getUnscheduledCases(this.appStore.getUserFacilities());
     this.signalRCaseApiService.stopConnection();
     this.selectFacility($event.target, $event.target.value);
     this.establishSignalRConnection(this.selectedFacilityId, previousFacilityId);
@@ -136,7 +136,7 @@ export class SchedulePage implements OnInit, OnDestroy {
         this.caseStore.getCasesByWeek([this.defaultFacilityId, this.getFirstDayOfTheWeekAsDate()]);
       }
       if (this.calendarView == 'byUnscheduled') {
-        this.caseStore.getUnscheduledCases();
+        this.caseStore.getUnscheduledCases(this.appStore.getUserFacilities());
       }
     });
   }
@@ -170,7 +170,7 @@ export class SchedulePage implements OnInit, OnDestroy {
       // });
     }
     if (viewDaily == 'byUnscheduled') {
-      this.caseStore.getUnscheduledCases();
+      this.caseStore.getUnscheduledCases(this.appStore.getUserFacilities());
     }
   }
 

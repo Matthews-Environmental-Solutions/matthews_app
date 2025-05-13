@@ -482,6 +482,10 @@ export class AppStoreService extends ComponentStore<AppState> {
     return this.get((state) => state.selectedFacility);
   }
 
+  getUserFacilities(): Facility[] {
+    return this.get((state) => state.facilities);
+  }
+
   readonly getCasesByDay = this.effect<[string, Date]>((cases$) =>
     cases$.pipe(
       tap(() => this.loadingService.present()),
@@ -522,11 +526,11 @@ export class AppStoreService extends ComponentStore<AppState> {
     )
   );
 
-  readonly getUnscheduledCases = this.effect((cases$) =>
-    cases$.pipe(
+  readonly getUnscheduledCases = this.effect<Facility[]>((facilities$) =>
+    facilities$.pipe(
       tap(() => this.loadingService.present()),
-      switchMap(() =>
-        this.caseService.getUnscheduledCases().then((cases) => {
+      switchMap((facilities) =>
+        this.caseService.getUnscheduledCases(facilities).then((cases) => {
           this.updateCases(
             cases.filter(
               (caseToFilter) =>

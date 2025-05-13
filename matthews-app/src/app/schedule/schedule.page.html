@@ -133,7 +133,7 @@
               <b>{{case.firstName | titlecase}} {{case.lastName | titlecase}}</b>
             </p>
             <p>{{case.facilityStatusText| translate | enumFormat | titlecase}}</p>
-            <p>Machine: {{case.scheduledDeviceAlias}}</p>
+            <p>Machine: {{case.scheduledDeviceAlias || 'None selected'}}</p>
             <p
               [ngClass]="checkScheduledStartTime(case.scheduledStartTime) ? 'scheduled-date-found' : 'scheduled-date-missing'">
               {{displayScheduledStartTime(case.scheduledStartTime)}}</p>
