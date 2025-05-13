@@ -9,6 +9,10 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 - Bug fixes.
 
+## [2.31] - 2025-05-12
+### Fixed
+- Improvement of getting the unscheduled Cases. We do filtering cases by facility. (not simply get all of them)
+
 ## [2.30] - 2025-04-23
 ### Fixed
 - SignalR - once facility is changed it will unsubscribe to previous facility and subscribe to new one.

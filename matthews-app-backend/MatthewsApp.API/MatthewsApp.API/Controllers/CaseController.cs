@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -198,14 +199,15 @@ public class CaseController : Controller
         }
     }
 
-    [HttpGet]
+    [HttpPost]
     [Route("GetUnscheduledCases")]
-    public async Task<ActionResult<IEnumerable<CaseDto>>> GetUnscheduledCases()
+    public async Task<ActionResult<IEnumerable<CaseDto>>> GetUnscheduledCases([FromBody] List<FacilityDto> Facilities)
     {
         _logger.LogInformation("---------- GetUnscheduledCases");
         try
         {
-            return Ok((await service.GetUnscheduledCases()).ToDTOs());
+            var facilityIds = Facilities.Select(f => f.id).ToList();
+            return Ok((await service.GetUnscheduledCases(facilityIds)).ToDTOs());
         }
         catch (Exception ex)
         {

@@ -30,7 +30,7 @@ public interface ICasesService
 
     Task<Case> GetById(Guid id);
     bool IsCaseExists(Guid id);
-    Task<IEnumerable<Case>> GetUnscheduledCases();
+    Task<IEnumerable<Case>> GetUnscheduledCases(List<Guid> Facilities);
     Task<IEnumerable<Case>> GetScheduledCasesByDay(Guid facilityId, DateTime date);
     Task<IEnumerable<Case>> GetScheduledCasesByWeek(Guid facilityId, DateTime dateStartDateOfWeek);
     Task<IEnumerable<Case>> GetScheduledCasesByTimePeriod(Guid facilityId, DateTime dateStart, DateTime dateEnd);
@@ -322,9 +322,9 @@ public class CasesService : ICasesService
         return UptadeOrCreateCase(dto, entity, entityDoesNotExistInDb);
     }
 
-    public async Task<IEnumerable<Case>> GetUnscheduledCases()
+    public async Task<IEnumerable<Case>> GetUnscheduledCases(List<Guid> Facilities)
     {
-        IEnumerable<Case> cases = await _caseRepository.GetAllUnscheduled();
+        IEnumerable<Case> cases = await _caseRepository.GetUnscheduledCasesByFacilities(Facilities);
         return cases.Select(i =>
         {
             i.ScheduledStartTime = DateTime.SpecifyKind(i.ScheduledStartTime is null ? DateTime.MinValue : i.ScheduledStartTime.Value, DateTimeKind.Utc);

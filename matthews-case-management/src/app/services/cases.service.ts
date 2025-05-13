@@ -6,6 +6,7 @@ import { TranslateService } from "@ngx-translate/core";
 import { environment } from "src/environments/environment";
 import { CalendarService } from "./calendar.service";
 import { CaseStatusDto } from "../models/case-status-dto.model";
+import { Facility } from "../models/facility.model";
 
 
 @Injectable({
@@ -26,8 +27,8 @@ export class CaseService {
             .pipe(map(item => this.remapCase(item)));
     }
 
-    getUnscheduledCases(): Observable<Case[]> {
-        return this.httpClient.get<Case[]>(this.apiURL + '/Case/GetUnscheduledCases')
+    getUnscheduledCases(facilities: Facility[]): Observable<Case[]> {
+        return this.httpClient.post<Case[]>(this.apiURL + '/Case/GetUnscheduledCases', facilities)
             .pipe(retry(1), catchError(this.handleError))
             .pipe(map((cases: Case[]) => {
                 cases = cases.map(item => this.remapCase(item));
