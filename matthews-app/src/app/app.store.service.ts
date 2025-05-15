@@ -380,7 +380,7 @@ export class AppStoreService extends ComponentStore<AppState> {
 
   readonly getDeviceListWithSignalR = this.effect<string>((trigger$) =>
     trigger$.pipe(
-      //tap(() => this.loadingService.present()),
+      tap(() => this.loadingService.present()),
       switchMap((facilityId) =>
         this.deviceListService
           .getDevices(facilityId)
