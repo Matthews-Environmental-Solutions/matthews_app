@@ -14,16 +14,13 @@ import { Device } from '../device-list/device';
   styleUrls: ['./extend-cycle.page.scss'],
 
 })
-export class ExtendCyclePage implements OnInit {
+export class ExtendCyclePage {
   @Input() selectedDevice: Device;
 
   extraTimeInterval = 5;
   maxTimeInterval = 480;
 
   constructor(private popoverController: PopoverController, private appStore: AppStoreService, private cremationProcessService: CremationProcessService) { }
-
-  ngOnInit() {
-  }
 
   increseTimeInterval() {
     if(this.extraTimeInterval < this.maxTimeInterval) {
