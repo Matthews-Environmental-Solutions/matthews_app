@@ -11,7 +11,7 @@ public interface IFacilityStatusRepository : IBaseRepository<FacilityStatus, Gui
     Task<IEnumerable<FacilityStatus>> GetAllByFacility(Guid id);
     FacilityStatus GetCremationCompleteFacilityStatus(Guid facilityId);
     FacilityStatus GetCycleCompleteFacilityStatus(Guid facilityId);
-    FacilityStatus GetFirstAwaitingPermissionFacilityStatus(Guid demoFacilityId);
+    FacilityStatus GetFirstAwaitingPermissionFacilityStatus(Guid facilityId);
     FacilityStatus GetInProgressFacilityStatus(Guid facilityId);
     FacilityStatus GetReadyToCremateFacilityStatus(Guid facilityId);
     FacilityStatus GetTrackedEntity(Guid facilityId);

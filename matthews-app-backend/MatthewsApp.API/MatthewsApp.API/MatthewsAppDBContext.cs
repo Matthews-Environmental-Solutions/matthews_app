@@ -82,16 +82,6 @@ public class MatthewsAppDBContext : DbContext, IMatthewsAppDBContext
             .Property(c => c.ModifiedTime)
             .IsRequired(false);
 
-
-        // many-to-many Case - FacilityStatus 
-
-        //modelBuilder.Entity<CaseToFacilityStatus>().HasKey(cf => new { cf.CaseId, cf.FacilityStatusId });
-
-        //modelBuilder.Entity<Case>()
-        //.HasMany(e => e.FacilityStatuses)
-        //.WithMany(e => e.Cases)
-        //.UsingEntity<CaseToFacilityStatus>();
-
         base.OnModelCreating(modelBuilder);
     }
 }

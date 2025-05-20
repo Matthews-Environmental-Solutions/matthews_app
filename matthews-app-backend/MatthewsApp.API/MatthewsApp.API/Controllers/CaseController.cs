@@ -1,8 +1,8 @@
 ﻿using MatthewsApp.API.Dtos;
-using MatthewsApp.API.Enums;
 using MatthewsApp.API.Mappers;
 using MatthewsApp.API.Models;
 using MatthewsApp.API.Services;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -10,13 +10,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace MatthewsApp.API.Controllers;
 
 [Route("[controller]")]
 [ApiController]
-public class CaseController : Controller
+public class CaseController : ControllerBase
 {
     private readonly ICasesService service;
     private readonly ILogger<CaseController> _logger;

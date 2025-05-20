@@ -34,7 +34,7 @@ public class FacilityService : IFacilityService
         return await GetFacilities(facilities);
     }
 
-    public async Task<IEnumerable<FacilityUsabilityDto>> GetFacilities(List<FacilityDto> facilities)
+    public async Task<IEnumerable<FacilityUsabilityDto>> GetFacilities(List<FacilityDto> Facilities)
     {
         var facilityUsabilityDtos = new List<FacilityUsabilityDto>();
 
@@ -43,7 +43,7 @@ public class FacilityService : IFacilityService
 
 
         // iterate through all facilities and check if they have at least one of all facility statuses
-        foreach (var facility in facilities)
+        foreach (var facility in Facilities)
         {
             var errorMessage = new StringBuilder();
             var fFacilityStatuses = facilityStatuses

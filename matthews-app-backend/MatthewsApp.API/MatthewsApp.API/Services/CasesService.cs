@@ -16,10 +16,10 @@ namespace MatthewsApp.API.Services;
 
 public interface ICasesService
 {
-    void Create(Case caseEntity);
-    void Delete(Case caseEntity);
-    Case Update(Case caseEntity);
-    void Select(Guid caseEntity);
+    void Create(Case entity);
+    void Delete(Case entity);
+    Case Update(Case entity);
+    void Select(Guid caseId);
 
     /// <summary>
     /// Deselects the case with the specified caseId. If publichEvent is true, an event is published to send mqtt message to Flexy.

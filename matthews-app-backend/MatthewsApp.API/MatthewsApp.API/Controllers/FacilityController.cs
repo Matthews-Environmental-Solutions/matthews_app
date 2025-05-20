@@ -10,7 +10,7 @@ namespace MatthewsApp.API.Controllers;
 
 [Route("[controller]")]
 [ApiController]
-public class FacilityController : Controller
+public class FacilityController : ControllerBase
 {
     private readonly ILogger<CaseController> _logger;
     private readonly IFacilityService _facilityService;

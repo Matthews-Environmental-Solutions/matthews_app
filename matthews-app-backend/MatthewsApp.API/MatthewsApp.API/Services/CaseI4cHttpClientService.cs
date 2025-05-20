@@ -15,10 +15,10 @@ namespace MatthewsApp.API.Services;
 
 public interface ICaseI4cHttpClientService
 {
-    Task<AdapterDto> GetAdapterByDeviceIdAsync(Guid adapterId);
+    Task<AdapterDto> GetAdapterByDeviceIdAsync(Guid deviceId);
     Task<ICollection<DeviceDto>> GetAllDevicesAsync();
     Task<ICollection<FacilityDto>> GetAllFacilities();
-    Task<DeviceDetailsDto> GetDeviceDetailsAsync(Guid id);
+    Task<DeviceDetailsDto> GetDeviceDetailsAsync(Guid deviceId);
 }
 
 public class CaseI4cHttpClientService : ICaseI4cHttpClientService
