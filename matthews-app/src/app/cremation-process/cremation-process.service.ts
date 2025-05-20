@@ -28,13 +28,4 @@ export class CremationProcessService {
     });
   }
 
-  public getPrimaryChamberTemperature(deviceName: string) {
-
-  }
-
-  public getSecondaryChamberTemperature(deviceName: string) {
-
-  }
-
-
 }
