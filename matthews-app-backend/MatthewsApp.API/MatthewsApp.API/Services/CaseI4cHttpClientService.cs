@@ -39,7 +39,7 @@ public class CaseI4cHttpClientService : ICaseI4cHttpClientService
         var handler = new HttpClientHandler
         {
             SslProtocols = SslProtocols.Tls12 | SslProtocols.Tls13,
-            ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
+            //ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
         };
 
         _httpClient = new HttpClient(handler)
@@ -129,12 +129,28 @@ public class CaseI4cHttpClientService : ICaseI4cHttpClientService
                 return;
             }
 
+            var username = string.Empty;
+            var password = string.Empty;
+            if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+            {
+                username = Environment.GetEnvironmentVariable("MatthewsCaseApiOAuthUsername");
+                password = Environment.GetEnvironmentVariable("MatthewsCaseApiOAuthPassword");
+                if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
+                {
+                    throw new InvalidOperationException("Username and password must be set in the environment variables.");
+                }
+            }
+            else
+            {
+                throw new PlatformNotSupportedException("This application can only run on Windows.");
+            }
+
             var request = new PasswordTokenRequest
             {
                 Address = disco.TokenEndpoint,
                 ClientId = _configuration["OAuth2Introspection:ClientId"],
-                UserName = _configuration["OAuth2Introspection:UserName"],
-                Password = _configuration["OAuth2Introspection:Password"],
+                UserName = username,
+                Password = password,
                 Scope = _configuration["OAuth2Introspection:Scope"]
             };
 

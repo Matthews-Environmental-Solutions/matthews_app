@@ -60,7 +60,22 @@ public class Startup
             c.OperationFilter<AuthorizeOperationFilter>();
         });
 
-        var connectionString = Configuration["connectionStrings:MatthewsAppDBConnectionString"];
+        var connectionString = string.Empty;
+        // Confirm that the value can only be retrieved from the process
+        // environment block if running on a Windows system.
+        if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+        {
+            var connectionStringFromEnv = Environment.GetEnvironmentVariable("MatthewsCaseApiDBConnectionString");
+            if (string.IsNullOrEmpty(connectionStringFromEnv))
+            {
+                throw new InvalidOperationException("DB connection string must be set in the environment variables.");
+            }
+            connectionString = connectionStringFromEnv;
+        }
+        else
+        {
+            throw new PlatformNotSupportedException("This application can only run on Windows.");
+        }
 
         services.AddDbContext<IMatthewsAppDBContext, MatthewsAppDBContext>(options => options.UseSqlServer(connectionString));
 

@@ -115,7 +115,7 @@ public class CaseMqttService : IHostedService
                             _logger?.LogInformation("---------- Case Mqtt Service - GetDevicesAsync");
 
                             // 1. get devices
-                            _devices = await _caseI4CHttpClientService.GetAllDevicesAsync();
+                            _devices = await _caseI4CHttpClientService.GetAllDevicesAsync() ?? new List<DeviceDto>();
                             _logger?.LogInformation($"---------- Case Mqtt Service - Number of devices: {_devices.Count}");
 
                             // 2. then iterate devices, 
