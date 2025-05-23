@@ -4,6 +4,10 @@
 - Changed: Description of a change in existing functionality.
 - Removed: Description of deprecated features.
 
+## [1.1.2] - 2025-05-23
+	- Fixed:
+	    Secrets are moved from appsettings.json to System Environment variables. The secrets are not stored in the repository. The secrets are used for the i4connected API and MQTT broker.
+
 ## [1.1.1] - 2025-05-12
 	- Fixed:
 	    Improvement of getting the unscheduled Cases. We do filtering cases by facility. (not simply get all of them)
