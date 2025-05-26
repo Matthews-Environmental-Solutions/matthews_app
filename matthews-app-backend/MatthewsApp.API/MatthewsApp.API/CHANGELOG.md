@@ -4,6 +4,11 @@
 - Changed: Description of a change in existing functionality.
 - Removed: Description of deprecated features.
 
+
+## [1.1.3] - 2025-05-26
+	- Fixed:
+	    Case field ScheduledDeviceAlias is populated on each Save and Update of the Case. We are calliing SetDeviceAliasForCase method.
+
 ## [1.1.2] - 2025-05-23
 	- Fixed:
 	    Secrets are moved from appsettings.json to System Environment variables. The secrets are not stored in the repository. The secrets are used for the i4connected API and MQTT broker.

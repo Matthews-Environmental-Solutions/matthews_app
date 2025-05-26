@@ -65,12 +65,12 @@ public class CaseController : ControllerBase
 
     [HttpPut]
     [Route("Update")]
-    public ActionResult Update([FromBody] CaseDto caseDto)
+    public async Task<ActionResult> Update([FromBody] CaseDto caseDto)
     {
         _logger.LogInformation("---------- Update");
         try
         {
-            service.Update(caseDto.ToEntity());
+            await service.Update(caseDto.ToEntity());
         }
         catch (DbUpdateConcurrencyException)
         {
@@ -105,12 +105,12 @@ public class CaseController : ControllerBase
 
     [HttpPut]
     [Route("Deselect")]
-    public ActionResult Deselect([FromBody] Guid caseId)
+    public async Task<ActionResult> Deselect([FromBody] Guid caseId)
     {
         _logger.LogInformation("---------- Deselect");
         try
         {
-            service.UpdateCaseWhenCaseDeselect(caseId, true);
+            await service.UpdateCaseWhenCaseDeselect(caseId, true);
         }
         catch (DbUpdateConcurrencyException)
         {

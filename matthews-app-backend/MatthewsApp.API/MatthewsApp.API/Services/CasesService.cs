@@ -18,7 +18,7 @@ public interface ICasesService
 {
     void Create(Case entity);
     void Delete(Case entity);
-    Case Update(Case entity);
+    Task<Case> Update(Case entity);
     void Select(Guid caseId);
 
     /// <summary>
@@ -26,7 +26,7 @@ public interface ICasesService
     /// </summary>
     /// <param name="caseId"></param>
     /// <param name="publichEvent"></param>
-    void UpdateCaseWhenCaseDeselect(Guid caseId, bool publichEvent);
+    Task UpdateCaseWhenCaseDeselect(Guid caseId, bool publichEvent);
 
     Task<Case> GetById(Guid id);
     bool IsCaseExists(Guid id);
@@ -70,7 +70,7 @@ public class CasesService : ICasesService
         _demoSeedCasesService = demoSeedCasesService;
     }
 
-    public void Create(Case entity)
+    public async void Create(Case entity)
     {
         if (entity.FacilityStatusId == Guid.Empty)
         {
@@ -81,6 +81,10 @@ public class CasesService : ICasesService
 
         try
         {
+            if(entity.ScheduledDevice != null && !entity.ScheduledDevice.Equals(Guid.Empty))
+            {
+                entity.ScheduledDeviceAlias = await SetDeviceAliasForCase((Guid)entity.ScheduledDevice);
+            }
             var createdEntity = _caseRepository.Create(entity);
             List<Guid> ids = new List<Guid>();
 
@@ -118,7 +122,7 @@ public class CasesService : ICasesService
         _caseHub.SendMessageToRefreshList($"Delete done.", entity.ScheduledFacility.ToString());
     }
 
-    public Case Update(Case entity)
+    public async Task<Case> Update(Case entity)
     {
         _logger.LogDebug("Update of case id");
         Case previousCase = _caseRepository.GetById(entity.Id);
@@ -140,6 +144,11 @@ public class CasesService : ICasesService
             }
         }
 
+        if (entity.ScheduledDevice != previousCase.ScheduledDevice)
+        {
+            entity.ScheduledDeviceAlias = await SetDeviceAliasForCase((Guid)entity.ScheduledDevice);
+        }
+
         _caseRepository.Update(entity);
         List<Guid> ids = new List<Guid>();
 
@@ -158,14 +167,14 @@ public class CasesService : ICasesService
         return entity;
     }
 
-    public void Select(Guid caseId)
+    public async void Select(Guid caseId)
     {
         _logger.LogDebug("Selection of case");
         try
         {
             var entity = _caseRepository.GetById(caseId);
             entity.Selected = true;
-            Update(entity);
+            await Update(entity);
 
             _ea.GetEvent<CaseSelectEvent>().Publish(entity);
         }
@@ -180,12 +189,12 @@ public class CasesService : ICasesService
     /// </summary>
     /// <param name="caseId"></param>
     /// <param name="publichEvent"></param>
-    public void UpdateCaseWhenCaseDeselect(Guid caseId, bool publichEvent)
+    public async Task UpdateCaseWhenCaseDeselect(Guid caseId, bool publichEvent)
     {
         _logger.LogDebug("Deselection of case");
         try
         {
-            Case updatedCase = UpdateDeselectedCase(caseId);
+            Case updatedCase = await UpdateDeselectedCase(caseId);
             if (publichEvent)
                 _ea.GetEvent<CaseDeselectEvent>().Publish(updatedCase);
         }
@@ -195,13 +204,13 @@ public class CasesService : ICasesService
         }
     }
 
-    private Case UpdateDeselectedCase(Guid caseId)
+    private async Task<Case> UpdateDeselectedCase(Guid caseId)
     {
         var entity = _caseRepository.GetById(caseId);
         if (entity != null)
         {
             entity.Selected = false;
-            Update(entity);
+            await Update(entity);
             return entity;
         }
         return null;
@@ -231,7 +240,7 @@ public class CasesService : ICasesService
         entity.ActualDeviceAlias = entity.ScheduledDeviceAlias;
         entity.PerformedBy = dto.User;
 
-        return UptadeOrCreateCase(dto, entity, entityDoesNotExistInDb);
+        return await UptadeOrCreateCase(dto, entity, entityDoesNotExistInDb);
     }
 
     public async Task<Case> UpdateCaseWhenCaseSelect(CaseFromFlexyDto dto)
@@ -253,7 +262,7 @@ public class CasesService : ICasesService
         entity.Selected = true;
         entity.PerformedBy = dto.User;
 
-        return UptadeOrCreateCase(dto, entity, entityDoesNotExistInDb);
+        return await UptadeOrCreateCase(dto, entity, entityDoesNotExistInDb);
     }
 
     public async Task<Case> UpdateCaseWhenCaseEnd(CaseFromFlexyDto dto)
@@ -275,7 +284,7 @@ public class CasesService : ICasesService
         entity.ActualDevice = dto.CREMATOR_ID;
         entity.ActualDeviceAlias = entity.ScheduledDeviceAlias;
 
-        return UptadeOrCreateCase(dto, entity, entityDoesNotExistInDb);
+        return await UptadeOrCreateCase(dto, entity, entityDoesNotExistInDb);
     }
 
     public async Task<Case> UpdateCaseWhenCaseRestart(CaseFromFlexyDto dto)
@@ -297,7 +306,7 @@ public class CasesService : ICasesService
         entity.Selected = true;
         entity.ActualDeviceAlias = entity.ScheduledDeviceAlias;
 
-        return UptadeOrCreateCase(dto, entity, entityDoesNotExistInDb);
+        return await UptadeOrCreateCase(dto, entity, entityDoesNotExistInDb);
     }
 
     public async Task<Case> UpdateCaseWhenCaseRemove(CaseFromFlexyDto dto)
@@ -319,7 +328,7 @@ public class CasesService : ICasesService
         entity.ActualEndTime = dto.EndTime;
         entity.ActualDeviceAlias = entity.ScheduledDeviceAlias;
 
-        return UptadeOrCreateCase(dto, entity, entityDoesNotExistInDb);
+        return await UptadeOrCreateCase(dto, entity, entityDoesNotExistInDb);
     }
 
     public async Task<IEnumerable<Case>> GetUnscheduledCases(List<Guid> Facilities)
@@ -629,7 +638,7 @@ public class CasesService : ICasesService
         }
     }
 
-    private Case UptadeOrCreateCase(CaseFromFlexyDto dto, Case entity, bool entityDoesNotExistInDb)
+    private async Task<Case> UptadeOrCreateCase(CaseFromFlexyDto dto, Case entity, bool entityDoesNotExistInDb)
     {
         try
         {
@@ -645,7 +654,7 @@ public class CasesService : ICasesService
                 {
                     _caseRepository.Detach(trackedEntity);
                 }
-                Update(entity);
+                await Update(entity);
             }
 
             return entity;
