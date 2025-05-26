@@ -9,6 +9,10 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 - Bug fixes.
 
+## [2.32] - 2025-05-26
+### Fixed
+- Message "No device found" is changed to be "Device has no alias" in case info dialog.
+
 ## [2.31] - 2025-05-12
 ### Fixed
 - Improvement of getting the unscheduled Cases. We do filtering cases by facility. (not simply get all of them)
