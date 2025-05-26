@@ -561,12 +561,17 @@ export class AppStoreService extends ComponentStore<AppState> {
   readonly createCase = this.effect<Case>((case$) =>
     case$.pipe(
       tap(() => this.loadingService.present()),
-      switchMap((selectedCase) =>
-        this.caseService.createCase(selectedCase).then((savedCase) => {
-          //this.getCases(selectedCase.scheduledFacility);
+      switchMap((selectedCase) => {
+        const caseCopy = JSON.parse(JSON.stringify(selectedCase));
+        if (caseCopy.scheduledStartTime) {
+          const original = new Date(caseCopy.scheduledStartTime);
+          caseCopy.scheduledStartTime = original.toISOString(); // ✅ Convert to UTC
+        }
+        return this.caseService.createCase(caseCopy).then((savedCase) => {
+          // this.getCases(selectedCase.scheduledFacility);
           this.loadingService.dismiss();
-        })
-      ),
+        });
+      }),
       catchError(() => this.loadingService.dismiss())
     )
   );
@@ -574,14 +579,22 @@ export class AppStoreService extends ComponentStore<AppState> {
   readonly createCaseFromProcess = this.effect<Case>((case$) =>
     case$.pipe(
       tap(() => this.loadingService.present()),
-      switchMap((selectedCase) =>
-        this.caseService.createCase(selectedCase).then((savedCase) => {
+      switchMap((selectedCase) => {
+        var caseCopy = JSON.parse(JSON.stringify(selectedCase));
+
+        if (caseCopy.scheduledStartTime) {
+          const original = new Date(caseCopy.scheduledStartTime);
+          caseCopy.scheduledStartTime = original.toISOString();
+        }
+
+        return this.caseService.createCase(caseCopy).then((savedCase) => {
           //this.getCases(selectedCase.scheduledFacility);
           this.updateSelectedCase(savedCase);
           this.updateSelectedCaseId(savedCase.id);
           this.caseService.selectCase(savedCase.id);
           this.loadingService.dismiss();
-        })
+        });
+      }
       ),
       catchError(() => this.loadingService.dismiss())
     )

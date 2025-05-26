@@ -18,7 +18,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { ActivatedRoute } from '@angular/router';
 import { Device } from '../device-list/device';
 import { CremationProcessService } from './cremation-process.service';
-import { Observable, of, Subscription } from 'rxjs';
+import { from, Observable, of, Subscription } from 'rxjs';
 import { BurnMode, ChamberStatus } from '../core/enums';
 import {
   ContainerTypeSelection,
@@ -260,14 +260,21 @@ export class CremationProcessPage implements OnInit, OnDestroy {
     //   this.appStore.updateSelectedCase(caseData);
     // });
     this.subscription = this.appStore.selectedCaseId$
-      .pipe(skip(1))
       .pipe(
-        //distinctUntilChanged(), // Ensures we only react to changes in the ID
-        filter(caseId => caseId !== null && caseId !== undefined), // Ensures caseId is defined
+        skip(1),
+        filter(caseId => caseId !== null && caseId !== undefined),
         switchMap(caseId => {
           this.selectedCaseId = caseId!;
           if (this.selectedCaseId !== "") {
-            return this.caseService.getCase(caseId);
+            return from(this.caseService.getCase(caseId)).pipe(
+              map(caseFromServer => {
+                if (caseFromServer.scheduledStartTime) {
+                  const date = new Date(caseFromServer.scheduledStartTime);
+                  caseFromServer.scheduledStartTime = date.toLocaleString(); // Convert to local Date object
+                }
+                return caseFromServer;
+              })
+            );
           } else {
             this.isCaseSelected = false;
             return of(null);
@@ -277,7 +284,6 @@ export class CremationProcessPage implements OnInit, OnDestroy {
       .subscribe(caseData => {
         this.appStore.updateSelectedCase(caseData);
       });
-
 
     this.caseService.GetSelectCaseByDevice(this.deviceId)
       .then(caseData => {
@@ -868,7 +874,11 @@ export class CremationProcessPage implements OnInit, OnDestroy {
       this.case.genderText = this.genders[res.gender].name;
       this.case.weight = res.weight;
       this.case.containerTypeText = this.containerTypes[res.containerType].name;
-      this.case.scheduledStartTime = res.scheduledStartTime;
+      const rawTime = res.scheduledStartTime; // e.g., "2025-05-26T11:31:47"
+      const utcTime = rawTime.endsWith('Z') ? rawTime : rawTime + 'Z';
+      const date = new Date(utcTime); // now it's correctly treated as UTC
+
+      this.case.scheduledStartTime = date.toLocaleString();
       this.clientCaseId = res.clientCaseId;
     }
 
