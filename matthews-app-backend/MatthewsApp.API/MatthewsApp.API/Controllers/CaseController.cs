@@ -28,15 +28,15 @@ public class CaseController : ControllerBase
 
     [HttpPost]
     [Route("Save")]
-    public ActionResult<Case> PostCase([FromBody]CaseDto caseDto)
+    public async Task<ActionResult<Case>> PostCase([FromBody]CaseDto caseDto)
     {
         _logger.LogInformation("---------- Save");
         try
         {
             var caseEntity = caseDto.ToEntity();
             caseEntity.Id = Guid.NewGuid();
-            service.Create(caseEntity);
-
+            await service.Create(caseEntity);
+            caseEntity.ScheduledStartTime = DateTime.SpecifyKind(caseEntity.ScheduledStartTime is null ? DateTime.MinValue : caseEntity.ScheduledStartTime.Value, DateTimeKind.Utc);
             return CreatedAtAction(nameof(PostCase), new { id = caseEntity.Id }, caseEntity);
         }
         catch (Exception ex)
@@ -53,13 +53,13 @@ public class CaseController : ControllerBase
             return BadRequest();
         }
 
-        Case caseEntitry = await service.GetById(idParsed);
-        if (caseEntitry == null)
+        Case caseEntity = await service.GetById(idParsed);
+        if (caseEntity == null)
         {
             return NotFound();
         }
-
-        service.Delete(caseEntitry);
+        caseEntity.ScheduledStartTime = DateTime.SpecifyKind(caseEntity.ScheduledStartTime is null ? DateTime.MinValue : caseEntity.ScheduledStartTime.Value, DateTimeKind.Utc);
+        service.Delete(caseEntity);
         return Ok();
     }
 

@@ -8,6 +8,7 @@
 ## [1.1.3] - 2025-05-26
 	- Fixed:
 	    Case field ScheduledDeviceAlias is populated on each Save and Update of the Case. We are calliing SetDeviceAliasForCase method.
+		CaseController returns Cases with updated ScheduledStartTime with 'Z' at the end. This is important for clinet apps.
 
 ## [1.1.2] - 2025-05-23
 	- Fixed:

@@ -16,7 +16,7 @@ namespace MatthewsApp.API.Services;
 
 public interface ICasesService
 {
-    void Create(Case entity);
+    Task Create(Case entity);
     void Delete(Case entity);
     Task<Case> Update(Case entity);
     void Select(Guid caseId);
@@ -70,7 +70,7 @@ public class CasesService : ICasesService
         _demoSeedCasesService = demoSeedCasesService;
     }
 
-    public async void Create(Case entity)
+    public async Task Create(Case entity)
     {
         if (entity.FacilityStatusId == Guid.Empty)
         {
@@ -414,7 +414,12 @@ public class CasesService : ICasesService
     {
         try
         {
-            return await _caseRepository.GetSelectCaseByDevice(deviceId);
+            Case Case = await _caseRepository.GetSelectCaseByDevice(deviceId);
+            if (Case is not null)
+            {
+                Case.ScheduledStartTime = DateTime.SpecifyKind(Case.ScheduledStartTime is null ? DateTime.MinValue : Case.ScheduledStartTime.Value, DateTimeKind.Utc);
+            }
+            return Case;
         }
         catch (Exception)
         {
@@ -445,7 +450,10 @@ public class CasesService : ICasesService
         try
         {
             Case Case = await _caseRepository.GetNextCaseForDevice(deviceId);
-            Case.ScheduledStartTime = DateTime.SpecifyKind(Case.ScheduledStartTime is null ? DateTime.MinValue : Case.ScheduledStartTime.Value, DateTimeKind.Utc);
+            if (Case is not null)
+            {
+                Case.ScheduledStartTime = DateTime.SpecifyKind(Case.ScheduledStartTime is null ? DateTime.MinValue : Case.ScheduledStartTime.Value, DateTimeKind.Utc);
+            }
 
             Case.Selected = true;
             _caseRepository.Update(Case);
@@ -644,7 +652,7 @@ public class CasesService : ICasesService
         {
             if (entityDoesNotExistInDb)
             {
-                Create(entity);
+                await Create(entity);
             }
             else
             {
