@@ -231,7 +231,6 @@ public class CasesService : ICasesService
             entity.ScheduledStartTime = DateTime.UtcNow;
         }
         SetStatusInProgress(entity);
-        entity.ScheduledDeviceAlias =  await SetDeviceAliasForCase(dto.CREMATOR_ID);
         entity.Selected = true;
         entity.ActualStartTime = dto.StartTime;
         entity.ActualEndTime = null;
@@ -258,7 +257,6 @@ public class CasesService : ICasesService
             entity.ScheduledStartTime = DateTime.UtcNow;
         }
         SetStatusReadyToCremate(entity);
-        entity.ScheduledDeviceAlias = await SetDeviceAliasForCase(dto.CREMATOR_ID);
         entity.Selected = true;
         entity.PerformedBy = dto.User;
 
@@ -276,7 +274,6 @@ public class CasesService : ICasesService
 
         Case entity = GetOrCreateCaseFromDto(dto, ref entityDoesNotExistInDb);
         SetStatusCycleComplete(entity);
-        entity.ScheduledDeviceAlias = await SetDeviceAliasForCase(dto.CREMATOR_ID);
         entity.Selected = true;
         entity.ActualEndTime = dto.EndTime;
         entity.ActualStartTime = dto.StartTime;
@@ -297,7 +294,6 @@ public class CasesService : ICasesService
         bool entityDoesNotExistInDb = false;
 
         Case entity = GetOrCreateCaseFromDto(dto, ref entityDoesNotExistInDb);
-        entity.ScheduledDeviceAlias = await SetDeviceAliasForCase(dto.CREMATOR_ID);
         SetStatusInProgress(entity);
         entity.ActualStartTime = dto.StartTime;
         entity.ActualFacility = dto.FACILITY_ID;
@@ -320,7 +316,6 @@ public class CasesService : ICasesService
 
         Case entity = GetOrCreateCaseFromDto(dto, ref entityDoesNotExistInDb);
         SetStatusCremationComplete(entity);
-        entity.ScheduledDeviceAlias = await SetDeviceAliasForCase(dto.CREMATOR_ID);
         entity.Selected = false;
         entity.ActualStartTime = dto.StartTime;
         entity.ActualFacility = dto.FACILITY_ID;
