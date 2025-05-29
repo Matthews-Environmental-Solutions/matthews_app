@@ -3,9 +3,12 @@
   <div class="header-left matthews-theme">
     <mat-toolbar color="primary">
       <img alt="logo" src="assets/Matthews Environmental Updated logo.png" class="logo" />
+      <div *ngIf="isDemoEntitiesOnly">Demo version</div>
       <span class="spacer"></span>
 
       <div class="toolbar-buttons">
+
+        <div *ngIf="isDemoEntitiesOnly">Demo version</div>
 
         <button mat-raised-button class="btn-color-green padding-left" [routerLink]="['/case']">
           <mat-icon>add_circle</mat-icon>

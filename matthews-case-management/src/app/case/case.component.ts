@@ -18,6 +18,7 @@ import { WfactorySnackBarService } from '../components/wfactory-snack-bar/wfacto
 import { SignalrService } from '../services/signalr.service';
 import { UserDetails } from '../models/user-details.model';
 import { FacilityService } from '../services/facility.service';
+import { DemoService } from '../services/demo.service';
 
 @Component({
   selector: 'app-case',
@@ -37,6 +38,7 @@ export class CaseComponent implements OnInit {
   loader: boolean = false;
   isButtonVisible: boolean = false;
   numberOfUnscheduledCases: number = 0;
+  isDemoEntitiesOnly: boolean = false;
 
   private subs = new Subscription();
 
@@ -52,6 +54,7 @@ export class CaseComponent implements OnInit {
       private _adapter: DateAdapter<any>,
       private _shackBar: WfactorySnackBarService,
       public signalRService: SignalrService,
+      public demoService: DemoService,
       @Inject(MAT_DATE_LOCALE) private _locale: string
     ) {
     this.loggedInUser = authService.loggedInUser;
@@ -59,6 +62,12 @@ export class CaseComponent implements OnInit {
     _adapter.setLocale(this.translate.store.currentLang);
   }
   ngOnInit(): void {
+    this.subs.add(this.demoService.isUseDemoEntitiesOnly().subscribe(data => {
+      console.log('isUseDemoEntitiesOnly', data);
+      this.stateService.setIsDemoEntitiesOnly(data);
+      this.isDemoEntitiesOnly = data;
+    }));
+
     this.subs.add(this.i4connectedService.getSites()
       .pipe(map(data => data.filter(f => f.isValid)))
       .subscribe(data => {
