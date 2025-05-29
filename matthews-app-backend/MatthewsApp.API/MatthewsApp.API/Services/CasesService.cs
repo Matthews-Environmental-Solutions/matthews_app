@@ -671,7 +671,7 @@ public class CasesService : ICasesService
     private async Task<string> SetDeviceAliasForCase(Guid deviceId)
     {
         DeviceDto cremator = null;
-        List<DeviceDto> cremators = (await _caseI4CHttpClientService.GetAllDevicesAsync()).ToList();
+        List<DeviceDto> cremators = (await _caseI4CHttpClientService.GetAllDevicesAsync(false)).ToList();
         cremator = cremators.FirstOrDefault(c => c.id == deviceId);
         return cremator is not null ? cremator.alias : string.Empty;
     }
