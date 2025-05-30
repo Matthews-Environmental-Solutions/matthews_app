@@ -23,13 +23,13 @@ public class DemoController : ControllerBase
 
     [HttpGet]
     [Route("IsUseDemoEntitiesOnly")]
-    public async Task<ActionResult<string>> IsUseDemoEntitiesOnly()
+    public async Task<ActionResult<bool>> IsUseDemoEntitiesOnly()
     {
         _logger.LogInformation("---------- IsUseDemoEntitiesOnly");
         try
         {
-            string res = _configuration["useDemoEntitiesOnly"];
-            return Ok(res);
+            bool result = _configuration.GetValue<bool>("useDemoEntitiesOnly");
+            return Ok(new { useDemoEntitiesOnly = result });
         }
         catch (Exception ex)
         {
