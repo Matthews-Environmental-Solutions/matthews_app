@@ -12,10 +12,10 @@ export class DemoService {
     constructor(public httpClient: HttpClient) { }
 
     isUseDemoEntitiesOnly(): Observable<boolean> {
-    return this.httpClient.get(`${this.apiURL}/Demo/IsUseDemoEntitiesOnly`, { responseType: 'text' })
+    return this.httpClient.get<{ useDemoEntitiesOnly: boolean }>(`${this.apiURL}/Demo/IsUseDemoEntitiesOnly`)
         .pipe(
             retry(1),
-            map(response => response === 'True'), // Convert string to boolean
+            map(response => response.useDemoEntitiesOnly), // Convert string to boolean
             catchError(this.handleError)
         );
     }
