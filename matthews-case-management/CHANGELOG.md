@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 ## [2.32] - 2025-05-26
 ### Fixed
 - Message "No device found" is changed to be "Device has no alias" in case info dialog.
+- Has new service: DemoService to provide information from CaseAPI about IsUseDemoEntitiesOnly
 
 ## [2.31] - 2025-05-12
 ### Fixed

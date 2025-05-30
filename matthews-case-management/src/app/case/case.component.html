@@ -3,14 +3,20 @@
   <div class="header-left matthews-theme">
     <mat-toolbar color="primary">
       <img alt="logo" src="assets/Matthews Environmental Updated logo.png" class="logo" />
-      <div *ngIf="isDemoEntitiesOnly">Demo version</div>
       <span class="spacer"></span>
 
       <div class="toolbar-buttons">
 
-        <div *ngIf="isDemoEntitiesOnly">Demo version</div>
+        <div *ngIf="isDemoEntitiesOnly" class="demo-inline-label mat-elevation-z2"
+          [matMenuTriggerFor]="demoInfoMenu"
+          #menuTrigger="matMenuTrigger"
+          style="cursor: pointer;"
+        >
+          <mat-icon>visibility</mat-icon>
+          You are using the Demo version
+        </div>
 
-        <button mat-raised-button class="btn-color-green padding-left" [routerLink]="['/case']">
+        <button mat-raised-button  class="btn-color-green padding-left" [routerLink]="['/case']">
           <mat-icon>add_circle</mat-icon>
           {{"addCase" | translate}}
         </button>
@@ -82,3 +88,12 @@
   </div>
 
 </div>
+
+<!-- Menu as a balloon -->
+<mat-menu #demoInfoMenu="matMenu" class="demo-balloon-menu" [overlapTrigger]="false">
+  <div class="demo-balloon-content">
+    <div class="arrow-up"></div>
+      <p>Devices with "DEMO" in their name (alias) will receive an updated list of 20 cases via MQTT whenever you make any changes to their Cases.
+      <p>You can still add, edit, and delete cases in all facilities, but keep in mind that only DEMO devices will be updated with the Case list.
+  </div>
+</mat-menu>
