@@ -40,6 +40,7 @@ export interface AppState {
   refreshCasesList: string;
   selectedCaseId: string;
   actualStartTime: string | null;
+  demoMode: boolean;
 }
 
 @Injectable({
@@ -71,11 +72,14 @@ export class AppStoreService extends ComponentStore<AppState> {
       weeklyCaseCount: 0,
       refreshCasesList: uuidv4(),
       selectedCaseId: null,
-      actualStartTime: null
+      actualStartTime: null,
+      demoMode: false
     });
   }
 
-  readonly cases$: Observable<Case[]> = this.select((state) => state.cases);
+  readonly cases$: Observable<Case[]> = this.select(
+    (state) => state.cases
+  );
   readonly selectedCase$: Observable<Case> = this.select(
     (state) => state.selectedCase
   );
@@ -124,6 +128,10 @@ export class AppStoreService extends ComponentStore<AppState> {
   readonly actualStartTime$: Observable<string | null> = this.select(
     (state) => state.actualStartTime
   );
+
+  readonly demoMode$: Observable<boolean> = this.select(
+    (state) => state.demoMode
+  )
 
   readonly scheduleVm$ = this.select(
     this.cases$,
@@ -304,6 +312,13 @@ export class AppStoreService extends ComponentStore<AppState> {
     })
   );
 
+  readonly updateDemoMode = this.updater(
+    (state: AppState, demoMode: boolean) => ({
+      ...state,
+      demoMode,
+    })
+  );
+
   getDefaultRefreshCasesList(): string {
     return uuidv4();
   }
@@ -472,6 +487,10 @@ export class AppStoreService extends ComponentStore<AppState> {
 
   getSelectedDevice(): string {
     return this.get((state) => state.selectedDevice?.id)
+  }
+
+  getDemoMode(): boolean {
+    return this.get((state) => state.demoMode);
   }
 
   getSelectedCaseId(): string {
