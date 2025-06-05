@@ -75,6 +75,23 @@ export class CremationProcessPage implements OnInit, OnDestroy {
             console.warn('Signal value is null or undefined for END_TIME_ESTIMATE');
           }
         }
+        if (signal.name === 'START_TIME_REFERENCE') {
+          if (signal.value !== null && signal.value !== undefined) {
+            const sanitizedValue = String(signal.value).replace(/,/g, '');
+            const startTimeEstimate = !isNaN(parseFloat(sanitizedValue))
+              ? Math.floor(parseFloat(sanitizedValue))
+              : null;
+        
+            if (startTimeEstimate !== null) {
+              this.handleStartTimeEstimate(startTimeEstimate);
+            } else {
+              console.error('Invalid startTimeEstimate after parsing:', signal.value);
+            }
+          } else {
+            console.warn('Signal value is null or undefined for START_TIME_ESTIMATE');
+          }
+        }
+        
         if (
           signal.name === 'MACHINE_STATUS' &&
           parseInt(signal.value) >= 40 &&
@@ -147,7 +164,7 @@ export class CremationProcessPage implements OnInit, OnDestroy {
   startHour: number;
   startMinute: number;
   startTime: string;
-  cremationTime: number;
+  cremationTime: string = '0';
   remainingTime: string = '0';
   private timerInterval: any;
   preheatTime: number;
@@ -207,9 +224,9 @@ export class CremationProcessPage implements OnInit, OnDestroy {
       this.actualStartTimeSubscription.unsubscribe();
     }
 
-    if (this.selectedCaseSubcription) {
-      this.actualStartTimeSubscription.unsubscribe();
-    }
+    // if (this.selectedCaseSubcription) {
+    //   this.actualStartTimeSubscription.unsubscribe();
+    // }
     this.appStore.updateSelectedCase(null);
     this.appStore.updateSelectedCaseId('');
     clearInterval(this.interval);
@@ -240,16 +257,16 @@ export class CremationProcessPage implements OnInit, OnDestroy {
             res.firstName + ' ' + res.lastName + ' - ' + res.clientCaseId;
           this.matStepperIntl.changes.next();
           this.mapCase(res);
-
-          if (res.actualStartTime) {
-            //debugger
-            this.updateElapsedTime(res.actualStartTime);
-          } else {
-            this.subscribeToActualStartTime();
-          }
+          
+          // if (res.actualStartTime) {
+          //   //debugger
+          //   this.updateElapsedTime(res.actualStartTime);
+          //   this.appStore.updateActualStartTime(res.actualStartTime);
+          // }
         }
       });
 
+    // this.subscribeToActualStartTime();
     this.establishSignalRConnection();
 
     // this.appStore.selectedCaseId$.pipe(
@@ -297,56 +314,77 @@ export class CremationProcessPage implements OnInit, OnDestroy {
 
   }
 
-  private subscribeToActualStartTime() {
-    this.actualStartTimeSubscription = this.appStore.actualStartTime$
-      .pipe(
-        distinctUntilChanged(),
-        debounceTime(100) // Prevents redundant calls when actualStartTime doesn't change
-      )
-      .subscribe((actualStartTime) => {
-        if (actualStartTime) {
-          this.updateElapsedTime(actualStartTime);
-        }
-      });
-  }
 
-  private updateElapsedTime(actualStartTimeStr: string) {
+  // private handleStartTimeEstimate(startTimeEstimate: number) {
+  //   const now = Date.now();
+  //   const elapsedMs = now - startTimeEstimate;
+  //   const elapsedMinutes = Math.floor(elapsedMs / 60000);
+  //   const elapsedSeconds = Math.floor((elapsedMs % 60000) / 1000);
+  
+  //   this.cremationTime = elapsedMinutes;
+  
+  //   if (this.isCremationRunning) {
+  //     this.startElapsedTimer(elapsedSeconds);
+  //   }
+  // }
+  
 
-    const actualStartTime = new Date(actualStartTimeStr + "Z");
+  // private subscribeToActualStartTime() {
+  //   this.actualStartTimeSubscription = this.appStore.actualStartTime$
+  //   .pipe(skip(1))
+  //     .pipe(
+  //       distinctUntilChanged(),
+  //       debounceTime(100) // Prevents redundant calls when actualStartTime doesn't change
+  //     )
+  //     .subscribe((actualStartTime) => {
+  //       if (actualStartTime) {
+  //         this.updateElapsedTime(actualStartTime);
+  //       }
+  //     });
+  // }
 
-    if (isNaN(actualStartTime.getTime())) {
-      console.error("Invalid actualStartTime:", actualStartTimeStr);
-      return;
-    }
+  // private updateElapsedTime(actualStartTimeStr: string) {
 
-    const now = new Date();
-    const elapsedMs = now.getTime() - actualStartTime.getTime();
-    const elapsedMinutes = Math.floor(elapsedMs / 60000); // Whole minutes
-    const elapsedSeconds = Math.floor((elapsedMs % 60000) / 1000); // Remaining seconds
+  //   const actualStartTime = new Date(
+  //     /[zZ]|[+-]\d{2}:\d{2}$/.test(actualStartTimeStr)
+  //       ? actualStartTimeStr
+  //       : actualStartTimeStr + "Z"
+  //   );
 
-    // Update cremationTime immediately with minute and fraction for seconds
-    this.cremationTime = elapsedMinutes;
+  //   if (isNaN(actualStartTime.getTime())) {
+  //     console.error("Invalid actualStartTime:", actualStartTimeStr);
+  //     return;
+  //   }
 
-    if (this.isCremationRunning) {
-      this.startElapsedTimer(elapsedSeconds);
-    }
-  }
+  //   const now = new Date();
+  //   const elapsedMs = now.getTime() - actualStartTime.getTime();
+  //   const elapsedMinutes = Math.floor(elapsedMs / 60000); // Whole minutes
+  //   const elapsedSeconds = Math.floor((elapsedMs % 60000) / 1000); // Remaining seconds
 
-  private startElapsedTimer(initialElapsedSec: number) {
+  //   // Update cremationTime immediately with minute and fraction for seconds
+  //   this.cremationTime = elapsedMinutes;
 
-    if (this.cremationInterval) {
-      clearInterval(this.cremationInterval);
-    }
+  //   if (this.isCremationRunning) {
+  //     this.startElapsedTimer(elapsedSeconds);
+  //   }
+  // }
 
-    const remainingSec = 60 - initialElapsedSec;
-    console.log("remainingMs: ", remainingSec);
+  // private startElapsedTimer(initialElapsedSec: number) {
 
-    setTimeout(() => {
-      this.cremationInterval = setInterval(() => {
-        this.cremationTime++;
-      }, 60000);
-    }, remainingSec);
-  }
+  //   if (this.cremationInterval) {
+  //     clearInterval(this.cremationInterval);
+  //   }
+
+  //   const remainingSec = 60 - initialElapsedSec;
+  //   console.log("remainingMs: ", remainingSec);
+
+  //   setTimeout(() => {
+  //     this.cremationInterval = setInterval(() => {
+  //       this.cremationTime++;
+  //     }, 60000);
+  //   }, remainingSec * 1000); // 👈 This is the fix
+    
+  // }
 
 
   startCountdown(endTimeEstimate: number) {
@@ -363,6 +401,25 @@ export class CremationProcessPage implements OnInit, OnDestroy {
       } else {
         this.remainingTime = '0';
         clearInterval(this.timerInterval);
+      }
+    }, 1000);
+  }
+
+  handleStartTimeEstimate(startTimeEstimate: number) {
+    if (this.cremationInterval) {
+      clearInterval(this.cremationInterval);
+    }
+  
+    this.cremationInterval = setInterval(() => {
+      const currentTime = Math.floor(new Date().getTime() / 1000); // current time in seconds
+      const elapsedSeconds = currentTime - startTimeEstimate;
+  
+      if (elapsedSeconds >= 0) {
+        this.cremationTime = Math.floor(elapsedSeconds / 60).toString(); // in minutes
+      } else {
+        this.cremationTime = '0';
+        console.warn('Start time is in the future — elapsed time cannot be negative.');
+        clearInterval(this.cremationInterval);
       }
     }, 1000);
   }
@@ -585,7 +642,7 @@ export class CremationProcessPage implements OnInit, OnDestroy {
               (signal) => signal.name === 'STOP_CREMATION'
             );
             this.cremationProcessService.writeSignalValue(signal?.id, 1);
-            //this.cremationTime = 0;
+            this.cremationTime = '0';
             this.isCremationStopped = true;
             this.coolDown(selectedDevice);
             this.move(3);
@@ -861,7 +918,7 @@ export class CremationProcessPage implements OnInit, OnDestroy {
   clearSelectedCase() {
     this.isCaseSelected = false;
     this.isContinueClicked = false;
-
+    this.cremationTime = '0';
     this.caseService.deselectCase(this.selectedCaseId)
       .then((response) => console.log('Case deselected successfully:', response))
       .catch((error) => console.error('Error deselecting case:', error));
