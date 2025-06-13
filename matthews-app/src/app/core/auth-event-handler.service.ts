@@ -1,20 +1,18 @@
 import { Injectable } from '@angular/core';
 import { NavController } from '@ionic/angular';
-import { AuthActions, IAuthAction } from 'ionic-appauth';
-import { CustomAuthService } from './custom-auth.service'; // Import your custom service
+import { AuthActions, AuthService, IAuthAction } from 'ionic-appauth';
+import { CustomAuthService } from './custom-auth.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthEventHandlerService {
   constructor(
-    private customAuthService: CustomAuthService, // Inject CustomAuthService
+    private customAuthService: AuthService, // Inject CustomAuthService
     private navCtrl: NavController
-  ) {
-    this.initialize();
-  }
+  ) {}
 
-  private initialize(): void {
+  initialize(): void {
     this.customAuthService.events$.subscribe((action: IAuthAction) => {
       switch (action.action) {
         case AuthActions.SignInFailed:
@@ -29,6 +27,7 @@ export class AuthEventHandlerService {
 
         case AuthActions.SignInSuccess:
         case AuthActions.RefreshSuccess:
+        case AuthActions.LoadTokenFromStorageSuccess:
           this.startTokenMonitor(); // Start monitoring token expiration
           break;
 
@@ -38,19 +37,32 @@ export class AuthEventHandlerService {
     });
   }
 
+  triggerRefresh() {
+    (this.customAuthService as CustomAuthService)
+      .refreshTokenManually()
+      .catch((error) => {
+        console.error('Error refreshing token:', error);
+        this.navCtrl.navigateRoot('landing'); // Handle refresh failure
+      });
+  }
+
   private startTokenMonitor(): void {
     const bufferTimeInSeconds = 300; // Adjust this buffer time as needed
     this.customAuthService.getValidToken().then((token) => {
       console.log('Token expires in:', token.expiresIn);
       const expiresIn = token.expiresIn ? token.expiresIn : 3600; // Default to 1 hour if undefined
-      const refreshTime = expiresIn - bufferTimeInSeconds;
+      let refreshTime = expiresIn - bufferTimeInSeconds;
+
+      refreshTime = 60; // Set to 1 minute for testing
 
       setTimeout(() => {
         // Replace the call to refreshToken() with your custom refresh token logic
-        this.customAuthService.refreshTokenManually(token.refreshToken).catch((error) => {
-          console.error('Error refreshing token:', error);
-          this.navCtrl.navigateRoot('landing'); // Handle refresh failure
-        });
+        (this.customAuthService as CustomAuthService)
+          .refreshTokenManually()
+          .catch((error) => {
+            console.error('Error refreshing token:', error);
+            this.navCtrl.navigateRoot('landing'); // Handle refresh failure
+          });
       }, refreshTime * 1000); // Convert to milliseconds
     });
   }

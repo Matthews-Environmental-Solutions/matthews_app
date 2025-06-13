@@ -25,11 +25,7 @@ import { HttpClient } from '@angular/common/http';
       provide: Browser,
       useClass: CapacitorBrowser
     },
-    {
-      provide: AuthService,
-      useFactory : authFactory,
-      deps: [Platform, NgZone, Requestor, Browser, StorageBackend, HttpClient]
-    }
+
   ]
 })
 export class CoreModule { }

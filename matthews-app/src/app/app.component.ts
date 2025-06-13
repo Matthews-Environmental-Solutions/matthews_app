@@ -41,7 +41,7 @@ export class AppComponent implements OnInit{
     this.translateService.use(browserLang.match(/en|de/) ? browserLang : 'en');
     this.language = this.translateService.currentLang;
 
-    
+
   }
 
   ngOnInit() {
@@ -80,8 +80,9 @@ export class AppComponent implements OnInit{
     await this.platform.ready();
     await this.auth.init();  // Ensure this completes
     SplashScreen.hide();     // Hide the splash screen after auth is ready
+    this.authEventHandler.initialize();
   }
-  
+
 
   languageChange() {
     this.translateService.use(this.language);
