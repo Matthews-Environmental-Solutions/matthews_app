@@ -265,7 +265,7 @@ public class MqttMessageHandler
             return;
         }
 
-        _casesService.UpdateCaseWhenCaseDeselect(_caseId, false);
+        await _casesService.UpdateCaseWhenCaseDeselect(_caseId, false);
         _caseHub.SendMessageToSelectCase($"CaseId: {string.Empty}; DeviceId: {_deviceId}; ActualStartTime: {string.Empty}; ActualEndTime: {string.Empty}");
     }
 

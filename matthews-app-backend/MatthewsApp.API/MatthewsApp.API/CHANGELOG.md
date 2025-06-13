@@ -4,6 +4,27 @@
 - Changed: Description of a change in existing functionality.
 - Removed: Description of deprecated features.
 
+
+## [1.1.3] - 2025-05-26
+	- Fixed:
+	    Case field ScheduledDeviceAlias is populated on each Save and Update of the Case. We are calliing SetDeviceAliasForCase method.
+		CaseController returns Cases with updated ScheduledStartTime with 'Z' at the end. This is important for clinet apps.
+		Calling SetDeviceAliasForCase method in CasesService is reduced and optimized
+
+## [1.1.2] - 2025-05-23
+	- Fixed:
+	    Secrets are moved from appsettings.json to System Environment variables. The secrets are not stored in the repository. The secrets are used for the i4connected API and MQTT broker.
+
+## [1.1.1] - 2025-05-12
+	- Fixed:
+	    Improvement of getting the unscheduled Cases. We do filtering cases by facility. (not simply get all of them)
+
+## [1.1.0] - 2025-05-06
+	- Added:
+		DemoSeedCasesService is added. It reads CSV file with Cases data and update database.
+	- Fixed:
+		"Matthews Demo Sample Cases v4.csv" is added to the project. It contains 150 Cases. The CSV file is encoded to UTF-8. Empty lines are removed. The first line is a header. The file is used for demo purposes only. In numbers, decimal delimiter is dot.
+
 ## [1.0.7] - 2025-04-23
 	- Fixed:
 		CasesService.SeedDbForDemo is fixed. Two unscheduled cases are added. ScheduledDeviceAlias is populated from DB.

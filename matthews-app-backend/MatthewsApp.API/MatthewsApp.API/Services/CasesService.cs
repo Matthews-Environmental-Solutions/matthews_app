@@ -16,21 +16,21 @@ namespace MatthewsApp.API.Services;
 
 public interface ICasesService
 {
-    void Create(Case caseEntity);
-    void Delete(Case caseEntity);
-    Case Update(Case caseEntity);
-    void Select(Guid caseEntity);
+    Task Create(Case entity);
+    void Delete(Case entity);
+    Task<Case> Update(Case entity);
+    void Select(Guid caseId);
 
     /// <summary>
     /// Deselects the case with the specified caseId. If publichEvent is true, an event is published to send mqtt message to Flexy.
     /// </summary>
     /// <param name="caseId"></param>
     /// <param name="publichEvent"></param>
-    void UpdateCaseWhenCaseDeselect(Guid caseId, bool publichEvent);
+    Task UpdateCaseWhenCaseDeselect(Guid caseId, bool publichEvent);
 
     Task<Case> GetById(Guid id);
     bool IsCaseExists(Guid id);
-    Task<IEnumerable<Case>> GetUnscheduledCases();
+    Task<IEnumerable<Case>> GetUnscheduledCases(List<Guid> Facilities);
     Task<IEnumerable<Case>> GetScheduledCasesByDay(Guid facilityId, DateTime date);
     Task<IEnumerable<Case>> GetScheduledCasesByWeek(Guid facilityId, DateTime dateStartDateOfWeek);
     Task<IEnumerable<Case>> GetScheduledCasesByTimePeriod(Guid facilityId, DateTime dateStart, DateTime dateEnd);
@@ -57,8 +57,9 @@ public class CasesService : ICasesService
     private readonly ILogger<CasesService> _logger;
     private readonly CaseHub _caseHub;
     private IEventAggregator _ea;
+    private readonly IDemoSeedCasesService _demoSeedCasesService;
 
-    public CasesService(ICaseRepository repository, IFacilityStatusRepository facilityStatusRepository, IEventAggregator ea, CaseHub caseHub, ICaseI4cHttpClientService caseI4CHttpClientService, ILogger<CasesService> logger)
+    public CasesService(ICaseRepository repository, IFacilityStatusRepository facilityStatusRepository, IEventAggregator ea, CaseHub caseHub, ICaseI4cHttpClientService caseI4CHttpClientService, ILogger<CasesService> logger, IDemoSeedCasesService demoSeedCasesService)
     {
         _caseI4CHttpClientService = caseI4CHttpClientService;
         _facilityStatusRepository = facilityStatusRepository;
@@ -66,9 +67,10 @@ public class CasesService : ICasesService
         _caseHub = caseHub;
         _logger = logger;
         _ea = ea;
+        _demoSeedCasesService = demoSeedCasesService;
     }
 
-    public void Create(Case entity)
+    public async Task Create(Case entity)
     {
         if (entity.FacilityStatusId == Guid.Empty)
         {
@@ -79,6 +81,10 @@ public class CasesService : ICasesService
 
         try
         {
+            if(entity.ScheduledDevice != null && !entity.ScheduledDevice.Equals(Guid.Empty))
+            {
+                entity.ScheduledDeviceAlias = await SetDeviceAliasForCase((Guid)entity.ScheduledDevice);
+            }
             var createdEntity = _caseRepository.Create(entity);
             List<Guid> ids = new List<Guid>();
 
@@ -116,7 +122,7 @@ public class CasesService : ICasesService
         _caseHub.SendMessageToRefreshList($"Delete done.", entity.ScheduledFacility.ToString());
     }
 
-    public Case Update(Case entity)
+    public async Task<Case> Update(Case entity)
     {
         _logger.LogDebug("Update of case id");
         Case previousCase = _caseRepository.GetById(entity.Id);
@@ -138,6 +144,11 @@ public class CasesService : ICasesService
             }
         }
 
+        if (entity.ScheduledDevice != previousCase.ScheduledDevice)
+        {
+            entity.ScheduledDeviceAlias = await SetDeviceAliasForCase((Guid)entity.ScheduledDevice);
+        }
+
         _caseRepository.Update(entity);
         List<Guid> ids = new List<Guid>();
 
@@ -156,14 +167,14 @@ public class CasesService : ICasesService
         return entity;
     }
 
-    public void Select(Guid caseId)
+    public async void Select(Guid caseId)
     {
         _logger.LogDebug("Selection of case");
         try
         {
             var entity = _caseRepository.GetById(caseId);
             entity.Selected = true;
-            Update(entity);
+            await Update(entity);
 
             _ea.GetEvent<CaseSelectEvent>().Publish(entity);
         }
@@ -178,12 +189,12 @@ public class CasesService : ICasesService
     /// </summary>
     /// <param name="caseId"></param>
     /// <param name="publichEvent"></param>
-    public void UpdateCaseWhenCaseDeselect(Guid caseId, bool publichEvent)
+    public async Task UpdateCaseWhenCaseDeselect(Guid caseId, bool publichEvent)
     {
         _logger.LogDebug("Deselection of case");
         try
         {
-            Case updatedCase = UpdateDeselectedCase(caseId);
+            Case updatedCase = await UpdateDeselectedCase(caseId);
             if (publichEvent)
                 _ea.GetEvent<CaseDeselectEvent>().Publish(updatedCase);
         }
@@ -193,13 +204,13 @@ public class CasesService : ICasesService
         }
     }
 
-    private Case UpdateDeselectedCase(Guid caseId)
+    private async Task<Case> UpdateDeselectedCase(Guid caseId)
     {
         var entity = _caseRepository.GetById(caseId);
         if (entity != null)
         {
             entity.Selected = false;
-            Update(entity);
+            await Update(entity);
             return entity;
         }
         return null;
@@ -220,7 +231,6 @@ public class CasesService : ICasesService
             entity.ScheduledStartTime = DateTime.UtcNow;
         }
         SetStatusInProgress(entity);
-        entity.ScheduledDeviceAlias =  await SetDeviceAliasForCase(dto.CREMATOR_ID);
         entity.Selected = true;
         entity.ActualStartTime = dto.StartTime;
         entity.ActualEndTime = null;
@@ -229,7 +239,7 @@ public class CasesService : ICasesService
         entity.ActualDeviceAlias = entity.ScheduledDeviceAlias;
         entity.PerformedBy = dto.User;
 
-        return UptadeOrCreateCase(dto, entity, entityDoesNotExistInDb);
+        return await UptadeOrCreateCase(dto, entity, entityDoesNotExistInDb);
     }
 
     public async Task<Case> UpdateCaseWhenCaseSelect(CaseFromFlexyDto dto)
@@ -247,11 +257,10 @@ public class CasesService : ICasesService
             entity.ScheduledStartTime = DateTime.UtcNow;
         }
         SetStatusReadyToCremate(entity);
-        entity.ScheduledDeviceAlias = await SetDeviceAliasForCase(dto.CREMATOR_ID);
         entity.Selected = true;
         entity.PerformedBy = dto.User;
 
-        return UptadeOrCreateCase(dto, entity, entityDoesNotExistInDb);
+        return await UptadeOrCreateCase(dto, entity, entityDoesNotExistInDb);
     }
 
     public async Task<Case> UpdateCaseWhenCaseEnd(CaseFromFlexyDto dto)
@@ -265,7 +274,6 @@ public class CasesService : ICasesService
 
         Case entity = GetOrCreateCaseFromDto(dto, ref entityDoesNotExistInDb);
         SetStatusCycleComplete(entity);
-        entity.ScheduledDeviceAlias = await SetDeviceAliasForCase(dto.CREMATOR_ID);
         entity.Selected = true;
         entity.ActualEndTime = dto.EndTime;
         entity.ActualStartTime = dto.StartTime;
@@ -273,7 +281,7 @@ public class CasesService : ICasesService
         entity.ActualDevice = dto.CREMATOR_ID;
         entity.ActualDeviceAlias = entity.ScheduledDeviceAlias;
 
-        return UptadeOrCreateCase(dto, entity, entityDoesNotExistInDb);
+        return await UptadeOrCreateCase(dto, entity, entityDoesNotExistInDb);
     }
 
     public async Task<Case> UpdateCaseWhenCaseRestart(CaseFromFlexyDto dto)
@@ -286,7 +294,6 @@ public class CasesService : ICasesService
         bool entityDoesNotExistInDb = false;
 
         Case entity = GetOrCreateCaseFromDto(dto, ref entityDoesNotExistInDb);
-        entity.ScheduledDeviceAlias = await SetDeviceAliasForCase(dto.CREMATOR_ID);
         SetStatusInProgress(entity);
         entity.ActualStartTime = dto.StartTime;
         entity.ActualFacility = dto.FACILITY_ID;
@@ -295,7 +302,7 @@ public class CasesService : ICasesService
         entity.Selected = true;
         entity.ActualDeviceAlias = entity.ScheduledDeviceAlias;
 
-        return UptadeOrCreateCase(dto, entity, entityDoesNotExistInDb);
+        return await UptadeOrCreateCase(dto, entity, entityDoesNotExistInDb);
     }
 
     public async Task<Case> UpdateCaseWhenCaseRemove(CaseFromFlexyDto dto)
@@ -309,7 +316,6 @@ public class CasesService : ICasesService
 
         Case entity = GetOrCreateCaseFromDto(dto, ref entityDoesNotExistInDb);
         SetStatusCremationComplete(entity);
-        entity.ScheduledDeviceAlias = await SetDeviceAliasForCase(dto.CREMATOR_ID);
         entity.Selected = false;
         entity.ActualStartTime = dto.StartTime;
         entity.ActualFacility = dto.FACILITY_ID;
@@ -317,12 +323,12 @@ public class CasesService : ICasesService
         entity.ActualEndTime = dto.EndTime;
         entity.ActualDeviceAlias = entity.ScheduledDeviceAlias;
 
-        return UptadeOrCreateCase(dto, entity, entityDoesNotExistInDb);
+        return await UptadeOrCreateCase(dto, entity, entityDoesNotExistInDb);
     }
 
-    public async Task<IEnumerable<Case>> GetUnscheduledCases()
+    public async Task<IEnumerable<Case>> GetUnscheduledCases(List<Guid> Facilities)
     {
-        IEnumerable<Case> cases = await _caseRepository.GetAllUnscheduled();
+        IEnumerable<Case> cases = await _caseRepository.GetUnscheduledCasesByFacilities(Facilities);
         return cases.Select(i =>
         {
             i.ScheduledStartTime = DateTime.SpecifyKind(i.ScheduledStartTime is null ? DateTime.MinValue : i.ScheduledStartTime.Value, DateTimeKind.Utc);
@@ -403,7 +409,12 @@ public class CasesService : ICasesService
     {
         try
         {
-            return await _caseRepository.GetSelectCaseByDevice(deviceId);
+            Case Case = await _caseRepository.GetSelectCaseByDevice(deviceId);
+            if (Case is not null)
+            {
+                Case.ScheduledStartTime = DateTime.SpecifyKind(Case.ScheduledStartTime is null ? DateTime.MinValue : Case.ScheduledStartTime.Value, DateTimeKind.Utc);
+            }
+            return Case;
         }
         catch (Exception)
         {
@@ -434,7 +445,10 @@ public class CasesService : ICasesService
         try
         {
             Case Case = await _caseRepository.GetNextCaseForDevice(deviceId);
-            Case.ScheduledStartTime = DateTime.SpecifyKind(Case.ScheduledStartTime is null ? DateTime.MinValue : Case.ScheduledStartTime.Value, DateTimeKind.Utc);
+            if (Case is not null)
+            {
+                Case.ScheduledStartTime = DateTime.SpecifyKind(Case.ScheduledStartTime is null ? DateTime.MinValue : Case.ScheduledStartTime.Value, DateTimeKind.Utc);
+            }
 
             Case.Selected = true;
             _caseRepository.Update(Case);
@@ -462,28 +476,43 @@ public class CasesService : ICasesService
     }
 
     /// <summary>
-    /// This method is used to reset the demo data only on specific device.
+    /// Resets the demo environment by reinitializing and seeding cases.
+    /// This method performs the following actions:
+    /// 1. Calls the Initialize method of the DemoSeedCasesService to reset and prepare the demo data.
+    /// 2. Saves the newly initialized cases to the database.
+    /// 3. Publishes an event to notify about changes in the cases for all devices.
+    /// 4. Sends SignalR messages to refresh the case list for all facilities.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>
+    /// A boolean value indicating whether the reset operation was successful.
+    /// Returns true if the operation completes without exceptions.
+    /// </returns>
+    /// <exception cref="Exception">
+    /// Throws an exception if any error occurs during the reset process.
+    /// </exception>
     public async Task<bool> ResetDemo()
     {
         try
         {
-            Guid facilityId = Guid.Parse("0c8f6429-5b54-486f-b0b1-9a9eb2fa0494");
-            Guid deviceId = Guid.Parse("f2f5eccc-0c98-4579-941f-a9d81e3817a5");
-            var scheduledDeviceAlias = await SetDeviceAliasForCase(deviceId);
-            await _caseRepository.CleanDbForDemo(deviceId);
-            await _caseRepository.SeedDbForDemo(deviceId, scheduledDeviceAlias);
+            await _demoSeedCasesService.Initialize();
+            _demoSeedCasesService.SaveCasesToDatabase();
 
-            List<Guid> ids = new List<Guid>();
-            ids.Add(deviceId);
-            _ea.GetEvent<EventCaseAnyChange>().Publish(ids);
+            //var scheduledDeviceAlias = await SetDeviceAliasForCase(deviceId);
+
+            List<Guid> deviceIds = _demoSeedCasesService.GetDevices();
+            _ea.GetEvent<EventCaseAnyChange>().Publish(deviceIds);
+            
             // SignalR
-            _caseHub.SendMessageToRefreshList($"Create 50 cases done.", facilityId.ToString());
+            List<Guid> facilityIds = _demoSeedCasesService.GetFacilities();
+            foreach (var facilityId in facilityIds)
+            {
+                _caseHub.SendMessageToRefreshList($"Reset demo done.", facilityId.ToString());
+            }
             return true;
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            _logger.LogDebug($"--- --- ResetDemo Error: {ex.InnerException}");
             throw;
         }
     }
@@ -612,13 +641,13 @@ public class CasesService : ICasesService
         }
     }
 
-    private Case UptadeOrCreateCase(CaseFromFlexyDto dto, Case entity, bool entityDoesNotExistInDb)
+    private async Task<Case> UptadeOrCreateCase(CaseFromFlexyDto dto, Case entity, bool entityDoesNotExistInDb)
     {
         try
         {
             if (entityDoesNotExistInDb)
             {
-                Create(entity);
+                await Create(entity);
             }
             else
             {
@@ -628,7 +657,7 @@ public class CasesService : ICasesService
                 {
                     _caseRepository.Detach(trackedEntity);
                 }
-                Update(entity);
+                await Update(entity);
             }
 
             return entity;
@@ -642,7 +671,7 @@ public class CasesService : ICasesService
     private async Task<string> SetDeviceAliasForCase(Guid deviceId)
     {
         DeviceDto cremator = null;
-        List<DeviceDto> cremators = (await _caseI4CHttpClientService.GetAllDevicesAsync()).ToList();
+        List<DeviceDto> cremators = (await _caseI4CHttpClientService.GetAllDevicesAsync(false)).ToList();
         cremator = cremators.FirstOrDefault(c => c.id == deviceId);
         return cremator is not null ? cremator.alias : string.Empty;
     }

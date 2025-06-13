@@ -11,6 +11,7 @@ import { SignalRCaseApiService } from '../core/signal-r.case-api.service';
 import { Facility } from '../facility/facility';
 import { DatePipe } from '@angular/common';
 import { Observable } from 'rxjs';
+import { withLatestFrom } from 'rxjs/operators';
 
 @Component({
   selector: 'app-schedule',
@@ -55,8 +56,9 @@ export class SchedulePage implements OnInit, OnDestroy {
     this.signalRCaseApiService.stopConnection();
   }
 
-  establishSignalRConnection(facilityId: string) {
+  establishSignalRConnection(facilityId: string, previousFacilityId?: string) {
     this.signalRCaseApiService.initializeSignalRCaseApiConnection();
+    this.signalRCaseApiService.setSelectedFacilityFromSchedulePage(facilityId, previousFacilityId);
     this.signalRCaseApiService.addCaseDataListener(facilityId);
   }
 
@@ -97,13 +99,14 @@ export class SchedulePage implements OnInit, OnDestroy {
   }
 
   selectedFacilityChanged($event) {
+    const previousFacilityId = this.selectedFacilityId;
     this.selectedFacilityId = $event.target.value;
     if(this.calendarView == 'byDay') this.caseStore.getCasesByDay([this.selectedFacilityId, this.selectedDay]);
     if(this.calendarView == 'byWeek') this.caseStore.getCasesByWeek([this.selectedFacilityId, this.getFirstDayOfTheWeekAsDate()]);
-    if(this.calendarView == 'byUnscheduled') this.caseStore.getUnscheduledCases();
+    if(this.calendarView == 'byUnscheduled') this.caseStore.getUnscheduledCases([this.appStore.getSelectedFacility()]);
     this.signalRCaseApiService.stopConnection();
     this.selectFacility($event.target, $event.target.value);
-    this.establishSignalRConnection(this.selectedFacilityId);
+    this.establishSignalRConnection(this.selectedFacilityId, previousFacilityId);
   }
 
   cancelSearch(): void {
@@ -119,25 +122,44 @@ export class SchedulePage implements OnInit, OnDestroy {
 
   setDefaultValues() {
     this.caseStore.scheduleVm$.subscribe(result => {
-      this.defaultFacilityId = (result.selectedFacility !== null && typeof result.selectedFacility !== 'undefined' && Object.keys(result.selectedFacility).length !== 0) ? result.selectedFacility.id : result.facilities[0].id;
-      this.selectedFacilityId = this.defaultFacilityId;
-    });
-
-    this.caseStore.refreshCasesList$.subscribe(() => {
-      if (!this.defaultFacilityId) {
+      const facility = result.selectedFacility &&
+        Object.keys(result.selectedFacility).length !== 0
+        ? result.selectedFacility
+        : (result.facilities?.length ? result.facilities[0] : null);
+  
+      if (!facility || !facility.id) {
+        console.warn('No valid facility found in scheduleVm$', result);
         return;
       }
-      if (this.calendarView == 'byDay') {
-        this.caseStore.getCasesByDay([this.defaultFacilityId, this.selectedDay]);
-      }
-      if (this.calendarView == 'byWeek') {
-        this.caseStore.getCasesByWeek([this.defaultFacilityId, this.getFirstDayOfTheWeekAsDate()]);
-      }
-      if (this.calendarView == 'byUnscheduled') {
-        this.caseStore.getUnscheduledCases();
-      }
+  
+      this.defaultFacilityId = facility.id;
+      this.selectedFacilityId = facility.id;
     });
-  }
+  
+    this.caseStore.refreshCasesList$
+      .pipe(withLatestFrom(this.caseStore.scheduleVm$))
+      .subscribe(([_, result]) => {
+        const facility = result.selectedFacility &&
+          Object.keys(result.selectedFacility).length !== 0
+          ? result.selectedFacility
+          : (result.facilities?.length ? result.facilities[0] : null);
+  
+        if (!facility || !facility.id) {
+          console.warn('No valid facility found in refreshCasesList$', result);
+          return;
+        }
+  
+        const facilityId = facility.id;
+  
+        if (this.calendarView === 'byDay') {
+          this.caseStore.getCasesByDay([facilityId, this.selectedDay]);
+        } else if (this.calendarView === 'byWeek') {
+          this.caseStore.getCasesByWeek([facilityId, this.getFirstDayOfTheWeekAsDate()]);
+        } else if (this.calendarView === 'byUnscheduled') {
+          this.caseStore.getUnscheduledCases([facility]);
+        }
+      });
+  }  
 
   checkScheduledStartTime(date: string): boolean {
     return !(date == '0001-01-01T00:00:00Z' || date == null);
@@ -168,7 +190,7 @@ export class SchedulePage implements OnInit, OnDestroy {
       // });
     }
     if (viewDaily == 'byUnscheduled') {
-      this.caseStore.getUnscheduledCases();
+      this.caseStore.getUnscheduledCases([this.appStore.getSelectedFacility()]);
     }
   }
 
@@ -279,7 +301,7 @@ export class SchedulePage implements OnInit, OnDestroy {
 
   getCompletedForDay(cases: Case[], index: number) {
     const filteredCases = this.filterCasesForDay(cases, index);
-    return filteredCases.filter(caseItem => caseItem.status === 1).length;
+    return filteredCases.filter(caseItem => caseItem.status === 5).length;
   }
 
   getInProgressForDay(cases: Case[], index: number) {
@@ -321,7 +343,7 @@ export class SchedulePage implements OnInit, OnDestroy {
     this.scheduledCount = filteredCases.length;
     this.completedCount = filteredCases.filter(caseItem => caseItem.status === 1).length;
     this.weeklyScheduledCount = cases.length;
-    this.weeklyCompletedCount = cases.filter(caseItem => caseItem.status == 1).length;
+    this.weeklyCompletedCount = cases.filter(caseItem => caseItem.status == 5).length;
   }
 
 }

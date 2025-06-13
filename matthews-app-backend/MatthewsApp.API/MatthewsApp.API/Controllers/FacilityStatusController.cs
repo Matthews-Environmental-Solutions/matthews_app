@@ -13,7 +13,7 @@ namespace MatthewsApp.API.Controllers;
 
 [Route("[controller]")]
 [ApiController]
-public class FacilityStatusController : Controller
+public class FacilityStatusController : ControllerBase
 {
     private readonly IFacilityStatusService service;
 

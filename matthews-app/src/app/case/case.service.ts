@@ -8,6 +8,7 @@ import { catchError, map, retry } from 'rxjs/operators';
 import { FacilityStatusService } from './facility-status.service';
 import { TranslateService } from '@ngx-translate/core';
 import { FacilityStatus } from './facility-status.model';
+import { Facility } from '../facility/facility';
 
 @Injectable({
   providedIn: 'root'
@@ -98,9 +99,9 @@ export class CaseService {
     return this.httpService.request<Case[]>('GET', getCasesByWeekUrl);
   }
 
-  getUnscheduledCases(): Promise<Case[]> {
-    const getUnscheduledCases = `${environment.apiUrl}/Case/GetUnscheduledCases`
-    return this.httpService.request<Case[]>('GET', getUnscheduledCases);
+  getUnscheduledCases(facilities: Facility[]): Promise<Case[]> {
+    const url = `${environment.apiUrl}/Case/GetUnscheduledCases`;
+    return this.httpService.request<Case[]>('POST', url, facilities);
   }
 
   remapCase(item: Case): Case {

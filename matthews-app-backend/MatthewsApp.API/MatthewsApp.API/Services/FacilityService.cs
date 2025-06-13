@@ -11,6 +11,7 @@ namespace MatthewsApp.API.Services;
 
 public interface IFacilityService
 {
+    Task<IEnumerable<FacilityUsabilityDto>> GetFacilities(List<FacilityDto> Facilities);
     Task<IEnumerable<FacilityUsabilityDto>> GetFacilities();
 }
 
@@ -29,14 +30,20 @@ public class FacilityService : IFacilityService
 
     public async Task<IEnumerable<FacilityUsabilityDto>> GetFacilities()
     {
+        List<FacilityDto> facilities = (await _caseI4cHttpClientService.GetAllFacilities()).ToList();
+        return await GetFacilities(facilities);
+    }
+
+    public async Task<IEnumerable<FacilityUsabilityDto>> GetFacilities(List<FacilityDto> Facilities)
+    {
         var facilityUsabilityDtos = new List<FacilityUsabilityDto>();
 
-        ICollection<FacilityDto> facilities = await _caseI4cHttpClientService.GetAllFacilities();
+        //ICollection<FacilityDto> facilities = await _caseI4cHttpClientService.GetAllFacilities();
         var facilityStatuses = await _facilityStatusService.GetAll();
 
 
         // iterate through all facilities and check if they have at least one of all facility statuses
-        foreach (var facility in facilities)
+        foreach (var facility in Facilities)
         {
             var errorMessage = new StringBuilder();
             var fFacilityStatuses = facilityStatuses

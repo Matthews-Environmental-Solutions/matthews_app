@@ -18,6 +18,7 @@ import { WfactorySnackBarService } from '../components/wfactory-snack-bar/wfacto
 import { SignalrService } from '../services/signalr.service';
 import { UserDetails } from '../models/user-details.model';
 import { FacilityService } from '../services/facility.service';
+import { DemoService } from '../services/demo.service';
 
 @Component({
   selector: 'app-case',
@@ -37,6 +38,7 @@ export class CaseComponent implements OnInit {
   loader: boolean = false;
   isButtonVisible: boolean = false;
   numberOfUnscheduledCases: number = 0;
+  isDemoEntitiesOnly: boolean = false;
 
   private subs = new Subscription();
 
@@ -52,45 +54,53 @@ export class CaseComponent implements OnInit {
       private _adapter: DateAdapter<any>,
       private _shackBar: WfactorySnackBarService,
       public signalRService: SignalrService,
+      public demoService: DemoService,
       @Inject(MAT_DATE_LOCALE) private _locale: string
     ) {
     this.loggedInUser = authService.loggedInUser;
     this.userSetting = userSettingService.getUserSettingLastValue();
-    this.caseService.getUnscheduledCases().subscribe(cases => this.filterCases(cases));
     _adapter.setLocale(this.translate.store.currentLang);
   }
   ngOnInit(): void {
-    this.subs.add(this.facilityService.getFacilities()
+    this.subs.add(this.demoService.isUseDemoEntitiesOnly().subscribe(data => {
+      console.log('isUseDemoEntitiesOnly', data);
+      this.stateService.setIsDemoEntitiesOnly(data);
+      this.isDemoEntitiesOnly = data;
+    }));
+
+    this.subs.add(this.i4connectedService.getSites()
       .pipe(map(data => data.filter(f => f.isValid)))
       .subscribe(data => {
       this.facilities = data;
       this.userSetting = this.userSettingService.getUserSettingLastValue();
       this.selectedFacilityId = this.userSetting.lastUsedFacilityId;
       this.stateService.setSelectedFacility( this.selectedFacilityId);
+      this.caseService.getUnscheduledCases(this.facilities).subscribe(cases => this.filterCases(cases));
       // this.userDetails = this.stateService.getUserDetails();
       // console.log(this.userDetails);
+
     }));
 
     this.subs.add(this.stateService.selectedFacilityId$.pipe(skip(1)).subscribe(fId => {
       this.selectedFacilityId = fId;
       this.loader = true;
-      this.caseService.getUnscheduledCases().subscribe(cases => {this.filterCases(cases); this.loader = false;});
+      this.caseService.getUnscheduledCases(this.facilities).subscribe(cases => {this.filterCases(cases); this.loader = false;});
     }));
 
     this.subs.add(this.stateService.caseSaved$.pipe(skip(1)).subscribe(c => {
       this.loader = true;
-      this.caseService.getUnscheduledCases().subscribe(cases => {this.filterCases(cases); this.loader = false;});
+      this.caseService.getUnscheduledCases(this.facilities).subscribe(cases => {this.filterCases(cases); this.loader = false;});
     }));
 
     this.subs.add(this.stateService.filterUnscheduledCasesByFacilityId$.subscribe(c => {
       this.loader = true;
-      this.caseService.getUnscheduledCases().subscribe(cases => {this.filterCases(cases); this.loader = false;});
+      this.caseService.getUnscheduledCases(this.facilities).subscribe(cases => {this.filterCases(cases); this.loader = false;});
     }));
 
     // Refresh unscheduled cases list when SignalR sends message
     this.subs.add(this.stateService.refreshCasesList$.pipe(skip(1)).subscribe(data => {
       this.loader = true;
-      this.caseService.getUnscheduledCases().subscribe(cases => {this.filterCases(cases); this.loader = false;});
+      this.caseService.getUnscheduledCases(this.facilities).subscribe(cases => {this.filterCases(cases); this.loader = false;});
     }));
 
     this.subs.add(this.stateService.canActivateFacilityUrl$.pipe(skip(1)).subscribe(permission => {

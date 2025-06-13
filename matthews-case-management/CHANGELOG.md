@@ -9,6 +9,15 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 - Bug fixes.
 
+## [2.32] - 2025-05-26
+### Fixed
+- Message "No device found" is changed to be "Device has no alias" in case info dialog.
+- Has new service: DemoService to provide information from CaseAPI about IsUseDemoEntitiesOnly
+
+## [2.31] - 2025-05-12
+### Fixed
+- Improvement of getting the unscheduled Cases. We do filtering cases by facility. (not simply get all of them)
+
 ## [2.30] - 2025-04-23
 ### Fixed
 - SignalR - once facility is changed it will unsubscribe to previous facility and subscribe to new one.

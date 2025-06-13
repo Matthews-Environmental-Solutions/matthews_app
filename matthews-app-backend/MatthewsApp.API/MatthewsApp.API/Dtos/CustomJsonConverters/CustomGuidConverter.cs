@@ -23,7 +23,6 @@ namespace MatthewsApp.API.Dtos.CustomJsonConverters
             {
                 return Guid.Empty;
             }
-            //throw new FormatException();
         }
 
         public override void Write(Utf8JsonWriter writer, Guid value, JsonSerializerOptions options)

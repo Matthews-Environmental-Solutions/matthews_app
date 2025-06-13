@@ -10,6 +10,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { CremationProcessService } from './cremation-process/cremation-process.service';
 import { CaseService } from './case/case.service';
 import { AuthEventHandlerService } from './core/auth-event-handler.service';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
@@ -22,6 +23,9 @@ export class AppComponent implements OnInit{
   userInfo$ = this.appStoreService.userInfo$;
   language: string;
   darkModeSliderValue: boolean;
+  demoFacilityExists$ = this.appStoreService.facilities$.pipe(
+    map(facilities => facilities.some(f => f.name?.includes('[DEMO]')))
+  );
 
   constructor(
     private platform: Platform,

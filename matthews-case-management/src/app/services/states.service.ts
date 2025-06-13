@@ -56,6 +56,9 @@ export class StateService {
     public facilities$: Observable<Facility[]>;
     private facilitiesBS = new BehaviorSubject<Facility[]>(this.getDefaultFacility());
 
+    public isDemoEntitiesOnly$: Observable<boolean>;
+    private isDemoEntitiesOnlyBS = new BehaviorSubject<boolean>(false);
+
     constructor(private calendarService: CalendarService, private userSettingService: UserSettingService, private i4connectedService: I4connectedService, private facilityService: FacilityService) {
         // Initialize the BehaviorSubjects with default values
         this.selectedFacilityId$ = this.selectedFacilityIdBehaviorSubject;
@@ -72,9 +75,18 @@ export class StateService {
         this.canActivateFacilityUrl$ = this.canActivateFacilityUrlBS;
         this.setCanActivateFacilityUrlBS(this.getCanActivateFacilityUrlBS());
         this.facilities$ = this.facilitiesBS;
+        this.isDemoEntitiesOnly$ = this.isDemoEntitiesOnlyBS;
     }
 
     // public canActivateFacilityUrl$ : Observable<boolean> = this.checkUserPermissionForFacility();
+
+    setIsDemoEntitiesOnly(isDemo: boolean): void {
+        this.isDemoEntitiesOnlyBS.next(isDemo);
+    }
+
+    getIsDemoEntitiesOnly(): boolean {  
+        return this.isDemoEntitiesOnlyBS.value;
+    }
 
     // selectedFacilityIdBehaviorSubject
     setSelectedFacility(facility: string): void {

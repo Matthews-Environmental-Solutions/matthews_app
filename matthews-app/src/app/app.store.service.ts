@@ -40,6 +40,7 @@ export interface AppState {
   refreshCasesList: string;
   selectedCaseId: string;
   actualStartTime: string | null;
+  demoMode: boolean;
 }
 
 @Injectable({
@@ -71,11 +72,14 @@ export class AppStoreService extends ComponentStore<AppState> {
       weeklyCaseCount: 0,
       refreshCasesList: uuidv4(),
       selectedCaseId: null,
-      actualStartTime: null
+      actualStartTime: null,
+      demoMode: false
     });
   }
 
-  readonly cases$: Observable<Case[]> = this.select((state) => state.cases);
+  readonly cases$: Observable<Case[]> = this.select(
+    (state) => state.cases
+  );
   readonly selectedCase$: Observable<Case> = this.select(
     (state) => state.selectedCase
   );
@@ -124,6 +128,10 @@ export class AppStoreService extends ComponentStore<AppState> {
   readonly actualStartTime$: Observable<string | null> = this.select(
     (state) => state.actualStartTime
   );
+
+  readonly demoMode$: Observable<boolean> = this.select(
+    (state) => state.demoMode
+  )
 
   readonly scheduleVm$ = this.select(
     this.cases$,
@@ -304,6 +312,13 @@ export class AppStoreService extends ComponentStore<AppState> {
     })
   );
 
+  readonly updateDemoMode = this.updater(
+    (state: AppState, demoMode: boolean) => ({
+      ...state,
+      demoMode,
+    })
+  );
+
   getDefaultRefreshCasesList(): string {
     return uuidv4();
   }
@@ -380,7 +395,7 @@ export class AppStoreService extends ComponentStore<AppState> {
 
   readonly getDeviceListWithSignalR = this.effect<string>((trigger$) =>
     trigger$.pipe(
-      //tap(() => this.loadingService.present()),
+      tap(() => this.loadingService.present()),
       switchMap((facilityId) =>
         this.deviceListService
           .getDevices(facilityId)
@@ -443,11 +458,16 @@ export class AppStoreService extends ComponentStore<AppState> {
       this.updateAlarmEventFromSignalR(alarm);
       console.log('🚨 Alarm received:', alarm); // Confirm event
 
-      // Check if the alarm has finished (end is not null)
-      const notificationTitle = alarm.end ? 'Alarm resolved' : 'Alarm Alert';
-      const notificationBody = alarm.end ? `${alarm.name} has been resolved` : `${alarm.name}`;
+      // 🔒 Skip notification if alarm is resolved
+      if (alarm.end) {
+        console.log('✅ Alarm is resolved, no notification scheduled.');
+        return;
+      }
 
-      // Schedule the notification with the updated title and body
+      // 🔔 Alarm is active, proceed to schedule notification
+      const notificationTitle = alarm.source?.name ?? 'Alarm Alert';
+      const notificationBody = alarm.name ?? 'An event has occurred';
+
       this.notificationService.scheduleNotification(
         notificationTitle,
         notificationBody
@@ -469,12 +489,20 @@ export class AppStoreService extends ComponentStore<AppState> {
     return this.get((state) => state.selectedDevice?.id)
   }
 
+  getDemoMode(): boolean {
+    return this.get((state) => state.demoMode);
+  }
+
   getSelectedCaseId(): string {
     return this.get((state) => state.selectedCaseId);
   }
 
   getSelectedFacility(): Facility {
     return this.get((state) => state.selectedFacility);
+  }
+
+  getUserFacilities(): Facility[] {
+    return this.get((state) => state.facilities);
   }
 
   readonly getCasesByDay = this.effect<[string, Date]>((cases$) =>
@@ -517,11 +545,11 @@ export class AppStoreService extends ComponentStore<AppState> {
     )
   );
 
-  readonly getUnscheduledCases = this.effect((cases$) =>
-    cases$.pipe(
+  readonly getUnscheduledCases = this.effect<Facility[]>((facilities$) =>
+    facilities$.pipe(
       tap(() => this.loadingService.present()),
-      switchMap(() =>
-        this.caseService.getUnscheduledCases().then((cases) => {
+      switchMap((facilities) =>
+        this.caseService.getUnscheduledCases(facilities).then((cases) => {
           this.updateCases(
             cases.filter(
               (caseToFilter) =>
@@ -552,12 +580,17 @@ export class AppStoreService extends ComponentStore<AppState> {
   readonly createCase = this.effect<Case>((case$) =>
     case$.pipe(
       tap(() => this.loadingService.present()),
-      switchMap((selectedCase) =>
-        this.caseService.createCase(selectedCase).then((savedCase) => {
-          //this.getCases(selectedCase.scheduledFacility);
+      switchMap((selectedCase) => {
+        const caseCopy = JSON.parse(JSON.stringify(selectedCase));
+        if (caseCopy.scheduledStartTime) {
+          const original = new Date(caseCopy.scheduledStartTime);
+          caseCopy.scheduledStartTime = original.toISOString(); // ✅ Convert to UTC
+        }
+        return this.caseService.createCase(caseCopy).then((savedCase) => {
+          // this.getCases(selectedCase.scheduledFacility);
           this.loadingService.dismiss();
-        })
-      ),
+        });
+      }),
       catchError(() => this.loadingService.dismiss())
     )
   );
@@ -565,14 +598,22 @@ export class AppStoreService extends ComponentStore<AppState> {
   readonly createCaseFromProcess = this.effect<Case>((case$) =>
     case$.pipe(
       tap(() => this.loadingService.present()),
-      switchMap((selectedCase) =>
-        this.caseService.createCase(selectedCase).then((savedCase) => {
+      switchMap((selectedCase) => {
+        var caseCopy = JSON.parse(JSON.stringify(selectedCase));
+
+        if (caseCopy.scheduledStartTime) {
+          const original = new Date(caseCopy.scheduledStartTime);
+          caseCopy.scheduledStartTime = original.toISOString();
+        }
+
+        return this.caseService.createCase(caseCopy).then((savedCase) => {
           //this.getCases(selectedCase.scheduledFacility);
           this.updateSelectedCase(savedCase);
           this.updateSelectedCaseId(savedCase.id);
           this.caseService.selectCase(savedCase.id);
           this.loadingService.dismiss();
-        })
+        });
+      }
       ),
       catchError(() => this.loadingService.dismiss())
     )
@@ -584,7 +625,7 @@ export class AppStoreService extends ComponentStore<AppState> {
       switchMap((selectedCase) =>
         this.caseService.updateCase(selectedCase.id, selectedCase).then(() => {
           //this.getCases(selectedCase.scheduledFacility);
-          
+
         })
       ),
       tap(() => this.loadingService.dismiss())
@@ -682,14 +723,14 @@ export class AppStoreService extends ComponentStore<AppState> {
   //       selectedDeviceId,
   //     },
   //   });
-  
+
   //   await modal.present();
 
   //   const { data } = await modal.onWillDismiss();
   //   if (data?.selectedCase) {
   //     debugger
   //   }
-  
+
   //   return await modal.present();
   // }
 

@@ -1,21 +1,21 @@
 ﻿using MatthewsApp.API.Dtos;
-using MatthewsApp.API.Enums;
 using MatthewsApp.API.Mappers;
 using MatthewsApp.API.Models;
 using MatthewsApp.API.Services;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace MatthewsApp.API.Controllers;
 
 [Route("[controller]")]
 [ApiController]
-public class CaseController : Controller
+public class CaseController : ControllerBase
 {
     private readonly ICasesService service;
     private readonly ILogger<CaseController> _logger;
@@ -28,15 +28,15 @@ public class CaseController : Controller
 
     [HttpPost]
     [Route("Save")]
-    public ActionResult<Case> PostCase([FromBody]CaseDto caseDto)
+    public async Task<ActionResult<Case>> PostCase([FromBody]CaseDto caseDto)
     {
         _logger.LogInformation("---------- Save");
         try
         {
             var caseEntity = caseDto.ToEntity();
             caseEntity.Id = Guid.NewGuid();
-            service.Create(caseEntity);
-
+            await service.Create(caseEntity);
+            caseEntity.ScheduledStartTime = DateTime.SpecifyKind(caseEntity.ScheduledStartTime is null ? DateTime.MinValue : caseEntity.ScheduledStartTime.Value, DateTimeKind.Utc);
             return CreatedAtAction(nameof(PostCase), new { id = caseEntity.Id }, caseEntity);
         }
         catch (Exception ex)
@@ -53,24 +53,24 @@ public class CaseController : Controller
             return BadRequest();
         }
 
-        Case caseEntitry = await service.GetById(idParsed);
-        if (caseEntitry == null)
+        Case caseEntity = await service.GetById(idParsed);
+        if (caseEntity == null)
         {
             return NotFound();
         }
-
-        service.Delete(caseEntitry);
+        caseEntity.ScheduledStartTime = DateTime.SpecifyKind(caseEntity.ScheduledStartTime is null ? DateTime.MinValue : caseEntity.ScheduledStartTime.Value, DateTimeKind.Utc);
+        service.Delete(caseEntity);
         return Ok();
     }
 
     [HttpPut]
     [Route("Update")]
-    public ActionResult Update([FromBody] CaseDto caseDto)
+    public async Task<ActionResult> Update([FromBody] CaseDto caseDto)
     {
         _logger.LogInformation("---------- Update");
         try
         {
-            service.Update(caseDto.ToEntity());
+            await service.Update(caseDto.ToEntity());
         }
         catch (DbUpdateConcurrencyException)
         {
@@ -105,12 +105,12 @@ public class CaseController : Controller
 
     [HttpPut]
     [Route("Deselect")]
-    public ActionResult Deselect([FromBody] Guid caseId)
+    public async Task<ActionResult> Deselect([FromBody] Guid caseId)
     {
         _logger.LogInformation("---------- Deselect");
         try
         {
-            service.UpdateCaseWhenCaseDeselect(caseId, true);
+            await service.UpdateCaseWhenCaseDeselect(caseId, true);
         }
         catch (DbUpdateConcurrencyException)
         {
@@ -198,14 +198,15 @@ public class CaseController : Controller
         }
     }
 
-    [HttpGet]
+    [HttpPost]
     [Route("GetUnscheduledCases")]
-    public async Task<ActionResult<IEnumerable<CaseDto>>> GetUnscheduledCases()
+    public async Task<ActionResult<IEnumerable<CaseDto>>> GetUnscheduledCases([FromBody] List<FacilityDto> Facilities)
     {
         _logger.LogInformation("---------- GetUnscheduledCases");
         try
         {
-            return Ok((await service.GetUnscheduledCases()).ToDTOs());
+            var facilityIds = Facilities.Select(f => f.id).ToList();
+            return Ok((await service.GetUnscheduledCases(facilityIds)).ToDTOs());
         }
         catch (Exception ex)
         {
