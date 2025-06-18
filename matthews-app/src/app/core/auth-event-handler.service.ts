@@ -47,23 +47,30 @@ export class AuthEventHandlerService {
   }
 
   private startTokenMonitor(): void {
-    const bufferTimeInSeconds = 300; // Adjust this buffer time as needed
+    const bufferTimeInSeconds = 300; 
+  
     this.customAuthService.getValidToken().then((token) => {
       console.log('Token expires in:', token.expiresIn);
-      const expiresIn = token.expiresIn ? token.expiresIn : 3600; // Default to 1 hour if undefined
+      const expiresIn = token.expiresIn ?? 3600; // Default to 1 hour if undefined
+  
       let refreshTime = expiresIn - bufferTimeInSeconds;
-
-      refreshTime = 60; // Set to 1 minute for testing
-
+  
+      // Prevent negative or too-low values
+      if (refreshTime < 10) {
+        refreshTime = 10; // Always give at least 10s buffer
+      }
+  
+      console.log(`Scheduling token refresh in ${refreshTime} seconds`);
+  
       setTimeout(() => {
-        // Replace the call to refreshToken() with your custom refresh token logic
         (this.customAuthService as CustomAuthService)
           .refreshTokenManually()
           .catch((error) => {
             console.error('Error refreshing token:', error);
-            this.navCtrl.navigateRoot('landing'); // Handle refresh failure
+            this.navCtrl.navigateRoot('landing');
           });
-      }, refreshTime * 1000); // Convert to milliseconds
+      }, refreshTime * 1000);
     });
   }
+  
 }
