@@ -173,6 +173,12 @@
             </div>
 
             <div class="right-column">
+                <mat-error
+                    *ngIf="caseForm.get('facilityStatus')?.invalid && (caseForm.get('facilityStatus')?.dirty || caseForm.get('facilityStatus')?.touched)">
+                    <span *ngIf="caseForm.get('facilityStatus')?.errors?.['required']">
+                        Case status is required.
+                    </span>
+                </mat-error>
                 <mat-form-field appearance="fill">
                     <mat-label>{{"caseStatus" | translate}}</mat-label>
                     <mat-select formControlName="facilityStatus">

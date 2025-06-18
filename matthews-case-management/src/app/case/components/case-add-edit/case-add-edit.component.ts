@@ -101,7 +101,7 @@ export class CaseAddEditComponent implements OnInit {
       containerType: new FormControl('', [Validators.required]),
       scheduledStartDateTime: new FormControl(null),
 
-      facilityStatus: new FormControl('', { nonNullable: true }),
+      facilityStatus: new FormControl('', [Validators.required]),
       physicalId: new FormControl('', { nonNullable: true })
     });
 
