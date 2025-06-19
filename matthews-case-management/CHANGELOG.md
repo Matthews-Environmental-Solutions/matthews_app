@@ -7,7 +7,7 @@ All notable changes to this project will be documented in this file.
 ### Changed
 - Changes made to existing features.
 ### Fixed
-- Bug fixes..
+- Bug fixes...
 
 ## [2.32] - 2025-05-26
 ### Fixed
