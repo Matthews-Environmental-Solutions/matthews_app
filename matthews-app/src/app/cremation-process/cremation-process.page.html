@@ -145,11 +145,11 @@
               </div>
               <div class="actions">
                 <ion-segment [(ngModel)]="selectedBurnMode" (ionChange)="segmentChanged($event, selectedDevice)">
-                  <ion-segment-button *ngFor="let s of burnModeKeys;" value="{{s}}">
+                  <ion-segment-button [disabled]="burnModeSegmentDisabled" *ngFor="let s of burnModeKeys;" value="{{s}}">
                     <ion-label>{{burnMode[s]}}</ion-label>
                   </ion-segment-button>
                 </ion-segment>   
-                  <ion-button expand="block" (click)="startPreheat(selectedDevice)" class="btnsuccessinline">
+                  <ion-button [disabled]="burnModeSegmentDisabled" expand="block" (click)="startPreheat(selectedDevice)" class="btnsuccessinline">
                     {{ 'StartPreheat' | translate }}
                   </ion-button>              
               </div>

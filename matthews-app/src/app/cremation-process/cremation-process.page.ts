@@ -183,6 +183,7 @@ export class CremationProcessPage implements OnInit, OnDestroy {
   private subscription: Subscription;
   private isUpdatingElapsedTime = false;
   isContinueClicked: boolean = false;
+  burnModeSegmentDisabled = false;
 
   containerTypes: ContainerTypeSelection[] = [
     { id: 0, name: 'None' },
@@ -835,13 +836,19 @@ export class CremationProcessPage implements OnInit, OnDestroy {
   }
 
   segmentChanged(ev: any, selectedDevice: Device) {
+    if (this.burnModeSegmentDisabled) return;
+    this.burnModeSegmentDisabled = true;
     this.selectedBurnMode = ev.detail.value;
-    console.log('Segment changed', ev);
+    let value: number = +ev.detail.value;
     const signal = selectedDevice.signals.find(
       (signal) => signal.name === 'BURN_MODE'
     );
     //console.log('Signal ID: ' + signal?.id);
-    this.cremationProcessService.writeSignalValue(signal?.id, ev.detail.value);
+    this.cremationProcessService.writeSignalValue(signal?.id, value);
+
+    setTimeout(() => {
+      this.burnModeSegmentDisabled = false;
+    }, 2500);
   }
 
   async presentAlert(options: AlertOptions) {
