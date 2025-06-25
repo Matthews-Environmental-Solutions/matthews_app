@@ -17,7 +17,7 @@ export const environment = {
     scopes: 'profile openid email offline_access matthews.api api',
     pkce: true
   }
-};  
+};
 
 //mob comdata
 // export const environment = {
