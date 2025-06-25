@@ -28,10 +28,10 @@ jobs:
 
       - name: Install dependencies
         run: |
-          cd android
+          cd matthews-app/android
           bundle install
 
       - name: Run Fastlane build
         run: |
-          cd android
+          cd matthews-app/android
           bundle exec fastlane build
