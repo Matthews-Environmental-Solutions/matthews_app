@@ -2,7 +2,7 @@ name: Android Fastlane Build
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
 
 jobs:
@@ -18,12 +18,12 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
-          java-version: '17' # Adjust if your project uses a different version
+          java-version: '17'
 
       - name: Install Ruby & Fastlane
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.2' # Adjust to match your local Ruby
+          ruby-version: '3.2'
           bundler-cache: true
 
       - name: Install dependencies
