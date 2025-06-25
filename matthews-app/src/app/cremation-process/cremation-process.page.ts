@@ -191,6 +191,7 @@ export class CremationProcessPage implements OnInit, OnDestroy {
   private isUpdatingElapsedTime = false;
   isContinueClicked: boolean = false;
   burnModeSegmentDisabled = false;
+  //testing
 
   containerTypes: ContainerTypeSelection[] = [
     { id: 0, name: 'None' },
