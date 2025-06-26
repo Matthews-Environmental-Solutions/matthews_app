@@ -26,7 +26,7 @@ jobs:
           ruby-version: '3.2'
           bundler-cache: true
 
-      - name: Install dependencies
+      - name: Install Ruby dependencies
         run: |
           cd matthews-app/android
           bundle install
@@ -38,6 +38,11 @@ jobs:
         run: |
           cd matthews-app
           npm ci --legacy-peer-deps
+
+      - name: Build Angular app (generate www/)
+        run: |
+          cd matthews-app
+          npm run build
 
       - name: Sync Capacitor
         run: |
