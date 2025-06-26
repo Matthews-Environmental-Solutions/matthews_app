@@ -36,5 +36,5 @@ jobs:
 
       - name: Run Fastlane build
         run: |
-          cd /android
+          cd matthews-app/android
           bundle exec fastlane build
