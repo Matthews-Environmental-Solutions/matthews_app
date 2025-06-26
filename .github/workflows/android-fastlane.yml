@@ -28,13 +28,13 @@ jobs:
 
       - name: Install dependencies
         run: |
-          cd matthews-app/android
+          cd /android
           bundle install
 
       - name: Make gradlew executable
-        run: chmod +x matthews-app/android/gradlew
+        run: chmod +x /android/gradlew
 
       - name: Run Fastlane build
         run: |
-          cd matthews-app/android
+          cd /android
           bundle exec fastlane build
