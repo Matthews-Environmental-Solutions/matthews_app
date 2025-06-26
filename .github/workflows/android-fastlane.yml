@@ -34,6 +34,16 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x matthews-app/android/gradlew
 
+      - name: Install Node.js dependencies
+        run: |
+          cd matthews-app
+          npm ci
+
+      - name: Sync Capacitor
+        run: |
+          cd matthews-app
+          npx cap sync android
+
       - name: Run Fastlane build
         run: |
           cd matthews-app/android
