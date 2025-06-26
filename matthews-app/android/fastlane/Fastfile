@@ -23,7 +23,7 @@ platform :android do
 
   desc "Build release"
   lane :build do
-    gradle(task: "assembleRelease")
+    gradle(task: "assembleDebug")
   end
 
   desc "Submit a new Beta Build to Crashlytics Beta"

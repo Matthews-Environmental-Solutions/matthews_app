@@ -18,15 +18,17 @@ android {
     }
     signingConfigs {
         release {
-            storeFile file('C:/ComData/keystore/matthews.keystore')
-            storePassword 'key123'
-            keyAlias 'matthews-keystore'
-            keyPassword 'key123'
+            // storeFile file('C:/ComData/keystore/matthews.keystore')
+            // storePassword 'key123'
+            // keyAlias 'matthews-keystore'
+            // keyPassword 'key123' 
+            // temporary skipping signing
         }
     }
     buildTypes {
         release {
-            signingConfig signingConfigs.release
+            //signingConfig signingConfigs.release
+            // temporary skipping
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
