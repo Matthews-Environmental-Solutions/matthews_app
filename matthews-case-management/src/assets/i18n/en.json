@@ -32,6 +32,7 @@
     "loadSize": "Load size",
     "caseStatus": "Case status",
     "cremator": "Cremator",
+    "crematorID": "Cremator ID",
     "burnMode": "Burn mode",
     "simple": "Simple",
     "eco": "Eco",
