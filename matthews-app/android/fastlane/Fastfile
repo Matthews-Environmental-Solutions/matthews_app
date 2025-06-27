@@ -12,6 +12,7 @@
 
 # Uncomment the line if you want fastlane to automatically update itself
 # update_fastlane
+require 'fileutils'
 
 default_platform(:android)
 
@@ -25,6 +26,24 @@ platform :android do
   lane :build do
     gradle(task: "assembleDebug")
   end
+
+    lane :debug do
+  gradle(task: "assembleDebug")
+  
+  # Debug: Print all APK paths
+  puts "All APK paths: #{lane_context[SharedValues::GRADLE_ALL_APK_OUTPUT_PATHS]}"
+  
+  # Find the debug APK
+  apk_path = lane_context[SharedValues::GRADLE_ALL_APK_OUTPUT_PATHS].find { |p| p.include?("debug") }
+  puts "Copying from: #{apk_path}"
+  
+  # Force overwrite
+  File.delete("debug.apk") if File.exist?("debug.apk")
+  
+  # Copy the new APK
+  FileUtils.cp(apk_path, "debug.apk")
+  puts "✅ Copied to: #{File.absolute_path('debug.apk')}"
+end
 
   desc "Submit a new Beta Build to Crashlytics Beta"
   lane :beta do
