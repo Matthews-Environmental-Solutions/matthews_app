@@ -83,9 +83,10 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
         IEnumerable<Case> cases = await _dataContext.Cases.Include(c => c.FacilityStatus)
             .Where(c => Facilities.Contains((Guid)c.ScheduledFacility))
             .Where(c =>
-                (c.ScheduledStartTime < DateTime.MinValue.AddDays(100)
-                || c.ScheduledFacility == Guid.Empty
-                || c.ScheduledDevice == Guid.Empty)
+                    (
+                    (c.ScheduledStartTime < DateTime.MinValue.AddDays(100) && c.ActualStartTime < DateTime.MinValue.AddDays(100))
+                    || c.ScheduledFacility == Guid.Empty
+                    || c.ScheduledDevice == Guid.Empty)
 
                 && c.IsObsolete == false
                 )
@@ -102,9 +103,9 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             c.IsObsolete == false
             && c.ScheduledFacility.Equals(facilityId)
             && !c.ScheduledDevice.Equals(Guid.Empty)
-            && c.ScheduledStartTime.HasValue
-            && c.ScheduledStartTime.Value >= date
-            && c.ScheduledStartTime.Value < dateEnd
+            && ((c.ScheduledStartTime.HasValue && c.ScheduledStartTime.Value >= date && c.ScheduledStartTime.Value < dateEnd)
+                || 
+                (c.ActualStartTime.HasValue && c.ActualStartTime.Value >= date && c.ActualStartTime.Value < dateEnd))
             ).ToList().OrderBy(c => c.ScheduledStartTime);
     }
 
@@ -116,9 +117,9 @@ public class CaseRepository : BaseRepository<Case, Guid>, ICaseRepository
             c.IsObsolete == false
             && c.ScheduledFacility.Equals(facilityId)
             && !c.ScheduledDevice.Equals(Guid.Empty)
-            && c.ScheduledStartTime.HasValue
-            && c.ScheduledStartTime.Value >= dateStartDateOfWeek
-            && c.ScheduledStartTime.Value < dateEnd
+            && ((c.ScheduledStartTime.HasValue && c.ScheduledStartTime.Value >= dateStartDateOfWeek && c.ScheduledStartTime.Value < dateEnd)
+                ||
+                (c.ActualStartTime.HasValue && c.ActualStartTime.Value >= dateStartDateOfWeek && c.ActualStartTime.Value < dateEnd))
             ).ToList().OrderBy(c => c.ScheduledStartTime);
     }
 

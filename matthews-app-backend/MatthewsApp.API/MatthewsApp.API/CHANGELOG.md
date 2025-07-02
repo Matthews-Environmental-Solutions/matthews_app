@@ -4,6 +4,9 @@
 - Changed: Description of a change in existing functionality.
 - Removed: Description of deprecated features.
 
+## [1.1.4] - 2025-07-02
+	- Fixed:
+		In CaseRepository: GetUnscheduledCasesByFacilities, GetScheduledCasesByDay, GetScheduledCasesByWeek methods are improved to take ActualStartTime in consideration
 
 ## [1.1.3] - 2025-05-26
 	- Fixed:
