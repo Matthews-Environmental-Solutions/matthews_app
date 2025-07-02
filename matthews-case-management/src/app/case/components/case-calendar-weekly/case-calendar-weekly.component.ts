@@ -1,15 +1,15 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { Subscription, skip } from 'rxjs';
+
+import { MatDialog } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
-import { Subscription, catchError, delay, filter, of, retryWhen, skip, take, tap } from 'rxjs';
 import { Case } from 'src/app/models/case.model';
+import { FacilityStatus } from 'src/app/models/facility-status.model';
 import { CalendarService } from 'src/app/services/calendar.service';
 import { CaseService } from 'src/app/services/cases.service';
+import { FacilityStatusService } from 'src/app/services/facility-status.service';
 import { StateService } from 'src/app/services/states.service';
 import { CaseInfoDialogComponent } from '../../dialogs/case-info.dialog/case-info.dialog.component';
-import { MatDialog } from '@angular/material/dialog';
-import { FacilityStatus } from 'src/app/models/facility-status.model';
-import { FacilityStatusService } from 'src/app/services/facility-status.service';
-import { TruncatePipe } from 'src/app/pipes/truncate.pipe';
 
 @Component({
   selector: 'case-calendar-weekly',
@@ -122,7 +122,14 @@ export class CaseCalendarWeeklyComponent implements OnInit {
       this.casesForDay6 = [];
       this.casesForDay7 = [];
 
-      this.cases = response;
+      this.cases = response.map((c: any) => {
+        if(c.scheduledStartTime && c.scheduledStartTime.includes('1-01-01')
+          && c.actualStartTime && !c.actualStartTime.includes('1-01-01')) {
+          c.scheduledStartTime = c.actualStartTime;
+        }
+
+        return c;
+      });
       this.filteredCases = this.filterDeviceId == 'all' ? response : this.cases.filter(c => c.scheduledDevice == this.filterDeviceId);
       this.parseCasesByDays();
       this.stateService.parseCasesByDevices(this.cases);

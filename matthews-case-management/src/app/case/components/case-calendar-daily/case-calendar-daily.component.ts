@@ -1,14 +1,14 @@
-import { Component, Input, OnInit, Output, EventEmitter, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable, Subscription, of, skip, take } from 'rxjs';
+import { Subscription, skip } from 'rxjs';
 import { Case } from 'src/app/models/case.model';
+import { FacilityStatus } from 'src/app/models/facility-status.model';
 import { CaseService } from 'src/app/services/cases.service';
+import { FacilityStatusService } from 'src/app/services/facility-status.service';
 import { StateService } from 'src/app/services/states.service';
 import { UserSettingService } from 'src/app/services/user-setting.service';
-import { FacilityStatusService } from 'src/app/services/facility-status.service';
-import { FacilityStatus } from 'src/app/models/facility-status.model';
 import { CaseInfoDialogComponent } from '../../dialogs/case-info.dialog/case-info.dialog.component';
 
 
@@ -116,7 +116,14 @@ export class CaseCalendarDailyComponent implements OnInit {
   getCasesByDate() {
     this.loader = true;
     this.caseService.getScheduledCasesByDay(this.selectedFacilityId, this.selectedDay).subscribe((response: any) => {
-      this.cases = response;
+      this.cases = response.map((c: any) => {
+        if(c.scheduledStartTime && c.scheduledStartTime.includes('1-01-01')
+          && c.actualStartTime && !c.actualStartTime.includes('1-01-01')) {
+          c.scheduledStartTime = c.actualStartTime;
+        }
+
+        return c;
+      });
       this.filteredCases = this.filterDeviceId == 'all' ? response : this.cases.filter(c => c.scheduledDevice == this.filterDeviceId);
       this.stateService.parseCasesByDevices(this.cases);
       this.loader = false;

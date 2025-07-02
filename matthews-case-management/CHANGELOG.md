@@ -9,6 +9,15 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 - Bug fixes...
 
+## [2.34] - 2025-07-02
+### Fixed
+- In Day/Week calendar, the ActualStartTime will be taken in consideration, especialy when ScheduledStartTime is missing.
+
+## [2.33] - 2025-06-27
+### Fixed
+- Case weight is added to Case tile in calendar
+- Case Add/Edit form: Cremator label is changed to: Cremator ID
+
 ## [2.32] - 2025-05-26
 ### Fixed
 - Message "No device found" is changed to be "Device has no alias" in case info dialog.

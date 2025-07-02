@@ -1,7 +1,7 @@
-import { Pipe, PipeTransform } from "@angular/core";
-import { UserSettingService } from "../services/user-setting.service";
 import { DatePipe } from "@angular/common";
+import { Pipe, PipeTransform } from "@angular/core";
 import { UserSettingData } from "../models/user-setting.model";
+import { UserSettingService } from "../services/user-setting.service";
 
 @Pipe({ name: 'timepipe' })
 export class DatetimePipe implements PipeTransform {
@@ -15,12 +15,17 @@ export class DatetimePipe implements PipeTransform {
       return null;
     }
     date = new Date(date);  // if orginal type was a string
+    // if date is invalid, return empty string
+    if (isNaN(date.getTime())) {
+      return "";
+    }
+
     if(date.getFullYear() == 1){
       return "";
     }
     let dateShift = date;
     let setting: UserSettingData = this.userSettingService.getUserSettingLastValue();
-    
+
     let format = '';
     if (setting) {
 
