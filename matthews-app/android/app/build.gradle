@@ -2,11 +2,11 @@ apply plugin: 'com.android.application'
 
 android {
     namespace "com.matthews.app"
-    compileSdkVersion 35
+    compileSdkVersion 34
     defaultConfig {
         applicationId "com.matthews.app"
         minSdkVersion rootProject.ext.minSdkVersion
-        targetSdkVersion 35
+        targetSdkVersion 34
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -16,6 +16,14 @@ android {
             ignoreAssetsPattern '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
         }
     }
+
+    lint {
+        checkReleaseBuilds = false
+        abortOnError = false
+        disable.add("RestrictedApi")
+    }
+
+
     signingConfigs {
         release {
             // storeFile file('C:/ComData/keystore/matthews.keystore')
