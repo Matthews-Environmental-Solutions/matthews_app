@@ -26,7 +26,7 @@ android {
 
     signingConfigs {
         release {
-            storeFile file("/keystores/matthews.keystore")
+            storeFile file("/keystores/M3-app-upload-keystore.jks")
             storePassword System.getenv("KEYSTORE_PASSWORD")
             keyAlias System.getenv("KEY_ALIAS")
             keyPassword System.getenv("KEY_PASSWORD")
