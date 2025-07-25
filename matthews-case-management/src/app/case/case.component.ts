@@ -71,36 +71,36 @@ export class CaseComponent implements OnInit {
     this.subs.add(this.i4connectedService.getSites()
       .pipe(map(data => data.filter(f => f.isValid)))
       .subscribe(data => {
-      this.facilities = data;
-      this.userSetting = this.userSettingService.getUserSettingLastValue();
-      this.selectedFacilityId = this.userSetting.lastUsedFacilityId;
-      this.stateService.setSelectedFacility( this.selectedFacilityId);
-      this.caseService.getUnscheduledCases(this.facilities).subscribe(cases => this.filterCases(cases));
-      // this.userDetails = this.stateService.getUserDetails();
-      // console.log(this.userDetails);
+        this.facilities = data;
+        this.userSetting = this.userSettingService.getUserSettingLastValue();
+        this.selectedFacilityId = this.userSetting.lastUsedFacilityId;
+        this.stateService.setSelectedFacility(this.selectedFacilityId);
+        this.caseService.getUnscheduledCases(this.facilities).subscribe(cases => this.filterCases(cases));
+        // this.userDetails = this.stateService.getUserDetails();
+        // console.log(this.userDetails);
 
-    }));
+      }));
 
     this.subs.add(this.stateService.selectedFacilityId$.pipe(skip(1)).subscribe(fId => {
       this.selectedFacilityId = fId;
       this.loader = true;
-      this.caseService.getUnscheduledCases(this.facilities).subscribe(cases => {this.filterCases(cases); this.loader = false;});
+      this.caseService.getUnscheduledCases(this.facilities).subscribe(cases => { this.filterCases(cases); this.loader = false; });
     }));
 
     this.subs.add(this.stateService.caseSaved$.pipe(skip(1)).subscribe(c => {
       this.loader = true;
-      this.caseService.getUnscheduledCases(this.facilities).subscribe(cases => {this.filterCases(cases); this.loader = false;});
+      this.caseService.getUnscheduledCases(this.facilities).subscribe(cases => { this.filterCases(cases); this.loader = false; });
     }));
 
     this.subs.add(this.stateService.filterUnscheduledCasesByFacilityId$.subscribe(c => {
       this.loader = true;
-      this.caseService.getUnscheduledCases(this.facilities).subscribe(cases => {this.filterCases(cases); this.loader = false;});
+      this.caseService.getUnscheduledCases(this.facilities).subscribe(cases => { this.filterCases(cases); this.loader = false; });
     }));
 
     // Refresh unscheduled cases list when SignalR sends message
     this.subs.add(this.stateService.refreshCasesList$.pipe(skip(1)).subscribe(data => {
       this.loader = true;
-      this.caseService.getUnscheduledCases(this.facilities).subscribe(cases => {this.filterCases(cases); this.loader = false;});
+      this.caseService.getUnscheduledCases(this.facilities).subscribe(cases => { this.filterCases(cases); this.loader = false; });
     }));
 
     this.subs.add(this.stateService.canActivateFacilityUrl$.pipe(skip(1)).subscribe(permission => {
@@ -181,16 +181,20 @@ export class CaseComponent implements OnInit {
 
   wasIClicked(buttonId: string) {
     return this.clickedFacilityFilterButton == buttonId ? 'selected-button' : 'default-button';
-  }  
+  }
 
-  filterCases(cases: Case[]){
+  filterCases(cases: Case[]) {
     this.unscheduledCases = cases;
-    this.filteredUnscheduledCases = this.clickedFacilityFilterButton == 'all' ? 
-      this.unscheduledCases.filter(c => this.facilities.some(f=> f.id == c.scheduledFacility))
-      : 
-      this.unscheduledCases.filter(c => c.scheduledFacility == this.selectedFacilityId);
+
+    this.filteredUnscheduledCases = this.clickedFacilityFilterButton == 'all'
+      ? this.unscheduledCases.filter(c => this.facilities.some(f => f.id == c.scheduledFacility))
+      : this.unscheduledCases.filter(c => c.scheduledFacility == this.selectedFacilityId);
+
+    // Sort by clientCaseId (customer's Case ID)
+    this.filteredUnscheduledCases = this.filteredUnscheduledCases.sort((a, b) =>
+      a.clientCaseId.localeCompare(b.clientCaseId)
+    );
 
     this.numberOfUnscheduledCases = this.filteredUnscheduledCases.length;
   }
-  
 }
