@@ -23,7 +23,7 @@ platform :android do
   end
 
   lane :release do
-  gradle(task: "clean assembleRelease")
+  gradle(task: "clean bundleRelease")
   end
 
 
