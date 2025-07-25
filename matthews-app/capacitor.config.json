@@ -1,10 +1,13 @@
 {
-	"appId": "com.matthews.app",
-	"appName": "matthews-app",
-	"webDir": "www",
-	"bundledWebRuntime": false,
-	"server": {
-		"hostname": "com.matthews.app",
-		"androidScheme": "https"
-	}
+  "appId": "com.matthews.app",
+  "appName": "Matthews App",
+  "webDir": "www",
+  "server": {
+    "hostname": "com.matthews.app",
+    "androidScheme": "https"
+  },
+  "ios": {
+    "minVersion": "13.0",
+    "contentInset": "always"
+  }
 }
