@@ -50,6 +50,8 @@ jobs:
           npx cap sync android
 
       - name: Run Fastlane build
+      # env: 
+        #   KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
         run: |
           cd matthews-app/android
           bundle exec fastlane build

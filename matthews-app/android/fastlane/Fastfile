@@ -22,12 +22,17 @@ platform :android do
     gradle(task: "test")
   end
 
+  lane :release do
+  gradle(task: "clean bundleRelease")
+  end
+
+
   desc "Build release"
   lane :build do
     gradle(task: "assembleDebug")
   end
 
-    lane :debug do
+  lane :debug do
   gradle(task: "assembleDebug")
   
   # Debug: Print all APK paths

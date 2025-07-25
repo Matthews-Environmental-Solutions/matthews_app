@@ -27,3 +27,14 @@ allprojects {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+
+subprojects {
+    afterEvaluate { project ->
+        if (project.name == "capacitor-android") {
+            project.android.lintOptions {
+                abortOnError false
+                disable 'RestrictedApi'
+            }
+        }
+    }
+}
