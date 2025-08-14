@@ -9,6 +9,10 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 - Bug fixes...
 
+## [2.35] - 2025-07-25
+### Fixed
+- Sorting unscheduled Cases by ClientCaseId.
+
 ## [2.34] - 2025-07-02
 ### Fixed
 - In Day/Week calendar, the ActualStartTime will be taken in consideration, especialy when ScheduledStartTime is missing.
