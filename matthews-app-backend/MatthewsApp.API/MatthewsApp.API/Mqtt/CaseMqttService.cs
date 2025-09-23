@@ -117,6 +117,10 @@ public class CaseMqttService : IHostedService
                             // 1. get devices
                             bool useDemoEntitiesOnly = _configuration["useDemoEntitiesOnly"]?.ToLower() == "true";
                             _devices = await _caseI4CHttpClientService.GetAllDevicesAsync(useDemoEntitiesOnly) ?? new List<DeviceDto>();
+
+                            // filter only devices with DeviceTypeId = 1
+                            _devices = _devices.Where(d => d.DeviceTypeId == 1).ToList();
+
                             _logger?.LogInformation($"---------- Case Mqtt Service - Number of devices: {_devices.Count}");
 
                             // 2. then iterate devices, 
