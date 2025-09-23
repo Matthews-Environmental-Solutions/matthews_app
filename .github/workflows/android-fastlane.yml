@@ -53,5 +53,5 @@ jobs:
       # env: 
         #   KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
         run: |
-          cd matthews-app/android
+          cd matthews-app/android   
           bundle exec fastlane build

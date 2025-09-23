@@ -8,6 +8,8 @@ public record DeviceDto(
     Guid? adapterId,
     bool? active,
     string alias
-    )
+)
 {
+    public int DeviceTypeId { get; init; }   // so i dont have to change constructor
 }
+
