@@ -9,6 +9,10 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 - Bug fixes...
 
+## [2.36] - 2025-09-23
+### Fixed
+- Filtering devices by type, so we have CREMATORS devices only.
+
 ## [2.35] - 2025-07-25
 ### Fixed
 - Sorting unscheduled Cases by ClientCaseId.
