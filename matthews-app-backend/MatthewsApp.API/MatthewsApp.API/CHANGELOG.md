@@ -4,7 +4,12 @@
 - Changed: Description of a change in existing functionality.
 - Removed: Description of deprecated features.
 
-## [1.1.4] - 2025-09-23
+## [1.1.6] - 2025-10-08
+	- Fixed:
+		DeviceDto: deviceTypeId property is added instead DeviceTypeId.
+		CaseMqttService.cs is fixed: deviceTypeId instead of DeviceTypeId
+
+## [1.1.5] - 2025-09-23
 	- Fixed:
 		CaseMqttService: filtering devices by type so that only devices of type "CREMATOR" are taken from i4c.
 
