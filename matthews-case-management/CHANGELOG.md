@@ -9,6 +9,14 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 - Bug fixes...
 
+## [2.37] - 2025-10-08
+### Fixed
+- In i4connected.service.ts, the getDevicesByFacility2 method is modified.
+
+## [2.36] - 2025-09-23
+### Fixed
+- Filtering devices by type, so we have CREMATORS devices only.
+
 ## [2.35] - 2025-07-25
 ### Fixed
 - Sorting unscheduled Cases by ClientCaseId.
@@ -50,7 +58,7 @@ All notable changes to this project will be documented in this file.
 
 ## [2.17] - 2025-01-31
 ### Added
-- Case Add/Edit - press Enter event is prevented 
+- Case Add/Edit - press Enter event is prevented
 
 ## [2.16] - 2024-12-19
 ### Added

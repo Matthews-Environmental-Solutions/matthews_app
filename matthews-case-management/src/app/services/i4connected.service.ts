@@ -1,9 +1,10 @@
+import { Observable, catchError, concatMap, retry, throwError } from "rxjs";
+
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { Observable, catchError, concatMap, forkJoin, map, retry, switchMap, throwError } from "rxjs";
-import { Facility } from "../models/facility.model";
-import { Device } from "../models/device.model";
 import { environment } from "src/environments/environment";
+import { Device } from "../models/device.model";
+import { Facility } from "../models/facility.model";
 import { UserDetails } from "../models/user-details.model";
 import { FacilityService } from "./facility.service";
 
@@ -37,15 +38,16 @@ export class I4connectedService {
     getDevicesByFacility2(facilityId: string): Observable<Device[]> {
         return this.httpClient.post<Device[]>(`${this.apiUrl}/api/devices/list?pageSize=1000000&pageNumber=1&sortFields=0`,
             {
+              "DeviceTypeIds": [
+                1
+              ],
                 "selectedItems": [
                     {
                         "id": facilityId,
                         "type": 2
                     }
                 ]
-            }).pipe(
-                map(devices => devices.filter(d => d.deviceTypeId === 1))
-            );
+            });
     }
 
 

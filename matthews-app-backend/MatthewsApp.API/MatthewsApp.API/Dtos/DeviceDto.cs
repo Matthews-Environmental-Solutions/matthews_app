@@ -7,9 +7,9 @@ public record DeviceDto(
     Guid siteId,
     Guid? adapterId,
     bool? active,
-    string alias
+    string alias,
+    int? deviceTypeId
 )
 {
-    public int DeviceTypeId { get; init; }   // so i dont have to change constructor
 }
 
