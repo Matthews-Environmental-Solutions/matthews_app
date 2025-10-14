@@ -111,14 +111,41 @@ export class CaseComponent implements OnInit {
     this.signalRService.addCaseDataListener();
 
     this.i4connectedService.getUserInfoDetails(this.authService.loggedInUser.sub).subscribe(userDetails => {
-      var user = new UserDetails();
+      const user = new UserDetails();
       user.id = userDetails.id;
       user.firstName = userDetails.firstName;
       user.lastName = userDetails.lastName;
       user.email = userDetails.email;
       user.roles = userDetails.roles;
+      user.timeZoneId = userDetails.timeZoneId;
 
       this.stateService.setUserDetailsBS(user);
+
+      this.i4connectedService.getTimeZoneDetails(user.timeZoneId).subscribe((tz: any) => {
+        if (tz?.ianaName) {
+          console.log('Detected timezone from API:', tz.ianaName);
+
+          // update userSetting in local storage
+          const username = this.authService.loggedInUser.name;
+          const userSettingString = localStorage.getItem(username);
+          if (userSettingString) {
+            const userSetting = JSON.parse(userSettingString);
+            userSetting.timezone = tz.ianaName;
+            localStorage.setItem(username, JSON.stringify(userSetting));
+          }
+
+          // update current app-level setting
+          const lastSetting = this.userSettingService.getUserSettingLastValue();
+
+          const updatedSetting = new UserSettingData();
+          updatedSetting.copyInto({
+            ...lastSetting,
+            timezone: tz.ianaName
+          });
+
+          this.userSettingService.setUserSetting(updatedSetting);
+        }
+      });
     });
   }
 
@@ -197,4 +224,5 @@ export class CaseComponent implements OnInit {
 
     this.numberOfUnscheduledCases = this.filteredUnscheduledCases.length;
   }
+
 }

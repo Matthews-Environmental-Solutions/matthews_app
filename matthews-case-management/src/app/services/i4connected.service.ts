@@ -29,7 +29,6 @@ export class I4connectedService {
     }
 
 
-
     getSite(id: string): Observable<Facility> {
         return this.httpClient.get<Facility>(`${this.apiUrl}/api/sites/${id}/details`)
             .pipe(retry(1), catchError(this.handleError));
@@ -38,9 +37,9 @@ export class I4connectedService {
     getDevicesByFacility2(facilityId: string): Observable<Device[]> {
         return this.httpClient.post<Device[]>(`${this.apiUrl}/api/devices/list?pageSize=1000000&pageNumber=1&sortFields=0`,
             {
-              "DeviceTypeIds": [
-                1
-              ],
+                "DeviceTypeIds": [
+                    1
+                ],
                 "selectedItems": [
                     {
                         "id": facilityId,
@@ -55,6 +54,15 @@ export class I4connectedService {
         return this.httpClient.get<UserDetails>(`${this.apiUrl}/api/users/${userId}/details`)
             .pipe(retry(1), catchError(this.handleError));;
     }
+
+    getTimeZonesList() {
+        return this.httpClient.get<any[]>(`${this.apiUrl}/api/timezones/list`);
+    }
+
+    getTimeZoneDetails(timeZoneId: number) {
+        return this.httpClient.get<any>(`${this.apiUrl}/api/timezones/${timeZoneId}/details`);
+    }
+
 
     // Error handling
     handleError(error: any) {

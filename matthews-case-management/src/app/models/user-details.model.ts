@@ -5,4 +5,5 @@ export class UserDetails{
 	lastName: string = '';
 	email: string = '';
 	roles: string[] = [];
+	timeZoneId: number = 0;
 }

@@ -84,7 +84,7 @@ export class StateService {
         this.isDemoEntitiesOnlyBS.next(isDemo);
     }
 
-    getIsDemoEntitiesOnly(): boolean {  
+    getIsDemoEntitiesOnly(): boolean {
         return this.isDemoEntitiesOnlyBS.value;
     }
 
@@ -93,21 +93,21 @@ export class StateService {
         //previously selected facility id
         let previousFacilityId = this.selectedFacilityIdBehaviorSubject.value;
 
-        if (previousFacilityId.trim().length === 0){
+        if (previousFacilityId.trim().length === 0) {
             this.facilityService.subscribeToGroup(facility).subscribe((response) => {
                 console.log(response);
             });
         } else {
             this.facilityService.unsubscribeFromGroup(previousFacilityId)
-            .pipe(
-                concatMap(firstResponse => { 
-                    console.log('First response:', firstResponse);
-                    return this.facilityService.subscribeToGroup(facility); 
-                })
-            )
-            .subscribe((response) => { console.log(response); });
+                .pipe(
+                    concatMap(firstResponse => {
+                        console.log('First response:', firstResponse);
+                        return this.facilityService.subscribeToGroup(facility);
+                    })
+                )
+                .subscribe((response) => { console.log(response); });
         }
-        
+
         this.selectedFacilityIdBehaviorSubject.next(facility);
         this.i4connectedService.getDevicesByFacility2(facility).subscribe(devices => {
             this.devicesFromSiteBehaviorSubject.next(devices);
@@ -208,7 +208,7 @@ export class StateService {
         this.caseSavedBehaviorSubject.next(uuidv4());
     }
 
-    getDefaultCaseSaved(): string{
+    getDefaultCaseSaved(): string {
         return uuidv4();
     }
 
@@ -222,7 +222,7 @@ export class StateService {
         return this.filterCasesByDeviceIdBehaviorSubject.value;
     }
 
-    getDefaultFilterCasesByDeviceId() : string {
+    getDefaultFilterCasesByDeviceId(): string {
         return 'all';
     }
 
@@ -236,7 +236,7 @@ export class StateService {
         return this.filterUnscheduledCasesByFacilityIdBehaviorSubject.value;
     }
 
-    getDefaultFilterUnscheduledCasesByFacilityId() : 'all' | 'bySelectedFacility' {
+    getDefaultFilterUnscheduledCasesByFacilityId(): 'all' | 'bySelectedFacility' {
         return 'all';
     }
 
@@ -246,10 +246,13 @@ export class StateService {
         this.refreshCasesListBS.next(uuidv4());
     }
 
-    getDefaultRefreshCasesList(): string{
+    getDefaultRefreshCasesList(): string {
         return uuidv4();
     }
 
+    getUserDetailsBS() : UserDetails {
+        return this.userDetailsBS.value;
+    }
 
     // userDetailsBS
     setUserDetailsBS(user: UserDetails) {
@@ -257,11 +260,11 @@ export class StateService {
         this.setCanActivateFacilityUrlBS(this.checkUserPermissionForFacility());
     }
 
-    getUserDetails() : UserDetails {
+    getUserDetails(): UserDetails {
         return this.userDetailsBS.value;
     }
 
-    getDefaultUserDetails(): UserDetails{
+    getDefaultUserDetails(): UserDetails {
         return new UserDetails();
     }
 
@@ -271,7 +274,7 @@ export class StateService {
         this.canActivateFacilityUrlBS.next(permission);
     }
 
-    getCanActivateFacilityUrlBS() : boolean {
+    getCanActivateFacilityUrlBS(): boolean {
         return this.canActivateFacilityUrlBS.value;
     }
 
@@ -281,7 +284,7 @@ export class StateService {
 
 
     // facilitiesBS
-    setFacilitiesBS(facilities: Facility[]) : void{
+    setFacilitiesBS(facilities: Facility[]): void {
         this.facilitiesBS.next(facilities);
     }
 

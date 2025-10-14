@@ -3,6 +3,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Language } from 'src/app/models/language.model';
 import { UserSettingData } from 'src/app/models/user-setting.model';
 import { CalendarService } from 'src/app/services/calendar.service';
+import { UserSettingService } from 'src/app/services/user-setting.service';
 
 @Component({
   selector: 'app-profile-setting.dialog',
@@ -18,6 +19,7 @@ export class ProfileSettingDialogComponent implements OnInit {
 
   constructor(
     private calendarService: CalendarService,
+    private userSettingService: UserSettingService,
     public dialogRef: MatDialogRef<ProfileSettingDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: UserSettingData,
   ) { }
@@ -25,8 +27,10 @@ export class ProfileSettingDialogComponent implements OnInit {
   timezones!: string[];
 
   ngOnInit(): void {
-    console.log('data', this.data);
     this.timezones = this.calendarService.getAllTimeZones();
+    this.userSettingService.userSettings$.subscribe(setting => {
+      this.data = setting;
+    });
   }
 
   onNoClick(): void {
