@@ -5,5 +5,11 @@
 .text-center {
   display: flex;
   justify-content: center;
-margin: auto;
+  margin: auto;
+}
+
+.no-padding {
+  --min-height: 0;
+  --padding-top: 0;
+  --padding-bottom: 0;
 }

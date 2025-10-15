@@ -7,7 +7,7 @@ android {
         applicationId "com.matthews.app"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion 35
-        versionCode 3
+        versionCode 4
         versionName "1.0.1"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {

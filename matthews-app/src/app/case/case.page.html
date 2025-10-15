@@ -85,8 +85,12 @@
       <ion-datetime [disabled]="fromProcess" placeholder="Select Date" name="scheduledTime"
         [(ngModel)]="newCase.scheduledStartTime"></ion-datetime>
     </ion-item>
-    <ion-button type="submit" color="primary" expand="block" [disabled]="!caseForm.valid">
-      {{'Submit' | translate}}
-    </ion-button>
   </form>
 </ion-content>
+<ion-footer>
+  <ion-toolbar class="no-padding">
+    <ion-button type="submit" color="primary" expand="block" [disabled]="!caseForm.valid" (click)="onSubmit()">
+      {{'Submit' | translate}}
+    </ion-button>
+  </ion-toolbar>
+</ion-footer>

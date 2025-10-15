@@ -1,14 +1,14 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 export const environment = {
   production: true,
-  apiUrl: 'https://develop.comdata.rs/MatthewsApp.API',
+  apiUrl: 'https://matthewsenvironmental.i4connected.cloud/MatthewsApp.API',
   i4connectedApiUrl: 'https://matthewsenvironmental.i4connected.cloud/api',
   auth_config: {
-    client_id: 'matthews.web',
-    client_secret: '0be0470165fa49ca9631a2babc0a73d4',
+    client_id: 'matthews.app',
+    client_secret: 'b8f30abd541943ff92a1d36ca72ed25e',
     server_host: 'https://matthewsenvironmental.i4connected.cloud/identity',
-    redirect_url: 'https://develop.comdata.rs/MatthewsApp/authorizationcallback',
-    end_session_redirect_url: 'https://develop.comdata.rs/MatthewsApp/endsessioncallback',
+    redirect_url: 'com.matthews.app://authorizationcallback',
+    end_session_redirect_url: 'com.matthews.app://endsessioncallback',
     scopes: 'profile openid email offline_access matthews.api api',
     pkce: true
   }
