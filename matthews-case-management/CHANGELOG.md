@@ -9,6 +9,10 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 - Bug fixes...
 
+## [2.38] - 2025-10-08
+### Fixed
+- Time zone logic implemented from i4connected
+
 ## [2.37] - 2025-10-08
 ### Fixed
 - In i4connected.service.ts, the getDevicesByFacility2 method is modified.

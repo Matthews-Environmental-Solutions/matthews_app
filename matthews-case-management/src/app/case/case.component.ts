@@ -110,7 +110,7 @@ export class CaseComponent implements OnInit {
     this.signalRService.startConnectionToCaseHub();
     this.signalRService.addCaseDataListener();
 
-    this.i4connectedService.getUserInfoDetails(this.authService.loggedInUser.sub).subscribe(userDetails => {
+    this.subs.add(this.i4connectedService.getUserInfoDetails(this.authService.loggedInUser.sub).subscribe(userDetails => {
       const user = new UserDetails();
       user.id = userDetails.id;
       user.firstName = userDetails.firstName;
@@ -123,8 +123,6 @@ export class CaseComponent implements OnInit {
 
       this.i4connectedService.getTimeZoneDetails(user.timeZoneId).subscribe((tz: any) => {
         if (tz?.ianaName) {
-          console.log('Detected timezone from API:', tz.ianaName);
-
           // update userSetting in local storage
           const username = this.authService.loggedInUser.name;
           const userSettingString = localStorage.getItem(username);
@@ -146,7 +144,7 @@ export class CaseComponent implements OnInit {
           this.userSettingService.setUserSetting(updatedSetting);
         }
       });
-    });
+    }));
   }
 
   ngOnDestroy(): void {
